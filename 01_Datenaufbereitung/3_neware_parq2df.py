@@ -434,7 +434,7 @@ import os
 
 # Ursprungspfad
 #source_path = r"c:\Users\Florian\Synology\TUB\3_Projekte\MG_Farm\4_Work_packages\3_State_estimation\01_LFP\00_Data\Versuch_18650_standart\MGFarm_18650_parquet"
-source_path = r'E:\00_Thesis\MGFarm_18650_Dataframes'
+source_path = r'c:\Users\Florian\SynologyDrive\TUB\3_Projekte\MG_Farm\4_Work_packages\3_State_estimation\01_LFP\00_Data\Versuch_18650_standart\MGFarm_18650_parquet'
 # Zielverzeichnis
 #destination_path = r"c:\Users\Florian\Synology\TUB\3_Projekte\MG_Farm\4_Work_packages\3_State_estimation\01_LFP\00_Data\Versuch_18650_standart\MGFarm_18650_Dataframes"
 destination_path = r'c:\Users\Florian\SynologyDrive\TUB\3_Projekte\MG_Farm\4_Work_packages\3_State_estimation\01_LFP\00_Data\Versuch_18650_standart\MGFarm_18650_Dataframes'
