@@ -1,18 +1,19 @@
 #!/bin/bash
 
-#SBATCH -o /home/users/z/zzhuqshun/Output/Results/myjob.%j.%N.out     # Output-File
-#SBATCH -D .                        # Working Directory
-#SBATCH -J Model_Run                                  # Job Name
-#SBATCH --ntasks=1                                    # Number of tasks (processes)
-#SBATCH --cpus-per-task=1                             # Number of CPU cores per task
-#SBATCH --gres=gpu:tesla:2                            # Request 2 Tesla GPUs
-#SBATCH --mem=50G                                    # Request 500 GB of memory
+#SBATCH -o ./Results/myjob.%j.out   
+#SBATCH -e ./Results/myjob.%j.err 
+#SBATCH -D .                     
+#SBATCH -J Model_Run                                  
+#SBATCH --ntasks=1                              
+#SBATCH --cpus-per-task=1                        
+#SBATCH --gres=gpu:a100:1                            
+#SBATCH --mem=100G                                    
 
 # Maximum walltime allowed:
-#SBATCH --time=36:00:00                               # Expected run time
+#SBATCH --time=24:00:00                             
 
 # Compute on GPU partition:
-#SBATCH --partition=gpu
+#SBATCH --partition=gpu_short
 
 # Job status via email:
 #SBATCH --mail-type=ALL

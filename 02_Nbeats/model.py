@@ -1,8 +1,4 @@
 # %%
-%pip install darts
-%matplotlib widget
-
-# %%
 ## Packages
 import pandas as pd
 import numpy as np
@@ -12,12 +8,11 @@ from darts.models import NBEATSModel
 from darts.dataprocessing.transformers import Scaler
 from sklearn.metrics import mean_absolute_error
 import optuna
-from tqdm import tqdm
 
 
 # %%
 ## Read data
-data = pd.read_parquet(r"..\01_Datenaufbereitung\Output\Calculated\df_15.parquet")
+data = pd.read_parquet("/home/users/z/zzhuqshun/Thesis/01_Datenaufbereitung/Output/Calculated/df_15.parquet")
 data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'] = pd.to_datetime(data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'])
 data = data[['Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'Current[A]', 'Voltage[V]', 'Temperature[°C]', 'SOH_ZHU']]
 
@@ -26,7 +21,8 @@ data.set_index('Absolute_Time[yyyy-mm-dd hh:mm:ss]', inplace=True)
 data_hourly = data.resample('h').mean().reset_index()
 
 ## Fill missing values
-data_hourly.interpolate(method='linear', inplace=True)
+numeric_cols = data_hourly.select_dtypes(include=[np.number]).columns  
+data_hourly[numeric_cols] = data_hourly[numeric_cols].interpolate(method='linear')
 data_hourly['SOH_ZHU'] = data_hourly['SOH_ZHU'].fillna(1)
 data_hourly
 
