@@ -7,6 +7,7 @@ from darts import TimeSeries
 from darts.models import NBEATSModel
 from darts.dataprocessing.transformers import Scaler
 from sklearn.metrics import mean_absolute_error
+from pytorch_lightning.callbacks import ModelCheckpoint
 import optuna
 
 
@@ -24,7 +25,6 @@ data_hourly = data.resample('h').mean().reset_index()
 numeric_cols = data_hourly.select_dtypes(include=[np.number]).columns  
 data_hourly[numeric_cols] = data_hourly[numeric_cols].interpolate(method='linear')
 data_hourly['SOH_ZHU'] = data_hourly['SOH_ZHU'].fillna(1)
-data_hourly
 
 # %%
 ## Data to time series
@@ -50,18 +50,13 @@ if cov_train.start_time() > required_start_time:
 if cov_val.start_time() > required_start_time:
     cov_val = covariates_scaled.slice(required_start_time, cov_val.end_time())
 
-plt.figure(figsize=(8, 5))
-train_series.plot(label="training")
-val_series.plot(label="validation")
-plt.title("SOH Over Time (hourly)")
-plt.xlabel("Time")
 
 # %%
 # Optuna objective function
 def objective(trial):
     # Define hyperparameter search space
     input_chunk_length = trial.suggest_int("input_chunk_length", 12, 24)
-    output_chunk_length = trial.suggest_int("output_chunk_length", 1, 12)
+    output_chunk_length = trial.suggest_int("output_chunk_length", 1, 7)
     batch_size = trial.suggest_categorical("batch_size", [16, 32, 64])
     num_blocks = trial.suggest_int("num_blocks", 2, 3)
     num_stacks = trial.suggest_int("num_stacks", 2, 3)
@@ -73,22 +68,24 @@ def objective(trial):
         batch_size=batch_size,
         num_blocks=num_blocks,
         num_stacks=num_stacks,
-        random_state=42
+        random_state=42,
+        pl_trainer_kwargs={
+            "callbacks": [ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)]
+        }
     )
 
-    model.fit(series=train_series, past_covariates=cov_train, epochs=100)  
+    model.fit(series=train_series, past_covariates=cov_train, 
+              val_series=val_series, val_past_covariates=cov_val, epochs=100)  
     
-    # Predict and compute MAE as evaluation metric
-    pred_series = model.predict(len(val_series), series=train_series, past_covariates=cov_val)
-    score = mean_absolute_error(val_series.values(), pred_series.values())
+    # Retrieve best validation loss directly from the training process
+    best_val_loss = model.trainer.checkpoint_callback.best_model_score.item() 
     
-    return score
+    return best_val_loss
 
 
 
 # %%
 # Optuna call with progress bar
-n_trials = 50  # Set the number of trials
 study = optuna.create_study(direction="minimize")
 study.optimize(objective, n_trials=50)  
 
@@ -108,12 +105,13 @@ best_model = NBEATSModel(
     batch_size=best_params["batch_size"],
     num_blocks=best_params["num_blocks"],
     num_stacks=best_params["num_stacks"],
-    random_state=42
+    random_state=42,
+    save_checkpoints=True
 )
 
-best_model.fit(series=train_series, past_covariates=cov_train, epochs=200)
-best_model.save_model("best_nbeats_model.pth")
-print("Best model saved as 'best_nbeats_model.pth'")
+best_model.fit(series=train_series, past_covariates=cov_train, 
+               val_series=val_series, val_past_covariates=cov_val, epochs=200, verbose=True)
+
 
 # %%
 # param_grid = {
