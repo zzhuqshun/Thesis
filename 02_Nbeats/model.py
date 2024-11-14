@@ -1,8 +1,4 @@
 # %%
-%pip install darts
-%matplotlib widget
-
-# %%
 import pandas as pd
 import numpy as np
 import itertools
@@ -56,6 +52,7 @@ train_series.plot(label="training")
 val_series.plot(label="validation")
 plt.title("SOH Over Time (hourly)")
 plt.xlabel("Time")
+plt.ion()
 
 # %% [markdown]
 # # Model training
@@ -97,6 +94,7 @@ val_series.plot(label="true")
 pred_series.plot(label="forecast")
 plt.legend()
 plt.xlabel('Time')
+plt.ion()
 plt.show()
 
 # %% [markdown]
