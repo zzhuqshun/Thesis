@@ -70,12 +70,13 @@ def objective(trial):
         num_stacks=num_stacks,
         random_state=42,
         pl_trainer_kwargs={
-            "callbacks": [ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)]
+            "callbacks": [ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)],
+            "enable_checkpointing": True
         }
     )
 
     model.fit(series=train_series, past_covariates=cov_train, 
-              val_series=val_series, val_past_covariates=cov_val, epochs=100)  
+              val_series=val_series, val_past_covariates=cov_val, epochs=200)  
     
     # Retrieve best validation loss directly from the training process
     best_val_loss = model.trainer.checkpoint_callback.best_model_score.item() 
