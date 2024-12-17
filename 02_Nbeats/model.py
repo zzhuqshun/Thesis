@@ -1,4 +1,8 @@
 # %%
+%pip install darts
+%matplotlib widget
+
+# %%
 ## Packages
 import pandas as pd
 import numpy as np
@@ -8,75 +12,227 @@ from darts.models import NBEATSModel
 from darts.dataprocessing.transformers import Scaler
 from sklearn.metrics import mean_absolute_error
 from pytorch_lightning.callbacks import ModelCheckpoint
+from sklearn.preprocessing import MinMaxScaler
+from pathlib import Path
 import optuna
+from tqdm import tqdm
+from sklearn.model_selection import train_test_split
+from typing import Dict, Tuple
+
+
 
 
 # %%
-## Read data
-data = pd.read_parquet("/home/users/z/zzhuqshun/Thesis/01_Datenaufbereitung/Output/Calculated/df_15.parquet")
-data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'] = pd.to_datetime(data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'])
-data = data[['Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'Current[A]', 'Voltage[V]', 'Temperature[°C]', 'SOH_ZHU']]
+def load_data(data_dir: str, feature_range=(-1, 1)) -> dict:
+    data_path = Path(data_dir)
+    processed_data = {}
 
-## Resample to hourly
-data.set_index('Absolute_Time[yyyy-mm-dd hh:mm:ss]', inplace=True)
-data_hourly = data.resample('h').mean().reset_index()
+    # Find all parquet files
+    parquet_files = list(data_path.glob("**/df*.parquet"))
+    print(f"Found {len(parquet_files)} parquet files")
 
-## Fill missing values
-numeric_cols = data_hourly.select_dtypes(include=[np.number]).columns  
-data_hourly[numeric_cols] = data_hourly[numeric_cols].interpolate(method='linear')
-data_hourly['SOH_ZHU'] = data_hourly['SOH_ZHU'].fillna(1)
+    for file_path in tqdm(parquet_files, desc="Processing cells", unit="cell"):
+        # Extract cell number from parent directory name
+        file_name = file_path.stem  
+        cell_number = file_name.replace('df_', '')  
+        cell_name = f'C{cell_number}'  
+        tqdm.write(f"Processing {cell_name} ...")
+            
+        # Load and process data
+        data = pd.read_parquet(file_path)
+        data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'] = pd.to_datetime(data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'])
+        
+        # Select relevant columns
+        data = data[['Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'Current[A]', 'Voltage[V]', 
+                    'Temperature[°C]', 'SOH_ZHU']]
+        
+        # Resample to hourly
+        data.set_index('Absolute_Time[yyyy-mm-dd hh:mm:ss]', inplace=True)
+        data_hourly = data.resample('h').mean().reset_index()
+        
+        # Fill missing values
+        data_hourly.interpolate(method='linear', inplace=True)
+        data_hourly['SOH_ZHU'] = data_hourly['SOH_ZHU'].fillna(1)
+        
+        # Convert to time series
+        target_series = TimeSeries.from_dataframe(
+            data_hourly, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'SOH_ZHU'
+        )
+        covariates = TimeSeries.from_dataframe(
+            data_hourly, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', 
+            ['Current[A]', 'Voltage[V]', 'Temperature[°C]']
+        )
+        
+        # Time align
+        target_series, covariates = target_series.slice_intersect(covariates), covariates.slice_intersect(target_series)
+        
+        # Scale covariates
+        scaler = Scaler(scaler=MinMaxScaler(feature_range=(-1,1)))
+        covariates_scaled = scaler.fit_transform(covariates)
+        
+        processed_data[cell_name] = {
+            'target': target_series,
+            'covariates_scaled': covariates_scaled
+        }
+    
+    return processed_data
+
+data_dir = "../01_Datenaufbereitung/Output/Calculated/"
+processed_data = load_data(data_dir)
 
 # %%
-## Data to time series
-target_series = TimeSeries.from_dataframe(data_hourly, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'SOH_ZHU')
-covariates = TimeSeries.from_dataframe(data_hourly, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', ['Current[A]', 'Voltage[V]', 'Temperature[°C]'])
+def inspect_data_ranges(data_dict: dict):
+   """
+   Inspect time ranges and value ranges for each battery in the data dictionary
+   """
+   for cell_name, cell_data in data_dict.items():
+       print(f"\n=== {cell_name} ===")
+       
+       # Get target data range
+       target = cell_data['target']
+       target_values = target.values().flatten()  # Flatten array for calculation
+       print("\nTarget (SOH_ZHU):")
+       print(f"Time Range: {target.start_time()} to {target.end_time()}")
+       print(f"Value Range: {target_values.min():.4f} to {target_values.max():.4f}")
+       print(f"Number of Data Points: {len(target)}")
+       
+       # Get covariates data range
+       covariates = cell_data['covariates_scaled']
+       cov_values = covariates.values()
+       print("\nCovariates (scaled):")
+       for i, feature in enumerate(covariates.components):
+           values = cov_values[:, i].flatten()
+           print(f"{feature}:")
+           print(f"Value Range: {values.min():.4f} to {values.max():.4f}")
 
-## Time align
-target_series, covariates = target_series.slice_intersect(covariates), covariates.slice_intersect(target_series)
+# View all data ranges
+print("All Data Ranges:")
+inspect_data_ranges(processed_data)
 
-## Covariates normalization
-scaler = Scaler() # Scale data [min,max] to [0,1]
-## Don't scale SOH
-covariates_scaled = scaler.fit_transform(covariates)
+# %%
+def split_cell_data(processed_data: dict, train_ratio=0.6, val_ratio=0.2, test_ratio=0.2) -> Tuple[Dict, Dict, Dict]:
+   # Get all cell numbers
+   cell_names = list(processed_data.keys())
+   
+   # Calculate number of cells needed for each set
+   n_cells = len(cell_names)
+   n_train = int(n_cells * train_ratio)
+   n_val = int(n_cells * val_ratio)
+   
+   # Randomly shuffle cell order
+   np.random.seed(773)
+   np.random.shuffle(cell_names)
+   
+   # Split cell numbers
+   train_cells = cell_names[:n_train]
+   val_cells = cell_names[n_train:n_train + n_val]
+   test_cells = cell_names[n_train + n_val:]
+   
+   # Create dataset dictionaries
+   train_data = {cell: processed_data[cell] for cell in train_cells}
+   val_data = {cell: processed_data[cell] for cell in val_cells}
+   test_data = {cell: processed_data[cell] for cell in test_cells}
+   
+   print(f"Data split completed:")
+   print(f"Training set: {len(train_data)} cells {sorted(train_cells)}")
+   print(f"Validation set: {len(val_data)} cells {sorted(val_cells)}")
+   print(f"Test set: {len(test_data)} cells {sorted(test_cells)}")
+   
+   return train_data, val_data, test_data
 
-## Data split
-train_series, val_series = target_series.split_after(0.8)
-cov_train, cov_val = covariates_scaled.split_after(0.8)
+# Usage example:
+train_data, val_data, test_data = split_cell_data(processed_data)
+inspect_data_ranges(train_data)
 
-# Time align
-required_start_time = train_series.start_time() - pd.Timedelta(hours=12) 
-if cov_train.start_time() > required_start_time:
-    cov_train = covariates_scaled.slice(required_start_time, cov_train.end_time())
-if cov_val.start_time() > required_start_time:
-    cov_val = covariates_scaled.slice(required_start_time, cov_val.end_time())
+# %%
+def plot_dataset_soh(data_dict: dict, title: str, figsize=(10, 7)):
+    plt.figure(figsize=figsize)
+    
+    # Plot each cell's SOH
+    for cell_name, cell_data in data_dict.items():
+        target = cell_data['target']
+        plt.plot(target.time_index, target.values().flatten(), label=cell_name)
+    
+    plt.title(f'{title} Set SOH Curves')
+    plt.xlabel('Time')
+    plt.ylabel('SOH_ZHU')
+    plt.grid(True)
+    plt.legend(loc='upper right')
+    plt.tight_layout()
+    plt.show()
 
+# Plot all three datasets
+plot_dataset_soh(train_data, "Training")
+plot_dataset_soh(val_data, "Validation")
+plot_dataset_soh(test_data, "Test")
+
+# %%
+def prepare_data(train_data, val_data):
+    # Concatenate training data
+    train_targets = []
+    train_covariates = []
+    for cell_data in train_data.values():
+        train_targets.append(cell_data['target'])
+        train_covariates.append(cell_data['covariates_scaled'])
+    
+    train_series = train_targets[0]
+    train_cov = train_covariates[0]
+    for i in range(1, len(train_targets)):
+        train_series = train_series.concatenate(train_targets[i], ignore_time_axis=True)
+        train_cov = train_cov.concatenate(train_covariates[i], ignore_time_axis=True)
+    
+    # Concatenate validation data
+    val_targets = []
+    val_covariates = []
+    for cell_data in val_data.values():
+        val_targets.append(cell_data['target'])
+        val_covariates.append(cell_data['covariates_scaled'])
+    
+    val_series = val_targets[0]
+    val_cov = val_covariates[0]
+    for i in range(1, len(val_targets)):
+        val_series = val_series.concatenate(val_targets[i], ignore_time_axis=True)
+        val_cov = val_cov.concatenate(val_covariates[i], ignore_time_axis=True)
+    
+    return train_series, train_cov, val_series, val_cov
 
 # %%
 # Optuna objective function
 def objective(trial):
     # Define hyperparameter search space
+    # 1. Search - Basic structure
     input_chunk_length = trial.suggest_int("input_chunk_length", 12, 24)
-    output_chunk_length = trial.suggest_int("output_chunk_length", 1, 7)
-    batch_size = trial.suggest_categorical("batch_size", [16, 32, 64])
-    num_blocks = trial.suggest_int("num_blocks", 2, 3)
-    num_stacks = trial.suggest_int("num_stacks", 2, 3)
+    output_chunk_length = trial.suggest_int("output_chunk_length", 1, 12)
+    num_blocks = trial.suggest_int("num_blocks", 2, 5)
+    num_stacks = trial.suggest_int("num_stacks", 2, 5)
+    activation = trial.suggest_categorical("activation", ["ReLU", "LeakyReLU"])
+    # 2. Search - Training parameters
+    batch_size = trial.suggest_categorical("batch_size", [16, 32, 64, 128])
+    learning_rate = trial.suggest_float("learning_rate", 1e-5, 1e-2, log=True)
+    expansion_coefficient_dim = trial.suggest_int("expansion_coefficient_dim", 5, 10)
+    trend_polynomial_degree = trial.suggest_int("trend_polynomial_degree", 2, 4)
 
     # Define and train model
     model = NBEATSModel(
         input_chunk_length=input_chunk_length,
         output_chunk_length=output_chunk_length,
-        batch_size=batch_size,
         num_blocks=num_blocks,
         num_stacks=num_stacks,
-        random_state=42,
+        batch_size=batch_size,
+        expansion_coefficient_dim=expansion_coefficient_dim, 
+        trend_polynomial_degree=trend_polynomial_degree, 
+        optimizer_kwargs={"lr": learning_rate},
+        random_state=773,
+        activation = activation,
         pl_trainer_kwargs={
             "callbacks": [ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)],
             "enable_checkpointing": True
         }
     )
-
-    model.fit(series=train_series, past_covariates=cov_train, 
-              val_series=val_series, val_past_covariates=cov_val, epochs=200)  
+    train_series, ctrain_cov, val_series, val_cov = prepare_data(train_data, val_data)
+    
+    model.fit(series=train_series, past_covariates=ctrain_cov, 
+              val_series=val_series, val_past_covariates=val_cov, epochs=200)  
     
     # Retrieve best validation loss directly from the training process
     best_val_loss = model.trainer.checkpoint_callback.best_model_score.item() 
@@ -88,7 +244,7 @@ def objective(trial):
 # %%
 # Optuna call with progress bar
 study = optuna.create_study(direction="minimize")
-study.optimize(objective, n_trials=50)  
+study.optimize(objective, n_trials=100)  
 
 # Best trial
 print("Best trial:")
@@ -99,20 +255,44 @@ for key, value in trial.params.items():
     print(f"    {key}: {value}")
 
 # %%
-best_params = trial.params
-best_model = NBEATSModel(
-    input_chunk_length=best_params["input_chunk_length"],
-    output_chunk_length=best_params["output_chunk_length"],
-    batch_size=best_params["batch_size"],
-    num_blocks=best_params["num_blocks"],
-    num_stacks=best_params["num_stacks"],
-    random_state=42,
-    save_checkpoints=True
-)
+# best_params = {'input_chunk_length': 15, 'output_chunk_length': 1, 'batch_size': 16, 'num_blocks': 2, 'num_stacks': 2}
 
-best_model.fit(series=train_series, past_covariates=cov_train, 
-               val_series=val_series, val_past_covariates=cov_val, epochs=200, verbose=True)
+# %%
+# best_params = trial.params
+# best_model = NBEATSModel(
+#     input_chunk_length=best_params["input_chunk_length"],
+#     output_chunk_length=best_params["output_chunk_length"],
+#     batch_size=best_params["batch_size"],
+#     num_blocks=best_params["num_blocks"],
+#     num_stacks=best_params["num_stacks"],
+#     random_state=42,
+#     save_checkpoints=True
+# )
 
+# best_model.fit(series=train_series, past_covariates=cov_train, 
+#                val_series=val_series, val_past_covariates=cov_val, epochs=200, verbose=True)
+
+
+# %%
+# model = NBEATSModel.load_from_checkpoint('in22_out1_bs16_nb3_ns2')
+
+# pred_series = model.predict(len(val_series), series=train_series, past_covariates=cov_val)
+
+# plt.figure(figsize=(8, 5))
+# target_series.plot(label="Actual")
+# pred_series.plot(label="Forecast")
+# plt.title("SOH Forecast using NBEATS Model")
+# plt.xlabel("Time")
+# plt.legend()
+# plt.show()
+
+# plt.figure(figsize=(8, 5)) 
+# train_series.plot(label="train")
+# val_series.plot(label="true")
+# pred_series.plot(label="forecast")
+# plt.legend()
+# plt.xlabel('Time')
+# plt.show()
 
 # %%
 # param_grid = {
