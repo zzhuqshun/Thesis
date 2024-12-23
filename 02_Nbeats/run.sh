@@ -3,17 +3,13 @@
 #SBATCH -o ./Results/myjob.%j.out   
 #SBATCH -e ./Results/myjob.%j.err 
 #SBATCH -D .                     
-#SBATCH -J Model_Run                                  
+#SBATCH -J NBeats                                 
 #SBATCH --ntasks=1                              
-#SBATCH --cpus-per-task=1                        
+#SBATCH --cpus-per-task=2                        
 #SBATCH --gres=gpu:a100:1                            
-#SBATCH --mem=100G                                    
-
-# Maximum walltime allowed:
-#SBATCH --time=24:00:00                             
-
-# Compute on GPU partition:
-#SBATCH --partition=gpu_short
+#SBATCH --mem=32G                                    
+#SBATCH --time=96:00:00                             
+#SBATCH --partition=gpu
 
 # Job status via email:
 #SBATCH --mail-type=ALL
@@ -25,3 +21,4 @@ conda activate myenv
 
 # Run the Python script
 python model.py
+

@@ -1,8 +1,4 @@
 # %%
-%pip install darts
-%matplotlib widget
-
-# %%
 ## Packages
 import pandas as pd
 import numpy as np
@@ -13,6 +9,7 @@ from darts.dataprocessing.transformers import Scaler
 from sklearn.metrics import mean_absolute_error
 from pytorch_lightning.callbacks import ModelCheckpoint
 from sklearn.preprocessing import MinMaxScaler
+from pytorch_lightning.callbacks import EarlyStopping
 from pathlib import Path
 import optuna
 from tqdm import tqdm
@@ -207,10 +204,10 @@ def objective(trial):
     num_stacks = trial.suggest_int("num_stacks", 2, 5)
     activation = trial.suggest_categorical("activation", ["ReLU", "LeakyReLU"])
     # 2. Search - Training parameters
-    batch_size = trial.suggest_categorical("batch_size", [16, 32, 64, 128])
-    learning_rate = trial.suggest_float("learning_rate", 1e-5, 1e-2, log=True)
-    expansion_coefficient_dim = trial.suggest_int("expansion_coefficient_dim", 5, 10)
-    trend_polynomial_degree = trial.suggest_int("trend_polynomial_degree", 2, 4)
+    batch_size = trial.suggest_categorical("batch_size", [16, 32, 64])
+    learning_rate = trial.suggest_float("learning_rate", 1e-4, 1e-3, log=True)
+    expansion_coefficient_dim = 8
+    trend_polynomial_degree = 2
 
     # Define and train model
     model = NBEATSModel(
@@ -225,14 +222,19 @@ def objective(trial):
         random_state=773,
         activation = activation,
         pl_trainer_kwargs={
-            "callbacks": [ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)],
+            "accelerator": "gpu",
+            "devices": 1, 
+            "callbacks": [
+              ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1),
+              EarlyStopping(monitor="val_loss", patience=10, mode="min")
+            ],
             "enable_checkpointing": True
         }
     )
     train_series, ctrain_cov, val_series, val_cov = prepare_data(train_data, val_data)
     
     model.fit(series=train_series, past_covariates=ctrain_cov, 
-              val_series=val_series, val_past_covariates=val_cov, epochs=200)  
+              val_series=val_series, val_past_covariates=val_cov, epochs=100)  
     
     # Retrieve best validation loss directly from the training process
     best_val_loss = model.trainer.checkpoint_callback.best_model_score.item() 
