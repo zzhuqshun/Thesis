@@ -1,4 +1,8 @@
 # %%
+# %pip install darts
+# %matplotlib widget
+
+# %%
 ## Packages
 import pandas as pd
 import numpy as np
@@ -6,21 +10,20 @@ import matplotlib.pyplot as plt
 from darts import TimeSeries
 from darts.models import NBEATSModel
 from darts.dataprocessing.transformers import Scaler
-from sklearn.metrics import mean_absolute_error
 from pytorch_lightning.callbacks import ModelCheckpoint
 from sklearn.preprocessing import MinMaxScaler
 from pytorch_lightning.callbacks import EarlyStopping
 from pathlib import Path
 import optuna
 from tqdm import tqdm
-from sklearn.model_selection import train_test_split
 from typing import Dict, Tuple
 
-
-
+from darts.metrics import rmse
+import warnings
+warnings.filterwarnings('ignore')
 
 # %%
-def load_data(data_dir: str, feature_range=(-1, 1)) -> dict:
+def load_data(data_dir: str) -> dict:
     data_path = Path(data_dir)
     processed_data = {}
 
@@ -107,14 +110,9 @@ print("All Data Ranges:")
 inspect_data_ranges(processed_data)
 
 # %%
-def split_cell_data(processed_data: dict, train_ratio=0.6, val_ratio=0.2, test_ratio=0.2) -> Tuple[Dict, Dict, Dict]:
+def split_cell_data(processed_data: dict, n_train=9, n_val=3, n_test=3) -> Tuple[Dict, Dict, Dict]:
    # Get all cell numbers
    cell_names = list(processed_data.keys())
-   
-   # Calculate number of cells needed for each set
-   n_cells = len(cell_names)
-   n_train = int(n_cells * train_ratio)
-   n_val = int(n_cells * val_ratio)
    
    # Randomly shuffle cell order
    np.random.seed(773)
@@ -123,7 +121,7 @@ def split_cell_data(processed_data: dict, train_ratio=0.6, val_ratio=0.2, test_r
    # Split cell numbers
    train_cells = cell_names[:n_train]
    val_cells = cell_names[n_train:n_train + n_val]
-   test_cells = cell_names[n_train + n_val:]
+   test_cells = cell_names[:n_test]
    
    # Create dataset dictionaries
    train_data = {cell: processed_data[cell] for cell in train_cells}
@@ -164,50 +162,36 @@ plot_dataset_soh(val_data, "Validation")
 plot_dataset_soh(test_data, "Test")
 
 # %%
-def prepare_data(train_data, val_data):
-    # Concatenate training data
-    train_targets = []
-    train_covariates = []
-    for cell_data in train_data.values():
-        train_targets.append(cell_data['target'])
-        train_covariates.append(cell_data['covariates_scaled'])
+def prepare_data(data):
+    targets = []
+    covariates = []
+    for cell_data in data.values():
+        targets.append(cell_data['target'])
+        covariates.append(cell_data['covariates_scaled'])
     
-    train_series = train_targets[0]
-    train_cov = train_covariates[0]
-    for i in range(1, len(train_targets)):
-        train_series = train_series.concatenate(train_targets[i], ignore_time_axis=True)
-        train_cov = train_cov.concatenate(train_covariates[i], ignore_time_axis=True)
-    
-    # Concatenate validation data
-    val_targets = []
-    val_covariates = []
-    for cell_data in val_data.values():
-        val_targets.append(cell_data['target'])
-        val_covariates.append(cell_data['covariates_scaled'])
-    
-    val_series = val_targets[0]
-    val_cov = val_covariates[0]
-    for i in range(1, len(val_targets)):
-        val_series = val_series.concatenate(val_targets[i], ignore_time_axis=True)
-        val_cov = val_cov.concatenate(val_covariates[i], ignore_time_axis=True)
-    
-    return train_series, train_cov, val_series, val_cov
+    series = targets[0]
+    cov = covariates[0]
+    for i in range(1, len(targets)):
+        series = series.concatenate(targets[i], ignore_time_axis=True)
+        cov = cov.concatenate(covariates[i], ignore_time_axis=True)
+    return series, cov
 
 # %%
 # Optuna objective function
 def objective(trial):
     # Define hyperparameter search space
     # 1. Search - Basic structure
-    input_chunk_length = trial.suggest_int("input_chunk_length", 12, 24)
-    output_chunk_length = trial.suggest_int("output_chunk_length", 1, 12)
+    input_chunk_length = trial.suggest_int("input_chunk_length", 12, 36)
+    output_chunk_length = trial.suggest_int("output_chunk_length", 1, 24)
     num_blocks = trial.suggest_int("num_blocks", 2, 5)
     num_stacks = trial.suggest_int("num_stacks", 2, 5)
     activation = trial.suggest_categorical("activation", ["ReLU", "LeakyReLU"])
     # 2. Search - Training parameters
-    batch_size = trial.suggest_categorical("batch_size", [16, 32, 64])
-    learning_rate = trial.suggest_float("learning_rate", 1e-4, 1e-3, log=True)
-    expansion_coefficient_dim = 8
-    trend_polynomial_degree = 2
+    batch_size = trial.suggest_categorical("batch_size", [32, 64, 128])
+    learning_rate = trial.suggest_float("learning_rate", 1e-5, 1e-3, log=True)
+
+    expansion_coefficient_dim = trial.suggest_int("expansion_coefficient_dim", 8, 32, step=8)
+    trend_polynomial_degree = trial.suggest_int("trend_polynomial_degree", 1, 3)
 
     # Define and train model
     model = NBEATSModel(
@@ -226,14 +210,14 @@ def objective(trial):
             "devices": 1, 
             "callbacks": [
               ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1),
-              EarlyStopping(monitor="val_loss", patience=10, mode="min")
+              EarlyStopping(monitor="val_loss", patience=20, mode="min")
             ],
             "enable_checkpointing": True
         }
     )
-    train_series, ctrain_cov, val_series, val_cov = prepare_data(train_data, val_data)
+    train_series, train_cov, val_series, val_cov = prepare_data(train_data, val_data)
     
-    model.fit(series=train_series, past_covariates=ctrain_cov, 
+    model.fit(series=train_series, past_covariates=train_cov, 
               val_series=val_series, val_past_covariates=val_cov, epochs=100)  
     
     # Retrieve best validation loss directly from the training process
@@ -257,94 +241,108 @@ for key, value in trial.params.items():
     print(f"    {key}: {value}")
 
 # %%
-# best_params = {'input_chunk_length': 15, 'output_chunk_length': 1, 'batch_size': 16, 'num_blocks': 2, 'num_stacks': 2}
+# best_params = {'input_chunk_length': 19, 
+#                'output_chunk_length': 1, 
+#                'num_blocks': 4, 
+#                'num_stacks': 4, 
+#                'activation': 'LeakyReLU', 
+#                'batch_size': 64, 
+#                'learning_rate': 0.0003829470808218292,
+#                "expansion_coefficient_dim":8,
+#                "trend_polynomial_degree":2
+#                }
 
-# %%
-# best_params = trial.params
 # best_model = NBEATSModel(
 #     input_chunk_length=best_params["input_chunk_length"],
 #     output_chunk_length=best_params["output_chunk_length"],
-#     batch_size=best_params["batch_size"],
 #     num_blocks=best_params["num_blocks"],
 #     num_stacks=best_params["num_stacks"],
-#     random_state=42,
-#     save_checkpoints=True
+#     batch_size=best_params["batch_size"],
+#     expansion_coefficient_dim=best_params["expansion_coefficient_dim"],  
+#     trend_polynomial_degree=best_params["trend_polynomial_degree"],  
+#     optimizer_kwargs={"lr": best_params["learning_rate"]},  
+#     random_state=773,  
+#     activation=best_params["activation"],
+#     pl_trainer_kwargs={ 
+#         "accelerator": "gpu",
+#         "devices": 1,
+#         "callbacks": [
+#             ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1),
+#             EarlyStopping(monitor="val_loss", patience=10, mode="min")
+#         ],
+#         "enable_checkpointing": True
+#     }
 # )
 
-# best_model.fit(series=train_series, past_covariates=cov_train, 
-#                val_series=val_series, val_past_covariates=cov_val, epochs=200, verbose=True)
+# train_series, train_cov = prepare_data(train_data)
+# val_series, val_cov = prepare_data(val_data)
+# best_model.fit(series=train_series, past_covariates=train_cov, 
+#                val_series=val_series, val_past_covariates=val_cov, epochs=500, verbose=True)
 
-
-# %%
-# model = NBEATSModel.load_from_checkpoint('in22_out1_bs16_nb3_ns2')
-
-# pred_series = model.predict(len(val_series), series=train_series, past_covariates=cov_val)
-
-# plt.figure(figsize=(8, 5))
-# target_series.plot(label="Actual")
-# pred_series.plot(label="Forecast")
-# plt.title("SOH Forecast using NBEATS Model")
-# plt.xlabel("Time")
-# plt.legend()
-# plt.show()
-
-# plt.figure(figsize=(8, 5)) 
-# train_series.plot(label="train")
-# val_series.plot(label="true")
-# pred_series.plot(label="forecast")
-# plt.legend()
-# plt.xlabel('Time')
-# plt.show()
+# best_model.save('best_nbeats_model')
 
 # %%
-# param_grid = {
-#     'input_chunk_length': [12, 24], # Half day or full day
-#     'output_chunk_length': [1, 3, 6, 12], # One Hour or more
-#     'batch_size': [16, 32, 64], # Training speed
-#     'num_blocks': [2, 3], # Depth and nonliniarity
-#     'num_stacks': [2, 3] # Different nonlinear mode 
-# }
+# def prepare_test_data(data):
+#     series = []
+#     cov = []
+#     for cell_data in data.values():
+#         series.append(cell_data['target'])
+#         cov.append(cell_data['covariates_scaled'])
+#     return series, cov
 
 # %%
-# def grid_search_nbeats(param_grid, train_series, val_series, cov_train=None, cov_val=None):
-#     best_params = None
-#     best_score = float("inf")
-#     best_model = None 
+# def prdictions(model_path:str, test_data):
+#     model = NBEATSModel.load(model_path)
 
-#     keys, values = zip(*param_grid.items())
-#     param_combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
-
-#     for params in tqdm(param_combinations, desc="Grid Search Progress"):
-#         model = NBEATSModel(
-#             input_chunk_length=params['input_chunk_length'],
-#             output_chunk_length=params['output_chunk_length'],
-#             batch_size=params['batch_size'],
-#             num_blocks=params['num_blocks'],
-#             num_stacks=params['num_stacks'],
-#             random_state=42
-#         )
-
-#         # Training
-#         model.fit(series=train_series, past_covariates=cov_train, epochs=200)
-
-#         # Predict
-#         pred_series = model.predict(len(val_series), series=train_series, past_covariates=cov_val)
-#         score = mean_absolute_error(val_series.values(), pred_series.values())
-
-#         print(f"Params: {params} - MAE: {score}")
-
-#         if score < best_score:
-#             best_score = score
-#             best_params = params
-#             best_model = model
-#     if best_model is not None:
-#         best_model.save_model("best_nbeats_model.pth")
-#         print("Best model saved as 'best_nbeats_model.pth'")
+#     test_series, test_cov = [], []
+#     for cell_data in test_data.values():
+#         test_series.append(cell_data['target'])
+#         test_cov.append(cell_data['covariates_scaled'])
         
-#     print(f"Best Params: {best_params} with MAE: {best_score}")
-#     return best_params, best_score
+#     start = model.input_chunk_length + model.output_chunk_length
+#     pred_test = model.historical_forecasts(
+#         series=test_series,
+#         past_covariates=test_cov,
+#         start=start,
+#         forecast_horizon=model.output_chunk_length,
+#         retrain=False,
+#         verbose=True
+#     )
 
-# best_params, best_score = grid_search_nbeats(param_grid, train_series, val_series, cov_train=cov_train, cov_val=cov_val)
+#     backtest_rmse = rmse(test_series, pred_test)
+#     print(f'Backtest RMSE of Testdaten = {backtest_rmse}')
+    
+#     cell_ids = test_data.keys()  
+#     colors = ['blue', 'green', 'red']
+
+#     plt.figure(figsize=(12, 6))
+#     for i, (cell_id, pred) in enumerate(zip(cell_ids, pred_test)):
+#         pred.plot(label=f'{cell_id} Forecast', 
+#                     color=colors[i], 
+#                     linestyle='--')
+    
+#         test_data[cell_id]['target'].plot(label=f'{cell_id} Actual', 
+#                                             color=colors[i], 
+#                                             linestyle='-',
+#                                             alpha=0.7)
+
+#     plt.title("SOH Forecast vs Actual")    
+#     plt.xlabel("Time")
+#     plt.ylabel("SOH")
+#     plt.legend()
+#     plt.grid(True)
+#     plt.tight_layout()
+#     plt.show()
+
+
+# %%
+# # model_path = r'best\01\best_nbeats_model'
+# model_path = 'best_nbeats_model'
+
+# prdictions(model_path, test_data)
+
+
+# %%
 
 
 
