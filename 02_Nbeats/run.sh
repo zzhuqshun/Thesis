@@ -8,7 +8,7 @@
 #SBATCH --cpus-per-task=2                        
 #SBATCH --gres=gpu:a100:1                            
 #SBATCH --mem=32G                                    
-#SBATCH --time=96:00:00                             
+#SBATCH --time=120:00:00                             
 #SBATCH --partition=gpu
 
 # Job status via email:

@@ -215,7 +215,9 @@ def objective(trial):
             "enable_checkpointing": True
         }
     )
-    train_series, train_cov, val_series, val_cov = prepare_data(train_data, val_data)
+    
+    train_series, train_cov = prepare_data(train_data)
+    val_series, val_cov = prepare_data(val_data)
     
     model.fit(series=train_series, past_covariates=train_cov, 
               val_series=val_series, val_past_covariates=val_cov, epochs=100)  
