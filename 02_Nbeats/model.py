@@ -18,14 +18,20 @@ import optuna
 from tqdm import tqdm
 from typing import Dict, Tuple
 
-from darts.metrics import rmse
+from darts.metrics import rmse, mae
 import warnings
 warnings.filterwarnings('ignore')
 
 # %%
-def load_data(data_dir: str) -> dict:
+def split_data_into_parts(data: pd.DataFrame, parts: int = 15) -> Dict[str, pd.DataFrame]:
+    # Split data into parts
+    chunk_size = len(data) // parts
+    return {f"{idx+1}": data.iloc[idx * chunk_size:(idx + 1) * chunk_size] for idx in range(parts)}
+
+def load_data(data_dir: str) -> Tuple[Dict, Dict]:
     data_path = Path(data_dir)
-    processed_data = {}
+    all_data = {}
+    all_data_split = {}
 
     # Find all parquet files
     parquet_files = list(data_path.glob("**/df*.parquet"))
@@ -54,31 +60,31 @@ def load_data(data_dir: str) -> dict:
         data_hourly.interpolate(method='linear', inplace=True)
         data_hourly['SOH_ZHU'] = data_hourly['SOH_ZHU'].fillna(1)
         
-        # Convert to time series
-        target_series = TimeSeries.from_dataframe(
-            data_hourly, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'SOH_ZHU'
-        )
-        covariates = TimeSeries.from_dataframe(
-            data_hourly, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', 
-            ['Current[A]', 'Voltage[V]', 'Temperature[°C]']
-        )
+        # Convert to time series for full data
+        target_series_full = TimeSeries.from_dataframe(data_hourly, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'SOH_ZHU')
+        covariates_full = TimeSeries.from_dataframe(data_hourly, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', ['Current[A]', 'Voltage[V]', 'Temperature[°C]'])
+        target_series_full, covariates_full = target_series_full.slice_intersect(covariates_full), covariates_full.slice_intersect(target_series_full)
+        scaler_full = Scaler(scaler=MinMaxScaler(feature_range=(-1,1)))
+        covariates_scaled_full = scaler_full.fit_transform(covariates_full)
         
-        # Time align
-        target_series, covariates = target_series.slice_intersect(covariates), covariates.slice_intersect(target_series)
-        
-        # Scale covariates
-        scaler = Scaler(scaler=MinMaxScaler(feature_range=(-1,1)))
-        covariates_scaled = scaler.fit_transform(covariates)
-        
-        processed_data[cell_name] = {
-            'target': target_series,
-            'covariates_scaled': covariates_scaled
-        }
-    
-    return processed_data
+        all_data[cell_name] = {'target': target_series_full, 'covariates_scaled': covariates_scaled_full}
+
+        # Split data into parts and process each part
+        split_data = split_data_into_parts(data_hourly)
+        for part_idx, df_part in split_data.items():
+            part_name = f"{cell_name}_{part_idx}"
+            target_series_part = TimeSeries.from_dataframe(df_part, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'SOH_ZHU')
+            covariates_part = TimeSeries.from_dataframe(df_part, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', ['Current[A]', 'Voltage[V]', 'Temperature[°C]'])
+            target_series_part, covariates_part = target_series_part.slice_intersect(covariates_part), covariates_part.slice_intersect(target_series_part)
+            scaler_part = Scaler(scaler=MinMaxScaler(feature_range=(-1,1)))
+            covariates_scaled_part = scaler_part.fit_transform(covariates_part)
+            
+            all_data_split[part_name] = {'target': target_series_part, 'covariates_scaled': covariates_scaled_part}
+
+    return all_data, all_data_split
 
 data_dir = "../01_Datenaufbereitung/Output/Calculated/"
-processed_data = load_data(data_dir)
+all_data, all_data_split = load_data(data_dir)
 
 # %%
 def inspect_data_ranges(data_dict: dict):
@@ -107,36 +113,30 @@ def inspect_data_ranges(data_dict: dict):
 
 # View all data ranges
 print("All Data Ranges:")
-inspect_data_ranges(processed_data)
+inspect_data_ranges(all_data_split)
 
 # %%
-def split_cell_data(processed_data: dict, n_train=9, n_val=3, n_test=3) -> Tuple[Dict, Dict, Dict]:
-   # Get all cell numbers
-   cell_names = list(processed_data.keys())
-   
-   # Randomly shuffle cell order
+def split_cell_data(all_data: dict, train=13, val=1, test=1, parts = 15) -> Tuple[Dict, Dict, Dict]:
+   n_train = train*parts
+   n_val = val*parts
+   n_test = test*parts
+   part_names = list(all_data.keys())
    np.random.seed(773)
-   np.random.shuffle(cell_names)
-   
-   # Split cell numbers
-   train_cells = cell_names[:n_train]
-   val_cells = cell_names[n_train:n_train + n_val]
-   test_cells = cell_names[:n_test]
-   
-   # Create dataset dictionaries
-   train_data = {cell: processed_data[cell] for cell in train_cells}
-   val_data = {cell: processed_data[cell] for cell in val_cells}
-   test_data = {cell: processed_data[cell] for cell in test_cells}
-   
+   np.random.shuffle(part_names)
+
+   train_data = {part: all_data[part] for part in part_names[:n_train]}
+   val_data = {part: all_data[part] for part in part_names[n_train:n_train + n_val]}
+   test_data = {part: all_data[part] for part in part_names[n_train + n_val:n_train + n_val + n_test]}
+
    print(f"Data split completed:")
-   print(f"Training set: {len(train_data)} cells {sorted(train_cells)}")
-   print(f"Validation set: {len(val_data)} cells {sorted(val_cells)}")
-   print(f"Test set: {len(test_data)} cells {sorted(test_cells)}")
+   print(f"Training set: {len(train_data)} parts")
+   print(f"Validation set: {len(val_data)} parts")
+   print(f"Test set: {len(test_data)} parts")
    
    return train_data, val_data, test_data
 
 # Usage example:
-train_data, val_data, test_data = split_cell_data(processed_data)
+train_data, val_data, test_data = split_cell_data(all_data_split)
 inspect_data_ranges(train_data)
 
 # %%
@@ -181,17 +181,21 @@ def prepare_data(data):
 def objective(trial):
     # Define hyperparameter search space
     # 1. Search - Basic structure
-    input_chunk_length = trial.suggest_int("input_chunk_length", 12, 36)
-    output_chunk_length = trial.suggest_int("output_chunk_length", 1, 24)
+    input_chunk_length = trial.suggest_int("input_chunk_length", 24, 48, step=12)
+    output_chunk_length = trial.suggest_int("output_chunk_length", 1, 24, step=12)
     num_blocks = trial.suggest_int("num_blocks", 2, 5)
     num_stacks = trial.suggest_int("num_stacks", 2, 5)
+    num_layers = trial.suggest_int("num_layers", 2, 5)  
     activation = trial.suggest_categorical("activation", ["ReLU", "LeakyReLU"])
     # 2. Search - Training parameters
-    batch_size = trial.suggest_categorical("batch_size", [32, 64, 128])
-    learning_rate = trial.suggest_float("learning_rate", 1e-5, 1e-3, log=True)
+    batch_size = trial.suggest_categorical("batch_size", [16, 32, 64, 128])
+    learning_rate = trial.suggest_float("learning_rate", 1e-5, 1e-4)
+    layer_widths = trial.suggest_categorical("layer_widths", [128, 256, 512])
+    dropout_rate = trial.suggest_float("dropout_rate", 0.0, 0.5)
 
-    expansion_coefficient_dim = trial.suggest_int("expansion_coefficient_dim", 8, 32, step=8)
-    trend_polynomial_degree = trial.suggest_int("trend_polynomial_degree", 1, 3)
+
+    # expansion_coefficient_dim = trial.suggest_int("expansion_coefficient_dim", 8, 32, step=8)
+    # trend_polynomial_degree = trial.suggest_int("trend_polynomial_degree", 1, 3)
 
     # Define and train model
     model = NBEATSModel(
@@ -200,22 +204,23 @@ def objective(trial):
         num_blocks=num_blocks,
         num_stacks=num_stacks,
         batch_size=batch_size,
-        expansion_coefficient_dim=expansion_coefficient_dim, 
-        trend_polynomial_degree=trend_polynomial_degree, 
+        num_layers=num_layers,
+        layer_widths=layer_widths,
+        dropout=dropout_rate,
+        # expansion_coefficient_dim=expansion_coefficient_dim, 
+        # trend_polynomial_degree=trend_polynomial_degree, 
         optimizer_kwargs={"lr": learning_rate},
         random_state=773,
         activation = activation,
         pl_trainer_kwargs={
             "accelerator": "gpu",
-            "devices": 1, 
+            "devices": "auto",
+            "strategy": "ddp",
             "callbacks": [
-              ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1),
-              EarlyStopping(monitor="val_loss", patience=20, mode="min")
-            ],
+              ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)],
             "enable_checkpointing": True
         }
     )
-    
     train_series, train_cov = prepare_data(train_data)
     val_series, val_cov = prepare_data(val_data)
     
@@ -243,14 +248,14 @@ for key, value in trial.params.items():
     print(f"    {key}: {value}")
 
 # %%
-# best_params = {'input_chunk_length': 19, 
+# best_params = {'input_chunk_length': 33, 
 #                'output_chunk_length': 1, 
 #                'num_blocks': 4, 
-#                'num_stacks': 4, 
+#                'num_stacks': 3, 
 #                'activation': 'LeakyReLU', 
-#                'batch_size': 64, 
-#                'learning_rate': 0.0003829470808218292,
-#                "expansion_coefficient_dim":8,
+#                'batch_size': 32, 
+#                'learning_rate': 0.00041328603854847963,
+#                "expansion_coefficient_dim":16,
 #                "trend_polynomial_degree":2
 #                }
 
@@ -269,8 +274,7 @@ for key, value in trial.params.items():
 #         "accelerator": "gpu",
 #         "devices": 1,
 #         "callbacks": [
-#             ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1),
-#             EarlyStopping(monitor="val_loss", patience=10, mode="min")
+#             ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)
 #         ],
 #         "enable_checkpointing": True
 #     }
@@ -292,7 +296,6 @@ for key, value in trial.params.items():
 #         cov.append(cell_data['covariates_scaled'])
 #     return series, cov
 
-# %%
 # def prdictions(model_path:str, test_data):
 #     model = NBEATSModel.load(model_path)
 
@@ -312,7 +315,9 @@ for key, value in trial.params.items():
 #     )
 
 #     backtest_rmse = rmse(test_series, pred_test)
+#     backtest_mae = mae(test_series, pred_test)
 #     print(f'Backtest RMSE of Testdaten = {backtest_rmse}')
+#     print(f'Backtest MAE of Testdaten = {backtest_rmse}')
     
 #     cell_ids = test_data.keys()  
 #     colors = ['blue', 'green', 'red']
@@ -328,7 +333,10 @@ for key, value in trial.params.items():
 #                                             linestyle='-',
 #                                             alpha=0.7)
 
-#     plt.title("SOH Forecast vs Actual")    
+#     ax = plt.gca()
+#     ax.text(0.5, 1.0, f'Backtest RMSE {backtest_rmse}\nBacktest MAE: {backtest_mae}', transform=ax.transAxes, fontsize=12, ha='center', va='top')
+
+#     plt.title("SOH Forecast vs Actual") 
 #     plt.xlabel("Time")
 #     plt.ylabel("SOH")
 #     plt.legend()
@@ -336,15 +344,9 @@ for key, value in trial.params.items():
 #     plt.tight_layout()
 #     plt.show()
 
-
-# %%
-# # model_path = r'best\01\best_nbeats_model'
-# model_path = 'best_nbeats_model'
+# model_path = r'best\02\val3test3\best_nbeats_model'
+# # model_path = 'best_nbeats_model'
 
 # prdictions(model_path, test_data)
-
-
-# %%
-
 
 

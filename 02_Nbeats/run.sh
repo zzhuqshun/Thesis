@@ -4,11 +4,11 @@
 #SBATCH -e ./Results/myjob.%j.err 
 #SBATCH -D .                     
 #SBATCH -J NBeats                                 
-#SBATCH --ntasks=1                              
+#SBATCH --ntasks=2                              
 #SBATCH --cpus-per-task=2                        
-#SBATCH --gres=gpu:a100:1                            
+#SBATCH --gres=gpu:tesla:2                            
 #SBATCH --mem=32G                                    
-#SBATCH --time=120:00:00                             
+#SBATCH --time=168:00:00                             
 #SBATCH --partition=gpu
 
 # Job status via email:
