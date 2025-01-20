@@ -2,8 +2,9 @@
 /MGFarm_18650_Dataframes_ZHU
 /00_Alterungstest
 01_Datenaufbereitung/Output/
-02_Nbeats/darts_logs/
-02_Nbeats/Results
-02_Nbeats/NBEATS_SOC_SOH-master
-02_Nbeats/checkpoints
-02_Nbeats/best/02/train500/myjob.23475277.out
+02_Nbeats/SOH/darts_logs/
+02_Nbeats/SOH/Results
+02_Nbeats/SOH/NBEATS_SOC_SOH-master
+02_Nbeats/SOH/checkpoints
+02_Nbeats/SOH/best
+02_Nbeats/SOH/lightning_logs
