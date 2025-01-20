@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 from darts import TimeSeries
 from darts.models import NBEATSModel
 from darts.dataprocessing.transformers import Scaler
-from pytorch_lightning.callbacks import ModelCheckpoint
 from sklearn.preprocessing import MinMaxScaler
-from pytorch_lightning.callbacks import EarlyStopping
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint, LearningRateMonitor
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.optim import Adam
 from pathlib import Path
 import optuna
 from tqdm import tqdm
@@ -211,6 +212,7 @@ def prepare_data(data):
 
 # %%
 # Optuna objective function
+# Optuna objective function
 def objective(trial):
     # Define hyperparameter search space
     # 1. Search - Basic structure
@@ -219,13 +221,12 @@ def objective(trial):
     num_blocks = trial.suggest_int("num_blocks", 2, 5)
     num_stacks = trial.suggest_int("num_stacks", 2, 5)
     activation = trial.suggest_categorical("activation", ["ReLU", "LeakyReLU"])
+    
     # 2. Search - Training parameters
     batch_size = trial.suggest_categorical("batch_size", [16, 32, 64, 128])
-    learning_rate = trial.suggest_float("learning_rate", 1e-5, 1e-4)
     layer_widths = trial.suggest_categorical("layer_widths", [128, 256, 512])
     dropout_rate = trial.suggest_float("dropout_rate", 0.0, 0.5)
     expansion_coefficient_dim = trial.suggest_int("expansion_coefficient_dim", 8, 32, step=8)
-    # trend_polynomial_degree = trial.suggest_int("trend_polynomial_degree", 1, 3)
 
     # Define and train model
     model = NBEATSModel(
@@ -237,23 +238,33 @@ def objective(trial):
         layer_widths=layer_widths,
         dropout=dropout_rate,
         expansion_coefficient_dim=expansion_coefficient_dim, 
-        # trend_polynomial_degree=trend_polynomial_degree, 
-        optimizer_kwargs={"lr": learning_rate},
         random_state=773,
-        activation = activation,
+        activation=activation,
         pl_trainer_kwargs={
             "accelerator": "gpu",
             "devices": 1,
             "callbacks": [
-              ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)
-              , EarlyStopping(monitor="val_loss", patience=20, mode="min", verbose=True)
-              ],
+                ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1),
+                EarlyStopping(monitor="val_loss", patience=60, mode="min", verbose=True),  
+                LearningRateMonitor(logging_interval="epoch")  
+            ],
             "enable_checkpointing": True
         }
     )
+    
+    # Create the optimizer with the default initial learning rate (1e-3)
+    optimizer = Adam(model.parameters(), lr=1e-3)  # Fixed initial learning rate
+
+    # Create the ReduceLROnPlateau scheduler
+    lr_scheduler = ReduceLROnPlateau(optimizer, mode='min', patience=20, factor=0.5, verbose=True)
+
+    # Assign the optimizer and lr_scheduler to the model trainer
+    model.trainer.optimizers = [optimizer]
+    model.trainer.lr_schedulers = [lr_scheduler]
+
     train_series, train_cov = prepare_data(train_data)
     val_series, val_cov = prepare_data(val_data)
-    
+
     model.fit(series=train_series, past_covariates=train_cov, 
               val_series=val_series, val_past_covariates=val_cov, epochs=100)  
     
@@ -261,6 +272,7 @@ def objective(trial):
     best_val_loss = model.trainer.checkpoint_callback.best_model_score.item() 
     
     return best_val_loss
+
 
 
 

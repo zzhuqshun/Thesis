@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 from darts import TimeSeries
 from darts.models import NBEATSModel
 from darts.dataprocessing.transformers import Scaler
-from pytorch_lightning.callbacks import ModelCheckpoint
 from sklearn.preprocessing import MinMaxScaler
-from pytorch_lightning.callbacks import EarlyStopping
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint, LearningRateMonitor
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.optim import Adam
 from pathlib import Path
-import optuna
 from tqdm import tqdm
 from typing import Dict, Tuple
 
@@ -215,7 +215,6 @@ best_params = {'input_chunk_length': 33,
                'num_stacks': 3, 
                'activation': 'LeakyReLU', 
                'batch_size': 32, 
-               'learning_rate': 0.00041328603854847963,
                "expansion_coefficient_dim":16,
                "trend_polynomial_degree":2
                }
@@ -228,22 +227,34 @@ best_model = NBEATSModel(
     batch_size=best_params["batch_size"],
     expansion_coefficient_dim=best_params["expansion_coefficient_dim"],  
     trend_polynomial_degree=best_params["trend_polynomial_degree"],  
-    optimizer_kwargs={"lr": best_params["learning_rate"]},  
     random_state=773,  
     activation=best_params["activation"],
     pl_trainer_kwargs={
-            "accelerator": "gpu",
-            "devices": 1,
-            "callbacks": [
-              ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)
-              , EarlyStopping(monitor="val_loss", patience=20, mode="min", verbose=True)
-              ],
-            "enable_checkpointing": True
-        }
+        "accelerator": "gpu",
+        "devices": 1,
+        "callbacks": [
+            ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1),
+            EarlyStopping(monitor="val_loss", patience=60, mode="min", verbose=True),  
+            LearningRateMonitor(logging_interval="epoch")  
+        ],
+        "enable_checkpointing": True
+    }
 )
 
+# Create the optimizer with the default initial learning rate (1e-3)
+optimizer = Adam(best_model.parameters(), lr=1e-3)  # Fixed initial learning rate
+
+# Create the ReduceLROnPlateau scheduler
+lr_scheduler = ReduceLROnPlateau(optimizer, mode='min', patience=20, factor=0.5, verbose=True)
+
+# Assign the optimizer and lr_scheduler to the model trainer
+best_model.trainer.optimizers = [optimizer]
+best_model.trainer.lr_schedulers = [lr_scheduler]
+
+# Prepare data for training
 train_series, train_cov = prepare_data(train_data)
 val_series, val_cov = prepare_data(val_data)
+
 best_model.fit(series=train_series, past_covariates=train_cov, 
                val_series=val_series, val_past_covariates=val_cov, epochs=500, verbose=True)
 

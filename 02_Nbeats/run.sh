@@ -19,9 +19,6 @@
 source ~/miniconda3/bin/activate
 conda activate myenv
 
-echo "Running on the following GPUs:"
-nvidia-smi
-
 # Run the Python script
 python model.py
 
