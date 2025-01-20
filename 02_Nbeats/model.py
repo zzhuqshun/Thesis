@@ -214,8 +214,8 @@ def objective(trial):
         activation = activation,
         pl_trainer_kwargs={
             "accelerator": "gpu",
-            "devices": "auto",
-            "strategy": "ddp",
+            "devices": 1,
+            # "strategy": "ddp",
             "callbacks": [
               ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)],
             "enable_checkpointing": True
@@ -295,6 +295,7 @@ for key, value in trial.params.items():
 #         series.append(cell_data['target'])
 #         cov.append(cell_data['covariates_scaled'])
 #     return series, cov
+
 
 # def prdictions(model_path:str, test_data):
 #     model = NBEATSModel.load(model_path)
