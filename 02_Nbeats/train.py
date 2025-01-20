@@ -1,9 +1,5 @@
 # %%
-# %pip install darts
 # %matplotlib widget
-
-# %%
-## Packages
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,7 +27,6 @@ def split_data_into_parts(data: pd.DataFrame, parts: int = 15) -> Dict[str, pd.D
 def load_data(data_dir: str) -> Tuple[Dict, Dict]:
     data_path = Path(data_dir)
     all_data = {}
-    all_data_split = {}
 
     # Find all parquet files
     parquet_files = list(data_path.glob("**/df*.parquet"))
@@ -67,24 +62,12 @@ def load_data(data_dir: str) -> Tuple[Dict, Dict]:
         scaler_full = Scaler(scaler=MinMaxScaler(feature_range=(-1,1)))
         covariates_scaled_full = scaler_full.fit_transform(covariates_full)
         
-        all_data[cell_name] = {'target': target_series_full, 'covariates_scaled': covariates_scaled_full}
+        all_data[cell_name] = {'target': target_series_full, 'covariates_scaled': covariates_scaled_full, 'df': data_hourly }
 
-        # Split data into parts and process each part
-        split_data = split_data_into_parts(data_hourly)
-        for part_idx, df_part in split_data.items():
-            part_name = f"{cell_name}_{part_idx}"
-            target_series_part = TimeSeries.from_dataframe(df_part, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'SOH_ZHU')
-            covariates_part = TimeSeries.from_dataframe(df_part, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', ['Current[A]', 'Voltage[V]', 'Temperature[°C]'])
-            target_series_part, covariates_part = target_series_part.slice_intersect(covariates_part), covariates_part.slice_intersect(target_series_part)
-            scaler_part = Scaler(scaler=MinMaxScaler(feature_range=(-1,1)))
-            covariates_scaled_part = scaler_part.fit_transform(covariates_part)
-            
-            all_data_split[part_name] = {'target': target_series_part, 'covariates_scaled': covariates_scaled_part}
-
-    return all_data, all_data_split
+    return all_data
 
 data_dir = "../01_Datenaufbereitung/Output/Calculated/"
-all_data, all_data_split = load_data(data_dir)
+all_data = load_data(data_dir)
 
 # %%
 def inspect_data_ranges(data_dict: dict):
@@ -113,31 +96,80 @@ def inspect_data_ranges(data_dict: dict):
 
 # View all data ranges
 print("All Data Ranges:")
-inspect_data_ranges(all_data_split)
+inspect_data_ranges(all_data)
 
 # %%
-def split_cell_data(all_data: dict, train=13, val=1, test=1, parts = 15) -> Tuple[Dict, Dict, Dict]:
-   n_train = train*parts
-   n_val = val*parts
-   n_test = test*parts
-   part_names = list(all_data.keys())
-   np.random.seed(773)
-   np.random.shuffle(part_names)
+def split_cell_data(all_data: dict, train=13, val=1, test=1, parts=15) -> Tuple[Dict, Dict, Dict]:
+    """Splits the dataset into training, validation, and test sets, then further divides train and val into parts."""
+    
+    cell_names = list(all_data.keys())
+    np.random.seed(773)
+    np.random.shuffle(cell_names)
 
-   train_data = {part: all_data[part] for part in part_names[:n_train]}
-   val_data = {part: all_data[part] for part in part_names[n_train:n_train + n_val]}
-   test_data = {part: all_data[part] for part in part_names[n_train + n_val:n_train + n_val + n_test]}
+    # 1. **Split data at the cell level into train/val/test sets**
+    train_cells = cell_names[:train]
+    val_cells = cell_names[train:train + val]
+    test_cells = cell_names[train + val:train + val + test]
 
-   print(f"Data split completed:")
-   print(f"Training set: {len(train_data)} parts")
-   print(f"Validation set: {len(val_data)} parts")
-   print(f"Test set: {len(test_data)} parts")
-   
-   return train_data, val_data, test_data
+    print(f"Cell split completed:")
+    print(f"Training set: {len(train_cells)} cells")
+    print(f"Validation set: {len(val_cells)} cells")
+    print(f"Test set: {len(test_cells)} cells")
 
-# Usage example:
-train_data, val_data, test_data = split_cell_data(all_data_split)
+    train_parts = []
+    val_parts = []
+
+    # 2. **Split training data into smaller parts**
+    for cell in train_cells:
+        split_data = split_data_into_parts(all_data[cell]['df'], parts=parts)
+        for part_idx, df_part in split_data.items():
+            part_name = f"{cell}_{part_idx}"
+            target_series_part = TimeSeries.from_dataframe(df_part, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'SOH_ZHU')
+            covariates_part = TimeSeries.from_dataframe(df_part, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', ['Current[A]', 'Voltage[V]', 'Temperature[°C]'])
+            target_series_part, covariates_part = target_series_part.slice_intersect(covariates_part), covariates_part.slice_intersect(target_series_part)
+            scaler_part = Scaler(scaler=MinMaxScaler(feature_range=(-1,1)))
+            covariates_scaled_part = scaler_part.fit_transform(covariates_part)
+            train_parts.append((part_name, {'target': target_series_part, 'covariates_scaled': covariates_scaled_part}))
+
+    # 3. **Split validation data into smaller parts**
+    for cell in val_cells:
+        split_data = split_data_into_parts(all_data[cell]['df'], parts=parts)
+        for part_idx, df_part in split_data.items():
+            part_name = f"{cell}_{part_idx}"
+            target_series_part = TimeSeries.from_dataframe(df_part, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'SOH_ZHU')
+            covariates_part = TimeSeries.from_dataframe(df_part, 'Absolute_Time[yyyy-mm-dd hh:mm:ss]', ['Current[A]', 'Voltage[V]', 'Temperature[°C]'])
+            target_series_part, covariates_part = target_series_part.slice_intersect(covariates_part), covariates_part.slice_intersect(target_series_part)
+            scaler_part = Scaler(scaler=MinMaxScaler(feature_range=(-1,1)))
+            covariates_scaled_part = scaler_part.fit_transform(covariates_part)
+            val_parts.append((part_name, {'target': target_series_part, 'covariates_scaled': covariates_scaled_part}))
+
+    # 4. **Combine and shuffle train and validation parts**
+    all_parts = train_parts + val_parts
+    np.random.shuffle(all_parts)
+
+    # 5. **Reassign train and validation parts**
+    new_train_size = train * parts
+    new_val_size = val * parts
+
+    train_data = dict(all_parts[:new_train_size])
+    val_data = dict(all_parts[new_train_size:new_train_size + new_val_size])
+
+    # 6. **Keep test data as full cells without splitting**
+    test_data = {cell: all_data[cell] for cell in test_cells}
+
+    print(f"Data split completed:")
+    print(f"Training set: {len(train_data)} parts")
+    print(f"Validation set: {len(val_data)} parts")
+    print(f"Test set: {len(test_data)} full cells")
+
+    return train_data, val_data, test_data
+
+# Execute data split
+train_data, val_data, test_data = split_cell_data(all_data)
+
+# Inspect training data
 inspect_data_ranges(train_data)
+
 
 # %%
 def plot_dataset_soh(data_dict: dict, title: str, figsize=(10, 7)):
@@ -177,8 +209,6 @@ def prepare_data(data):
     return series, cov
 
 # %%
-
-# %%
 best_params = {'input_chunk_length': 33, 
                'output_chunk_length': 1, 
                'num_blocks': 4, 
@@ -201,14 +231,15 @@ best_model = NBEATSModel(
     optimizer_kwargs={"lr": best_params["learning_rate"]},  
     random_state=773,  
     activation=best_params["activation"],
-    pl_trainer_kwargs={ 
-        "accelerator": "gpu",
-        "devices": 1,
-        "callbacks": [
-            ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)
-        ],
-        "enable_checkpointing": True
-    }
+    pl_trainer_kwargs={
+            "accelerator": "gpu",
+            "devices": 1,
+            "callbacks": [
+              ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1)
+              , EarlyStopping(monitor="val_loss", patience=20, mode="min", verbose=True)
+              ],
+            "enable_checkpointing": True
+        }
 )
 
 train_series, train_cov = prepare_data(train_data)
@@ -252,16 +283,13 @@ def prdictions(model_path:str, test_data):
     print(f'Backtest MAE of Testdaten = {backtest_rmse}')
     
     cell_ids = test_data.keys()  
-    colors = ['blue', 'green', 'red']
 
     plt.figure(figsize=(12, 6))
     for i, (cell_id, pred) in enumerate(zip(cell_ids, pred_test)):
         pred.plot(label=f'{cell_id} Forecast', 
-                    color=colors[i], 
                     linestyle='--')
     
         test_data[cell_id]['target'].plot(label=f'{cell_id} Actual', 
-                                            color=colors[i], 
                                             linestyle='-',
                                             alpha=0.7)
 
@@ -276,9 +304,13 @@ def prdictions(model_path:str, test_data):
     plt.tight_layout()
     plt.show()
 
-model_path = r'best\02\val3test3\best_nbeats_model'
+model_path = r'best\02\train 500\best_nbeats_model'
 # model_path = 'best_nbeats_model'
 
 prdictions(model_path, test_data)
+
+
+# %%
+
 
 
