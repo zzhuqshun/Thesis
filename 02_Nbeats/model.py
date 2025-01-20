@@ -10,7 +10,6 @@ from darts.dataprocessing.transformers import Scaler
 from sklearn.preprocessing import MinMaxScaler
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint, LearningRateMonitor
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch.optim import Adam
 from pathlib import Path
 import optuna
 from tqdm import tqdm
@@ -19,6 +18,7 @@ from typing import Dict, Tuple
 from darts.metrics import rmse, mae
 import warnings
 warnings.filterwarnings('ignore')
+
 
 # %%
 def split_data_into_parts(data: pd.DataFrame, parts: int = 15) -> Dict[str, pd.DataFrame]:
@@ -211,8 +211,6 @@ def prepare_data(data):
     return series, cov
 
 # %%
-# Optuna objective function
-# Optuna objective function
 def objective(trial):
     # Define hyperparameter search space
     # 1. Search - Basic structure
@@ -241,27 +239,17 @@ def objective(trial):
         random_state=773,
         activation=activation,
         pl_trainer_kwargs={
-            "accelerator": "gpu",
-            "devices": 1,
-            "callbacks": [
-                ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1),
-                EarlyStopping(monitor="val_loss", patience=60, mode="min", verbose=True),  
-                LearningRateMonitor(logging_interval="epoch")  
+        "accelerator": "gpu",
+        "devices": 1,
+        "callbacks": [
+            ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1),
+            EarlyStopping(monitor="val_loss", patience=60, mode="min", verbose=True),  
             ],
-            "enable_checkpointing": True
-        }
+        "enable_checkpointing": True
+        },
+        lr_scheduler_cls=ReduceLROnPlateau,
     )
     
-    # Create the optimizer with the default initial learning rate (1e-3)
-    optimizer = Adam(model.parameters(), lr=1e-3)  # Fixed initial learning rate
-
-    # Create the ReduceLROnPlateau scheduler
-    lr_scheduler = ReduceLROnPlateau(optimizer, mode='min', patience=20, factor=0.5, verbose=True)
-
-    # Assign the optimizer and lr_scheduler to the model trainer
-    model.trainer.optimizers = [optimizer]
-    model.trainer.lr_schedulers = [lr_scheduler]
-
     train_series, train_cov = prepare_data(train_data)
     val_series, val_cov = prepare_data(val_data)
 
@@ -272,9 +260,6 @@ def objective(trial):
     best_val_loss = model.trainer.checkpoint_callback.best_model_score.item() 
     
     return best_val_loss
-
-
-
 
 # %%
 # Optuna call with progress bar
@@ -288,5 +273,8 @@ print(f"  Value (MAE): {trial.value}")
 print("  Params: ")
 for key, value in trial.params.items():
     print(f"    {key}: {value}")
+
+# %%
+
 
 

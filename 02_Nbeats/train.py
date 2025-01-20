@@ -1,5 +1,6 @@
 # %%
 # %matplotlib widget
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,7 +10,6 @@ from darts.dataprocessing.transformers import Scaler
 from sklearn.preprocessing import MinMaxScaler
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint, LearningRateMonitor
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch.optim import Adam
 from pathlib import Path
 from tqdm import tqdm
 from typing import Dict, Tuple
@@ -235,21 +235,12 @@ best_model = NBEATSModel(
         "callbacks": [
             ModelCheckpoint(monitor="val_loss", mode="min", save_top_k=1),
             EarlyStopping(monitor="val_loss", patience=60, mode="min", verbose=True),  
-            LearningRateMonitor(logging_interval="epoch")  
-        ],
+            ],
         "enable_checkpointing": True
-    }
+    },
+    lr_scheduler_cls=ReduceLROnPlateau,
 )
 
-# Create the optimizer with the default initial learning rate (1e-3)
-optimizer = Adam(best_model.parameters(), lr=1e-3)  # Fixed initial learning rate
-
-# Create the ReduceLROnPlateau scheduler
-lr_scheduler = ReduceLROnPlateau(optimizer, mode='min', patience=20, factor=0.5, verbose=True)
-
-# Assign the optimizer and lr_scheduler to the model trainer
-best_model.trainer.optimizers = [optimizer]
-best_model.trainer.lr_schedulers = [lr_scheduler]
 
 # Prepare data for training
 train_series, train_cov = prepare_data(train_data)
