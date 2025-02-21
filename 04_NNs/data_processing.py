@@ -41,7 +41,7 @@ def load_data(data_dir: str) -> pd.DataFrame:
         
         # fill missing values
         data_hourly.interpolate(method='linear', inplace=True)
-        data_hourly = data_hourly.bfill
+        data_hourly = data_hourly.bfill()
         data_hourly.reset_index(drop=True, inplace=True)
         
         # add time_idx column
@@ -55,8 +55,7 @@ def load_data(data_dir: str) -> pd.DataFrame:
         
         df_list.append(data_hourly)
     
-    all_df = pd.concat(df_list, ignore_index=True)
-    return all_df
+    return pd.concat(df_list, ignore_index=True)
 
 def visualize_data(data_df: pd.DataFrame):
     """
@@ -202,12 +201,12 @@ def scale_data(
     Scale the data using a robust/standard scaler
     '''
     scaler = RobustScaler()
-    scaler.fit(train_df[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'Q_sum', 'EFC','SOH_ZHU', "InternalResistance[Ohms]"]])
+    scaler.fit(train_df[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'Q_sum', 'EFC', "InternalResistance[Ohms]"]])
     
     def transform(df: pd.DataFrame) -> pd.DataFrame:
         df_copy = df.copy()
-        df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'Q_sum', 'EFC','SOH_ZHU', "InternalResistance[Ohms]"]] = scaler.transform(
-            df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'Q_sum', 'EFC','SOH_ZHU',"InternalResistance[Ohms]"]]
+        df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'Q_sum', 'EFC',"InternalResistance[Ohms]"]] = scaler.transform(
+            df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'Q_sum', 'EFC',"InternalResistance[Ohms]"]]
         )
         return df_copy
 
