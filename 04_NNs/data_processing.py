@@ -26,7 +26,7 @@ def load_data(data_dir: str) -> pd.DataFrame:
         
         data = pd.read_parquet(file_path)
         data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'] = pd.to_datetime(data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'])
-        data = data[['Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'Current[A]', 'Voltage[V]', 'Temperature[°C]', 'EFC', 'Q_sum', 'SOH_ZHU']]
+        data = data[['Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'Current[A]', 'Voltage[V]', 'Temperature[°C]', 'SOH_ZHU']]
         
         data["dV"] = data["Voltage[V]"].diff().fillna(0)
         data["dI"] = data["Current[A]"].diff().fillna(0)
@@ -50,8 +50,7 @@ def load_data(data_dir: str) -> pd.DataFrame:
         # add cell_id column
         data_hourly['cell_id'] = cell_name
         
-        data_hourly = data_hourly[['Testtime[h]','Current[A]', 'Voltage[V]','Temperature[°C]', 'cell_id',
-                                   'Q_sum','EFC', 'InternalResistance[Ohms]','SOH_ZHU']]
+        data_hourly = data_hourly[['Testtime[h]','Current[A]', 'Voltage[V]','Temperature[°C]', 'cell_id','SOH_ZHU']]
         
         df_list.append(data_hourly)
     
@@ -201,12 +200,12 @@ def scale_data(
     Scale the data using a robust/standard scaler
     '''
     scaler = RobustScaler()
-    scaler.fit(train_df[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'Q_sum', 'EFC', "InternalResistance[Ohms]"]])
+    scaler.fit(train_df[['Current[A]', 'Temperature[°C]', 'Voltage[V]']])
     
     def transform(df: pd.DataFrame) -> pd.DataFrame:
         df_copy = df.copy()
-        df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'Q_sum', 'EFC',"InternalResistance[Ohms]"]] = scaler.transform(
-            df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'Q_sum', 'EFC',"InternalResistance[Ohms]"]]
+        df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]']] = scaler.transform(
+            df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]']]
         )
         return df_copy
 

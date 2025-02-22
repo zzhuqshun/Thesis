@@ -27,9 +27,9 @@ train_scaled, val_scaled, test_scaled = scale_data(train_df, val_df, test_df)
 # visualize_data(all_data)
 # inspect_data_ranges(all_data)
 # inspect_data_ranges(train_scaled)
-plot_dataset_soh(train_df, "Train")
-plot_dataset_soh(val_df, "Validation")
-plot_dataset_soh(test_df, "Test")
+# plot_dataset_soh(train_df, "Train")
+# plot_dataset_soh(val_df, "Validation")
+# plot_dataset_soh(test_df, "Test")
 
 # %%
 class SequenceDataset(Dataset):
@@ -217,7 +217,7 @@ def train_model(model,
         mean_train_loss = np.mean(train_losses)
         history['train_loss'].append(mean_train_loss)
         
-        # Validation loop with Scheduled Sampling (i.e., same as training)
+        # Validation loop using fully autoregressive
         model.eval()
         val_losses = []
         all_preds = []
@@ -228,25 +228,22 @@ def train_model(model,
                 Y_val = Y_val.to(device)
                 batch_size, seed_len, num_features = X_val.shape
                 pred_len = Y_val.shape[1]
-                
+
                 current_seq = X_val.clone()
                 preds_steps = []
                 for t in range(pred_len):
                     pred = model(current_seq)
                     preds_steps.append(pred.unsqueeze(1))
                     
-                    # Use scheduled sampling here as well
-                    teacher_mask = (torch.rand(batch_size, device=device) < p_teacher).float()
-                    gt_next = Y_val[:, t]
-                    next_value = teacher_mask * gt_next + (1 - teacher_mask) * pred
-                    
+                    next_value = pred
+
                     if seed_len + t < X_val.shape[1]:
                         next_input = X_val[:, seed_len + t, :].clone()
                     else:
                         next_input = current_seq[:, -1, :].clone()
                     next_input[:, target_idx] = next_value
                     current_seq = torch.cat([current_seq[:, 1:, :], next_input.unsqueeze(1)], dim=1)
-                
+                    
                 preds_steps = torch.cat(preds_steps, dim=1)
                 loss = criterion(preds_steps, Y_val)
                 val_losses.append(loss.item())
