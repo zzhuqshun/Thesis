@@ -14,8 +14,14 @@ def load_data(data_dir: str) -> pd.DataFrame:
     Load data from parquet files in the given directory.
     '''
     data_path = Path(data_dir)
-    parquet_files = list(data_path.glob("**/df*.parquet"))
+    if not data_path.exists():
+        raise ValueError(f"Directory {data_dir} does not exist")
+    
+    parquet_files = list(data_path.glob("df*.parquet"))  # 移除 **/ 通配符
     print(f"Found {len(parquet_files)} parquet files")   
+    
+    if not parquet_files:
+        raise ValueError(f"No parquet files found in {data_dir}")
     
     df_list = []
     for file_path in tqdm(parquet_files, desc="Processing cells", unit="cell"):
@@ -199,14 +205,22 @@ def scale_data(
     '''
     Scale the data using a robust/standard scaler
     '''
-    scaler = StandardScaler()
-    scaler.fit(train_df[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'EFC', 'InternalResistance[Ohms]']])
+    # 对协变量进行标准化
+    covariate_scaler = StandardScaler()
+    covariate_scaler.fit(train_df[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'EFC', 'InternalResistance[Ohms]']])
+    
+    # 对SOH进行标准化
+    soh_scaler = StandardScaler()
+    soh_scaler.fit(train_df[['SOH_ZHU']])
     
     def transform(df: pd.DataFrame) -> pd.DataFrame:
         df_copy = df.copy()
-        df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]','EFC', 'InternalResistance[Ohms]']] = scaler.transform(
+        # 标准化协变量
+        df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]','EFC', 'InternalResistance[Ohms]']] = covariate_scaler.transform(
             df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]','EFC', 'InternalResistance[Ohms]']]
         )
+        # 标准化SOH
+        df_copy[['SOH_ZHU']] = soh_scaler.transform(df_copy[['SOH_ZHU']])
         return df_copy
 
     train_scaled = transform(train_df)
