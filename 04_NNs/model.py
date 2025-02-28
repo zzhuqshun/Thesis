@@ -1,5 +1,4 @@
 from data_processing import *
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 from sklearn.metrics import mean_absolute_error, r2_score,mean_squared_error
 import torch
@@ -11,7 +10,7 @@ import optuna
 import numpy as np
 from tqdm import tqdm
 import copy
-
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 data_dir = "../01_Datenaufbereitung/Output/Calculated/"
 all_data = load_data(data_dir)
 
@@ -99,7 +98,7 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
         model.train()
         train_losses = []
         
-        for X_batch, Y_batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{num_epochs} Training", leave=False):
+        for X_batch, Y_batch in train_loader:
             X_batch = X_batch.to(device)  # shape: (batch_size, seed_len, num_features)
             Y_batch = Y_batch.to(device)  # shape: (batch_size, pred_len)
             
@@ -213,7 +212,7 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
         else:
             epochs_no_improve += 1
             if epochs_no_improve >= patience:
-                print(f"Early stopping at epoch {epoch+1} because validation loss did not improve.")
+                print(f"Early stopping at epoch {epoch+1}")
                 break
     
     return history, best_model_state
@@ -244,7 +243,7 @@ def objective(trial):
     model = LSTMSOH(input_dim=4, hidden_dim=hidden_size, num_layers=num_layers, dropout=dropout).type(torch.float32).to(device)
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay) #L2 regularization
-    history, _ = train_model(model, criterion, optimizer, train_loader, val_loader)
+    history, _ = train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs = 100, patience = 10)
 
     # Extract last validation loss
     last_val_loss = history['val_loss'][-1]
