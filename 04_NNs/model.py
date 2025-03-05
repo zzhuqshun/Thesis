@@ -10,6 +10,10 @@ import optuna
 import numpy as np
 from tqdm import tqdm
 import copy
+
+##########################################################
+# Data loading
+##########################################################
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 data_dir = "../01_Datenaufbereitung/Output/Calculated/"
 all_data = load_data(data_dir)
@@ -17,41 +21,51 @@ all_data = load_data(data_dir)
 train_df, val_df, test_df = split_data(all_data, train=13, val=1, test=1,parts = 5)
 train_scaled, val_scaled, test_scaled = scale_data(train_df, val_df, test_df)
 
+##########################################################
+# Dataset definition    
+##########################################################
 class SequenceDataset(Dataset):
-    def __init__(self, df, seed_len = 36, pred_len = 5):
+    def __init__(self, df, seed_len=36, pred_len=5):
         self.seed_len = seed_len
         self.pred_len = pred_len
-        self.data = df[["SOH_ZHU",'Current[A]', 'Voltage[V]','Temperature[°C]']].values
+        # (目标 + 外生) 例如 [SOH_ZHU, Current, Voltage, Temperature]
+        self.data_all = df[['SOH_ZHU', 'Current[A]', 'Voltage[V]', 'Temperature[°C]']].values
 
     def __len__(self):
-        return len(self.data) - (self.seed_len + self.pred_len)
+        return len(self.data_all) - (self.seed_len + self.pred_len) + 1
 
     def __getitem__(self, idx):
-        # X: (batch_size, seq_len, num_features)
-        x_seq = self.data[idx : idx + self.seed_len]
-        # Y: (batch_size, pred_len)
-        y_seq = self.data[idx + self.seed_len : idx + self.seed_len + self.pred_len, 0]
+        block = self.data_all[idx : idx + self.seed_len + self.pred_len]
+        # block shape: (seed_len + pred_len, 4)
 
-        x = torch.tensor(x_seq, dtype=torch.float32)
-        y = torch.tensor(y_seq, dtype=torch.float32)
-        return x, y
+        # 历史: [0 : seed_len], 未来: [seed_len : seed_len + pred_len]
+        x_seed = block[:self.seed_len]          # (seed_len, 4)
+        x_future = block[self.seed_len:]        # (pred_len, 4)
 
+        # 目标只取这 pred_len 行的第 0 列
+        y_target = x_future[:, 0]  # shape (pred_len, )
+        return (
+            torch.tensor(x_seed, dtype=torch.float32),
+            torch.tensor(x_future, dtype=torch.float32),
+            torch.tensor(y_target, dtype=torch.float32)
+        )
 
-
-# Using ground truth of SOH and 3 covariances
-seq_length=72
-batch_size=32
-train_dataset = SequenceDataset(train_scaled, seed_len=seq_length)
-val_dataset = SequenceDataset(val_scaled, seed_len=seq_length)
-test_dataset = SequenceDataset(test_scaled, seed_len=seq_length)
-
+# Using ground truth of SOH and 3 cova riances
+seq_length=13
+pred_length= 10  
+batch_size=16
+train_dataset = SequenceDataset(train_scaled, seed_len=seq_length, pred_len=pred_length)
+val_dataset = SequenceDataset(val_scaled, seed_len=seq_length, pred_len=pred_length)
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, drop_last=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, drop_last=True)
 
+
+##########################################################  
+# Model definition  
+##########################################################
 class LSTMSOH(nn.Module):
-    def __init__(self, input_dim: int, hidden_dim: int, num_layers: int, dropout: float):
+    def __init__(self, input_dim = 4, hidden_dim = 128, num_layers = 3, dropout = 0.3):
         super(LSTMSOH, self).__init__()
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
@@ -78,6 +92,10 @@ class LSTMSOH(nn.Module):
         
         return out.squeeze(-1) #(batch_size,)
 
+
+##########################################################
+# Training process
+##########################################################      
 def train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs=10, patience=5):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -88,9 +106,7 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
     best_val_loss = float('inf')
     best_model_state = None
     epochs_no_improve = 0
-    
-    target_idx = 0
-    
+
     for epoch in range(num_epochs):
         # -----------------------------
         # 1) Training Loop (pure autoregressive)
@@ -98,42 +114,27 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
         model.train()
         train_losses = []
         
-        for X_batch, Y_batch in train_loader:
-            X_batch = X_batch.to(device)  # shape: (batch_size, seed_len, num_features)
-            Y_batch = Y_batch.to(device)  # shape: (batch_size, pred_len)
-            
-            batch_size, seed_len, num_features = X_batch.shape
-            pred_len = Y_batch.shape[1]
-            
-            # current_seq als autoregressive rolling window
-            current_seq = X_batch.clone()  # (batch_size, seed_len, num_features)
+        for X_seed, X_future, Y_target in train_loader:
+            X_seed = X_seed.to(device)# X_seed shape: (batch_size, seed_len, 4)       # [SOH, Current, Voltage, Temp]
+            X_future = X_future.to(device)# X_future shape: (batch_size, pred_len, 4) 
+            Y_target = Y_target.to(device)# Y_target shape: (batch_size, pred_len)
+                        
+            current_seq = X_seed.clone()  # 初始输入(含目标+外生), shape (batch_size, seed_len, 4)
             preds_steps = []
-            
+
             for t in range(pred_len):
-                # 1) Predicting the next time step with the current sequence
-                pred = model(current_seq)  # (batch_size,)
-                preds_steps.append(pred.unsqueeze(1))  # -> (batch_size, 1)
-                
-                # 2) Write pred back to current_seq's target column, ready for the next time step.
-                # - If there are other features for the next moment, replace them with the true values from the X_batch.
-                # - Otherwise, leave the last feature unchanged.
-                if seed_len + t < X_batch.shape[1]:
-                    # Explain that X_batch also provides other characteristics of this moment in time
-                    next_input = X_batch[:, seed_len + t, :].clone()
-                else:
-                    # exceed seed_len or no more features, only the current last frame will be kept.
-                    next_input = current_seq[:, -1, :].clone()
-                
-                # Replace target columns with model predictions
-                next_input[:, target_idx] = pred
-                
-                # 3) Move the window: remove the top frame, put in a new prediction frame
-                #   current_seq[:, 1:, :] -> drop the last step
-                #   next_input.unsqueeze(1) -> (batch_size, 1, num_features)
-                current_seq = torch.cat([current_seq[:, 1:, :], next_input.unsqueeze(1)], dim=1)
-            
+                pred = model(current_seq)  # -> shape (batch_size,)
+                preds_steps.append(pred.unsqueeze(1))
+
+                # 取下一时刻的未来特征(含目标列): shape (batch_size, 4)
+                next_frame = X_future[:, t, :].clone()
+                # 替换目标列 (SOH) 为模型预测
+                next_frame[:, 0] = pred
+
+                # 滑动窗口
+                current_seq = torch.cat([current_seq[:, 1:, :], next_frame.unsqueeze(1)], dim=1)
             preds_steps = torch.cat(preds_steps, dim=1)
-            loss = criterion(preds_steps, Y_batch)
+            loss = criterion(preds_steps, Y_target)
             
             optimizer.zero_grad()
             loss.backward()
@@ -151,48 +152,47 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
         val_losses = []
         all_preds = []
         all_targets = []
-        
+
         with torch.no_grad():
-            for X_val, Y_val in val_loader:
-                X_val = X_val.to(device)
-                Y_val = Y_val.to(device)
-                batch_size, seed_len, num_features = X_val.shape
-                pred_len = Y_val.shape[1]
+            for X_seed, X_future, Y_target in val_loader:
+                # 将数据转移到 device 上
+                X_seed = X_seed.to(device)
+                X_future = X_future.to(device)
+                Y_target = Y_target.to(device)
                 
-                current_seq = X_val.clone()
+                # 当前序列初始化为历史seed数据（含目标和外生变量）
+                current_seq = X_seed.clone()
                 preds_steps = []
                 
-                for t in range(pred_len):
-                    pred = model(current_seq)  # (batch_size,)
+                for t in range(Y_target.shape[1]):  # 这里 pred_len = Y_target.shape[1]
+                    pred = model(current_seq)  # 输出 shape: (batch_size,)
                     preds_steps.append(pred.unsqueeze(1))
                     
-                    if seed_len + t < X_val.shape[1]:
-                        next_input = X_val[:, seed_len + t, :].clone()
-                    else:
-                        next_input = current_seq[:, -1, :].clone()
-                    
-                    next_input[:, target_idx] = pred
-                    current_seq = torch.cat([current_seq[:, 1:, :], next_input.unsqueeze(1)], dim=1)
+                    # 取出未来时刻的外生变量（含目标列）
+                    next_frame = X_future[:, t, :].clone()
+                    # 将目标位置（假设为第0列）替换为当前预测
+                    next_frame[:, 0] = pred
+                    # 更新序列：移除最旧的一帧，添加新的预测帧
+                    current_seq = torch.cat([current_seq[:, 1:, :], next_frame.unsqueeze(1)], dim=1)
                 
                 preds_steps = torch.cat(preds_steps, dim=1)  # (batch_size, pred_len)
-                val_loss = criterion(preds_steps, Y_val)
+                val_loss = criterion(preds_steps, Y_target)
                 val_losses.append(val_loss.item())
                 
                 all_preds.append(preds_steps.cpu().numpy())
-                all_targets.append(Y_val.cpu().numpy())
-        
+                all_targets.append(Y_target.cpu().numpy()) 
+
         mean_val_loss = np.mean(val_losses)
         history['val_loss'].append(mean_val_loss)
         
         # Calculate overall MAE, RMSE, R2
         all_preds = np.concatenate(all_preds, axis=0)
         all_targets = np.concatenate(all_targets, axis=0)
-        mae = np.mean(np.abs(all_preds - all_targets))
-        rmse = np.sqrt(np.mean((all_preds - all_targets)**2))
         
-        ss_res = np.sum((all_targets - all_preds)**2)
-        ss_tot = np.sum((all_targets - np.mean(all_targets))**2)
-        r2 = 1 - ss_res / ss_tot if ss_tot > 1e-12 else 0.0
+        # 使用sklearn.metrics中的函数
+        mae = mean_absolute_error(all_targets, all_preds)
+        rmse = np.sqrt(mean_squared_error(all_targets, all_preds)) 
+        r2 = r2_score(all_targets, all_preds)
         
         history['val_mae'].append(mae)
         history['val_rmse'].append(rmse)
@@ -217,48 +217,129 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
     
     return history, best_model_state
 
+model = LSTMSOH().to(device)
+criterion = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=1.4296450393279462e-05, weight_decay=0.00012)
+
+history, best_model_state = train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs=100, patience=10)
+
+
     
-
-
-# Example usage:
-def objective(trial):
-    # Suggest hyperparameters
-    hidden_size = trial.suggest_int('hidden_size', 32, 256, step = 16)
-    num_layers = trial.suggest_int('num_layers', 2, 5)
-    learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-1, log=True)
-    dropout = trial.suggest_float('dropout', 0.1,0.5)
-    weight_decay= trial.suggest_float('weight_decay',1e-5,1e-1, log=True)
+##########################################################
+# Hyperparameter Optimization
+##########################################################
+# def objective(trial):
+#     # Suggest hyperparameters
+#     hidden_size = trial.suggest_int('hidden_size', 32, 256, step = 16)
+#     num_layers = trial.suggest_int('num_layers', 2, 5)
+#     learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-1, log=True)
+#     dropout = trial.suggest_float('dropout', 0.1,0.5)
+#     weight_decay= trial.suggest_float('weight_decay',1e-5,1e-1, log=True)
     
-    seed_len = trial.suggest_int('seed_len', 12, 128)
-    pred_len = trial.suggest_int('pred_len', 1, 20)
-    batch_size = trial.suggest_int('batch_size', 16, 64, step = 8)
+#     seed_len = trial.suggest_int('seed_len', 12, 128)
+#     pred_len = trial.suggest_int('pred_len', 1, 20)
+#     batch_size = trial.suggest_int('batch_size', 16, 64, step = 8)
     
-    train_dataset = SequenceDataset(train_scaled, seed_len=seed_len, pred_len=pred_len)
-    val_dataset = SequenceDataset(val_scaled, seed_len=seed_len, pred_len=pred_len)
+#     train_dataset = SequenceDataset(train_scaled, seed_len=seed_len, pred_len=pred_len)
+#     val_dataset = SequenceDataset(val_scaled, seed_len=seed_len, pred_len=pred_len)
     
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, drop_last=True)
+#     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
+#     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, drop_last=True)
     
-    # Instantiate model with suggested hyperparameters
-    model = LSTMSOH(input_dim=4, hidden_dim=hidden_size, num_layers=num_layers, dropout=dropout).type(torch.float32).to(device)
-    criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay) #L2 regularization
-    history, _ = train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs = 100, patience = 10)
+#     # Instantiate model with suggested hyperparameters
+#     model = LSTMSOH(input_dim=4, hidden_dim=hidden_size, num_layers=num_layers, dropout=dropout).type(torch.float32).to(device)
+#     criterion = nn.MSELoss()
+#     optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay) #L2 regularization
+#     history, _ = train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs = 100, patience = 10)
 
-    # Extract last validation loss
-    last_val_loss = history['val_loss'][-1]
-    return last_val_loss
+#     # Extract last validation loss
+#     last_val_loss = history['val_loss'][-1]
+#     return last_val_loss
 
-    # Optuna study
-study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=100)
+## Optuna study
+# study = optuna.create_study(direction='minimize')
+# study.optimize(objective, n_trials=100)
 
-# Extract best trial
-best_trial = study.best_trial
-print(f"Best trial: {best_trial}")
+# # Extract best trial
+# best_trial = study.best_trial
+# print(f"Best trial: {best_trial}")
 
-best_hyperparams = study.best_trial.params
-print('Best hyperparameters:', best_hyperparams)
+# best_hyperparams = study.best_trial.params
+# print('Best hyperparameters:', best_hyperparams)
+
+##########################################################
+# Evaluation
+##########################################################  
+
+# predict_autoregressive
+def evaluate_model(model, test_loader):
+    model.eval()
+    all_preds = []
+    all_targets = []
+    
+    with torch.no_grad():
+        for X_seed, X_future, Y_target in test_loader:
+            X_seed = X_seed.to(device)        # shape: (batch_size, seed_len, 4)
+            X_future = X_future.to(device)    # shape: (batch_size, pred_len, 4)
+            Y_target = Y_target.to(device)    # shape: (batch_size, pred_len)
+            
+            batch_size, seed_len, num_features = X_seed.shape
+            pred_len = Y_target.shape[1]
+            
+            current_seq = X_seed.clone()  # 初始输入：历史的seed数据
+            preds_steps = []
+            
+            for t in range(pred_len):
+                # 预测下一时刻目标值
+                pred = model(current_seq)  # 输出 shape: (batch_size,)
+                preds_steps.append(pred.unsqueeze(1))
+                
+                # 从X_future中获取当前时刻的外生变量（含目标列）
+                next_frame = X_future[:, t, :].clone()  # shape: (batch_size, num_features)
+                # 将目标位置（假设第0列）替换为预测值
+                next_frame[:, 0] = pred
+                # 更新输入序列：移除最早的时间步，添加新的预测帧
+                current_seq = torch.cat([current_seq[:, 1:, :], next_frame.unsqueeze(1)], dim=1)
+            
+            preds_steps = torch.cat(preds_steps, dim=1)  # (batch_size, pred_len)
+            all_preds.append(preds_steps.cpu().numpy())
+            all_targets.append(Y_target.cpu().numpy())
+    
+    all_preds = np.concatenate(all_preds, axis=0)
+    all_targets = np.concatenate(all_targets, axis=0)
+    
+    r2 = r2_score(all_targets, all_preds)
+    mae = mean_absolute_error(all_targets, all_preds)
+    rmse = np.sqrt(mean_squared_error(all_targets, all_preds))
+    
+    print(f"R2:{r2:.5f} | MAE: {mae:.5e} | RMSE:{rmse:.5e}")
+    
+    return all_preds, all_targets, r2, mae, rmse
 
 
+# Load best model   
+model_path = '04_NNs/Results/LSTM/C,V,T/00/best_model.pth'
+model = LSTMSOH().to(device)
+model.load_state_dict(torch.load(model_path))
 
+seed_len = 13
+pred_len = 10
+batch_size = 16
+
+test_dataset = SequenceDataset(test_scaled, seed_len=seed_len, pred_len=pred_len)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, drop_last=True)
+
+all_preds, all_targets, r2, mae, rmse = evaluate_model(model, test_loader)
+
+plt.figure(figsize=(10, 5))
+plt.plot(all_targets[:, 0], label="Ground Truth SOH")
+plt.plot(all_preds[:, 0], label="Predicted SOH")
+plt.title("Autoregressive SOH-Estimation - Test ")
+plt.text(0.5, 0.95, f"R2:{r2:.5f} | MAE: {mae:.5e}| RMSE:{rmse:.5e}", 
+         horizontalalignment='center', transform=plt.gca().transAxes)
+print(f"R2:{r2:.5f} | MAE: {mae:.5e}| RMSE:{rmse:.5e}")
+plt.xlabel("Samples")
+plt.ylabel("SOH")
+plt.legend()
+plt.tight_layout()
+plt.show()
