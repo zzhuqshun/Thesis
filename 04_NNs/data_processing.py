@@ -26,22 +26,22 @@ def load_data(data_dir: str) -> pd.DataFrame:
         
         data = pd.read_parquet(file_path)
         data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'] = pd.to_datetime(data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'])
-        data = data[['Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'Current[A]', 'Voltage[V]','Temperature[°C]', 'SOH_ZHU', 'EFC']]
-        
+        data = data[['Absolute_Time[yyyy-mm-dd hh:mm:ss]', 'Current[A]', 'Voltage[V]','Temperature[°C]', 'SOH_ZHU']]
 
-        data["dV"] = data["Voltage[V]"].diff().fillna(0)
-        data["dI"] = data["Current[A]"].diff().fillna(0)
-        data["InternalResistance[Ohms]"] = np.where(
-            data["dI"].abs() > 0.5,
-            data["dV"] / data["dI"],
-            np.nan
-        )
-        
-        data_hourly = data.set_index('Absolute_Time[yyyy-mm-dd hh:mm:ss]').resample('h').mean()
+
+        # data["dV"] = data["Voltage[V]"].diff().fillna(0)
+        # data["dI"] = data["Current[A]"].diff().fillna(0)
+        # data["InternalResistance[Ohms]"] = np.where(
+        #     data["dI"].abs() > 0.5,
+        #     data["dV"] / data["dI"],
+        #     np.nan
+        # )
+        # data_hourly = data[::600].reset_index(drop=True)
+        data_hourly = data.set_index('Absolute_Time[yyyy-mm-dd hh:mm:ss]').resample('min').mean()
         
         # fill missing values
         data_hourly.interpolate(method='linear', inplace=True)
-        data_hourly = data_hourly.bfill()
+        data_hourly = data_hourly.dropna()
         data_hourly.reset_index(drop=True, inplace=True)
         
         # add time_idx column
@@ -50,7 +50,7 @@ def load_data(data_dir: str) -> pd.DataFrame:
         # add cell_id column
         data_hourly['cell_id'] = cell_name
         
-        data_hourly = data_hourly[['Testtime[h]','Current[A]', 'Voltage[V]','Temperature[°C]', 'cell_id','SOH_ZHU', 'EFC', 'InternalResistance[Ohms]']]
+        data_hourly = data_hourly[['Testtime[h]','Current[A]', 'Voltage[V]','Temperature[°C]', 'cell_id','SOH_ZHU']]
         
         df_list.append(data_hourly)
     
@@ -77,31 +77,13 @@ def visualize_data(data_df: pd.DataFrame):
     plt.tight_layout()
     plt.show()
     
-def inspect_data_ranges(data_df: pd.DataFrame) -> None:
-    '''
-    Inspect the ranges of the data columns.
-    '''
-    for cell_id, cell_data in data_df.groupby('cell_id'):
-        print(f"\n=== {cell_id} ===")
-        
-        time_range = (
-            cell_data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'].min(), 
-            cell_data['Absolute_Time[yyyy-mm-dd hh:mm:ss]'].max()
-        )
-        print(f"Time Range: {time_range[0]} to {time_range[1]}")
-        
-        for column in cell_data.columns:
-            values = cell_data[column]
-            print(f"\n{column}:")
-            print(f"Value Range: {values.min():.4f} to {values.max():.4f}")
-            print(f"Number of Data Points: {len(values)}")
             
 
 def split_data(all_data: pd.DataFrame,
                     train: int = 13,
                     val: int = 1,
                     test: int = 1,
-                    parts: int = 10) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+                    parts: int = 1) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Split data into training, validation, and test sets.
     For training cells, further split each cell's data into 'parts' contiguous chunks.
@@ -191,26 +173,27 @@ def plot_dataset_soh(data_df: pd.DataFrame, title: str, figsize=(10, 7)):
     plt.show()
     
 
-def scale_data(
-    train_df: pd.DataFrame,
-    val_df: pd.DataFrame,
-    test_df: pd.DataFrame
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    '''
-    Scale the data using a robust/standard scaler
-    '''
+def scale_data(train_df, val_df, test_df):
+    # 拟缩放的列
+    columns_to_scale = ['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'EFC']
+    
+    # 拟合 scaler（仅使用训练集计算均值、方差）
     scaler = StandardScaler()
-    scaler.fit(train_df[['Current[A]', 'Temperature[°C]', 'Voltage[V]', 'EFC', 'InternalResistance[Ohms]']])
+    scaler.fit(train_df[columns_to_scale])
     
-    def transform(df: pd.DataFrame) -> pd.DataFrame:
-        df_copy = df.copy()
-        df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]','EFC', 'InternalResistance[Ohms]']] = scaler.transform(
-            df_copy[['Current[A]', 'Temperature[°C]', 'Voltage[V]','EFC', 'InternalResistance[Ohms]']]
-        )
-        return df_copy
+    # transform 之后得到的是 numpy 数组
+    train_scaled = scaler.transform(train_df[columns_to_scale])
+    val_scaled = scaler.transform(val_df[columns_to_scale])
+    test_scaled = scaler.transform(test_df[columns_to_scale])
+    
+    # 将 numpy 数组转换回 DataFrame 并与其他未缩放列合并
+    train_df_scaled = train_df.copy()  # 先复制一份原始 DataFrame
+    train_df_scaled[columns_to_scale] = train_scaled  # 用缩放后的数组覆盖对应列
 
-    train_scaled = transform(train_df)
-    val_scaled = transform(val_df)
-    test_scaled = transform(test_df)
+    val_df_scaled = val_df.copy()
+    val_df_scaled[columns_to_scale] = val_scaled
+
+    test_df_scaled = test_df.copy()
+    test_df_scaled[columns_to_scale] = test_scaled
     
-    return train_scaled, val_scaled, test_scaled
+    return train_df_scaled, val_df_scaled, test_df_scaled

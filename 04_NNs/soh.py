@@ -25,7 +25,7 @@ train_df, val_df, test_df = split_data(all_data, train=13, val=1, test=1, parts 
 train_scaled, val_scaled, test_scaled = scale_data(train_df, val_df, test_df)
 
 # Hyperparameters
-seed_len = 120  # Length of input sequence
+seq_len = 120  # Length of input sequence
 pred_len = 48   # Length of prediction sequence
 batch_size = 64 # Increased batch size
 hidden_dim = 80 # Increased hidden dimension
@@ -33,7 +33,7 @@ num_layers = 5  # Reduced number of layers
 dropout = 0.5   # Adjusted dropout
 
 class BatteryCellDataset(Dataset):
-    def __init__(self, df, seed_len, pred_len, is_train=True):
+    def __init__(self, df, seq_len, pred_len, is_train=True):
         """
         df: DataFrame 包含列:
             - SOH_ZHU
@@ -45,7 +45,7 @@ class BatteryCellDataset(Dataset):
         is_train: 是否是训练模式
         """
         self.df = df
-        self.seed_len = seed_len
+        self.seq_len = seq_len
         self.pred_len = pred_len
         self.is_train = is_train
         
@@ -61,7 +61,7 @@ class BatteryCellDataset(Dataset):
             if is_train:
                 # 训练模式：使用较小的stride生成batch训练样本
                 stride = max(pred_len // 4, 1)  # 可以根据需要调整stride大小
-                for i in range(0, len(cell_data) - seed_len - pred_len + 1, stride):
+                for i in range(0, len(cell_data) - seq_len - pred_len + 1, stride):
                     self.samples.append({
                         'cell_id': cell_id,
                         'start_idx': i
@@ -88,18 +88,18 @@ class BatteryCellDataset(Dataset):
         
         cell_data = self.df[self.df['cell_id'] == cell_id]
         features = ['SOH_ZHU', 'Current[A]', 'Voltage[V]', 'Temperature[°C]']
-        sequence = cell_data[features].iloc[start_idx:start_idx + self.seed_len + self.pred_len].values
+        sequence = cell_data[features].iloc[start_idx:start_idx + self.seq_len + self.pred_len].values
         
-        X_seed = sequence[:self.seed_len]
-        X_future = sequence[self.seed_len:]
-        Y_target = sequence[self.seed_len:, 0]
+        X_seed = sequence[:self.seq_len]
+        X_future = sequence[self.seq_len:]
+        Y_target = sequence[self.seq_len:, 0]
         
         return torch.FloatTensor(X_seed), torch.FloatTensor(X_future), torch.FloatTensor(Y_target), cell_id
 
-def create_data_loaders(train_df, val_df, seed_len, pred_len, batch_size):
+def create_data_loaders(train_df, val_df, seq_len, pred_len, batch_size):
     """创建训练和验证数据加载器"""
-    train_dataset = BatteryCellDataset(train_df, seed_len, pred_len, is_train=True)
-    val_dataset = BatteryCellDataset(val_df, seed_len, pred_len, is_train=False)
+    train_dataset = BatteryCellDataset(train_df, seq_len, pred_len, is_train=True)
+    val_dataset = BatteryCellDataset(val_df, seq_len, pred_len, is_train=False)
     
     train_loader = DataLoader(
         train_dataset,
@@ -242,8 +242,8 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
                 preds = np.full(len(data_array), np.nan)
                 
                 # 对每个电池进行连续预测
-                for i in range(seed_len, len(data_array) - pred_len + 1, pred_len):
-                    input_seq = data_array[i - seed_len : i]
+                for i in range(seq_len, len(data_array) - pred_len + 1, pred_len):
+                    input_seq = data_array[i - seq_len : i]
                     future_features = data_array[i:i + pred_len, 1:]
                     
                     x_t = torch.tensor(input_seq, dtype=torch.float32).unsqueeze(0).to(device)
@@ -301,7 +301,7 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
 # Create data loaders
 train_loader, val_loader = create_data_loaders(
     train_scaled, val_scaled, 
-    seed_len, pred_len, 
+    seq_len, pred_len, 
     batch_size
 )
 
@@ -333,16 +333,16 @@ history, best_model_state = train_model(
 torch.save(best_model_state, "best_model.pth")
 
 
-def evaluate_singlepass(model, df, seed_len=100, pred_len=50):
+def evaluate_singlepass(model, df, seq_len=100, pred_len=50):
     model.eval()
     features = ['SOH_ZHU', 'Current[A]', 'Voltage[V]', 'Temperature[°C]']
     data_array = df[features].values.copy()
     preds = np.full(len(data_array), np.nan)
     
     with torch.no_grad():
-        for i in range(seed_len, len(data_array) - pred_len + 1, pred_len):
+        for i in range(seq_len, len(data_array) - pred_len + 1, pred_len):
             # 获取输入序列
-            input_seq = data_array[i - seed_len : i]
+            input_seq = data_array[i - seq_len : i]
             # 获取未来特征
             future_features = data_array[i:i + pred_len, 1:]
             
@@ -363,7 +363,7 @@ def evaluate_singlepass(model, df, seed_len=100, pred_len=50):
 
 # Evaluate on test set
 model.load_state_dict(best_model_state)
-all_preds = evaluate_singlepass(model, test_scaled, seed_len=seed_len, pred_len=pred_len)
+all_preds = evaluate_singlepass(model, test_scaled, seq_len=seq_len, pred_len=pred_len)
 all_targets = test_scaled['SOH_ZHU'].values
 
 # 只使用非NaN的预测值进行评估
