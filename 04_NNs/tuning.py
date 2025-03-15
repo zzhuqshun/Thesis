@@ -11,6 +11,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 
 import optuna
@@ -33,6 +34,8 @@ if torch.cuda.is_available():
 parser = argparse.ArgumentParser()
 parser.add_argument("--run_folder", type=str, default=None,
                     help="Folder path to save models and logs.")
+parser.add_argument("--learning_rate", type=float, default=1e-3,
+                    help="Initial learning rate for the optimizer.")
 args = parser.parse_args()
 
 # Create a run folder if not provided
@@ -138,11 +141,16 @@ def objective(trial):
     hidden_size = trial.suggest_categorical('hidden_size', [32, 64, 128, 256])
     num_layers = trial.suggest_int('num_layers', 2, 5)
     dropout = trial.suggest_float('dropout', 0.2, 0.5)
-    weight_decay = trial.suggest_float('weight_decay', 1e-5, 1e-1, log=True)
+    
+    # Use discrete weight_decay values as requested
+    weight_decay = trial.suggest_categorical('weight_decay', [1e-5, 1e-4, 1e-3])
+    
     sequence_length = trial.suggest_int('sequence_length', 60, 1440, step=60)
-    pred_len = trial.suggest_int('pred_len', 1, 60)
-    batch_size = trial.suggest_categorical('batch_size', [32, 64, 128, 256])
-    learning_rate = trial.suggest_float('learning_rate', 1e-5, 1e-2, log=True)
+    pred_len = trial.suggest_categorical('pred_len', [1, 60])
+    batch_size = trial.suggest_categorical('batch_size', [32, 64, 128])
+    
+    # Fixed learning rate instead of searching for it
+    learning_rate = args.learning_rate
     
     # Create temporary datasets and dataloaders based on the suggested sequence and prediction lengths
     train_dataset_t = CellDataset(train_scaled, sequence_length=sequence_length, pred_len=pred_len)
@@ -156,6 +164,9 @@ def objective(trial):
     model_t.to(device)
     
     optimizer_t = optim.Adam(model_t.parameters(), lr=learning_rate, weight_decay=weight_decay)
+    # Add learning rate scheduler
+    scheduler = ReduceLROnPlateau(optimizer_t, mode='min', factor=0.5, patience=5, 
+                                 verbose=True, min_lr=1e-6)
     criterion = nn.MSELoss()
     
     best_val_loss = float('inf')
@@ -189,6 +200,9 @@ def objective(trial):
         val_loss_epoch /= len(val_loader_t)
         history["val_loss"].append(val_loss_epoch)
         
+        # Update learning rate based on validation loss
+        scheduler.step(val_loss_epoch)
+        
         # Early stopping check
         if val_loss_epoch < best_val_loss:
             best_val_loss = val_loss_epoch
@@ -218,11 +232,15 @@ def main():
         "NUM_LAYERS": best_params['num_layers'],
         "DROPOUT": best_params['dropout'],
         "BATCH_SIZE": best_params['batch_size'],
-        "LEARNING_RATE": best_params['learning_rate'],
+        "LEARNING_RATE": args.learning_rate,
         "WEIGHT_DECAY": best_params['weight_decay'],
         "EPOCHS": 200,
         "PATIENCE": 20
     }
+    
+    # Save hyperparameters to the run folder
+    with open(os.path.join(args.run_folder, 'hyperparams.json'), 'w') as f:
+        json.dump(final_hyperparams, f, indent=4)
     
     # Create final train, validation, and test datasets using the final hyperparameters
     train_dataset_final = CellDataset(train_scaled, sequence_length=final_hyperparams["SEQUENCE_LENGTH"],
@@ -249,11 +267,16 @@ def main():
     optimizer_final = optim.Adam(final_model.parameters(), 
                                  lr=final_hyperparams["LEARNING_RATE"],
                                  weight_decay=final_hyperparams["WEIGHT_DECAY"])
+    
+    # Add learning rate scheduler for final training
+    scheduler_final = ReduceLROnPlateau(optimizer_final, mode='min', factor=0.5, 
+                                        patience=7, verbose=True, min_lr=1e-6)
+    
     criterion = nn.MSELoss()
     
     best_val_loss = float('inf')
     epochs_no_improve = 0
-    history = {"train_loss": [], "val_loss": [], "epoch": []}
+    history = {"train_loss": [], "val_loss": [], "epoch": [], "learning_rate": []}
     best_model = None
     
     for epoch in range(final_hyperparams["EPOCHS"]):
@@ -280,11 +303,18 @@ def main():
                 val_loss_epoch += loss.item()
         val_loss_epoch /= len(val_loader_final)
         
+        # Get current learning rate
+        current_lr = optimizer_final.param_groups[0]['lr']
+        
         history["train_loss"].append(train_loss_epoch)
         history["val_loss"].append(val_loss_epoch)
         history["epoch"].append(epoch + 1)
+        history["learning_rate"].append(current_lr)
         
-        print(f'Epoch {epoch+1}/{final_hyperparams["EPOCHS"]} | Train Loss: {train_loss_epoch:.3e} | Val Loss: {val_loss_epoch:.3e}')
+        # Update the learning rate scheduler
+        scheduler_final.step(val_loss_epoch)
+        
+        print(f'Epoch {epoch+1}/{final_hyperparams["EPOCHS"]} | Train Loss: {train_loss_epoch:.3e} | Val Loss: {val_loss_epoch:.3e} | LR: {current_lr}')
         
         if val_loss_epoch < best_val_loss:
             best_val_loss = val_loss_epoch

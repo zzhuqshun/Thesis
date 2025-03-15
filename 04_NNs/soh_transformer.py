@@ -42,7 +42,8 @@ hyperparams = {
     "BATCH_SIZE": 64,
     "LEARNING_RATE": 0.001,
     "EPOCHS": 200,
-    "PATIENCE": 20
+    "PATIENCE": 20,
+    "NUM_HEADS": 4,  # Added for transformer
 }
 
 # Save hyperparameters in the run folder
@@ -116,23 +117,64 @@ val_loader = DataLoader(val_dataset, batch_size=hyperparams["BATCH_SIZE"],
 test_loader = DataLoader(test_dataset, batch_size=hyperparams["BATCH_SIZE"],
                          shuffle=False, pin_memory=torch.cuda.is_available())
 
+# Function to generate causal mask (added)
+def generate_square_subsequent_mask(sz, device):
+    """Generate a square mask for the sequence. The masked positions are filled with float('-inf').
+    Unmasked positions are filled with float(0.0).
+    """
+    mask = (torch.triu(torch.ones(sz, sz, device=device)) == 1).transpose(0, 1)
+    mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
+    return mask
+
+# Positional Encoding for Transformer
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model, max_len=5000):
+        super(PositionalEncoding, self).__init__()
+        
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-np.log(10000.0) / d_model))
+        
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        pe = pe.unsqueeze(0)
+        
+        self.register_buffer('pe', pe)
+        
+    def forward(self, x):
+        return x + self.pe[:, :x.size(1), :]
+
 # Transformer model definition
-class LSTMmodel(nn.Module):
-    def __init__(self, input_dim, hidden_dim, num_layers, dropout, output_length=1):
+class TransformerModel(nn.Module):
+    def __init__(self, input_dim, hidden_dim, num_layers, num_heads, dropout, output_length=1):
         """
         Args:
             input_dim (int): number of input features
-            hidden_dim (int): LSTM hidden layer size
-            num_layers (int): number of LSTM layers
+            hidden_dim (int): transformer hidden dimension
+            num_layers (int): number of transformer layers
+            num_heads (int): number of attention heads
+            feedforward_dim (int): dimension of the feedforward network
             dropout (float): dropout probability
             output_length (int): number of prediction steps
         """
-        super(LSTMmodel, self).__init__()
-        self.hidden_dim = hidden_dim
-        self.num_layers = num_layers
+        super(TransformerModel, self).__init__()
         
-        self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers,
-                            batch_first=True, dropout=dropout)
+        self.input_embedding = nn.Linear(input_dim, hidden_dim)
+        self.positional_encoding = PositionalEncoding(hidden_dim)
+        
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=hidden_dim,
+            nhead=num_heads,
+            dim_feedforward= 4*hidden_dim,
+            dropout=dropout,
+            batch_first=True
+        )
+        
+        self.transformer_encoder = nn.TransformerEncoder(
+            encoder_layer,
+            num_layers=num_layers
+        )
+        
         self.fc = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim // 2),
             nn.LeakyReLU(),
@@ -141,15 +183,29 @@ class LSTMmodel(nn.Module):
         )
     
     def forward(self, x):
-        # Initialize hidden and cell states
-        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_dim,
-                         device=x.device, dtype=x.dtype)
-        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_dim,
-                         device=x.device, dtype=x.dtype)
-        lstm_out, _ = self.lstm(x, (h0, c0))  # (batch_size, seq_len, hidden_dim)
-        final_hidden = lstm_out[:, -1, :]      # Use the output from the last time step
-        output = self.fc(final_hidden)         # (batch_size, output_length)
-        return output, _
+        # Generate causal mask to ensure the model only looks at past time steps
+        seq_len = x.size(1)
+        mask = generate_square_subsequent_mask(seq_len, x.device)
+        
+        # Embed the input features
+        x = self.input_embedding(x)
+        
+        # Add positional encoding
+        x = self.positional_encoding(x)
+        
+        # Apply transformer encoder with causal mask
+        output = self.transformer_encoder(x, mask=mask)
+        
+        # Use the last time step for prediction
+        output = output[:, -1, :]
+        
+        # Apply fully connected layers
+        output = self.fc(output)
+        
+        # For compatibility with the LSTM model's return type
+        hidden_state = None
+        
+        return output, hidden_state
 
 # Training and validation function
 def train_and_validation(model, train_loader, val_loader, hyperparams):
@@ -256,11 +312,14 @@ def evaluate_model(model, data_loader):
 # Main function
 def main():
     # Initialize the model
-    model = LSTMmodel(input_dim=3,
-                      hidden_dim=hyperparams["HIDDEN_SIZE"],
-                      num_layers=hyperparams["NUM_LAYERS"],
-                      dropout=hyperparams["DROPOUT"],
-                      output_length=hyperparams["PREDICT_LENGTH"])
+    model = TransformerModel(
+        input_dim=3,
+        hidden_dim=hyperparams["HIDDEN_SIZE"],
+        num_layers=hyperparams["NUM_LAYERS"],
+        num_heads=hyperparams["NUM_HEADS"],
+        dropout=hyperparams["DROPOUT"],
+        output_length=hyperparams["PREDICT_LENGTH"]
+    )
     model.to(device)
 
     # Train and validate
