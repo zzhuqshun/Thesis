@@ -1,0 +1,11 @@
+{
+    "SEQUENCE_LENGTH": 168,
+    "PREDICT_LENGTH": 1,
+    "HIDDEN_SIZE": 64,
+    "NUM_LAYERS": 5,
+    "DROPOUT": 0.5,
+    "BATCH_SIZE": 64,
+    "LEARNING_RATE": 0.001,
+    "EPOCHS": 100,
+    "PATIENCE": 20
+}

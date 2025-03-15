@@ -116,7 +116,7 @@ val_loader = DataLoader(val_dataset, batch_size=hyperparams["BATCH_SIZE"],
 test_loader = DataLoader(test_dataset, batch_size=hyperparams["BATCH_SIZE"],
                          shuffle=False, pin_memory=torch.cuda.is_available())
 
-# LSTM model definition
+# Transformer model definition
 class LSTMmodel(nn.Module):
     def __init__(self, input_dim, hidden_dim, num_layers, dropout, output_length=1):
         """
