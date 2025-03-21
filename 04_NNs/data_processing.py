@@ -36,10 +36,10 @@ def load_data(data_dir: str) -> pd.DataFrame:
         # Select columns of interest
         data = data[['Absolute_Time[yyyy-mm-dd hh:mm:ss]', 
                      'Current[A]', 'Voltage[V]', 
-                     'Temperature[°C]', 'SOH_ZHU']]
+                     'Temperature[°C]', 'SOH_ZHU','EFC']]
         
         # Resample the data to 1-minute intervals, then interpolate
-        data_hourly = data.set_index('Absolute_Time[yyyy-mm-dd hh:mm:ss]').resample('min').mean()
+        data_hourly = data.set_index('Absolute_Time[yyyy-mm-dd hh:mm:ss]').resample('10min').mean()
         data_hourly.interpolate(method='linear', inplace=True)
         data_hourly.dropna(inplace=True)
         data_hourly.reset_index(drop=True, inplace=True)
@@ -52,7 +52,7 @@ def load_data(data_dir: str) -> pd.DataFrame:
         
         # Reorder columns
         data_hourly = data_hourly[['Testtime[min]', 'Current[A]', 'Voltage[V]',
-                                   'Temperature[°C]', 'cell_id', 'SOH_ZHU']]
+                                   'Temperature[°C]', 'cell_id', 'SOH_ZHU','EFC']]
         
         df_list.append(data_hourly)
     
@@ -170,7 +170,7 @@ def scale_data(train_df: pd.DataFrame,
     """
     Scale the specified columns in the dataset using StandardScaler fitted on the training set.
     """
-    columns_to_scale = ['Current[A]', 'Temperature[°C]', 'Voltage[V]']
+    columns_to_scale = ['Current[A]', 'Temperature[°C]', 'Voltage[V]','EFC']
     
     # Fit the scaler on the training data
     scaler = StandardScaler()

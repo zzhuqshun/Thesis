@@ -1,0 +1,13 @@
+{   
+    "MODEL": "Transformer",
+    "SEQUENCE_LENGTH": 360,
+    "PREDICT_LENGTH": 1,
+    "HIDDEN_SIZE": 64,
+    "NUM_LAYERS": 3,
+    "DROPOUT": 0.3,
+    "BATCH_SIZE": 64,
+    "LEARNING_RATE": 0.001,
+    "EPOCHS": 200,
+    "PATIENCE": 20,
+    "NUM_HEADS": 4
+}

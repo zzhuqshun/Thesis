@@ -1,0 +1,59 @@
+Using device: cuda
+Found 15 parquet files
+Processing C01 ...
+Processing C03 ...
+Processing C05 ...
+Processing C07 ...
+Processing C09 ...
+Processing C15 ...
+Processing C11 ...
+Processing C17 ...
+Processing C13 ...
+Processing C19 ...
+Processing C21 ...
+Processing C23 ...
+Processing C27 ...
+Processing C29 ...
+Processing C25 ...
+Cell split completed:
+Training set: 13 cells
+Validation set: 1 cells
+Test set: 1 cells
+Final dataset sizes:
+Training set: 285880 rows (split into 13 parts)
+Validation set: 26791 rows from 1 cells
+Test set: 27189 rows from 1 cells
+
+Start training...
+Epoch 1/200 | Train Loss: 1.425e-02 | Val Loss: 2.223e-03 | LR: 1.00e-04
+Epoch 2/200 | Train Loss: 4.019e-03 | Val Loss: 1.722e-03 | LR: 1.00e-04
+Epoch 3/200 | Train Loss: 2.556e-03 | Val Loss: 1.365e-03 | LR: 1.00e-04
+Epoch 4/200 | Train Loss: 1.657e-03 | Val Loss: 8.604e-04 | LR: 1.00e-04
+Epoch 5/200 | Train Loss: 1.095e-03 | Val Loss: 7.459e-04 | LR: 1.00e-04
+Epoch 6/200 | Train Loss: 8.585e-04 | Val Loss: 7.190e-04 | LR: 1.00e-04
+Epoch 7/200 | Train Loss: 7.526e-04 | Val Loss: 5.085e-04 | LR: 1.00e-04
+Epoch 8/200 | Train Loss: 6.981e-04 | Val Loss: 8.290e-04 | LR: 1.00e-04
+Epoch 9/200 | Train Loss: 6.612e-04 | Val Loss: 7.924e-04 | LR: 1.00e-04
+Epoch 10/200 | Train Loss: 6.145e-04 | Val Loss: 8.594e-04 | LR: 1.00e-04
+Epoch 11/200 | Train Loss: 5.539e-04 | Val Loss: 1.116e-03 | LR: 1.00e-04
+Epoch 12/200 | Train Loss: 5.213e-04 | Val Loss: 1.605e-03 | LR: 1.00e-04
+Epoch 13/200 | Train Loss: 4.937e-04 | Val Loss: 1.048e-03 | LR: 1.00e-04
+Epoch 14/200 | Train Loss: 4.745e-04 | Val Loss: 1.933e-03 | LR: 1.00e-04
+Epoch 15/200 | Train Loss: 4.572e-04 | Val Loss: 1.275e-03 | LR: 1.00e-04
+Epoch 16/200 | Train Loss: 4.290e-04 | Val Loss: 1.620e-03 | LR: 1.00e-04
+Epoch 17/200 | Train Loss: 4.144e-04 | Val Loss: 1.577e-03 | LR: 1.00e-04
+Epoch 18/200 | Train Loss: 4.042e-04 | Val Loss: 1.717e-03 | LR: 5.00e-05
+Epoch 19/200 | Train Loss: 3.530e-04 | Val Loss: 1.656e-03 | LR: 5.00e-05
+Epoch 20/200 | Train Loss: 3.460e-04 | Val Loss: 1.729e-03 | LR: 5.00e-05
+Epoch 21/200 | Train Loss: 3.431e-04 | Val Loss: 1.793e-03 | LR: 5.00e-05
+Epoch 22/200 | Train Loss: 3.349e-04 | Val Loss: 1.690e-03 | LR: 5.00e-05
+Epoch 23/200 | Train Loss: 3.323e-04 | Val Loss: 1.587e-03 | LR: 5.00e-05
+Epoch 24/200 | Train Loss: 3.281e-04 | Val Loss: 1.452e-03 | LR: 5.00e-05
+Epoch 25/200 | Train Loss: 3.251e-04 | Val Loss: 1.401e-03 | LR: 5.00e-05
+Epoch 26/200 | Train Loss: 3.202e-04 | Val Loss: 1.577e-03 | LR: 5.00e-05
+Epoch 27/200 | Train Loss: 3.145e-04 | Val Loss: 1.574e-03 | LR: 5.00e-05
+Early stopping triggered after 27 epochs!
+Evaluation Metrics:
+MAE: 3.8509e-02
+RMSE: 4.2854e-02
+R2: -0.1767

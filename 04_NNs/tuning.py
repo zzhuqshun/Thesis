@@ -34,7 +34,7 @@ if torch.cuda.is_available():
 parser = argparse.ArgumentParser()
 parser.add_argument("--run_folder", type=str, default=None,
                     help="Folder path to save models and logs.")
-parser.add_argument("--learning_rate", type=float, default=1e-3,
+parser.add_argument("--learning_rate", type=float, default=1e-4,
                     help="Initial learning rate for the optimizer.")
 args = parser.parse_args()
 
@@ -138,16 +138,16 @@ class LSTMmodel(nn.Module):
 # Objective function for hyperparameter tuning using Optuna
 def objective(trial):
     # Suggest hyperparameters for tuning
-    hidden_size = trial.suggest_categorical('hidden_size', [32, 64, 128, 256])
+    hidden_size = trial.suggest_categorical('hidden_size', [64, 128])
     num_layers = trial.suggest_int('num_layers', 2, 5)
-    dropout = trial.suggest_float('dropout', 0.2, 0.5)
+    dropout = trial.suggest_float('dropout', 0.2, 0.5, step = 0.1)
     
     # Use discrete weight_decay values as requested
-    weight_decay = trial.suggest_categorical('weight_decay', [1e-5, 1e-4, 1e-3])
+    weight_decay = trial.suggest_categorical('weight_decay', [1e-5, 1e-4])
     
-    sequence_length = trial.suggest_int('sequence_length', 60, 1440, step=60)
-    pred_len = trial.suggest_categorical('pred_len', [1, 60])
-    batch_size = trial.suggest_categorical('batch_size', [32, 64, 128])
+    sequence_length = trial.suggest_int('sequence_length', 72, 432, step=72) # 0.5 day - 3day
+    pred_len = trial.suggest_categorical('pred_len', [1, 6])
+    batch_size = trial.suggest_categorical('batch_size', [32, 64])
     
     # Fixed learning rate instead of searching for it
     learning_rate = args.learning_rate
@@ -165,8 +165,7 @@ def objective(trial):
     
     optimizer_t = optim.Adam(model_t.parameters(), lr=learning_rate, weight_decay=weight_decay)
     # Add learning rate scheduler
-    scheduler = ReduceLROnPlateau(optimizer_t, mode='min', factor=0.5, patience=5, 
-                                 verbose=True, min_lr=1e-6)
+    scheduler = ReduceLROnPlateau(optimizer_t, mode='min', factor=0.1, patience=5, min_lr=1e-6)
     criterion = nn.MSELoss()
     
     best_val_loss = float('inf')
@@ -218,7 +217,7 @@ def objective(trial):
 def main():
     # Create an Optuna study and optimize the objective function
     study = optuna.create_study(direction="minimize")
-    study.optimize(objective, n_trials=20)
+    study.optimize(objective, n_trials=50)
     print("Best trial:")
     print(study.best_trial.params)
 
@@ -270,7 +269,7 @@ def main():
     
     # Add learning rate scheduler for final training
     scheduler_final = ReduceLROnPlateau(optimizer_final, mode='min', factor=0.5, 
-                                        patience=7, verbose=True, min_lr=1e-6)
+                                        patience=7, min_lr=1e-6)
     
     criterion = nn.MSELoss()
     

@@ -1,0 +1,77 @@
+Using device: cuda
+Found 15 parquet files
+Processing C01 ...
+Processing C03 ...
+Processing C05 ...
+Processing C07 ...
+Processing C09 ...
+Processing C15 ...
+Processing C11 ...
+Processing C17 ...
+Processing C13 ...
+Processing C19 ...
+Processing C21 ...
+Processing C23 ...
+Processing C27 ...
+Processing C29 ...
+Processing C25 ...
+Cell split completed:
+Training set: 13 cells
+Validation set: 1 cells
+Test set: 1 cells
+Final dataset sizes:
+Training set: 285880 rows (split into 13 parts)
+Validation set: 26791 rows from 1 cells
+Test set: 27189 rows from 1 cells
+
+Start training...
+Epoch 1/200 | Train Loss: 2.105e-02 | Val Loss: 3.009e-03 | LR: 1.00e-04
+Epoch 2/200 | Train Loss: 5.131e-03 | Val Loss: 1.631e-03 | LR: 1.00e-04
+Epoch 3/200 | Train Loss: 2.319e-03 | Val Loss: 1.406e-03 | LR: 1.00e-04
+Epoch 4/200 | Train Loss: 1.520e-03 | Val Loss: 1.346e-03 | LR: 1.00e-04
+Epoch 5/200 | Train Loss: 1.202e-03 | Val Loss: 1.030e-03 | LR: 1.00e-04
+Epoch 6/200 | Train Loss: 8.919e-04 | Val Loss: 9.046e-04 | LR: 1.00e-04
+Epoch 7/200 | Train Loss: 8.077e-04 | Val Loss: 9.652e-04 | LR: 1.00e-04
+Epoch 8/200 | Train Loss: 7.582e-04 | Val Loss: 1.126e-03 | LR: 1.00e-04
+Epoch 9/200 | Train Loss: 7.024e-04 | Val Loss: 9.044e-04 | LR: 1.00e-04
+Epoch 10/200 | Train Loss: 6.844e-04 | Val Loss: 7.889e-04 | LR: 1.00e-04
+Epoch 11/200 | Train Loss: 6.567e-04 | Val Loss: 8.700e-04 | LR: 1.00e-04
+Epoch 12/200 | Train Loss: 6.373e-04 | Val Loss: 7.704e-04 | LR: 1.00e-04
+Epoch 13/200 | Train Loss: 6.240e-04 | Val Loss: 9.588e-04 | LR: 1.00e-04
+Epoch 14/200 | Train Loss: 6.103e-04 | Val Loss: 8.552e-04 | LR: 1.00e-04
+Epoch 15/200 | Train Loss: 5.996e-04 | Val Loss: 6.953e-04 | LR: 1.00e-04
+Epoch 16/200 | Train Loss: 5.895e-04 | Val Loss: 8.064e-04 | LR: 1.00e-04
+Epoch 17/200 | Train Loss: 5.805e-04 | Val Loss: 9.029e-04 | LR: 1.00e-04
+Epoch 18/200 | Train Loss: 5.644e-04 | Val Loss: 7.250e-04 | LR: 1.00e-04
+Epoch 19/200 | Train Loss: 5.581e-04 | Val Loss: 8.948e-04 | LR: 1.00e-04
+Epoch 20/200 | Train Loss: 5.479e-04 | Val Loss: 8.983e-04 | LR: 1.00e-04
+Epoch 21/200 | Train Loss: 5.362e-04 | Val Loss: 6.769e-04 | LR: 1.00e-04
+Epoch 22/200 | Train Loss: 5.381e-04 | Val Loss: 8.301e-04 | LR: 1.00e-04
+Epoch 23/200 | Train Loss: 5.250e-04 | Val Loss: 7.729e-04 | LR: 1.00e-04
+Epoch 24/200 | Train Loss: 5.223e-04 | Val Loss: 1.255e-03 | LR: 1.00e-04
+Epoch 25/200 | Train Loss: 5.087e-04 | Val Loss: 5.860e-04 | LR: 1.00e-04
+Epoch 26/200 | Train Loss: 5.058e-04 | Val Loss: 1.052e-03 | LR: 1.00e-04
+Epoch 27/200 | Train Loss: 4.964e-04 | Val Loss: 9.363e-04 | LR: 1.00e-04
+Epoch 28/200 | Train Loss: 5.006e-04 | Val Loss: 1.160e-03 | LR: 1.00e-04
+Epoch 29/200 | Train Loss: 4.894e-04 | Val Loss: 7.662e-04 | LR: 1.00e-04
+Epoch 30/200 | Train Loss: 4.904e-04 | Val Loss: 8.667e-04 | LR: 1.00e-04
+Epoch 31/200 | Train Loss: 4.816e-04 | Val Loss: 1.489e-03 | LR: 1.00e-04
+Epoch 32/200 | Train Loss: 4.787e-04 | Val Loss: 7.950e-04 | LR: 1.00e-04
+Epoch 33/200 | Train Loss: 4.797e-04 | Val Loss: 1.088e-03 | LR: 1.00e-04
+Epoch 34/200 | Train Loss: 4.716e-04 | Val Loss: 1.125e-03 | LR: 1.00e-04
+Epoch 35/200 | Train Loss: 4.682e-04 | Val Loss: 1.243e-03 | LR: 1.00e-04
+Epoch 36/200 | Train Loss: 4.627e-04 | Val Loss: 9.208e-04 | LR: 5.00e-05
+Epoch 37/200 | Train Loss: 4.306e-04 | Val Loss: 1.045e-03 | LR: 5.00e-05
+Epoch 38/200 | Train Loss: 4.252e-04 | Val Loss: 1.236e-03 | LR: 5.00e-05
+Epoch 39/200 | Train Loss: 4.266e-04 | Val Loss: 9.927e-04 | LR: 5.00e-05
+Epoch 40/200 | Train Loss: 4.201e-04 | Val Loss: 1.147e-03 | LR: 5.00e-05
+Epoch 41/200 | Train Loss: 4.206e-04 | Val Loss: 1.225e-03 | LR: 5.00e-05
+Epoch 42/200 | Train Loss: 4.182e-04 | Val Loss: 1.205e-03 | LR: 5.00e-05
+Epoch 43/200 | Train Loss: 4.155e-04 | Val Loss: 9.004e-04 | LR: 5.00e-05
+Epoch 44/200 | Train Loss: 4.168e-04 | Val Loss: 1.139e-03 | LR: 5.00e-05
+Epoch 45/200 | Train Loss: 4.139e-04 | Val Loss: 9.780e-04 | LR: 5.00e-05
+Early stopping triggered after 45 epochs!
+Evaluation Metrics:
+MAE: 3.8187e-02
+RMSE: 4.1769e-02
+R2: -0.1185

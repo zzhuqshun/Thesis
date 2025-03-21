@@ -6,7 +6,7 @@
 #SBATCH -J LSTM
 #SBATCH --cpus-per-task=2
 #SBATCH --gres=gpu:tesla:1
-#SBATCH --mem=64G
+#SBATCH --mem=96G
 #SBATCH --time=168:00:00
 #SBATCH --partition=gpu
 

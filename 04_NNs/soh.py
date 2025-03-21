@@ -34,15 +34,17 @@ print(f"Using device: {device}")
 
 # Hyperparameters dictionary
 hyperparams = {
-    "SEQUENCE_LENGTH": 360,
+    "MODEL" : "LSTM 10min liqun EFC",
+    "SEQUENCE_LENGTH": 144,
     "PREDICT_LENGTH": 1,
     "HIDDEN_SIZE": 64,
-    "NUM_LAYERS": 3,
-    "DROPOUT": 0.3,
+    "NUM_LAYERS": 2,
+    "DROPOUT": 0.2,
     "BATCH_SIZE": 64,
-    "LEARNING_RATE": 0.001,
+    "LEARNING_RATE": 1e-4,
     "EPOCHS": 200,
-    "PATIENCE": 20
+    "PATIENCE": 20,
+    "WEIGHT_DECAY": 1e-5
 }
 
 # Save hyperparameters in the run folder
@@ -71,7 +73,7 @@ class CellDataset(Dataset):
         self.pred_len = pred_len
         
         # Define feature and label columns
-        features_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
+        features_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]', 'EFC']
         label_col = 'SOH_ZHU'
         cell_id_col = 'cell_id'
         
@@ -156,11 +158,12 @@ def train_and_validation(model, train_loader, val_loader, hyperparams):
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(),
                                  lr=hyperparams["LEARNING_RATE"],
-                                 weight_decay=1e-4)
+                                 weight_decay=hyperparams["WEIGHT_DECAY"])
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
                                                            mode='min',
-                                                           factor=0.1,
-                                                           patience=10)
+                                                           factor=0.5,
+                                                           patience=10,
+                                                           min_lr=1e-6)
 
     epochs_no_improve = 0
     best_val_loss = float('inf')
@@ -256,7 +259,7 @@ def evaluate_model(model, data_loader):
 # Main function
 def main():
     # Initialize the model
-    model = LSTMmodel(input_dim=3,
+    model = LSTMmodel(input_dim=4,
                       hidden_dim=hyperparams["HIDDEN_SIZE"],
                       num_layers=hyperparams["NUM_LAYERS"],
                       dropout=hyperparams["DROPOUT"],

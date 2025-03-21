@@ -1,0 +1,13 @@
+{
+    "MODEL": "LSTM",
+    "SEQUENCE_LENGTH": 720,
+    "PREDICT_LENGTH": 1,
+    "HIDDEN_SIZE": 128,
+    "NUM_LAYERS": 3,
+    "DROPOUT": 0.3,
+    "BATCH_SIZE": 64,
+    "LEARNING_RATE": 0.001,
+    "EPOCHS": 200,
+    "PATIENCE": 20,
+    "WEIGHT_DECAY": 0.001
+}

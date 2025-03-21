@@ -34,6 +34,7 @@ print(f"Using device: {device}")
 
 # Hyperparameters dictionary
 hyperparams = {
+    "MODEL": "Transformer",
     "SEQUENCE_LENGTH": 360,
     "PREDICT_LENGTH": 1,
     "HIDDEN_SIZE": 64,

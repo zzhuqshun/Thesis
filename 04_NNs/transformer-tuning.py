@@ -186,9 +186,9 @@ def objective(trial):
     hidden_dim = trial.suggest_categorical('hidden_dim', [32, 64, 128])
     num_layers = trial.suggest_int('num_layers', 1, 4)
     num_heads = trial.suggest_categorical('num_heads', [2, 4, 8])
-    dropout = trial.suggest_float('dropout', 0.1, 0.5)
+    dropout = trial.suggest_float('dropout', 0.2, 0.5, step = 0.1)
     sequence_length = trial.suggest_int('sequence_length', 60, 1440, step=60)
-    pred_len = trial.suggest_int('pred_len', 1, 60)
+    pred_len = trial.suggest_categorical('pred_len', [1, 60])
     batch_size = trial.suggest_categorical('batch_size', [32, 64, 128])
     learning_rate = trial.suggest_float('learning_rate', 1e-4, 1e-2, log=True)
     

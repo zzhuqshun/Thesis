@@ -1,0 +1,78 @@
+Using device: cuda
+Found 15 parquet files
+Processing C01 ...
+Processing C03 ...
+Processing C05 ...
+Processing C07 ...
+Processing C09 ...
+Processing C15 ...
+Processing C11 ...
+Processing C17 ...
+Processing C13 ...
+Processing C19 ...
+Processing C21 ...
+Processing C23 ...
+Processing C27 ...
+Processing C29 ...
+Processing C25 ...
+Cell split completed:
+Training set: 13 cells
+Validation set: 1 cells
+Test set: 1 cells
+Final dataset sizes:
+Training set: 285880 rows (split into 13 parts)
+Validation set: 26791 rows from 1 cells
+Test set: 27189 rows from 1 cells
+
+Start training...
+Epoch 1/200 | Train Loss: 1.681e-02 | Val Loss: 2.992e-03 | LR: 1.00e-04
+Epoch 2/200 | Train Loss: 4.768e-03 | Val Loss: 2.305e-03 | LR: 1.00e-04
+Epoch 3/200 | Train Loss: 1.913e-03 | Val Loss: 1.822e-03 | LR: 1.00e-04
+Epoch 4/200 | Train Loss: 1.130e-03 | Val Loss: 1.667e-03 | LR: 1.00e-04
+Epoch 5/200 | Train Loss: 9.268e-04 | Val Loss: 1.045e-03 | LR: 1.00e-04
+Epoch 6/200 | Train Loss: 8.575e-04 | Val Loss: 1.284e-03 | LR: 1.00e-04
+Epoch 7/200 | Train Loss: 8.146e-04 | Val Loss: 9.361e-04 | LR: 1.00e-04
+Epoch 8/200 | Train Loss: 7.893e-04 | Val Loss: 1.304e-03 | LR: 1.00e-04
+Epoch 9/200 | Train Loss: 7.610e-04 | Val Loss: 1.006e-03 | LR: 1.00e-04
+Epoch 10/200 | Train Loss: 7.482e-04 | Val Loss: 1.070e-03 | LR: 1.00e-04
+Epoch 11/200 | Train Loss: 7.343e-04 | Val Loss: 1.410e-03 | LR: 1.00e-04
+Epoch 12/200 | Train Loss: 7.255e-04 | Val Loss: 1.158e-03 | LR: 1.00e-04
+Epoch 13/200 | Train Loss: 7.038e-04 | Val Loss: 9.915e-04 | LR: 1.00e-04
+Epoch 14/200 | Train Loss: 6.768e-04 | Val Loss: 1.101e-03 | LR: 1.00e-04
+Epoch 15/200 | Train Loss: 6.431e-04 | Val Loss: 8.461e-04 | LR: 1.00e-04
+Epoch 16/200 | Train Loss: 5.971e-04 | Val Loss: 1.175e-03 | LR: 1.00e-04
+Epoch 17/200 | Train Loss: 5.764e-04 | Val Loss: 9.171e-04 | LR: 1.00e-04
+Epoch 18/200 | Train Loss: 5.700e-04 | Val Loss: 9.093e-04 | LR: 1.00e-04
+Epoch 19/200 | Train Loss: 5.594e-04 | Val Loss: 1.144e-03 | LR: 1.00e-04
+Epoch 20/200 | Train Loss: 5.446e-04 | Val Loss: 1.059e-03 | LR: 1.00e-04
+Epoch 21/200 | Train Loss: 5.365e-04 | Val Loss: 9.695e-04 | LR: 1.00e-04
+Epoch 22/200 | Train Loss: 5.256e-04 | Val Loss: 1.046e-03 | LR: 1.00e-04
+Epoch 23/200 | Train Loss: 5.173e-04 | Val Loss: 8.204e-04 | LR: 1.00e-04
+Epoch 24/200 | Train Loss: 5.145e-04 | Val Loss: 8.570e-04 | LR: 1.00e-04
+Epoch 25/200 | Train Loss: 4.969e-04 | Val Loss: 7.048e-04 | LR: 1.00e-04
+Epoch 26/200 | Train Loss: 4.955e-04 | Val Loss: 6.071e-04 | LR: 1.00e-04
+Epoch 27/200 | Train Loss: 4.874e-04 | Val Loss: 7.936e-04 | LR: 1.00e-04
+Epoch 28/200 | Train Loss: 4.745e-04 | Val Loss: 8.764e-04 | LR: 1.00e-04
+Epoch 29/200 | Train Loss: 4.747e-04 | Val Loss: 8.336e-04 | LR: 1.00e-04
+Epoch 30/200 | Train Loss: 4.637e-04 | Val Loss: 7.585e-04 | LR: 1.00e-04
+Epoch 31/200 | Train Loss: 4.599e-04 | Val Loss: 8.341e-04 | LR: 1.00e-04
+Epoch 32/200 | Train Loss: 4.576e-04 | Val Loss: 7.551e-04 | LR: 1.00e-04
+Epoch 33/200 | Train Loss: 4.563e-04 | Val Loss: 7.682e-04 | LR: 1.00e-04
+Epoch 34/200 | Train Loss: 4.574e-04 | Val Loss: 7.411e-04 | LR: 1.00e-04
+Epoch 35/200 | Train Loss: 4.530e-04 | Val Loss: 7.741e-04 | LR: 1.00e-04
+Epoch 36/200 | Train Loss: 4.486e-04 | Val Loss: 7.445e-04 | LR: 1.00e-04
+Epoch 37/200 | Train Loss: 4.399e-04 | Val Loss: 6.525e-04 | LR: 5.00e-05
+Epoch 38/200 | Train Loss: 4.110e-04 | Val Loss: 6.228e-04 | LR: 5.00e-05
+Epoch 39/200 | Train Loss: 4.141e-04 | Val Loss: 8.065e-04 | LR: 5.00e-05
+Epoch 40/200 | Train Loss: 4.081e-04 | Val Loss: 7.069e-04 | LR: 5.00e-05
+Epoch 41/200 | Train Loss: 4.046e-04 | Val Loss: 7.171e-04 | LR: 5.00e-05
+Epoch 42/200 | Train Loss: 4.065e-04 | Val Loss: 7.062e-04 | LR: 5.00e-05
+Epoch 43/200 | Train Loss: 4.068e-04 | Val Loss: 8.028e-04 | LR: 5.00e-05
+Epoch 44/200 | Train Loss: 4.044e-04 | Val Loss: 7.325e-04 | LR: 5.00e-05
+Epoch 45/200 | Train Loss: 4.044e-04 | Val Loss: 6.953e-04 | LR: 5.00e-05
+Epoch 46/200 | Train Loss: 4.044e-04 | Val Loss: 6.986e-04 | LR: 5.00e-05
+Early stopping triggered after 46 epochs!
+Evaluation Metrics:
+MAE: 1.6545e-02
+RMSE: 2.0976e-02
+R2: 0.7181

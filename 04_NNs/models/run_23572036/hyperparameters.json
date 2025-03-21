@@ -1,0 +1,13 @@
+{
+    "MODEL": "Optuna hyperparameters tuning 10min",
+    "SEQUENCE_LENGTH": [72, 432, "step = 72"],
+    "PREDICT_LENGTH": [1, 6, "catagorical"],
+    "HIDDEN_SIZE": [64, 128],
+    "NUM_LAYERS": [2, 5],
+    "DROPOUT": [0.2, 0.5, "step = 0.1"],
+    "BATCH_SIZE": [32, 64],
+    "LEARNING_RATE": [1e-4, "lr-scheduler"],
+    "EPOCHS": 100,
+    "PATIENCE": 10,
+    "WEIGHT_DECAY": [1e-5, 1e-4]
+}
