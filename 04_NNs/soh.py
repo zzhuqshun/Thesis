@@ -7,11 +7,11 @@ import datetime
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-
+import time
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
-from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
+from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error, mean_absolute_percentage_error
 
 # Import custom data processing functions
 from data_processing import load_data, split_data, scale_data
@@ -34,17 +34,17 @@ print(f"Using device: {device}")
 
 # Hyperparameters dictionary
 hyperparams = {
-    "MODEL" : "LSTM 10min liqun EFC",
+    "MODEL" : "LSTM 10min liqun",
     "SEQUENCE_LENGTH": 144,
     "PREDICT_LENGTH": 1,
     "HIDDEN_SIZE": 64,
     "NUM_LAYERS": 2,
     "DROPOUT": 0.2,
     "BATCH_SIZE": 64,
-    "LEARNING_RATE": 1e-4,
+    "LEARNING_RATE": 1e-3,
     "EPOCHS": 200,
     "PATIENCE": 20,
-    "WEIGHT_DECAY": 1e-5
+    "WEIGHT_DECAY": 0.0
 }
 
 # Save hyperparameters in the run folder
@@ -61,7 +61,7 @@ train_scaled, val_scaled, test_scaled = scale_data(train_df, val_df, test_df)
 
 # Custom Dataset for cell data
 class CellDataset(Dataset):
-    def __init__(self, df, sequence_length=60, pred_len=1, stride=1):
+    def __init__(self, df, sequence_length=60, pred_len=1):
         """
         Args:
             df (DataFrame): input data
@@ -70,32 +70,30 @@ class CellDataset(Dataset):
             stride (int): sliding window stride
         """
         self.sequence_length = sequence_length
-        self.pred_len = pred_len
         
-        # Define feature and label columns
-        features_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]', 'EFC']
+        # Get the features and labels
+        features_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
         label_col = 'SOH_ZHU'
-        cell_id_col = 'cell_id'
+        features = torch.tensor(df[features_cols].values, dtype=torch.float32)
+        labels = torch.tensor(df[label_col].values, dtype=torch.float32)
         
-        self.features = []
-        self.labels = []
+        # Create the sequence data using efficient preallocated memory method
+        n_samples = len(df) - sequence_length - pred_len + 1
+        if pred_len == 1:
+            self.labels = torch.zeros(n_samples, dtype=torch.float32)
+        else:
+            self.labels = torch.zeros((n_samples, pred_len), dtype=torch.float32)
+
+        self.features = torch.zeros((n_samples, sequence_length, len(features_cols)), dtype=torch.float32)
         
-        # Process data for each cell separately
-        for cell_id in df[cell_id_col].unique():
-            cell_data = df[df[cell_id_col] == cell_id].sort_index()
-            cell_features = torch.tensor(cell_data[features_cols].values, dtype=torch.float32)
-            cell_labels = torch.tensor(cell_data[label_col].values, dtype=torch.float32)
-            n_samples = len(cell_data) - sequence_length - pred_len + 1
-            
-            if n_samples > 0:
-                for i in range(0, n_samples, stride):
-                    feature_window = cell_features[i:i + sequence_length]
-                    label_window = cell_labels[i + sequence_length:i + sequence_length + pred_len]
-                    self.features.append(feature_window)
-                    self.labels.append(label_window)
-        
-        self.features = torch.stack(self.features)  # (n_samples, sequence_length, n_features)
-        self.labels = torch.stack(self.labels)       # (n_samples, pred_len)
+        # Create the sequence window data for each sample using tensor slicing
+        for i in range(n_samples):
+            self.features[i] = features[i:i+sequence_length]
+            if pred_len == 1:
+                self.labels[i] = labels[i+sequence_length]
+            else:
+                self.labels[i] = labels[i+sequence_length:i+sequence_length+pred_len]
+
 
     def __len__(self):
         return len(self.features)
@@ -184,7 +182,10 @@ def train_and_validation(model, train_loader, val_loader, hyperparams):
                 features, labels = features.to(device), labels.to(device)
                 optimizer.zero_grad()
                 outputs, _ = model(features)
-                loss = criterion(outputs, labels)
+                if hyperparams["PREDICT_LENGTH"] > 1:
+                    loss = criterion(outputs, labels)
+                else:
+                    loss = criterion(outputs.squeeze(-1), labels)
                 loss.backward()
                 nn.utils.clip_grad_norm_(model.parameters(), max_norm=1)
                 optimizer.step()
@@ -200,7 +201,10 @@ def train_and_validation(model, train_loader, val_loader, hyperparams):
             for features, labels in val_loader:
                 features, labels = features.to(device), labels.to(device)
                 outputs, _ = model(features)
-                loss = criterion(outputs, labels)
+                if hyperparams["PREDICT_LENGTH"] > 1:
+                    loss = criterion(outputs, labels)
+                else:
+                    loss = criterion(outputs.squeeze(-1), labels)
                 val_loss += loss.item()
         val_loss /= len(val_loader)
         history["val_loss"].append(val_loss)
@@ -213,21 +217,19 @@ def train_and_validation(model, train_loader, val_loader, hyperparams):
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             epochs_no_improve = 0
-            best_model = copy.deepcopy(model)
+            torch.save(model.state_dict(), os.path.join(args.run_folder, 'best.pth'))
         else:
             epochs_no_improve += 1
             if epochs_no_improve >= hyperparams["PATIENCE"]:
                 print(f'Early stopping triggered after {epoch+1} epochs!')
                 break
 
-    last_model = copy.deepcopy(model)
-    history_df = pd.DataFrame(history)
     # Save all files in the unique run folder
+    history_df = pd.DataFrame(history)
     history_df.to_parquet(os.path.join(args.run_folder, 'history.parquet'), index=False)
-    torch.save(best_model, os.path.join(args.run_folder, 'best.pth'))
-    torch.save(last_model, os.path.join(args.run_folder, 'last.pth'))
+    torch.save(model.state_dict(), os.path.join(args.run_folder, 'last.pth'))
 
-    return history_df, best_model, last_model
+    return history_df
 
 # Evaluation function
 def evaluate_model(model, data_loader):
@@ -239,18 +241,23 @@ def evaluate_model(model, data_loader):
         for features, labels in data_loader:
             features, labels = features.to(device), labels.to(device)
             outputs, _ = model(features)
-            predictions.extend(outputs.cpu().numpy())
-            true_labels.extend(labels.cpu().numpy())
+            if hyperparams["PREDICT_LENGTH"] > 1:
+                predictions.append(outputs.cpu().numpy())
+            else:
+                predictions.append(outputs.squeeze(-1).cpu().numpy())
+            true_labels.append(labels.cpu().numpy())
 
-    predictions = np.array(predictions)
-    true_labels = np.array(true_labels)
+    predictions = np.concatenate(predictions)
+    true_labels = np.concatenate(true_labels)
 
     mae = mean_absolute_error(true_labels, predictions)
+    mape =  mean_absolute_percentage_error(true_labels, predictions)
     rmse = np.sqrt(mean_squared_error(true_labels, predictions))
     r2 = r2_score(true_labels, predictions)
 
     print("Evaluation Metrics:")
     print("MAE: {:.4e}".format(mae))
+    print("MAPE: {:.4e}".format(mape))
     print("RMSE: {:.4e}".format(rmse))
     print("R2: {:.4f}".format(r2))
 
@@ -259,18 +266,22 @@ def evaluate_model(model, data_loader):
 # Main function
 def main():
     # Initialize the model
-    model = LSTMmodel(input_dim=4,
+    model = LSTMmodel(input_dim=3,
                       hidden_dim=hyperparams["HIDDEN_SIZE"],
                       num_layers=hyperparams["NUM_LAYERS"],
                       dropout=hyperparams["DROPOUT"],
                       output_length=hyperparams["PREDICT_LENGTH"])
     model.to(device)
-
+    start_time = time.time()
     # Train and validate
-    history, best_model, last_model = train_and_validation(model, train_loader, val_loader, hyperparams)
-
+    train_and_validation(model, train_loader, val_loader, hyperparams)
+    
+    end_time = time.time()
+    elapsed = end_time - start_time
+    print("Total training time: {:.2f} seconds".format(elapsed))
+    model.load_state_dict(torch.load(os.path.join(args.run_folder, 'best.pth'), weights_only=True))
     # Evaluate the model on the test set
-    evaluate_model(best_model, test_loader)
+    evaluate_model(model, test_loader)
 
 if __name__ == "__main__":
     main()

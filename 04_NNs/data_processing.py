@@ -36,25 +36,25 @@ def load_data(data_dir: str) -> pd.DataFrame:
         # Select columns of interest
         data = data[['Absolute_Time[yyyy-mm-dd hh:mm:ss]', 
                      'Current[A]', 'Voltage[V]', 
-                     'Temperature[°C]', 'SOH_ZHU','EFC']]
+                     'Temperature[°C]', 'SOH_ZHU']]
         
         # Resample the data to 1-minute intervals, then interpolate
-        data_hourly = data.set_index('Absolute_Time[yyyy-mm-dd hh:mm:ss]').resample('10min').mean()
-        data_hourly.interpolate(method='linear', inplace=True)
-        data_hourly.dropna(inplace=True)
-        data_hourly.reset_index(drop=True, inplace=True)
+        data_selected = data.set_index('Absolute_Time[yyyy-mm-dd hh:mm:ss]').resample('10min').mean()
+        data_selected.interpolate(method='linear', inplace=True)
+        data_selected.dropna(inplace=True)
+        data_selected.reset_index(drop=True, inplace=True)
         
         # Add a time index column
-        data_hourly['Testtime[min]'] = data_hourly.index
+        data_selected['Testtime[min]'] = data_selected.index
         
         # Add a cell_id column
-        data_hourly['cell_id'] = cell_name
+        data_selected['cell_id'] = cell_name
         
         # Reorder columns
-        data_hourly = data_hourly[['Testtime[min]', 'Current[A]', 'Voltage[V]',
-                                   'Temperature[°C]', 'cell_id', 'SOH_ZHU','EFC']]
+        data_selected = data_selected[['Testtime[min]', 'Current[A]', 'Voltage[V]',
+                                   'Temperature[°C]', 'cell_id', 'SOH_ZHU']]
         
-        df_list.append(data_hourly)
+        df_list.append(data_selected)
     
     # Concatenate all processed dataframes
     return pd.concat(df_list, ignore_index=True)
@@ -170,7 +170,7 @@ def scale_data(train_df: pd.DataFrame,
     """
     Scale the specified columns in the dataset using StandardScaler fitted on the training set.
     """
-    columns_to_scale = ['Current[A]', 'Temperature[°C]', 'Voltage[V]','EFC']
+    columns_to_scale = ['Current[A]', 'Temperature[°C]', 'Voltage[V]']
     
     # Fit the scaler on the training data
     scaler = StandardScaler()
