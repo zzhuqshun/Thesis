@@ -14,10 +14,11 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, r2_score
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
-import seaborn as sns
 from tqdm import tqdm
 import optuna
 import copy
+from soh_lstm  import *
+
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Hyperparameter tuning for SOH LSTM model")
@@ -343,13 +344,13 @@ def objective(trial):
     """
     # Suggest values for the hyperparameters
     hyperparams = {
-        "SEQUENCE_LENGTH": trial.suggest_categorical("SEQUENCE_LENGTH", [72, 144, 216, 288]),
-        "HIDDEN_SIZE": trial.suggest_categorical("HIDDEN_SIZE", [32, 64, 128, 256]),
-        "NUM_LAYERS": trial.suggest_int("NUM_LAYERS", 1, 4),
-        "DROPOUT": trial.suggest_float("DROPOUT", 0.1, 0.5, step=0.1),
+        "SEQUENCE_LENGTH": trial.suggest_categorical("SEQUENCE_LENGTH", [144, 216, 288, 360, 432]),
+        "HIDDEN_SIZE": trial.suggest_categorical("HIDDEN_SIZE", [32, 64, 128]),
+        "NUM_LAYERS": trial.suggest_int("NUM_LAYERS", 2, 5),
+        "DROPOUT": trial.suggest_categorical("DROPOUT", [0.1, 0.2, 0.3, 0.4, 0.5]),
         "BATCH_SIZE": trial.suggest_categorical("BATCH_SIZE", [32, 64, 128]),
-        "LEARNING_RATE": trial.suggest_float("LEARNING_RATE", 1e-4, 1e-2, log=True),
-        "WEIGHT_DECAY": trial.suggest_float("WEIGHT_DECAY", 1e-6, 1e-3, log=True),
+        "LEARNING_RATE": trial.suggest_categorical("LEARNING_RATE", [1e-4, 1e-3]),
+        "WEIGHT_DECAY": trial.suggest_categorical("WEIGHT_DECAY", [0, 1e-5, 1e-4])
     }
     
     # Log the hyperparameters for this trial
