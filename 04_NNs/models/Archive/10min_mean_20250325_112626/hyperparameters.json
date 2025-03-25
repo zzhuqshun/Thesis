@@ -1,0 +1,13 @@
+{
+    "MODEL": "LSTM reasmple mean 10min",
+    "SEQUENCE_LENGTH": 144,
+    "HIDDEN_SIZE": 64,
+    "NUM_LAYERS": 2,
+    "DROPOUT": 0.2,
+    "BATCH_SIZE": 64,
+    "LEARNING_RATE": 0.001,
+    "EPOCHS": 100,
+    "PATIENCE": 15,
+    "WEIGHT_DECAY": 0,
+    "device": "cuda:0"
+}

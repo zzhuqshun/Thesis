@@ -1,0 +1,40 @@
+Best trial: 
+FrozenTrial(number=41, state=TrialState.COMPLETE, 
+    values=[2.825243887962415e-06], 
+    datetime_start=datetime.datetime(2025, 2, 27, 16, 36, 53, 357280), 
+    datetime_complete=datetime.datetime(2025, 2, 27, 17, 46, 43, 519254), 
+    params={'hidden_size': 80, 
+        'num_layers': 5, 
+        'learning_rate': 1.4296450393279462e-05,
+        'dropout': 0.4853053053325258, 
+        'weight_decay': 0.00012402443665515258, 
+        'seed_len': 13, 
+        'pred_len': 10, 
+        'batch_size': 16
+        }, 
+    user_attrs={}, 
+    system_attrs={}, 
+    intermediate_values={}, 
+    distributions={
+        'hidden_size': IntDistribution(high=256, log=False, low=32, step=16), 
+        'num_layers': IntDistribution(high=5, log=False, low=2, step=1), 
+        'learning_rate': FloatDistribution(high=0.1, log=True, low=1e-05, step=None), 
+        'dropout': FloatDistribution(high=0.5, log=False, low=0.1, step=None), 
+        'weight_decay': FloatDistribution(high=0.1, log=True, low=1e-05, step=None), 
+        'seed_len': IntDistribution(high=128, log=False, low=12, step=1), 
+        'pred_len': IntDistribution(high=20, log=False, low=1, step=1), 
+        'batch_size': IntDistribution(high=64, log=False, low=16, step=8)
+        }, 
+    trial_id=41, 
+    value=None
+)
+
+Best hyperparameters: 
+{'hidden_size': 80, 
+'num_layers': 5, 
+'learning_rate': 1.4296450393279462e-05, 
+'dropout': 0.4853053053325258, 
+'weight_decay': 0.00012402443665515258, 
+'seed_len': 13, 
+'pred_len': 10, 
+'batch_size': 16}

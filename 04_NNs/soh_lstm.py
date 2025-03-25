@@ -20,41 +20,30 @@ from tqdm import tqdm
 # Set configurations
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-save_dir = Path(__file__).parent / f"models/10minresample_{timestamp}" # 10minresample
-# save_dir = Path(__file__).parent / f"models/600resample_20250323_165142"
+save_dir = Path(__file__).parent / f"models/10min_mean_{timestamp}" # 10minresample
+# save_dir = Path(__file__).parent / f"models/10min_mean_20250325_113846"
 save_dir.mkdir(exist_ok=True)
 hyperparams = {
-    "MODEL" : "LSTM 10min liqun",
-    "SEQUENCE_LENGTH": 144,
+    "MODEL" : "LSTM reasmple mean 10min",
+    "SEQUENCE_LENGTH": 288,  
     "HIDDEN_SIZE": 64,
     "NUM_LAYERS": 3,
-    "DROPOUT": 0.2,
+    "DROPOUT": 0.3,
     "BATCH_SIZE": 64,
     "LEARNING_RATE": 1e-3,
-    "EPOCHS": 50,
+    "EPOCHS": 100,
     "PATIENCE": 10,
-    "WEIGHT_DECAY": 0.0,
+    "WEIGHT_DECAY": 1e-6,
     "device": str(device)
 }
-
-# Save hyperparameters to a JSON file
-hyperparams_path = save_dir / "hyperparameters.json"
-with open(hyperparams_path, "w") as f:
-    json.dump(hyperparams, f, indent=4)
-    
-# Unpack hyperparameters
-SEQUENCE_LENGTH = hyperparams["SEQUENCE_LENGTH"]
-HIDDEN_SIZE = hyperparams["HIDDEN_SIZE"]
-NUM_LAYERS = hyperparams["NUM_LAYERS"]
-DROPOUT = hyperparams["DROPOUT"]
-BATCH_SIZE = hyperparams["BATCH_SIZE"]
-LEARNING_RATE = hyperparams["LEARNING_RATE"]
-EPOCHS = hyperparams["EPOCHS"]
-PATIENCE = hyperparams["PATIENCE"]
-WEIGHT_DECAY = hyperparams["WEIGHT_DECAY"]
-
+ 
 # Main execution
 def main():
+    
+    # Save hyperparameters to a JSON file
+    hyperparams_path = save_dir / "hyperparameters.json"
+    with open(hyperparams_path, "w") as f: 
+        json.dump(hyperparams, f, indent=4)
     # Set the seed and device
     set_seed(6)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -70,21 +59,21 @@ def main():
     df_train_scaled, df_val_scaled, df_test_scaled = scale_data(df_train, df_val, df_test, scaler_type='standard')
 
     # Create the DataSets and DataLoaders
-    train_dataset = BatteryDataset(df_train_scaled, SEQUENCE_LENGTH)
-    val_dataset = BatteryDataset(df_val_scaled, SEQUENCE_LENGTH)
-    test_dataset = BatteryDataset(df_test_scaled, SEQUENCE_LENGTH)
+    train_dataset = BatteryDataset(df_train_scaled, hyperparams["SEQUENCE_LENGTH"])
+    val_dataset = BatteryDataset(df_val_scaled, hyperparams["SEQUENCE_LENGTH"])
+    test_dataset = BatteryDataset(df_test_scaled, hyperparams["SEQUENCE_LENGTH"])
 
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, pin_memory=torch.cuda.is_available())
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, pin_memory=torch.cuda.is_available())
-    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, pin_memory=torch.cuda.is_available())
+    train_loader = DataLoader(train_dataset, batch_size=hyperparams['BATCH_SIZE'], shuffle=True, pin_memory=torch.cuda.is_available())
+    val_loader = DataLoader(val_dataset, batch_size=hyperparams['BATCH_SIZE'], shuffle=False, pin_memory=torch.cuda.is_available())
+    test_loader = DataLoader(test_dataset, batch_size=hyperparams['BATCH_SIZE'], shuffle=False, pin_memory=torch.cuda.is_available())
 
     # ==================== Model Initialization ====================
     # Initialize the LSTM model
     model = SOHLSTM(
         input_size=3,  # The number of features (voltage, current, temperature)
-        hidden_size=HIDDEN_SIZE, 
-        num_layers=NUM_LAYERS, 
-        dropout=DROPOUT
+        hidden_size=hyperparams['HIDDEN_SIZE'], 
+        num_layers=hyperparams['NUM_LAYERS'], 
+        dropout=hyperparams['DROPOUT']
     ).to(device)
     
     # Count the total parameters and calculate the model size
@@ -111,7 +100,7 @@ def main():
     TRAINING_MODE = True
     # Define which trained model to load and evaluate
     LOAD_MODEL_TYPE = 'last'  # 'best' or 'last'
-
+ 
     if TRAINING_MODE:
         # Train and validate the model
         train_and_validate_model(model, train_loader, val_loader, save_path)
@@ -194,7 +183,7 @@ def load_data(data_dir: Path):
         
         # Sample data every 10 minutes to reduce data size
         # df_sampled = df_processed.iloc[::600].reset_index(drop=True)
-        df_sampled = df_processed.resample('10min', on='Datetime').first().reset_index(drop=False)
+        df_sampled = df_processed.resample('10min', on='Datetime').mean().reset_index(drop=False)
         
         return df_sampled, file_path.name
 
@@ -363,7 +352,7 @@ def train_and_validate_model(model, train_loader, val_loader, save_path):
     """
     # Define the loss function and optimizer
     criterion = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+    optimizer = torch.optim.Adam(model.parameters(), lr=hyperparams['LEARNING_RATE'], weight_decay=hyperparams['WEIGHT_DECAY'])
     # Define learning rate scheduler and early stopping
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
 
@@ -380,12 +369,12 @@ def train_and_validate_model(model, train_loader, val_loader, save_path):
 
     # Start training
     print('\nStart training...')
-    for epoch in range(EPOCHS):
+    for epoch in range(hyperparams['EPOCHS']):
         # ==================== Training phase ====================
         model.train()
         train_loss = 0.0
 
-        with tqdm(total=len(train_loader), desc=f'Epoch {epoch+1}/{EPOCHS}', leave=False) as pbar:
+        with tqdm(total=len(train_loader), desc=f'Epoch {epoch+1}/{hyperparams["EPOCHS"]}', leave=False) as pbar:
             for features, labels in train_loader:
                 features, labels = features.to(device), labels.to(device)
                 # Clear the previous gradients
@@ -429,7 +418,7 @@ def train_and_validate_model(model, train_loader, val_loader, save_path):
         scheduler.step(val_loss)
 
         # Display the training and validation loss and learning rate
-        print(f'Epoch {epoch + 1}/{EPOCHS} | '
+        print(f'Epoch {epoch + 1}/{hyperparams["EPOCHS"]} | '
               f'Training Loss: {train_loss:.3e} | '
               f'Validation Loss: {val_loss:.3e} | '
               f'LR: {optimizer.param_groups[0]["lr"]:.2e}')
@@ -441,7 +430,7 @@ def train_and_validate_model(model, train_loader, val_loader, save_path):
             torch.save(model.state_dict(), save_path['best'])
         else:
             epochs_no_improve += 1
-            if epochs_no_improve >= PATIENCE:
+            if epochs_no_improve >= hyperparams['PATIENCE']:
                 print(f'Early stopping triggered after {epoch + 1} epochs!')
                 break
         
@@ -453,7 +442,7 @@ def train_and_validate_model(model, train_loader, val_loader, save_path):
     history_df.to_parquet(save_path['history'], index=False)
     print(f'Training history saved to {save_path["history"]}')
 
-    return history
+    return history, best_val_loss
 
 def evaluate_model(model, data_loader):
     """
@@ -553,7 +542,7 @@ def plot_results(predictions, targets, metrics, df_test_scaled, save_dir):
 
     # 1. 绘制基于时间的实际与预测 SOH 值
     plt.figure(figsize=(10, 6))
-    datetime_vals = df_test_scaled['Datetime'].iloc[SEQUENCE_LENGTH:].values
+    datetime_vals = df_test_scaled['Datetime'].iloc[hyperparams['SEQUENCE_LENGTH']:].values
     plt.plot(datetime_vals, targets, label='Actual SOH', color='blue', lw=2)
     plt.plot(datetime_vals, predictions, label='Predicted SOH', color='red', alpha=0.5)
     plt.title('Actual vs. Predicted SOH values\n'

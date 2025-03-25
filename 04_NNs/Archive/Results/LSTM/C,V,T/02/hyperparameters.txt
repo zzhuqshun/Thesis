@@ -1,0 +1,9 @@
+Best hyperparameters: 
+{'hidden_size': 80, 
+'num_layers': 5, 
+'learning_rate': 1.4296450393279462e-05, 
+'dropout': 0.4853053053325258, 
+'weight_decay': 0.00012402443665515258, 
+'seed_len': 13, 
+'pred_len': 1, 
+'batch_size': 16}
