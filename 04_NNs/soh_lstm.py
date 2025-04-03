@@ -20,20 +20,20 @@ from tqdm import tqdm
 # Set configurations
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-save_dir = Path(__file__).parent / f"models/10min_mean_{timestamp}" # 10minresample
-# save_dir = Path(__file__).parent / f"models/10min_mean_20250325_113846"
+# save_dir = Path(__file__).parent / f"models/optuna_tryout_{timestamp}" # 10minresample
+save_dir = Path(__file__).parent / f"models/optuna_tryout/best/01"
 save_dir.mkdir(exist_ok=True)
 hyperparams = {
     "MODEL" : "LSTM reasmple mean 10min",
-    "SEQUENCE_LENGTH": 288,  
+    "SEQUENCE_LENGTH": 864,  
     "HIDDEN_SIZE": 64,
-    "NUM_LAYERS": 3,
-    "DROPOUT": 0.3,
-    "BATCH_SIZE": 64,
-    "LEARNING_RATE": 1e-3,
+    "NUM_LAYERS": 5,
+    "DROPOUT": 0.5,
+    "BATCH_SIZE": 32,
+    "LEARNING_RATE": 1e-4,
     "EPOCHS": 100,
     "PATIENCE": 10,
-    "WEIGHT_DECAY": 1e-6,
+    "WEIGHT_DECAY": 1e-5,
     "device": str(device)
 }
  
@@ -45,7 +45,7 @@ def main():
     with open(hyperparams_path, "w") as f: 
         json.dump(hyperparams, f, indent=4)
     # Set the seed and device
-    set_seed(6)
+    set_seed(42)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     torch.cuda.empty_cache()
     print(f'Using device: {device}\n')
@@ -97,9 +97,9 @@ def main():
     }
 
     # Define TRAINING_MODE to control if the model should be trained or loaded
-    TRAINING_MODE = True
+    TRAINING_MODE = False
     # Define which trained model to load and evaluate
-    LOAD_MODEL_TYPE = 'last'  # 'best' or 'last'
+    LOAD_MODEL_TYPE = 'best'  # 'best' or 'last'
  
     if TRAINING_MODE:
         # Train and validate the model
@@ -132,14 +132,17 @@ def main():
 
 # Set seed for reproducibility
 def set_seed(seed=42):
+    """Set seed for reproducibility"""
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
-def load_data(data_dir: Path):
+def load_data(data_dir: Path, resample = '10min'):
     """
     Load training, validation and test data from a single directory.
     Assumes filenames in the format: df_01.parquet, df_03.parquet, ...
@@ -183,7 +186,9 @@ def load_data(data_dir: Path):
         
         # Sample data every 10 minutes to reduce data size
         # df_sampled = df_processed.iloc[::600].reset_index(drop=True)
-        df_sampled = df_processed.resample('10min', on='Datetime').mean().reset_index(drop=False)
+        df_sampled = df_processed.resample(resample, on='Datetime').mean().reset_index(drop=False)
+        
+        df_sampled["cell_id"] = file_path.stem.split('_')[1]
         
         return df_sampled, file_path.name
 
@@ -295,6 +300,40 @@ class BatteryDataset(Dataset):
     def __getitem__(self, idx):
         return self.features[idx], self.labels[idx]
     
+# class BatteryDataset(Dataset):
+#     def __init__(self, df, sequence_length=60):
+#         self.sequence_length = sequence_length
+        
+#         # Get the features and labels
+#         features_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
+#         label_col = 'SOH_ZHU'
+        
+#         features_list = []
+#         labels_list = []
+#         cell_ids = []  # 可选：存储每个窗口对应的 cell id
+#         for cell, group in df.groupby('cell_id'):
+#             # 确保数据按时间顺序排列
+#             group = group.sort_values('Datetime')
+#             features_tensor = torch.tensor(group[features_cols].values, dtype=torch.float32)
+#             labels_tensor = torch.tensor(group[label_col].values, dtype=torch.float32)
+#             n_samples = len(group) - sequence_length
+#             if n_samples <= 0:
+#                 continue  # 如果该 cell 数据不足一个窗口则跳过
+#             for i in range(n_samples):
+#                 features_list.append(features_tensor[i:i+sequence_length])
+#                 labels_list.append(labels_tensor[i+sequence_length])
+#                 cell_ids.append(cell)
+                
+#         self.features = torch.stack(features_list)
+#         self.labels = torch.tensor(labels_list, dtype=torch.float32)
+#         self.cell_ids = cell_ids  # 如果后续需要用到 cell id，可以返回或进一步处理
+
+#     def __len__(self):
+#         return len(self.features)
+
+#     def __getitem__(self, idx):
+#         return self.features[idx], self.labels[idx]
+    
 # LSTM model for SOH prediction
 class SOHLSTM(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, dropout=0.2):
@@ -336,6 +375,13 @@ class SOHLSTM(nn.Module):
         out = self.fc_layers(out)
         
         return out.squeeze(-1)
+    
+    def get_params(self):
+        """Get model parameters as a flat vector"""
+        params = []
+        for param in self.parameters():
+            params.append(param.view(-1))
+        return torch.cat(params)
 
 def train_and_validate_model(model, train_loader, val_loader, save_path):
     """

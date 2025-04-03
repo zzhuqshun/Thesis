@@ -1,0 +1,12 @@
+{
+    "SEQUENCE_LENGTH": 720,
+    "HIDDEN_SIZE": 32,
+    "NUM_LAYERS": 5,
+    "DROPOUT": 0.4,
+    "LEARNING_RATE": 0.001,
+    "WEIGHT_DECAY": 1e-06,
+    "BATCH_SIZE": 32,
+    "EPOCHS": 100,
+    "PATIENCE": 10,
+    "best_val_loss": 0.0004362571181270467
+}
