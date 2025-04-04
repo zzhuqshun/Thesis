@@ -150,7 +150,7 @@ def main(model_type="structure_based(PNN)"):
         print("\nAdding column for second update...")
         task2_idx = pnn_model.add_column()
         print("Training column for second update...")
-        pnn_model = train_model(
+        pnn_model,_ = train_model(
             model=pnn_model,
             train_loader=update2_train_loader,
             val_loader=update2_val_loader,
@@ -788,7 +788,7 @@ def plot_results(save_dir, method_name, df_test, seq_len,
     # 此处 SEQUENCE_LENGTH 建议由全局变量 hyperparams 或其他方式提供
     sequence_length = seq_len
     datetime_vals = df_test['Datetime'].iloc[sequence_length:].values
-    true_vals = df_test['target'].iloc[sequence_length:].values
+    true_vals = df_test['SOH_ZHU'].iloc[sequence_length:].values
 
     # 转换预测值为 numpy 数组
     base_pred = np.array(base_pred)
@@ -838,8 +838,8 @@ def plot_results(save_dir, method_name, df_test, seq_len,
     annotate_segment(x_update2, update2_true, update2_pred, update2_metrics, "Update 2")
     
     plt.xlabel("Datetime")
-    plt.ylabel("Value")
-    plt.title(f"{method_name} - True vs Predicted Values Across Phases")
+    plt.ylabel("SOH")
+    plt.title(f"{method_name} - True vs Predicted SOH Across Phases")
     plt.legend()
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.tight_layout()

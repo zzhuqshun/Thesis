@@ -20,8 +20,8 @@ from tqdm import tqdm
 # Set configurations
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-# save_dir = Path(__file__).parent / f"models/optuna_tryout_{timestamp}" # 10minresample
-save_dir = Path(__file__).parent / f"models/optuna_tryout/best/01"
+save_dir = Path(__file__).parent / f"models/optuna_tryout_{timestamp}" # 10minresample
+# save_dir = Path(__file__).parent / f"models/optuna_tryout/best/01"
 save_dir.mkdir(exist_ok=True)
 hyperparams = {
     "MODEL" : "LSTM reasmple mean 10min",
