@@ -19,16 +19,18 @@ def load_and_prepare_data(data_dir: Path, resample='10min'):
         [f for f in data_dir.glob('*.parquet') if f.is_file()],
         key=lambda x: int(x.stem.split('_')[-1])
     )
-    
-    if len(parquet_files) < 15:
-        raise ValueError(f"Need at least 15 cell files, but found only {len(parquet_files)}")
-    
+
     # Random assignment of files to different sets
-    random.shuffle(parquet_files)
-    test_file = parquet_files[0]
-    base_files = parquet_files[1:5]
-    update1_files = parquet_files[5:10]
-    update2_files = parquet_files[10:15]
+    test_file = random.choice(parquet_files)
+    remaining_files = [f for f in parquet_files if f != test_file]
+
+    # Randomly shuffle the remaining files
+    random.shuffle(remaining_files)
+
+    # Assign the remaining files to different sets
+    base_files = remaining_files[:4]
+    update1_files = remaining_files[4:9]
+    update2_files = remaining_files[9:14]
     
     def process_file(file_path: Path):
         """Process a single parquet file into a resampled dataframe"""

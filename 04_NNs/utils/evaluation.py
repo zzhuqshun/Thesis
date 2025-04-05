@@ -152,8 +152,8 @@ def plot_results(save_dir, method_name, df_test, seq_len,
     
     # Create the main plot
     plt.figure(figsize=(15, 6))
-    plt.plot(datetime_vals[:len(true_vals)], true_vals, label='True Values', marker='o', linestyle='-')
-    plt.plot(datetime_vals[:len(all_pred)], all_pred, label='Predicted Values', marker='x', linestyle='--')
+    plt.plot(datetime_vals[:len(true_vals)], true_vals, label='True Values')
+    plt.plot(datetime_vals[:len(all_pred)], all_pred, label='Predicted Values')
     
     # Function to annotate each segment with metrics
     def annotate_segment(x_segment, seg_true, seg_pred, metrics, phase_name):
@@ -186,7 +186,7 @@ def plot_results(save_dir, method_name, df_test, seq_len,
     plt.ylabel("SOH")
     plt.title(f"{method_name} - True vs Predicted SOH Across Phases")
     plt.legend()
-    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.grid(True)
     plt.tight_layout()
     
     # Create output directory and save figure
@@ -214,10 +214,75 @@ def plot_results(save_dir, method_name, df_test, seq_len,
     plt.title(f'{method_name} - Performance Metrics Comparison')
     plt.xticks(x, metrics_names)
     plt.legend()
-    plt.grid(True, alpha=0.3)
+    plt.grid(True)
     plt.tight_layout()
     
     plt.savefig(results_dir / f"{method_name}_metrics_comparison.png")
     plt.close()
 
     print(f"Results saved to {results_dir}")
+    
+
+def plot_pnn_learning_curves(base_history, update1_history, update2_history, save_dir, filename="pnn_learning_curves.png"):
+    """
+    Plot and save learning curves for Progressive Neural Network training.
+    
+    Parameters:
+    -----------
+    base_history : dict
+        Dictionary containing 'epoch', 'train_loss', and 'val_loss' for the base model
+    update1_history : dict
+        Dictionary containing 'epoch', 'train_loss', and 'val_loss' for the first update
+    update2_history : dict
+        Dictionary containing 'epoch', 'train_loss', and 'val_loss' for the second update
+    save_dir : Path or str
+        Directory to save the figure
+    filename : str, optional
+        Filename for the saved figure, default is "pnn_learning_curves.png"
+    """
+    import matplotlib.pyplot as plt
+    from pathlib import Path
+    
+    # Make sure save_dir is a Path object
+    if not isinstance(save_dir, Path):
+        save_dir = Path(save_dir)
+    
+    # Create figure
+    plt.figure(figsize=(10, 6))
+    
+    # Base model
+    plt.plot(base_history["epoch"], base_history["train_loss"], label="Base Training Loss")
+    plt.plot(base_history["epoch"], base_history["val_loss"], label="Base Validation Loss")
+    
+    # First update - shift epochs to continue after base model
+    epoch_shift = max(base_history["epoch"])
+    plt.plot([e + epoch_shift for e in update1_history["epoch"]], 
+             update1_history["train_loss"], label="Update1 Training Loss")
+    plt.plot([e + epoch_shift for e in update1_history["epoch"]], 
+             update1_history["val_loss"], label="Update1 Validation Loss")
+    
+    # Second update - shift epochs to continue after first update
+    epoch_shift += max(update1_history["epoch"])
+    plt.plot([e + epoch_shift for e in update2_history["epoch"]], 
+             update2_history["train_loss"], label="Update2 Training Loss")
+    plt.plot([e + epoch_shift for e in update2_history["epoch"]], 
+             update2_history["val_loss"], label="Update2 Validation Loss")
+    
+    # Add labels and styling
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.yscale("log")
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.title("PNN Training and Validation Loss")
+    
+    # Create directory if it doesn't exist
+    save_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Save the figure
+    plt.savefig(save_dir / filename)
+    plt.close()
+    
+    print(f"Learning curves saved to {save_dir / filename}")
+    
+    return plt  # Return the plot object in case further modifications are needed

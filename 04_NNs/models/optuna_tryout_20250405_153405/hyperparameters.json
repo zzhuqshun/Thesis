@@ -1,5 +1,5 @@
 {
-    "MODEL_TYPE": "structure_based(PNN)",
+    "MODEL": "LSTM reasmple mean 10min",
     "SEQUENCE_LENGTH": 1008,
     "HIDDEN_SIZE": 128,
     "NUM_LAYERS": 3,

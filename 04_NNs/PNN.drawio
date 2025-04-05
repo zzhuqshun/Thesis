@@ -1,0 +1,91 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" version="24.7.16">
+  <diagram name="第 1 页" id="x1HOfTxzprQZQ-bmlOIu">
+    <mxGraphModel dx="875" dy="435" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="o5hn3e9TejQz5YwnFcND-25" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="10" y="154" width="200" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-1" value="&lt;b&gt;Data preparation&lt;/b&gt;&lt;div&gt;Base, Update 1, Update 2 (Train/Val)&lt;br&gt;Test in 3 part (Base, Update 1, Update 2)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;" vertex="1" parent="1">
+          <mxGeometry x="180" y="90" width="290" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="o5hn3e9TejQz5YwnFcND-2" target="o5hn3e9TejQz5YwnFcND-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="332" y="184" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-2" value="Initialize first column (Task 0)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="20" y="169" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="o5hn3e9TejQz5YwnFcND-4" target="o5hn3e9TejQz5YwnFcND-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="o5hn3e9TejQz5YwnFcND-4" target="o5hn3e9TejQz5YwnFcND-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-4" value="&lt;b&gt;Base stage&lt;/b&gt;&lt;br&gt;train first column" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="250" y="200" width="164" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.475;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="o5hn3e9TejQz5YwnFcND-1" target="o5hn3e9TejQz5YwnFcND-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="101" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="o5hn3e9TejQz5YwnFcND-7" target="o5hn3e9TejQz5YwnFcND-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-7" value="Freeze first column&lt;br&gt;Add second column (Task 1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="20" y="250" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="o5hn3e9TejQz5YwnFcND-9" target="o5hn3e9TejQz5YwnFcND-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="o5hn3e9TejQz5YwnFcND-9" target="o5hn3e9TejQz5YwnFcND-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-9" value="&lt;b&gt;Update 1 stage&lt;br&gt;&lt;/b&gt;train second column" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="250" y="290" width="164" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="o5hn3e9TejQz5YwnFcND-11" target="o5hn3e9TejQz5YwnFcND-12">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="332" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-11" value="Freeze second column&lt;br&gt;Add third column (Task 2)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="20" y="340" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="o5hn3e9TejQz5YwnFcND-12" target="o5hn3e9TejQz5YwnFcND-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-12" value="&lt;b&gt;Update 2 stage&lt;br&gt;&lt;/b&gt;train third column" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="250" y="380" width="164" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-15" value="&lt;b&gt;Base stage&lt;br&gt;&lt;/b&gt;Test on first part" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="460" y="200" width="164" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-17" value="&lt;b&gt;Update 1 stage&lt;br&gt;&lt;/b&gt;Test on second part" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="460" y="290" width="164" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-19" value="&lt;b&gt;Update 2 stage&lt;br&gt;&lt;/b&gt;Test on third part" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="460" y="380" width="164" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-21" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="500" y="80" width="270" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-22" value="&lt;b&gt;PNN&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="605" y="80" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="o5hn3e9TejQz5YwnFcND-23" value="&lt;ul&gt;&lt;li class=&quot;whitespace-normal break-words&quot;&gt;Strict parameter isolation&lt;/li&gt;&lt;li class=&quot;whitespace-normal break-words&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Complete prevention of catastrophic forgetting&lt;/span&gt;&lt;/li&gt;&lt;li class=&quot;whitespace-normal break-words&quot;&gt;Linear growth in model size with new tasks&lt;/li&gt;&lt;li class=&quot;whitespace-normal break-words&quot;&gt;Task-specific output heads&lt;/li&gt;&lt;/ul&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="480" y="84" width="302" height="96" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

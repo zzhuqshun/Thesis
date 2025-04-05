@@ -25,15 +25,15 @@ save_dir = Path(__file__).parent / f"models/optuna_tryout_{timestamp}" # 10minre
 save_dir.mkdir(exist_ok=True)
 hyperparams = {
     "MODEL" : "LSTM reasmple mean 10min",
-    "SEQUENCE_LENGTH": 864,  
-    "HIDDEN_SIZE": 64,
-    "NUM_LAYERS": 5,
-    "DROPOUT": 0.5,
+    "SEQUENCE_LENGTH": 1008,  
+    "HIDDEN_SIZE": 128,
+    "NUM_LAYERS": 3,
+    "DROPOUT": 0.4,
     "BATCH_SIZE": 32,
     "LEARNING_RATE": 1e-4,
     "EPOCHS": 100,
     "PATIENCE": 10,
-    "WEIGHT_DECAY": 1e-5,
+    "WEIGHT_DECAY": 1e-4,
     "device": str(device)
 }
  
@@ -97,7 +97,7 @@ def main():
     }
 
     # Define TRAINING_MODE to control if the model should be trained or loaded
-    TRAINING_MODE = False
+    TRAINING_MODE = True
     # Define which trained model to load and evaluate
     LOAD_MODEL_TYPE = 'best'  # 'best' or 'last'
  

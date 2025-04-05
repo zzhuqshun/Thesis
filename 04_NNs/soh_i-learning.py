@@ -5,13 +5,13 @@ from datetime import datetime
 import torch
 from torch.utils.data import DataLoader, Subset
 import matplotlib.pyplot as plt
-
+import pandas as pd
 # Import from project modules
 from models.pnn import ProgressiveNN
 from utils.data_processing import load_and_prepare_data, scale_data, split_by_cell
 from utils.common import set_seed
 from utils.training import train_model
-from utils.visualization import evaluate_pnn, plot_results
+from utils.evaluation import evaluate_pnn, plot_results, plot_pnn_learning_curves
 from soh_lstm import SOHLSTM, BatteryDataset
 
 
@@ -73,7 +73,6 @@ def main(model_type="structure_based(PNN)"):
     update1_val_dataset = BatteryDataset(df_update1_val, hyperparams["SEQUENCE_LENGTH"])
     update2_train_dataset = BatteryDataset(df_update2_train, hyperparams["SEQUENCE_LENGTH"])
     update2_val_dataset = BatteryDataset(df_update2_val, hyperparams["SEQUENCE_LENGTH"])
-    test_dataset = BatteryDataset(df_test_scaled, hyperparams["SEQUENCE_LENGTH"])
 
     # Create data loaders
     base_train_loader = DataLoader(base_train_dataset, batch_size=hyperparams["BATCH_SIZE"], shuffle=True)
@@ -84,13 +83,25 @@ def main(model_type="structure_based(PNN)"):
     update2_val_loader = DataLoader(update2_val_dataset, batch_size=hyperparams["BATCH_SIZE"])
     
     # Split test set into 3 segments for each phase
-    n = len(test_dataset)
-    seg1 = Subset(test_dataset, list(range(0, n // 3)))
-    seg2 = Subset(test_dataset, list(range(n // 3, 2 * n // 3)))
-    seg3 = Subset(test_dataset, list(range(2 * n // 3, n)))
-    base_test = DataLoader(seg1, batch_size=hyperparams["BATCH_SIZE"])
-    update1_test = DataLoader(seg2, batch_size=hyperparams["BATCH_SIZE"])
-    update2_test = DataLoader(seg3, batch_size=hyperparams["BATCH_SIZE"])
+    timestamps = df_test_scaled['Datetime'].values
+
+    # Assuming timestamps are sorted, we can split them into 3 segments
+    time_boundary1 = timestamps[len(timestamps) // 3]  
+    time_boundary2 = timestamps[2 * len(timestamps) // 3]  
+
+    # Create boolean masks for each segment
+    test_idx1 = df_test_scaled['Datetime'] < time_boundary1
+    test_idx2 = (df_test_scaled['Datetime'] >= time_boundary1) & (df_test_scaled['Datetime'] < time_boundary2)
+    test_idx3 = df_test_scaled['Datetime'] >= time_boundary2
+
+    # Create datasets for each segment
+    test_dataset1 = BatteryDataset(df_test_scaled[test_idx1], hyperparams["SEQUENCE_LENGTH"])
+    test_dataset2 = BatteryDataset(df_test_scaled[test_idx2], hyperparams["SEQUENCE_LENGTH"])
+    test_dataset3 = BatteryDataset(df_test_scaled[test_idx3], hyperparams["SEQUENCE_LENGTH"])
+
+    base_test = DataLoader(test_dataset1, batch_size=hyperparams["BATCH_SIZE"])
+    update1_test = DataLoader(test_dataset2, batch_size=hyperparams["BATCH_SIZE"])
+    update2_test = DataLoader(test_dataset3, batch_size=hyperparams["BATCH_SIZE"])
 
     # Choose incremental learning method
     if model_type == "structure_based(PNN)":
@@ -125,6 +136,9 @@ def main(model_type="structure_based(PNN)"):
         # Save base model weights
         torch.save(pnn_model.state_dict(), save_dir / "pnn_base_model.pt")
         
+        base_history = pd.DataFrame(base_history)
+        base_history.to_parquet(save_dir / "pnn_base_history.parquet", index=False)
+        
         # Evaluate base model
         print("\nEvaluating base model...")
         base_pred, base_targets, base_metrics = evaluate_pnn(pnn_model, base_test, task_id=0)
@@ -141,7 +155,7 @@ def main(model_type="structure_based(PNN)"):
             model=pnn_model,
             train_loader=update1_train_loader,
             val_loader=update1_val_loader,
-            epochs=hyperparams["EPOCHS"] // 2,
+            epochs=hyperparams["EPOCHS"],
             lr=hyperparams["LEARNING_RATE"],
             weight_decay=hyperparams["WEIGHT_DECAY"],      
             patience=hyperparams["PATIENCE"]
@@ -149,6 +163,9 @@ def main(model_type="structure_based(PNN)"):
 
         # Save updated model
         torch.save(pnn_model.state_dict(), save_dir / "pnn_update1_model.pt")
+        
+        update1_history = pd.DataFrame(update1_history)
+        update1_history.to_parquet(save_dir / "pnn_update2_history.parquet", index=False)
         
         # Evaluate after first update
         print("\nEvaluating after first update...")
@@ -166,7 +183,7 @@ def main(model_type="structure_based(PNN)"):
             model=pnn_model,
             train_loader=update2_train_loader,
             val_loader=update2_val_loader,
-            epochs=hyperparams["EPOCHS"] // 2,
+            epochs=hyperparams["EPOCHS"],
             lr=hyperparams["LEARNING_RATE"],
             weight_decay=hyperparams["WEIGHT_DECAY"],
             patience=hyperparams["PATIENCE"]
@@ -174,6 +191,9 @@ def main(model_type="structure_based(PNN)"):
 
         # Save final model
         torch.save(pnn_model.state_dict(), save_dir / "pnn_update2_model.pt")
+        
+        update2_history = pd.DataFrame(update2_history)
+        update2_history.to_parquet(save_dir / "pnn_update2_history.parquet", index=False)
         
         # Evaluate after second update
         print("\nEvaluating after second update...")
@@ -184,25 +204,10 @@ def main(model_type="structure_based(PNN)"):
         plot_results(save_dir, "Structure based(PNN)", df_test_scaled, hyperparams["SEQUENCE_LENGTH"], 
                      base_pred, update1_pred, update2_pred, base_metrics, update1_metrics, update2_metrics)
         
-        # Save learning curves
-        plt.figure(figsize=(10, 6))
-        plt.plot(base_history["epoch"], base_history["train_loss"], label="Base Training Loss")
-        plt.plot(base_history["epoch"], base_history["val_loss"], label="Base Validation Loss")
-        plt.plot([e + max(base_history["epoch"]) for e in update1_history["epoch"]], 
-                 update1_history["train_loss"], label="Update1 Training Loss")
-        plt.plot([e + max(base_history["epoch"]) for e in update1_history["epoch"]], 
-                 update1_history["val_loss"], label="Update1 Validation Loss")
-        plt.plot([e + max(base_history["epoch"]) + max(update1_history["epoch"]) for e in update2_history["epoch"]], 
-                 update2_history["train_loss"], label="Update2 Training Loss")
-        plt.plot([e + max(base_history["epoch"]) + max(update1_history["epoch"]) for e in update2_history["epoch"]], 
-                 update2_history["val_loss"], label="Update2 Validation Loss")
-        plt.xlabel("Epoch")
-        plt.ylabel("Loss")
-        plt.yscale("log")
-        plt.legend()
-        plt.grid(True, linestyle='--', alpha=0.7)
-        plt.title("PNN Training and Validation Loss")
-        plt.savefig(save_dir / "pnn_learning_curves.png")
+        # plot_pnn_learning_curves(
+        #     save_dir, base_history, update1_history, update2_history,
+        #     ["Base", "Update 1", "Update 2"]
+        # )
         
         print("PNN Incremental Learning Finished!")
 
