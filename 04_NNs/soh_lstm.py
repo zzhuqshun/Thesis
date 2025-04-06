@@ -20,7 +20,7 @@ from tqdm import tqdm
 # Set configurations
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-save_dir = Path(__file__).parent / f"models/optuna_tryout_{timestamp}" # 10minresample
+save_dir = Path(__file__).parent / f"models/optuna_best_val_{timestamp}" # 10minresample
 # save_dir = Path(__file__).parent / f"models/optuna_tryout/best/01"
 save_dir.mkdir(exist_ok=True)
 hyperparams = {
@@ -28,12 +28,12 @@ hyperparams = {
     "SEQUENCE_LENGTH": 1008,  
     "HIDDEN_SIZE": 128,
     "NUM_LAYERS": 3,
-    "DROPOUT": 0.4,
+    "DROPOUT": 0.5,
     "BATCH_SIZE": 32,
     "LEARNING_RATE": 1e-4,
     "EPOCHS": 100,
     "PATIENCE": 10,
-    "WEIGHT_DECAY": 1e-4,
+    "WEIGHT_DECAY": 0.0,
     "device": str(device)
 }
  

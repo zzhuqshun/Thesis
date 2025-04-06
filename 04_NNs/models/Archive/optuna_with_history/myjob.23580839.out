@@ -1,0 +1,1752 @@
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 5.836e-03 | Validation Loss: 9.714e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.997e-04 | Validation Loss: 1.494e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 1.356e-04 | Validation Loss: 1.225e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 8.811e-05 | Validation Loss: 1.089e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 7.386e-05 | Validation Loss: 1.163e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.250e-05 | Validation Loss: 8.759e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.148e-05 | Validation Loss: 1.035e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 5.329e-05 | Validation Loss: 1.089e-03 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 4.920e-05 | Validation Loss: 4.313e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 4.485e-05 | Validation Loss: 1.539e-03 | LR: 1.00e-03
+Epoch 11/100 | Training Loss: 5.035e-05 | Validation Loss: 1.116e-03 | LR: 1.00e-03
+Epoch 12/100 | Training Loss: 4.198e-05 | Validation Loss: 1.544e-03 | LR: 1.00e-03
+Epoch 13/100 | Training Loss: 4.159e-05 | Validation Loss: 1.563e-03 | LR: 1.00e-03
+Epoch 14/100 | Training Loss: 3.797e-05 | Validation Loss: 1.611e-03 | LR: 1.00e-03
+Epoch 15/100 | Training Loss: 3.574e-05 | Validation Loss: 1.676e-03 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 2.527e-05 | Validation Loss: 1.782e-03 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 2.612e-05 | Validation Loss: 1.814e-03 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 2.518e-05 | Validation Loss: 1.692e-03 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 2.706e-05 | Validation Loss: 1.484e-03 | LR: 5.00e-04
+Early stopping triggered after 19 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_0/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_0/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 6.942e-03 | Validation Loss: 4.082e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.052e-03 | Validation Loss: 2.677e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 1.241e-03 | Validation Loss: 1.279e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 1.427e-04 | Validation Loss: 1.798e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 1.345e-04 | Validation Loss: 1.869e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 7.848e-05 | Validation Loss: 1.832e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.739e-05 | Validation Loss: 1.579e-03 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 3.390e-05 | Validation Loss: 1.948e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 3.451e-05 | Validation Loss: 2.291e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 3.444e-05 | Validation Loss: 1.956e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 3.163e-05 | Validation Loss: 2.031e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_1/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_1/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 8.489e-03 | Validation Loss: 8.177e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 6.405e-04 | Validation Loss: 2.057e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 1.995e-04 | Validation Loss: 3.190e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 1.152e-04 | Validation Loss: 3.866e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.366e-05 | Validation Loss: 3.498e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 7.478e-05 | Validation Loss: 2.752e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.115e-05 | Validation Loss: 2.733e-03 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 3.835e-05 | Validation Loss: 2.347e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 3.635e-05 | Validation Loss: 2.402e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 3.556e-05 | Validation Loss: 2.309e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 3.444e-05 | Validation Loss: 2.610e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_2/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_2/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 2.477e-02 | Validation Loss: 9.441e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 4.361e-03 | Validation Loss: 5.334e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 2.064e-03 | Validation Loss: 5.907e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 1.427e-03 | Validation Loss: 4.413e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 1.040e-03 | Validation Loss: 5.826e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 8.739e-04 | Validation Loss: 5.705e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 7.159e-04 | Validation Loss: 9.220e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 9.503e-04 | Validation Loss: 9.120e-04 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 7.384e-04 | Validation Loss: 1.378e-03 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 9.320e-04 | Validation Loss: 8.499e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.285e-04 | Validation Loss: 7.576e-04 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 4.374e-04 | Validation Loss: 1.703e-03 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 3.139e-04 | Validation Loss: 1.629e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 2.569e-04 | Validation Loss: 1.684e-03 | LR: 5.00e-04
+Early stopping triggered after 14 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_3/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_3/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.988e-02 | Validation Loss: 2.362e-03 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 1.811e-03 | Validation Loss: 7.338e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 1.448e-03 | Validation Loss: 3.880e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 1.247e-03 | Validation Loss: 9.297e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 5.658e-04 | Validation Loss: 1.547e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.580e-04 | Validation Loss: 1.683e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.256e-04 | Validation Loss: 1.222e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 4.536e-04 | Validation Loss: 8.468e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 4.013e-04 | Validation Loss: 1.652e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 3.792e-04 | Validation Loss: 1.267e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 3.704e-04 | Validation Loss: 1.368e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 3.655e-04 | Validation Loss: 1.377e-03 | LR: 5.00e-04
+Early stopping triggered after 12 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_4/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_4/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.479e-02 | Validation Loss: 4.354e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 1.291e-03 | Validation Loss: 5.743e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.894e-04 | Validation Loss: 3.216e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 8.460e-04 | Validation Loss: 4.864e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 1.212e-03 | Validation Loss: 7.596e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 2.970e-04 | Validation Loss: 1.229e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 1.020e-04 | Validation Loss: 1.610e-03 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 6.505e-05 | Validation Loss: 1.845e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 5.816e-05 | Validation Loss: 2.116e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 5.202e-05 | Validation Loss: 1.855e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 4.612e-05 | Validation Loss: 1.616e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_5/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_5/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.402e-02 | Validation Loss: 1.850e-02 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 1.836e-03 | Validation Loss: 1.256e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 1.538e-03 | Validation Loss: 6.294e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 1.257e-03 | Validation Loss: 4.969e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 1.054e-03 | Validation Loss: 8.119e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 7.728e-04 | Validation Loss: 4.726e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 7.026e-04 | Validation Loss: 4.901e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.011e-04 | Validation Loss: 4.140e-04 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 6.339e-04 | Validation Loss: 5.299e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 6.441e-04 | Validation Loss: 5.235e-04 | LR: 1.00e-03
+Epoch 11/100 | Training Loss: 6.353e-04 | Validation Loss: 6.388e-04 | LR: 1.00e-03
+Epoch 12/100 | Training Loss: 5.959e-04 | Validation Loss: 5.473e-04 | LR: 1.00e-03
+Epoch 13/100 | Training Loss: 6.206e-04 | Validation Loss: 7.056e-04 | LR: 1.00e-03
+Epoch 14/100 | Training Loss: 6.535e-04 | Validation Loss: 5.147e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 5.754e-04 | Validation Loss: 5.211e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.409e-04 | Validation Loss: 6.759e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 4.570e-04 | Validation Loss: 8.468e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 4.178e-04 | Validation Loss: 8.782e-04 | LR: 5.00e-04
+Early stopping triggered after 18 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_6/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_6/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.214e-02 | Validation Loss: 4.975e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 1.645e-03 | Validation Loss: 5.205e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 1.320e-03 | Validation Loss: 6.949e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 1.067e-03 | Validation Loss: 4.336e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.871e-04 | Validation Loss: 9.716e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 5.620e-04 | Validation Loss: 1.212e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.620e-04 | Validation Loss: 8.324e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 4.466e-04 | Validation Loss: 1.458e-03 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 4.419e-04 | Validation Loss: 8.052e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 4.292e-04 | Validation Loss: 1.127e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 3.728e-04 | Validation Loss: 6.290e-04 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 3.683e-04 | Validation Loss: 8.772e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 3.627e-04 | Validation Loss: 8.984e-04 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 3.635e-04 | Validation Loss: 8.184e-04 | LR: 5.00e-04
+Early stopping triggered after 14 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_7/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_7/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.083e-02 | Validation Loss: 4.689e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 1.746e-03 | Validation Loss: 7.960e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.671e-04 | Validation Loss: 1.616e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 5.246e-04 | Validation Loss: 1.512e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 2.800e-04 | Validation Loss: 1.720e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 2.399e-04 | Validation Loss: 1.435e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 1.451e-04 | Validation Loss: 9.952e-04 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 9.764e-05 | Validation Loss: 1.373e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 8.829e-05 | Validation Loss: 1.487e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 8.091e-05 | Validation Loss: 1.421e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 7.249e-05 | Validation Loss: 1.336e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_8/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_8/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 6.176e-03 | Validation Loss: 6.664e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 6.168e-04 | Validation Loss: 1.159e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 3.507e-04 | Validation Loss: 1.212e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 3.283e-04 | Validation Loss: 1.127e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 3.135e-04 | Validation Loss: 1.779e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 2.979e-04 | Validation Loss: 1.124e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 2.948e-04 | Validation Loss: 6.846e-04 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 2.554e-04 | Validation Loss: 1.227e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 2.554e-04 | Validation Loss: 1.369e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 2.490e-04 | Validation Loss: 1.654e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 2.507e-04 | Validation Loss: 1.305e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_9/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_9/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.931e-02 | Validation Loss: 3.736e-03 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 8.750e-03 | Validation Loss: 1.060e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 7.532e-03 | Validation Loss: 1.232e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 6.320e-03 | Validation Loss: 3.084e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 7.293e-03 | Validation Loss: 2.987e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 7.289e-03 | Validation Loss: 2.612e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.090e-03 | Validation Loss: 6.265e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 7.859e-04 | Validation Loss: 1.192e-03 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 4.177e-04 | Validation Loss: 1.537e-03 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 2.968e-04 | Validation Loss: 1.634e-03 | LR: 1.00e-03
+Epoch 11/100 | Training Loss: 2.372e-04 | Validation Loss: 1.064e-03 | LR: 1.00e-03
+Epoch 12/100 | Training Loss: 4.246e-04 | Validation Loss: 1.243e-03 | LR: 1.00e-03
+Epoch 13/100 | Training Loss: 2.412e-04 | Validation Loss: 1.420e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 1.878e-04 | Validation Loss: 1.582e-03 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 1.880e-04 | Validation Loss: 1.251e-03 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 1.873e-04 | Validation Loss: 1.552e-03 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 1.837e-04 | Validation Loss: 1.599e-03 | LR: 5.00e-04
+Early stopping triggered after 17 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_10/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_10/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 8.927e-03 | Validation Loss: 5.436e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 4.218e-03 | Validation Loss: 4.039e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.162e-04 | Validation Loss: 7.235e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 5.579e-04 | Validation Loss: 5.558e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 4.976e-04 | Validation Loss: 4.499e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.578e-04 | Validation Loss: 4.772e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.485e-04 | Validation Loss: 2.232e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 4.431e-04 | Validation Loss: 1.008e-03 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 4.677e-04 | Validation Loss: 5.358e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 1.349e-03 | Validation Loss: 2.841e-04 | LR: 1.00e-03
+Epoch 11/100 | Training Loss: 3.459e-04 | Validation Loss: 4.921e-04 | LR: 1.00e-03
+Epoch 12/100 | Training Loss: 3.424e-04 | Validation Loss: 1.512e-03 | LR: 1.00e-03
+Epoch 13/100 | Training Loss: 3.408e-04 | Validation Loss: 6.247e-04 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 2.935e-04 | Validation Loss: 4.258e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 3.306e-04 | Validation Loss: 2.204e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 3.040e-04 | Validation Loss: 6.685e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 3.925e-04 | Validation Loss: 8.236e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 3.042e-04 | Validation Loss: 3.653e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 2.919e-04 | Validation Loss: 4.660e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 2.883e-04 | Validation Loss: 2.150e-04 | LR: 5.00e-04
+Epoch 21/100 | Training Loss: 2.949e-04 | Validation Loss: 2.608e-04 | LR: 5.00e-04
+Epoch 22/100 | Training Loss: 2.930e-04 | Validation Loss: 4.588e-04 | LR: 5.00e-04
+Epoch 23/100 | Training Loss: 2.881e-04 | Validation Loss: 5.110e-04 | LR: 5.00e-04
+Epoch 24/100 | Training Loss: 2.855e-04 | Validation Loss: 3.744e-04 | LR: 5.00e-04
+Epoch 25/100 | Training Loss: 2.889e-04 | Validation Loss: 3.223e-04 | LR: 5.00e-04
+Epoch 26/100 | Training Loss: 2.880e-04 | Validation Loss: 2.884e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 2.676e-04 | Validation Loss: 4.183e-04 | LR: 2.50e-04
+Epoch 28/100 | Training Loss: 2.690e-04 | Validation Loss: 2.841e-04 | LR: 2.50e-04
+Epoch 29/100 | Training Loss: 2.670e-04 | Validation Loss: 5.924e-04 | LR: 2.50e-04
+Epoch 30/100 | Training Loss: 2.629e-04 | Validation Loss: 3.744e-04 | LR: 2.50e-04
+Early stopping triggered after 30 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_11/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_11/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 8.927e-03 | Validation Loss: 5.436e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 4.218e-03 | Validation Loss: 4.039e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.162e-04 | Validation Loss: 7.235e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 5.579e-04 | Validation Loss: 5.558e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 4.976e-04 | Validation Loss: 4.499e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.578e-04 | Validation Loss: 4.772e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.485e-04 | Validation Loss: 2.232e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 4.431e-04 | Validation Loss: 1.008e-03 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 4.677e-04 | Validation Loss: 5.358e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 1.349e-03 | Validation Loss: 2.841e-04 | LR: 1.00e-03
+Epoch 11/100 | Training Loss: 3.459e-04 | Validation Loss: 4.921e-04 | LR: 1.00e-03
+Epoch 12/100 | Training Loss: 3.424e-04 | Validation Loss: 1.512e-03 | LR: 1.00e-03
+Epoch 13/100 | Training Loss: 3.408e-04 | Validation Loss: 6.247e-04 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 2.935e-04 | Validation Loss: 4.258e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 3.306e-04 | Validation Loss: 2.204e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 3.040e-04 | Validation Loss: 6.685e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 3.925e-04 | Validation Loss: 8.236e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 3.042e-04 | Validation Loss: 3.653e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 2.919e-04 | Validation Loss: 4.660e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 2.883e-04 | Validation Loss: 2.150e-04 | LR: 5.00e-04
+Epoch 21/100 | Training Loss: 2.949e-04 | Validation Loss: 2.608e-04 | LR: 5.00e-04
+Epoch 22/100 | Training Loss: 2.930e-04 | Validation Loss: 4.588e-04 | LR: 5.00e-04
+Epoch 23/100 | Training Loss: 2.881e-04 | Validation Loss: 5.110e-04 | LR: 5.00e-04
+Epoch 24/100 | Training Loss: 2.855e-04 | Validation Loss: 3.744e-04 | LR: 5.00e-04
+Epoch 25/100 | Training Loss: 2.889e-04 | Validation Loss: 3.223e-04 | LR: 5.00e-04
+Epoch 26/100 | Training Loss: 2.880e-04 | Validation Loss: 2.884e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 2.676e-04 | Validation Loss: 4.183e-04 | LR: 2.50e-04
+Epoch 28/100 | Training Loss: 2.690e-04 | Validation Loss: 2.841e-04 | LR: 2.50e-04
+Epoch 29/100 | Training Loss: 2.670e-04 | Validation Loss: 5.924e-04 | LR: 2.50e-04
+Epoch 30/100 | Training Loss: 2.629e-04 | Validation Loss: 3.744e-04 | LR: 2.50e-04
+Early stopping triggered after 30 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_12/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_12/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 8.927e-03 | Validation Loss: 5.436e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 4.218e-03 | Validation Loss: 4.039e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.162e-04 | Validation Loss: 7.235e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 5.579e-04 | Validation Loss: 5.558e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 4.976e-04 | Validation Loss: 4.499e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.578e-04 | Validation Loss: 4.772e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.485e-04 | Validation Loss: 2.232e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 4.431e-04 | Validation Loss: 1.008e-03 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 4.677e-04 | Validation Loss: 5.358e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 1.349e-03 | Validation Loss: 2.841e-04 | LR: 1.00e-03
+Epoch 11/100 | Training Loss: 3.459e-04 | Validation Loss: 4.921e-04 | LR: 1.00e-03
+Epoch 12/100 | Training Loss: 3.424e-04 | Validation Loss: 1.512e-03 | LR: 1.00e-03
+Epoch 13/100 | Training Loss: 3.408e-04 | Validation Loss: 6.247e-04 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 2.935e-04 | Validation Loss: 4.258e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 3.306e-04 | Validation Loss: 2.204e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 3.040e-04 | Validation Loss: 6.685e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 3.925e-04 | Validation Loss: 8.236e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 3.042e-04 | Validation Loss: 3.653e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 2.919e-04 | Validation Loss: 4.660e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 2.883e-04 | Validation Loss: 2.150e-04 | LR: 5.00e-04
+Epoch 21/100 | Training Loss: 2.949e-04 | Validation Loss: 2.608e-04 | LR: 5.00e-04
+Epoch 22/100 | Training Loss: 2.930e-04 | Validation Loss: 4.588e-04 | LR: 5.00e-04
+Epoch 23/100 | Training Loss: 2.881e-04 | Validation Loss: 5.110e-04 | LR: 5.00e-04
+Epoch 24/100 | Training Loss: 2.855e-04 | Validation Loss: 3.744e-04 | LR: 5.00e-04
+Epoch 25/100 | Training Loss: 2.889e-04 | Validation Loss: 3.223e-04 | LR: 5.00e-04
+Epoch 26/100 | Training Loss: 2.880e-04 | Validation Loss: 2.884e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 2.676e-04 | Validation Loss: 4.183e-04 | LR: 2.50e-04
+Epoch 28/100 | Training Loss: 2.690e-04 | Validation Loss: 2.841e-04 | LR: 2.50e-04
+Epoch 29/100 | Training Loss: 2.670e-04 | Validation Loss: 5.924e-04 | LR: 2.50e-04
+Epoch 30/100 | Training Loss: 2.629e-04 | Validation Loss: 3.744e-04 | LR: 2.50e-04
+Early stopping triggered after 30 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_13/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_13/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 6.971e-03 | Validation Loss: 6.409e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 7.566e-04 | Validation Loss: 1.126e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 5.800e-04 | Validation Loss: 1.511e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 5.307e-04 | Validation Loss: 1.239e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 4.962e-04 | Validation Loss: 1.037e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.777e-04 | Validation Loss: 1.260e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.584e-04 | Validation Loss: 1.191e-03 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 4.057e-04 | Validation Loss: 1.410e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 4.034e-04 | Validation Loss: 1.438e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 3.937e-04 | Validation Loss: 9.998e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 3.930e-04 | Validation Loss: 1.244e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_14/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_14/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.036e-02 | Validation Loss: 4.073e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 9.918e-04 | Validation Loss: 3.585e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 7.451e-04 | Validation Loss: 5.145e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 6.624e-04 | Validation Loss: 3.575e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 6.516e-04 | Validation Loss: 9.272e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.368e-04 | Validation Loss: 7.979e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 1.267e-03 | Validation Loss: 4.579e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 9.281e-04 | Validation Loss: 5.271e-04 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 6.874e-04 | Validation Loss: 5.127e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 5.866e-04 | Validation Loss: 6.588e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.097e-04 | Validation Loss: 4.093e-04 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.004e-04 | Validation Loss: 6.420e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 4.984e-04 | Validation Loss: 2.211e-04 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 4.964e-04 | Validation Loss: 5.566e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 4.931e-04 | Validation Loss: 3.739e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 4.988e-04 | Validation Loss: 5.883e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 4.981e-04 | Validation Loss: 5.803e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 4.873e-04 | Validation Loss: 5.633e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 4.908e-04 | Validation Loss: 3.523e-04 | LR: 2.50e-04
+Epoch 20/100 | Training Loss: 4.604e-04 | Validation Loss: 2.784e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 4.601e-04 | Validation Loss: 3.583e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 4.556e-04 | Validation Loss: 3.189e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 4.579e-04 | Validation Loss: 5.168e-04 | LR: 2.50e-04
+Early stopping triggered after 23 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_15/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_15/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 7.493e-03 | Validation Loss: 5.441e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 3.414e-03 | Validation Loss: 4.300e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 7.842e-04 | Validation Loss: 4.054e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 4.584e-04 | Validation Loss: 1.457e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 4.067e-04 | Validation Loss: 1.411e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 3.805e-04 | Validation Loss: 1.523e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 3.881e-04 | Validation Loss: 1.423e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 3.684e-04 | Validation Loss: 1.387e-03 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 3.531e-04 | Validation Loss: 1.620e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 3.148e-04 | Validation Loss: 1.066e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 3.123e-04 | Validation Loss: 1.069e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 3.115e-04 | Validation Loss: 1.037e-03 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 3.105e-04 | Validation Loss: 1.132e-03 | LR: 5.00e-04
+Early stopping triggered after 13 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_16/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_16/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 7.582e-03 | Validation Loss: 4.663e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 8.586e-04 | Validation Loss: 2.574e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 3.062e-04 | Validation Loss: 1.605e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 2.540e-04 | Validation Loss: 2.677e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 2.181e-04 | Validation Loss: 2.541e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 2.037e-04 | Validation Loss: 2.058e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 1.890e-04 | Validation Loss: 1.769e-03 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 1.618e-04 | Validation Loss: 1.723e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 1.601e-04 | Validation Loss: 1.651e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 1.523e-04 | Validation Loss: 1.629e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 1.553e-04 | Validation Loss: 1.522e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_17/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_17/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.256e-02 | Validation Loss: 6.749e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.678e-03 | Validation Loss: 6.291e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.841e-04 | Validation Loss: 6.324e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.012e-04 | Validation Loss: 1.330e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.103e-04 | Validation Loss: 2.220e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.482e-04 | Validation Loss: 1.284e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.224e-04 | Validation Loss: 1.529e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.017e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 5.483e-04 | Validation Loss: 1.292e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 5.533e-04 | Validation Loss: 8.565e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.500e-04 | Validation Loss: 1.012e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.492e-04 | Validation Loss: 4.384e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 6.177e-04 | Validation Loss: 1.116e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 5.745e-04 | Validation Loss: 1.865e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 5.673e-04 | Validation Loss: 7.286e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.521e-04 | Validation Loss: 6.925e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.490e-04 | Validation Loss: 7.194e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.541e-04 | Validation Loss: 4.330e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.355e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 5.401e-04 | Validation Loss: 9.984e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 5.113e-04 | Validation Loss: 1.375e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 5.102e-04 | Validation Loss: 4.659e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 5.106e-04 | Validation Loss: 4.015e-04 | LR: 2.50e-04
+Epoch 24/100 | Training Loss: 5.068e-04 | Validation Loss: 5.531e-04 | LR: 2.50e-04
+Epoch 25/100 | Training Loss: 5.075e-04 | Validation Loss: 6.943e-04 | LR: 2.50e-04
+Epoch 26/100 | Training Loss: 5.119e-04 | Validation Loss: 4.722e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 5.123e-04 | Validation Loss: 3.349e-04 | LR: 1.25e-04
+Epoch 28/100 | Training Loss: 4.967e-04 | Validation Loss: 2.629e-04 | LR: 1.25e-04
+Epoch 29/100 | Training Loss: 4.929e-04 | Validation Loss: 2.794e-04 | LR: 1.25e-04
+Epoch 30/100 | Training Loss: 4.886e-04 | Validation Loss: 2.901e-04 | LR: 1.25e-04
+Epoch 31/100 | Training Loss: 4.908e-04 | Validation Loss: 3.468e-04 | LR: 1.25e-04
+Early stopping triggered after 31 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_18/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_18/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 8.594e-03 | Validation Loss: 6.150e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 6.343e-04 | Validation Loss: 1.112e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 5.208e-04 | Validation Loss: 4.748e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 4.882e-04 | Validation Loss: 1.417e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 4.763e-04 | Validation Loss: 1.615e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.680e-04 | Validation Loss: 1.723e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.581e-04 | Validation Loss: 1.764e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 4.538e-04 | Validation Loss: 9.983e-04 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 4.540e-04 | Validation Loss: 1.550e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 4.150e-04 | Validation Loss: 1.880e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 4.118e-04 | Validation Loss: 1.443e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 4.105e-04 | Validation Loss: 1.760e-03 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 4.076e-04 | Validation Loss: 1.542e-03 | LR: 5.00e-04
+Early stopping triggered after 13 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_19/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_19/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.109e-02 | Validation Loss: 1.563e-03 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.735e-03 | Validation Loss: 7.501e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 7.377e-04 | Validation Loss: 1.092e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 3.943e-04 | Validation Loss: 1.929e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 3.090e-04 | Validation Loss: 1.460e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 2.806e-04 | Validation Loss: 1.604e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 2.529e-04 | Validation Loss: 1.348e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 2.495e-04 | Validation Loss: 1.578e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 2.063e-04 | Validation Loss: 1.445e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 2.039e-04 | Validation Loss: 1.774e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 2.019e-04 | Validation Loss: 1.630e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 2.016e-04 | Validation Loss: 1.740e-03 | LR: 5.00e-04
+Early stopping triggered after 12 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_20/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_20/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 8.927e-03 | Validation Loss: 5.436e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 4.218e-03 | Validation Loss: 4.039e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.162e-04 | Validation Loss: 7.235e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 5.579e-04 | Validation Loss: 5.558e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 4.976e-04 | Validation Loss: 4.499e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.578e-04 | Validation Loss: 4.772e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.485e-04 | Validation Loss: 2.232e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 4.431e-04 | Validation Loss: 1.008e-03 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 4.677e-04 | Validation Loss: 5.358e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 1.349e-03 | Validation Loss: 2.841e-04 | LR: 1.00e-03
+Epoch 11/100 | Training Loss: 3.459e-04 | Validation Loss: 4.921e-04 | LR: 1.00e-03
+Epoch 12/100 | Training Loss: 3.424e-04 | Validation Loss: 1.512e-03 | LR: 1.00e-03
+Epoch 13/100 | Training Loss: 3.408e-04 | Validation Loss: 6.247e-04 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 2.935e-04 | Validation Loss: 4.258e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 3.306e-04 | Validation Loss: 2.204e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 3.040e-04 | Validation Loss: 6.685e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 3.925e-04 | Validation Loss: 8.236e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 3.042e-04 | Validation Loss: 3.653e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 2.919e-04 | Validation Loss: 4.660e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 2.883e-04 | Validation Loss: 2.150e-04 | LR: 5.00e-04
+Epoch 21/100 | Training Loss: 2.949e-04 | Validation Loss: 2.608e-04 | LR: 5.00e-04
+Epoch 22/100 | Training Loss: 2.930e-04 | Validation Loss: 4.588e-04 | LR: 5.00e-04
+Epoch 23/100 | Training Loss: 2.881e-04 | Validation Loss: 5.110e-04 | LR: 5.00e-04
+Epoch 24/100 | Training Loss: 2.855e-04 | Validation Loss: 3.744e-04 | LR: 5.00e-04
+Epoch 25/100 | Training Loss: 2.889e-04 | Validation Loss: 3.223e-04 | LR: 5.00e-04
+Epoch 26/100 | Training Loss: 2.880e-04 | Validation Loss: 2.884e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 2.676e-04 | Validation Loss: 4.183e-04 | LR: 2.50e-04
+Epoch 28/100 | Training Loss: 2.690e-04 | Validation Loss: 2.841e-04 | LR: 2.50e-04
+Epoch 29/100 | Training Loss: 2.670e-04 | Validation Loss: 5.924e-04 | LR: 2.50e-04
+Epoch 30/100 | Training Loss: 2.629e-04 | Validation Loss: 3.744e-04 | LR: 2.50e-04
+Early stopping triggered after 30 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_21/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_21/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.256e-02 | Validation Loss: 6.749e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.678e-03 | Validation Loss: 6.291e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.841e-04 | Validation Loss: 6.324e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.012e-04 | Validation Loss: 1.330e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.103e-04 | Validation Loss: 2.220e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.482e-04 | Validation Loss: 1.284e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.224e-04 | Validation Loss: 1.529e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.017e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 5.483e-04 | Validation Loss: 1.292e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 5.533e-04 | Validation Loss: 8.565e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.500e-04 | Validation Loss: 1.012e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.492e-04 | Validation Loss: 4.384e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 6.177e-04 | Validation Loss: 1.116e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 5.745e-04 | Validation Loss: 1.865e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 5.673e-04 | Validation Loss: 7.286e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.521e-04 | Validation Loss: 6.925e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.490e-04 | Validation Loss: 7.194e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.541e-04 | Validation Loss: 4.330e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.355e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 5.401e-04 | Validation Loss: 9.984e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 5.113e-04 | Validation Loss: 1.375e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 5.102e-04 | Validation Loss: 4.659e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 5.106e-04 | Validation Loss: 4.015e-04 | LR: 2.50e-04
+Epoch 24/100 | Training Loss: 5.068e-04 | Validation Loss: 5.531e-04 | LR: 2.50e-04
+Epoch 25/100 | Training Loss: 5.075e-04 | Validation Loss: 6.943e-04 | LR: 2.50e-04
+Epoch 26/100 | Training Loss: 5.119e-04 | Validation Loss: 4.722e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 5.123e-04 | Validation Loss: 3.349e-04 | LR: 1.25e-04
+Epoch 28/100 | Training Loss: 4.967e-04 | Validation Loss: 2.629e-04 | LR: 1.25e-04
+Epoch 29/100 | Training Loss: 4.929e-04 | Validation Loss: 2.794e-04 | LR: 1.25e-04
+Epoch 30/100 | Training Loss: 4.886e-04 | Validation Loss: 2.901e-04 | LR: 1.25e-04
+Epoch 31/100 | Training Loss: 4.908e-04 | Validation Loss: 3.468e-04 | LR: 1.25e-04
+Early stopping triggered after 31 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_22/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_22/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 8.594e-03 | Validation Loss: 6.150e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 6.343e-04 | Validation Loss: 1.112e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 5.208e-04 | Validation Loss: 4.748e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 4.882e-04 | Validation Loss: 1.417e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 4.763e-04 | Validation Loss: 1.615e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.680e-04 | Validation Loss: 1.723e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.581e-04 | Validation Loss: 1.764e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 4.538e-04 | Validation Loss: 9.983e-04 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 4.540e-04 | Validation Loss: 1.550e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 4.150e-04 | Validation Loss: 1.880e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 4.118e-04 | Validation Loss: 1.443e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 4.105e-04 | Validation Loss: 1.760e-03 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 4.076e-04 | Validation Loss: 1.542e-03 | LR: 5.00e-04
+Early stopping triggered after 13 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_23/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_23/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.256e-02 | Validation Loss: 6.749e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.678e-03 | Validation Loss: 6.291e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.841e-04 | Validation Loss: 6.324e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.012e-04 | Validation Loss: 1.330e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.103e-04 | Validation Loss: 2.220e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.482e-04 | Validation Loss: 1.284e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.224e-04 | Validation Loss: 1.529e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.017e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 5.483e-04 | Validation Loss: 1.292e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 5.533e-04 | Validation Loss: 8.565e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.500e-04 | Validation Loss: 1.012e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.492e-04 | Validation Loss: 4.384e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 6.177e-04 | Validation Loss: 1.116e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 5.745e-04 | Validation Loss: 1.865e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 5.673e-04 | Validation Loss: 7.286e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.521e-04 | Validation Loss: 6.925e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.490e-04 | Validation Loss: 7.194e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.541e-04 | Validation Loss: 4.330e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.355e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 5.401e-04 | Validation Loss: 9.984e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 5.113e-04 | Validation Loss: 1.375e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 5.102e-04 | Validation Loss: 4.659e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 5.106e-04 | Validation Loss: 4.015e-04 | LR: 2.50e-04
+Epoch 24/100 | Training Loss: 5.068e-04 | Validation Loss: 5.531e-04 | LR: 2.50e-04
+Epoch 25/100 | Training Loss: 5.075e-04 | Validation Loss: 6.943e-04 | LR: 2.50e-04
+Epoch 26/100 | Training Loss: 5.119e-04 | Validation Loss: 4.722e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 5.123e-04 | Validation Loss: 3.349e-04 | LR: 1.25e-04
+Epoch 28/100 | Training Loss: 4.967e-04 | Validation Loss: 2.629e-04 | LR: 1.25e-04
+Epoch 29/100 | Training Loss: 4.929e-04 | Validation Loss: 2.794e-04 | LR: 1.25e-04
+Epoch 30/100 | Training Loss: 4.886e-04 | Validation Loss: 2.901e-04 | LR: 1.25e-04
+Epoch 31/100 | Training Loss: 4.908e-04 | Validation Loss: 3.468e-04 | LR: 1.25e-04
+Early stopping triggered after 31 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_24/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_24/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 9.064e-03 | Validation Loss: 4.202e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 8.624e-04 | Validation Loss: 1.006e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 6.376e-04 | Validation Loss: 1.003e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 5.207e-04 | Validation Loss: 1.834e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 5.004e-04 | Validation Loss: 1.917e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.840e-04 | Validation Loss: 9.831e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.815e-04 | Validation Loss: 8.801e-04 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 4.235e-04 | Validation Loss: 1.349e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 4.212e-04 | Validation Loss: 1.274e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 4.200e-04 | Validation Loss: 1.034e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 4.177e-04 | Validation Loss: 1.066e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_25/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_25/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.256e-02 | Validation Loss: 6.749e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.678e-03 | Validation Loss: 6.291e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.841e-04 | Validation Loss: 6.324e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.012e-04 | Validation Loss: 1.330e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.103e-04 | Validation Loss: 2.220e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.482e-04 | Validation Loss: 1.284e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.224e-04 | Validation Loss: 1.529e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.017e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 5.483e-04 | Validation Loss: 1.292e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 5.533e-04 | Validation Loss: 8.565e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.500e-04 | Validation Loss: 1.012e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.492e-04 | Validation Loss: 4.384e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 6.177e-04 | Validation Loss: 1.116e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 5.745e-04 | Validation Loss: 1.865e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 5.673e-04 | Validation Loss: 7.286e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.521e-04 | Validation Loss: 6.925e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.490e-04 | Validation Loss: 7.194e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.541e-04 | Validation Loss: 4.330e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.355e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 5.401e-04 | Validation Loss: 9.984e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 5.113e-04 | Validation Loss: 1.375e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 5.102e-04 | Validation Loss: 4.659e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 5.106e-04 | Validation Loss: 4.015e-04 | LR: 2.50e-04
+Epoch 24/100 | Training Loss: 5.068e-04 | Validation Loss: 5.531e-04 | LR: 2.50e-04
+Epoch 25/100 | Training Loss: 5.075e-04 | Validation Loss: 6.943e-04 | LR: 2.50e-04
+Epoch 26/100 | Training Loss: 5.119e-04 | Validation Loss: 4.722e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 5.123e-04 | Validation Loss: 3.349e-04 | LR: 1.25e-04
+Epoch 28/100 | Training Loss: 4.967e-04 | Validation Loss: 2.629e-04 | LR: 1.25e-04
+Epoch 29/100 | Training Loss: 4.929e-04 | Validation Loss: 2.794e-04 | LR: 1.25e-04
+Epoch 30/100 | Training Loss: 4.886e-04 | Validation Loss: 2.901e-04 | LR: 1.25e-04
+Epoch 31/100 | Training Loss: 4.908e-04 | Validation Loss: 3.468e-04 | LR: 1.25e-04
+Early stopping triggered after 31 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_26/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_26/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 9.775e-03 | Validation Loss: 4.683e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 9.826e-04 | Validation Loss: 5.053e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 5.998e-04 | Validation Loss: 1.084e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 5.144e-04 | Validation Loss: 1.633e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 4.845e-04 | Validation Loss: 1.050e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.710e-04 | Validation Loss: 1.621e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.612e-04 | Validation Loss: 1.076e-03 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 4.093e-04 | Validation Loss: 1.891e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 4.075e-04 | Validation Loss: 8.762e-04 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 3.987e-04 | Validation Loss: 1.344e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 4.073e-04 | Validation Loss: 8.775e-04 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_27/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_27/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.580e-02 | Validation Loss: 4.215e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 1.178e-03 | Validation Loss: 3.894e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 7.849e-04 | Validation Loss: 3.190e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.458e-04 | Validation Loss: 4.099e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 7.062e-04 | Validation Loss: 1.307e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 7.005e-04 | Validation Loss: 2.396e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.507e-04 | Validation Loss: 5.447e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.366e-04 | Validation Loss: 9.658e-04 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 6.303e-04 | Validation Loss: 7.233e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 6.143e-04 | Validation Loss: 1.906e-04 | LR: 1.00e-03
+Epoch 11/100 | Training Loss: 6.245e-04 | Validation Loss: 8.157e-04 | LR: 1.00e-03
+Epoch 12/100 | Training Loss: 6.092e-04 | Validation Loss: 9.613e-04 | LR: 1.00e-03
+Epoch 13/100 | Training Loss: 6.092e-04 | Validation Loss: 5.491e-04 | LR: 1.00e-03
+Epoch 14/100 | Training Loss: 6.026e-04 | Validation Loss: 7.647e-04 | LR: 1.00e-03
+Epoch 15/100 | Training Loss: 6.036e-04 | Validation Loss: 5.218e-04 | LR: 1.00e-03
+Epoch 16/100 | Training Loss: 5.918e-04 | Validation Loss: 4.362e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.503e-04 | Validation Loss: 4.153e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.320e-04 | Validation Loss: 4.167e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.082e-04 | Validation Loss: 2.818e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 5.031e-04 | Validation Loss: 7.512e-04 | LR: 5.00e-04
+Early stopping triggered after 20 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_28/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_28/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 5.624e-03 | Validation Loss: 5.194e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 4.301e-04 | Validation Loss: 9.994e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 2.695e-04 | Validation Loss: 8.711e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 2.227e-04 | Validation Loss: 5.617e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 2.024e-04 | Validation Loss: 1.069e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 2.039e-04 | Validation Loss: 8.358e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 1.889e-04 | Validation Loss: 7.070e-04 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 1.495e-04 | Validation Loss: 1.140e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 1.479e-04 | Validation Loss: 6.496e-04 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 1.447e-04 | Validation Loss: 9.584e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 1.437e-04 | Validation Loss: 7.153e-04 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_29/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_29/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.055e-02 | Validation Loss: 4.093e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 1.198e-03 | Validation Loss: 3.794e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 8.068e-04 | Validation Loss: 5.903e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 6.886e-04 | Validation Loss: 5.246e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 6.562e-04 | Validation Loss: 1.133e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.492e-04 | Validation Loss: 4.733e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.418e-04 | Validation Loss: 2.739e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.509e-04 | Validation Loss: 6.242e-04 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 6.251e-04 | Validation Loss: 4.951e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 6.477e-04 | Validation Loss: 2.171e-04 | LR: 1.00e-03
+Epoch 11/100 | Training Loss: 6.186e-04 | Validation Loss: 2.575e-04 | LR: 1.00e-03
+Epoch 12/100 | Training Loss: 6.141e-04 | Validation Loss: 2.832e-04 | LR: 1.00e-03
+Epoch 13/100 | Training Loss: 6.114e-04 | Validation Loss: 6.048e-04 | LR: 1.00e-03
+Epoch 14/100 | Training Loss: 6.455e-04 | Validation Loss: 4.129e-04 | LR: 1.00e-03
+Epoch 15/100 | Training Loss: 6.169e-04 | Validation Loss: 4.235e-04 | LR: 1.00e-03
+Epoch 16/100 | Training Loss: 5.750e-04 | Validation Loss: 2.170e-04 | LR: 1.00e-03
+Epoch 17/100 | Training Loss: 5.228e-04 | Validation Loss: 2.149e-04 | LR: 1.00e-03
+Epoch 18/100 | Training Loss: 4.450e-04 | Validation Loss: 3.501e-04 | LR: 1.00e-03
+Epoch 19/100 | Training Loss: 4.239e-04 | Validation Loss: 2.166e-04 | LR: 1.00e-03
+Epoch 20/100 | Training Loss: 4.178e-04 | Validation Loss: 4.753e-04 | LR: 1.00e-03
+Epoch 21/100 | Training Loss: 4.160e-04 | Validation Loss: 2.698e-04 | LR: 1.00e-03
+Epoch 22/100 | Training Loss: 4.190e-04 | Validation Loss: 2.784e-04 | LR: 1.00e-03
+Epoch 23/100 | Training Loss: 4.122e-04 | Validation Loss: 3.520e-04 | LR: 5.00e-04
+Epoch 24/100 | Training Loss: 3.573e-04 | Validation Loss: 3.389e-04 | LR: 5.00e-04
+Epoch 25/100 | Training Loss: 3.455e-04 | Validation Loss: 6.779e-04 | LR: 5.00e-04
+Epoch 26/100 | Training Loss: 3.456e-04 | Validation Loss: 4.881e-04 | LR: 5.00e-04
+Epoch 27/100 | Training Loss: 3.460e-04 | Validation Loss: 5.357e-04 | LR: 5.00e-04
+Early stopping triggered after 27 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_30/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_30/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.256e-02 | Validation Loss: 6.749e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.678e-03 | Validation Loss: 6.291e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.841e-04 | Validation Loss: 6.324e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.012e-04 | Validation Loss: 1.330e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.103e-04 | Validation Loss: 2.220e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.482e-04 | Validation Loss: 1.284e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.224e-04 | Validation Loss: 1.529e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.017e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 5.483e-04 | Validation Loss: 1.292e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 5.533e-04 | Validation Loss: 8.565e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.500e-04 | Validation Loss: 1.012e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.492e-04 | Validation Loss: 4.384e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 6.177e-04 | Validation Loss: 1.116e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 5.745e-04 | Validation Loss: 1.865e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 5.673e-04 | Validation Loss: 7.286e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.521e-04 | Validation Loss: 6.925e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.490e-04 | Validation Loss: 7.194e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.541e-04 | Validation Loss: 4.330e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.355e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 5.401e-04 | Validation Loss: 9.984e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 5.113e-04 | Validation Loss: 1.375e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 5.102e-04 | Validation Loss: 4.659e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 5.106e-04 | Validation Loss: 4.015e-04 | LR: 2.50e-04
+Epoch 24/100 | Training Loss: 5.068e-04 | Validation Loss: 5.531e-04 | LR: 2.50e-04
+Epoch 25/100 | Training Loss: 5.075e-04 | Validation Loss: 6.943e-04 | LR: 2.50e-04
+Epoch 26/100 | Training Loss: 5.119e-04 | Validation Loss: 4.722e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 5.123e-04 | Validation Loss: 3.349e-04 | LR: 1.25e-04
+Epoch 28/100 | Training Loss: 4.967e-04 | Validation Loss: 2.629e-04 | LR: 1.25e-04
+Epoch 29/100 | Training Loss: 4.929e-04 | Validation Loss: 2.794e-04 | LR: 1.25e-04
+Epoch 30/100 | Training Loss: 4.886e-04 | Validation Loss: 2.901e-04 | LR: 1.25e-04
+Epoch 31/100 | Training Loss: 4.908e-04 | Validation Loss: 3.468e-04 | LR: 1.25e-04
+Early stopping triggered after 31 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_31/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_31/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.256e-02 | Validation Loss: 6.749e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.678e-03 | Validation Loss: 6.291e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.841e-04 | Validation Loss: 6.324e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.012e-04 | Validation Loss: 1.330e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.103e-04 | Validation Loss: 2.220e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.482e-04 | Validation Loss: 1.284e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.224e-04 | Validation Loss: 1.529e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.017e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 5.483e-04 | Validation Loss: 1.292e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 5.533e-04 | Validation Loss: 8.565e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.500e-04 | Validation Loss: 1.012e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.492e-04 | Validation Loss: 4.384e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 6.177e-04 | Validation Loss: 1.116e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 5.745e-04 | Validation Loss: 1.865e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 5.673e-04 | Validation Loss: 7.286e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.521e-04 | Validation Loss: 6.925e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.490e-04 | Validation Loss: 7.194e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.541e-04 | Validation Loss: 4.330e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.355e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 5.401e-04 | Validation Loss: 9.984e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 5.113e-04 | Validation Loss: 1.375e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 5.102e-04 | Validation Loss: 4.659e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 5.106e-04 | Validation Loss: 4.015e-04 | LR: 2.50e-04
+Epoch 24/100 | Training Loss: 5.068e-04 | Validation Loss: 5.531e-04 | LR: 2.50e-04
+Epoch 25/100 | Training Loss: 5.075e-04 | Validation Loss: 6.943e-04 | LR: 2.50e-04
+Epoch 26/100 | Training Loss: 5.119e-04 | Validation Loss: 4.722e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 5.123e-04 | Validation Loss: 3.349e-04 | LR: 1.25e-04
+Epoch 28/100 | Training Loss: 4.967e-04 | Validation Loss: 2.629e-04 | LR: 1.25e-04
+Epoch 29/100 | Training Loss: 4.929e-04 | Validation Loss: 2.794e-04 | LR: 1.25e-04
+Epoch 30/100 | Training Loss: 4.886e-04 | Validation Loss: 2.901e-04 | LR: 1.25e-04
+Epoch 31/100 | Training Loss: 4.908e-04 | Validation Loss: 3.468e-04 | LR: 1.25e-04
+Early stopping triggered after 31 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_32/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_32/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.226e-02 | Validation Loss: 5.459e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 3.011e-03 | Validation Loss: 4.362e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 6.204e-04 | Validation Loss: 6.575e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 3.096e-04 | Validation Loss: 8.896e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 2.517e-04 | Validation Loss: 1.166e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 2.409e-04 | Validation Loss: 7.316e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 2.250e-04 | Validation Loss: 7.924e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 2.085e-04 | Validation Loss: 1.877e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 1.783e-04 | Validation Loss: 7.903e-04 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 1.690e-04 | Validation Loss: 1.134e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 1.706e-04 | Validation Loss: 1.774e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 1.684e-04 | Validation Loss: 1.508e-03 | LR: 5.00e-04
+Early stopping triggered after 12 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_33/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_33/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.256e-02 | Validation Loss: 6.749e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.678e-03 | Validation Loss: 6.291e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.841e-04 | Validation Loss: 6.324e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.012e-04 | Validation Loss: 1.330e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.103e-04 | Validation Loss: 2.220e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.482e-04 | Validation Loss: 1.284e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.224e-04 | Validation Loss: 1.529e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.017e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 5.483e-04 | Validation Loss: 1.292e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 5.533e-04 | Validation Loss: 8.565e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.500e-04 | Validation Loss: 1.012e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.492e-04 | Validation Loss: 4.384e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 6.177e-04 | Validation Loss: 1.116e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 5.745e-04 | Validation Loss: 1.865e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 5.673e-04 | Validation Loss: 7.286e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.521e-04 | Validation Loss: 6.925e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.490e-04 | Validation Loss: 7.194e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.541e-04 | Validation Loss: 4.330e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.355e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 5.401e-04 | Validation Loss: 9.984e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 5.113e-04 | Validation Loss: 1.375e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 5.102e-04 | Validation Loss: 4.659e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 5.106e-04 | Validation Loss: 4.015e-04 | LR: 2.50e-04
+Epoch 24/100 | Training Loss: 5.068e-04 | Validation Loss: 5.531e-04 | LR: 2.50e-04
+Epoch 25/100 | Training Loss: 5.075e-04 | Validation Loss: 6.943e-04 | LR: 2.50e-04
+Epoch 26/100 | Training Loss: 5.119e-04 | Validation Loss: 4.722e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 5.123e-04 | Validation Loss: 3.349e-04 | LR: 1.25e-04
+Epoch 28/100 | Training Loss: 4.967e-04 | Validation Loss: 2.629e-04 | LR: 1.25e-04
+Epoch 29/100 | Training Loss: 4.929e-04 | Validation Loss: 2.794e-04 | LR: 1.25e-04
+Epoch 30/100 | Training Loss: 4.886e-04 | Validation Loss: 2.901e-04 | LR: 1.25e-04
+Epoch 31/100 | Training Loss: 4.908e-04 | Validation Loss: 3.468e-04 | LR: 1.25e-04
+Early stopping triggered after 31 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_34/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_34/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.896e-02 | Validation Loss: 1.528e-03 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 3.068e-03 | Validation Loss: 4.208e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 1.374e-03 | Validation Loss: 4.513e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 8.519e-04 | Validation Loss: 4.680e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 5.761e-04 | Validation Loss: 1.824e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 5.112e-04 | Validation Loss: 1.412e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 4.644e-04 | Validation Loss: 1.253e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 4.397e-04 | Validation Loss: 1.521e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 3.851e-04 | Validation Loss: 1.976e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 3.827e-04 | Validation Loss: 2.070e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 3.799e-04 | Validation Loss: 1.704e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 3.687e-04 | Validation Loss: 2.018e-03 | LR: 5.00e-04
+Early stopping triggered after 12 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_35/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_35/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.731e-02 | Validation Loss: 7.017e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.597e-03 | Validation Loss: 7.104e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 1.422e-03 | Validation Loss: 4.305e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 9.423e-04 | Validation Loss: 4.179e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 7.807e-04 | Validation Loss: 9.202e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.593e-04 | Validation Loss: 1.462e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.558e-04 | Validation Loss: 1.026e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.455e-04 | Validation Loss: 1.262e-03 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 6.396e-04 | Validation Loss: 1.906e-03 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 6.143e-04 | Validation Loss: 1.766e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.680e-04 | Validation Loss: 1.562e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.629e-04 | Validation Loss: 1.531e-03 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 5.679e-04 | Validation Loss: 1.779e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 5.588e-04 | Validation Loss: 1.621e-03 | LR: 5.00e-04
+Early stopping triggered after 14 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_36/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_36/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.259e-02 | Validation Loss: 4.363e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 1.314e-03 | Validation Loss: 6.492e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 7.954e-04 | Validation Loss: 1.612e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.270e-04 | Validation Loss: 1.846e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 6.988e-04 | Validation Loss: 1.834e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.824e-04 | Validation Loss: 1.789e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.781e-04 | Validation Loss: 2.023e-03 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 6.271e-04 | Validation Loss: 1.530e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 6.253e-04 | Validation Loss: 1.586e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 6.146e-04 | Validation Loss: 2.057e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 6.198e-04 | Validation Loss: 1.713e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_37/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_37/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.963e-02 | Validation Loss: 3.893e-03 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 4.866e-03 | Validation Loss: 4.213e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 1.187e-03 | Validation Loss: 4.160e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 8.382e-04 | Validation Loss: 4.197e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 5.308e-04 | Validation Loss: 5.230e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.134e-04 | Validation Loss: 5.094e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 3.561e-04 | Validation Loss: 5.959e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 3.130e-04 | Validation Loss: 5.707e-04 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 2.967e-04 | Validation Loss: 4.410e-04 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 2.450e-04 | Validation Loss: 9.450e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 2.422e-04 | Validation Loss: 1.146e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 2.401e-04 | Validation Loss: 8.886e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 2.335e-04 | Validation Loss: 1.515e-03 | LR: 5.00e-04
+Early stopping triggered after 13 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_38/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_38/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.040e-02 | Validation Loss: 5.903e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 8.955e-04 | Validation Loss: 1.123e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 4.226e-04 | Validation Loss: 8.494e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 3.202e-04 | Validation Loss: 1.386e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 3.014e-04 | Validation Loss: 1.924e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 2.863e-04 | Validation Loss: 1.731e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 2.827e-04 | Validation Loss: 1.617e-03 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 2.485e-04 | Validation Loss: 1.743e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 2.456e-04 | Validation Loss: 1.580e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 2.458e-04 | Validation Loss: 1.836e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 2.438e-04 | Validation Loss: 1.869e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_39/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_39/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 4.701e-03 | Validation Loss: 6.222e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 4.600e-04 | Validation Loss: 1.157e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 2.234e-04 | Validation Loss: 1.198e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 1.825e-04 | Validation Loss: 1.414e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 1.656e-04 | Validation Loss: 1.621e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 1.501e-04 | Validation Loss: 8.731e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 1.477e-04 | Validation Loss: 1.835e-03 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 1.167e-04 | Validation Loss: 1.565e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 1.133e-04 | Validation Loss: 1.380e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 1.120e-04 | Validation Loss: 1.322e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 1.124e-04 | Validation Loss: 1.216e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_40/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_40/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.256e-02 | Validation Loss: 6.749e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.678e-03 | Validation Loss: 6.291e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.841e-04 | Validation Loss: 6.324e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.012e-04 | Validation Loss: 1.330e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.103e-04 | Validation Loss: 2.220e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.482e-04 | Validation Loss: 1.284e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.224e-04 | Validation Loss: 1.529e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.017e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 5.483e-04 | Validation Loss: 1.292e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 5.533e-04 | Validation Loss: 8.565e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.500e-04 | Validation Loss: 1.012e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.492e-04 | Validation Loss: 4.384e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 6.177e-04 | Validation Loss: 1.116e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 5.745e-04 | Validation Loss: 1.865e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 5.673e-04 | Validation Loss: 7.286e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.521e-04 | Validation Loss: 6.925e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.490e-04 | Validation Loss: 7.194e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.541e-04 | Validation Loss: 4.330e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.355e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 5.401e-04 | Validation Loss: 9.984e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 5.113e-04 | Validation Loss: 1.375e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 5.102e-04 | Validation Loss: 4.659e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 5.106e-04 | Validation Loss: 4.015e-04 | LR: 2.50e-04
+Epoch 24/100 | Training Loss: 5.068e-04 | Validation Loss: 5.531e-04 | LR: 2.50e-04
+Epoch 25/100 | Training Loss: 5.075e-04 | Validation Loss: 6.943e-04 | LR: 2.50e-04
+Epoch 26/100 | Training Loss: 5.119e-04 | Validation Loss: 4.722e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 5.123e-04 | Validation Loss: 3.349e-04 | LR: 1.25e-04
+Epoch 28/100 | Training Loss: 4.967e-04 | Validation Loss: 2.629e-04 | LR: 1.25e-04
+Epoch 29/100 | Training Loss: 4.929e-04 | Validation Loss: 2.794e-04 | LR: 1.25e-04
+Epoch 30/100 | Training Loss: 4.886e-04 | Validation Loss: 2.901e-04 | LR: 1.25e-04
+Epoch 31/100 | Training Loss: 4.908e-04 | Validation Loss: 3.468e-04 | LR: 1.25e-04
+Early stopping triggered after 31 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_41/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_41/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.256e-02 | Validation Loss: 6.749e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.678e-03 | Validation Loss: 6.291e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.841e-04 | Validation Loss: 6.324e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.012e-04 | Validation Loss: 1.330e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.103e-04 | Validation Loss: 2.220e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.482e-04 | Validation Loss: 1.284e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.224e-04 | Validation Loss: 1.529e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.017e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 5.483e-04 | Validation Loss: 1.292e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 5.533e-04 | Validation Loss: 8.565e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.500e-04 | Validation Loss: 1.012e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.492e-04 | Validation Loss: 4.384e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 6.177e-04 | Validation Loss: 1.116e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 5.745e-04 | Validation Loss: 1.865e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 5.673e-04 | Validation Loss: 7.286e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.521e-04 | Validation Loss: 6.925e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.490e-04 | Validation Loss: 7.194e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.541e-04 | Validation Loss: 4.330e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.355e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 5.401e-04 | Validation Loss: 9.984e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 5.113e-04 | Validation Loss: 1.375e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 5.102e-04 | Validation Loss: 4.659e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 5.106e-04 | Validation Loss: 4.015e-04 | LR: 2.50e-04
+Epoch 24/100 | Training Loss: 5.068e-04 | Validation Loss: 5.531e-04 | LR: 2.50e-04
+Epoch 25/100 | Training Loss: 5.075e-04 | Validation Loss: 6.943e-04 | LR: 2.50e-04
+Epoch 26/100 | Training Loss: 5.119e-04 | Validation Loss: 4.722e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 5.123e-04 | Validation Loss: 3.349e-04 | LR: 1.25e-04
+Epoch 28/100 | Training Loss: 4.967e-04 | Validation Loss: 2.629e-04 | LR: 1.25e-04
+Epoch 29/100 | Training Loss: 4.929e-04 | Validation Loss: 2.794e-04 | LR: 1.25e-04
+Epoch 30/100 | Training Loss: 4.886e-04 | Validation Loss: 2.901e-04 | LR: 1.25e-04
+Epoch 31/100 | Training Loss: 4.908e-04 | Validation Loss: 3.468e-04 | LR: 1.25e-04
+Early stopping triggered after 31 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_42/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_42/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.256e-02 | Validation Loss: 6.749e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 2.678e-03 | Validation Loss: 6.291e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 9.841e-04 | Validation Loss: 6.324e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.012e-04 | Validation Loss: 1.330e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 8.103e-04 | Validation Loss: 2.220e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.482e-04 | Validation Loss: 1.284e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.224e-04 | Validation Loss: 1.529e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 6.017e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 5.483e-04 | Validation Loss: 1.292e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 5.533e-04 | Validation Loss: 8.565e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.500e-04 | Validation Loss: 1.012e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.492e-04 | Validation Loss: 4.384e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 6.177e-04 | Validation Loss: 1.116e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 5.745e-04 | Validation Loss: 1.865e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 5.673e-04 | Validation Loss: 7.286e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.521e-04 | Validation Loss: 6.925e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.490e-04 | Validation Loss: 7.194e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.541e-04 | Validation Loss: 4.330e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.355e-04 | Validation Loss: 7.178e-04 | LR: 5.00e-04
+Epoch 20/100 | Training Loss: 5.401e-04 | Validation Loss: 9.984e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 5.113e-04 | Validation Loss: 1.375e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 5.102e-04 | Validation Loss: 4.659e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 5.106e-04 | Validation Loss: 4.015e-04 | LR: 2.50e-04
+Epoch 24/100 | Training Loss: 5.068e-04 | Validation Loss: 5.531e-04 | LR: 2.50e-04
+Epoch 25/100 | Training Loss: 5.075e-04 | Validation Loss: 6.943e-04 | LR: 2.50e-04
+Epoch 26/100 | Training Loss: 5.119e-04 | Validation Loss: 4.722e-04 | LR: 2.50e-04
+Epoch 27/100 | Training Loss: 5.123e-04 | Validation Loss: 3.349e-04 | LR: 1.25e-04
+Epoch 28/100 | Training Loss: 4.967e-04 | Validation Loss: 2.629e-04 | LR: 1.25e-04
+Epoch 29/100 | Training Loss: 4.929e-04 | Validation Loss: 2.794e-04 | LR: 1.25e-04
+Epoch 30/100 | Training Loss: 4.886e-04 | Validation Loss: 2.901e-04 | LR: 1.25e-04
+Epoch 31/100 | Training Loss: 4.908e-04 | Validation Loss: 3.468e-04 | LR: 1.25e-04
+Early stopping triggered after 31 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_43/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_43/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.036e-02 | Validation Loss: 4.073e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 9.918e-04 | Validation Loss: 3.585e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 7.451e-04 | Validation Loss: 5.145e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 6.624e-04 | Validation Loss: 3.575e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 6.516e-04 | Validation Loss: 9.272e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.368e-04 | Validation Loss: 7.979e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 1.267e-03 | Validation Loss: 4.579e-04 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 9.281e-04 | Validation Loss: 5.271e-04 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 6.874e-04 | Validation Loss: 5.127e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 5.866e-04 | Validation Loss: 6.588e-04 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.097e-04 | Validation Loss: 4.093e-04 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.004e-04 | Validation Loss: 6.420e-04 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 4.984e-04 | Validation Loss: 2.211e-04 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 4.964e-04 | Validation Loss: 5.566e-04 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 4.931e-04 | Validation Loss: 3.739e-04 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 4.988e-04 | Validation Loss: 5.883e-04 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 4.981e-04 | Validation Loss: 5.803e-04 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 4.873e-04 | Validation Loss: 5.633e-04 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 4.908e-04 | Validation Loss: 3.523e-04 | LR: 2.50e-04
+Epoch 20/100 | Training Loss: 4.604e-04 | Validation Loss: 2.784e-04 | LR: 2.50e-04
+Epoch 21/100 | Training Loss: 4.601e-04 | Validation Loss: 3.583e-04 | LR: 2.50e-04
+Epoch 22/100 | Training Loss: 4.556e-04 | Validation Loss: 3.189e-04 | LR: 2.50e-04
+Epoch 23/100 | Training Loss: 4.579e-04 | Validation Loss: 5.168e-04 | LR: 2.50e-04
+Early stopping triggered after 23 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_44/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_44/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.163e-02 | Validation Loss: 4.089e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 5.293e-04 | Validation Loss: 4.742e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 4.039e-04 | Validation Loss: 4.272e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 3.204e-04 | Validation Loss: 5.184e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 3.683e-04 | Validation Loss: 4.161e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 2.782e-04 | Validation Loss: 4.132e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 1.653e-04 | Validation Loss: 4.387e-04 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 8.034e-05 | Validation Loss: 3.747e-04 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 7.232e-05 | Validation Loss: 3.933e-04 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 6.552e-05 | Validation Loss: 1.322e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 5.847e-05 | Validation Loss: 1.492e-03 | LR: 5.00e-04
+Epoch 12/100 | Training Loss: 5.321e-05 | Validation Loss: 1.259e-03 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 5.024e-05 | Validation Loss: 1.760e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 4.802e-05 | Validation Loss: 1.464e-03 | LR: 2.50e-04
+Epoch 15/100 | Training Loss: 3.529e-05 | Validation Loss: 1.564e-03 | LR: 2.50e-04
+Epoch 16/100 | Training Loss: 3.393e-05 | Validation Loss: 2.014e-03 | LR: 2.50e-04
+Epoch 17/100 | Training Loss: 3.345e-05 | Validation Loss: 1.278e-03 | LR: 2.50e-04
+Epoch 18/100 | Training Loss: 3.169e-05 | Validation Loss: 1.441e-03 | LR: 2.50e-04
+Early stopping triggered after 18 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_45/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_45/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 7.161e-03 | Validation Loss: 1.272e-03 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 7.066e-04 | Validation Loss: 1.650e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 1.786e-03 | Validation Loss: 8.185e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 1.213e-03 | Validation Loss: 1.084e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 4.502e-04 | Validation Loss: 1.160e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 4.711e-04 | Validation Loss: 4.565e-04 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 3.443e-04 | Validation Loss: 1.705e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 3.069e-04 | Validation Loss: 1.618e-03 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 2.963e-04 | Validation Loss: 1.012e-03 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 3.299e-04 | Validation Loss: 1.456e-03 | LR: 1.00e-03
+Epoch 11/100 | Training Loss: 2.877e-04 | Validation Loss: 1.627e-03 | LR: 1.00e-03
+Epoch 12/100 | Training Loss: 2.848e-04 | Validation Loss: 1.972e-03 | LR: 5.00e-04
+Epoch 13/100 | Training Loss: 2.483e-04 | Validation Loss: 1.559e-03 | LR: 5.00e-04
+Epoch 14/100 | Training Loss: 2.458e-04 | Validation Loss: 1.480e-03 | LR: 5.00e-04
+Epoch 15/100 | Training Loss: 2.449e-04 | Validation Loss: 1.482e-03 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 2.486e-04 | Validation Loss: 1.346e-03 | LR: 5.00e-04
+Early stopping triggered after 16 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_46/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_46/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 9.877e-03 | Validation Loss: 4.106e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 6.723e-03 | Validation Loss: 1.891e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 6.554e-03 | Validation Loss: 5.184e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 6.095e-03 | Validation Loss: 4.148e-04 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 5.985e-03 | Validation Loss: 5.537e-04 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 7.101e-03 | Validation Loss: 2.963e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 7.290e-03 | Validation Loss: 2.775e-03 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 7.286e-03 | Validation Loss: 2.784e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 7.287e-03 | Validation Loss: 3.317e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 7.288e-03 | Validation Loss: 3.023e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 7.288e-03 | Validation Loss: 3.077e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_47/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_47/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 6.176e-03 | Validation Loss: 6.664e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 6.168e-04 | Validation Loss: 1.159e-03 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 3.507e-04 | Validation Loss: 1.212e-03 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 3.283e-04 | Validation Loss: 1.127e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 3.135e-04 | Validation Loss: 1.779e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 2.979e-04 | Validation Loss: 1.124e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 2.948e-04 | Validation Loss: 6.846e-04 | LR: 5.00e-04
+Epoch 8/100 | Training Loss: 2.554e-04 | Validation Loss: 1.227e-03 | LR: 5.00e-04
+Epoch 9/100 | Training Loss: 2.554e-04 | Validation Loss: 1.369e-03 | LR: 5.00e-04
+Epoch 10/100 | Training Loss: 2.490e-04 | Validation Loss: 1.654e-03 | LR: 5.00e-04
+Epoch 11/100 | Training Loss: 2.507e-04 | Validation Loss: 1.305e-03 | LR: 5.00e-04
+Early stopping triggered after 11 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_48/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_48/train_history.parquet
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 7)
+Validation dataframe shape: (50697, 7)
+Testing dataframe shape: (23172, 7)
+
+Features scaled using StandardScaler
+
+
+Start training...
+Epoch 1/100 | Training Loss: 1.758e-02 | Validation Loss: 7.615e-04 | LR: 1.00e-03
+Epoch 2/100 | Training Loss: 3.120e-03 | Validation Loss: 6.488e-04 | LR: 1.00e-03
+Epoch 3/100 | Training Loss: 2.111e-03 | Validation Loss: 4.178e-04 | LR: 1.00e-03
+Epoch 4/100 | Training Loss: 7.843e-04 | Validation Loss: 1.101e-03 | LR: 1.00e-03
+Epoch 5/100 | Training Loss: 6.820e-04 | Validation Loss: 1.124e-03 | LR: 1.00e-03
+Epoch 6/100 | Training Loss: 6.522e-04 | Validation Loss: 1.224e-03 | LR: 1.00e-03
+Epoch 7/100 | Training Loss: 6.355e-04 | Validation Loss: 1.219e-03 | LR: 1.00e-03
+Epoch 8/100 | Training Loss: 7.604e-04 | Validation Loss: 7.546e-04 | LR: 1.00e-03
+Epoch 9/100 | Training Loss: 6.492e-04 | Validation Loss: 1.418e-04 | LR: 1.00e-03
+Epoch 10/100 | Training Loss: 6.224e-04 | Validation Loss: 1.177e-03 | LR: 1.00e-03
+Epoch 11/100 | Training Loss: 1.482e-03 | Validation Loss: 5.220e-04 | LR: 1.00e-03
+Epoch 12/100 | Training Loss: 1.460e-03 | Validation Loss: 8.156e-04 | LR: 1.00e-03
+Epoch 13/100 | Training Loss: 1.081e-03 | Validation Loss: 1.135e-03 | LR: 1.00e-03
+Epoch 14/100 | Training Loss: 6.882e-04 | Validation Loss: 1.075e-03 | LR: 1.00e-03
+Epoch 15/100 | Training Loss: 7.125e-04 | Validation Loss: 1.077e-03 | LR: 5.00e-04
+Epoch 16/100 | Training Loss: 5.738e-04 | Validation Loss: 1.412e-03 | LR: 5.00e-04
+Epoch 17/100 | Training Loss: 5.642e-04 | Validation Loss: 1.180e-03 | LR: 5.00e-04
+Epoch 18/100 | Training Loss: 5.632e-04 | Validation Loss: 1.350e-03 | LR: 5.00e-04
+Epoch 19/100 | Training Loss: 5.482e-04 | Validation Loss: 1.513e-03 | LR: 5.00e-04
+Early stopping triggered after 19 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_49/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/10min_mean_20250325_180539/trial_49/train_history.parquet
+
+============================
+      Search Finished!      
+============================
+Best trial ID: 18
+Best trial value (Val. Loss): 0.0001
+Best hyperparameters:
+    SEQUENCE_LENGTH: 864
+    HIDDEN_SIZE: 64
+    NUM_LAYERS: 5
+    DROPOUT: 0.5
+    LEARNING_RATE: 0.001
+    WEIGHT_DECAY: 1e-05
+    BATCH_SIZE: 32
+============================

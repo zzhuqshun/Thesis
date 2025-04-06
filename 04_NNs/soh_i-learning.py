@@ -35,12 +35,12 @@ def main(model_type="structure_based(PNN)"):
         "SEQUENCE_LENGTH": 1008,
         "HIDDEN_SIZE": 128,
         "NUM_LAYERS": 3,
-        "DROPOUT": 0.4,
+        "DROPOUT": 0.5,
         "BATCH_SIZE": 32,
         "LEARNING_RATE": 1e-4,
         "EPOCHS": 100,
         "PATIENCE": 10,
-        "WEIGHT_DECAY": 1e-4, 
+        "WEIGHT_DECAY": 0.0, 
         "device": str(device)
     }
     

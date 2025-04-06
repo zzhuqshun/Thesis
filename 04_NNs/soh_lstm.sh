@@ -18,9 +18,5 @@
 source ~/miniconda3/bin/activate
 conda activate myenv
 
-# Create a run folder with the SLURM job ID
-RUN_FOLDER="models/run_${SLURM_JOB_ID}"
-mkdir -p "$RUN_FOLDER"
-
 # Run the Python script, passing the folder path as an argument
-python soh_lstm.py --run_folder "$RUN_FOLDER"
+python soh_lstm.py 

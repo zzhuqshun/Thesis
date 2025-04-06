@@ -1,0 +1,112 @@
+Using device: cuda:0
+Current model_type: structure_based(PNN)
+
+Test cell: df_21.parquet
+Base training cells: ['df_17.parquet', 'df_29.parquet', 'df_15.parquet', 'df_13.parquet']
+Update 1 cells: ['df_23.parquet', 'df_27.parquet', 'df_11.parquet', 'df_05.parquet', 'df_19.parquet']
+Update 2 cells: ['df_07.parquet', 'df_09.parquet', 'df_25.parquet', 'df_01.parquet', 'df_03.parquet']
+
+Base training data shape: (46125, 8)
+Update 1 data shape: (109434, 8)
+Update 2 data shape: (107962, 8)
+Test data shape: (23172, 8)
+
+Features scaled using StandardScaler fitted on base training data.
+
+Base - Training cells: ['13', '17', '15']
+Base - Validation cells: ['29']
+Update1 - Training cells: ['19', '11', '23', '05']
+Update1 - Validation cells: ['27']
+Update2 - Training cells: ['03', '25', '07', '01']
+Update2 - Validation cells: ['09']
+================================================================================
+Method: Progressive Neural Networks (PNN)
+================================================================================
+
+Training base column...
+Epoch 1/100 | Train Loss: 7.218e-02 | Val Loss: 1.596e-02 | LR: 1.00e-04
+Epoch 2/100 | Train Loss: 2.416e-02 | Val Loss: 1.508e-02 | LR: 1.00e-04
+Epoch 3/100 | Train Loss: 1.890e-02 | Val Loss: 1.808e-02 | LR: 1.00e-04
+Epoch 4/100 | Train Loss: 1.590e-02 | Val Loss: 1.547e-02 | LR: 1.00e-04
+Epoch 5/100 | Train Loss: 1.431e-02 | Val Loss: 1.674e-02 | LR: 1.00e-04
+Epoch 6/100 | Train Loss: 1.349e-02 | Val Loss: 1.646e-02 | LR: 1.00e-04
+Epoch 7/100 | Train Loss: 1.324e-02 | Val Loss: 1.661e-02 | LR: 1.00e-04
+Epoch 8/100 | Train Loss: 1.341e-02 | Val Loss: 1.140e-02 | LR: 1.00e-04
+Epoch 9/100 | Train Loss: 1.169e-02 | Val Loss: 1.969e-02 | LR: 1.00e-04
+Epoch 10/100 | Train Loss: 1.122e-02 | Val Loss: 1.779e-02 | LR: 1.00e-04
+Epoch 11/100 | Train Loss: 1.093e-02 | Val Loss: 1.634e-02 | LR: 1.00e-04
+Epoch 12/100 | Train Loss: 9.500e-03 | Val Loss: 2.088e-02 | LR: 1.00e-04
+Epoch 13/100 | Train Loss: 9.155e-03 | Val Loss: 2.103e-02 | LR: 1.00e-04
+Epoch 14/100 | Train Loss: 8.920e-03 | Val Loss: 1.799e-02 | LR: 5.00e-05
+Epoch 15/100 | Train Loss: 8.565e-03 | Val Loss: 2.090e-02 | LR: 5.00e-05
+Epoch 16/100 | Train Loss: 8.193e-03 | Val Loss: 2.036e-02 | LR: 5.00e-05
+Epoch 17/100 | Train Loss: 7.287e-03 | Val Loss: 1.346e-02 | LR: 5.00e-05
+Epoch 18/100 | Train Loss: 6.181e-03 | Val Loss: 1.474e-02 | LR: 5.00e-05
+Early stopping triggered after 18 epochs!
+
+Evaluating base model...
+Base model metrics: {'RMSE': 0.054126486, 'MAE': 0.04540068, 'MAPE': 4.705417528748512, 'R²': -12.499345779418945}
+
+Adding column for first update...
+New column added at index 1
+Training column for first update...
+Epoch 1/100 | Train Loss: 2.930e-02 | Val Loss: 8.069e-04 | LR: 1.00e-04
+Epoch 2/100 | Train Loss: 9.915e-03 | Val Loss: 1.344e-03 | LR: 1.00e-04
+Epoch 3/100 | Train Loss: 7.191e-03 | Val Loss: 2.368e-03 | LR: 1.00e-04
+Epoch 4/100 | Train Loss: 5.657e-03 | Val Loss: 9.234e-04 | LR: 1.00e-04
+Epoch 5/100 | Train Loss: 4.493e-03 | Val Loss: 9.634e-04 | LR: 1.00e-04
+Epoch 6/100 | Train Loss: 3.574e-03 | Val Loss: 1.404e-03 | LR: 1.00e-04
+Epoch 7/100 | Train Loss: 2.838e-03 | Val Loss: 5.097e-04 | LR: 1.00e-04
+Epoch 8/100 | Train Loss: 1.954e-03 | Val Loss: 4.991e-04 | LR: 1.00e-04
+Epoch 9/100 | Train Loss: 1.781e-03 | Val Loss: 3.968e-04 | LR: 1.00e-04
+Epoch 10/100 | Train Loss: 1.639e-03 | Val Loss: 4.805e-04 | LR: 1.00e-04
+Epoch 11/100 | Train Loss: 1.267e-03 | Val Loss: 2.842e-04 | LR: 1.00e-04
+Epoch 12/100 | Train Loss: 1.308e-03 | Val Loss: 3.030e-04 | LR: 1.00e-04
+Epoch 13/100 | Train Loss: 1.224e-03 | Val Loss: 3.116e-04 | LR: 1.00e-04
+Epoch 14/100 | Train Loss: 1.096e-03 | Val Loss: 3.581e-04 | LR: 1.00e-04
+Epoch 15/100 | Train Loss: 1.222e-03 | Val Loss: 3.979e-04 | LR: 1.00e-04
+Epoch 16/100 | Train Loss: 1.070e-03 | Val Loss: 2.868e-04 | LR: 1.00e-04
+Epoch 17/100 | Train Loss: 9.981e-04 | Val Loss: 3.876e-04 | LR: 5.00e-05
+Epoch 18/100 | Train Loss: 8.424e-04 | Val Loss: 2.813e-04 | LR: 5.00e-05
+Epoch 19/100 | Train Loss: 8.391e-04 | Val Loss: 2.813e-04 | LR: 5.00e-05
+Epoch 20/100 | Train Loss: 8.237e-04 | Val Loss: 2.821e-04 | LR: 5.00e-05
+Epoch 21/100 | Train Loss: 8.082e-04 | Val Loss: 2.873e-04 | LR: 5.00e-05
+Epoch 22/100 | Train Loss: 8.016e-04 | Val Loss: 2.854e-04 | LR: 5.00e-05
+Epoch 23/100 | Train Loss: 8.085e-04 | Val Loss: 2.941e-04 | LR: 5.00e-05
+Epoch 24/100 | Train Loss: 7.855e-04 | Val Loss: 2.835e-04 | LR: 2.50e-05
+Epoch 25/100 | Train Loss: 7.232e-04 | Val Loss: 2.864e-04 | LR: 2.50e-05
+Epoch 26/100 | Train Loss: 7.170e-04 | Val Loss: 2.838e-04 | LR: 2.50e-05
+Epoch 27/100 | Train Loss: 6.998e-04 | Val Loss: 2.863e-04 | LR: 2.50e-05
+Epoch 28/100 | Train Loss: 7.043e-04 | Val Loss: 2.846e-04 | LR: 2.50e-05
+Epoch 29/100 | Train Loss: 7.122e-04 | Val Loss: 2.846e-04 | LR: 2.50e-05
+Early stopping triggered after 29 epochs!
+
+Evaluating after first update...
+Update 1 metrics: {'RMSE': 0.082659945, 'MAE': 0.06676879, 'MAPE': 7.422073930501938, 'R²': -28.435501098632812}
+
+Adding column for second update...
+New column added at index 2
+Training column for second update...
+Epoch 1/100 | Train Loss: 2.701e-02 | Val Loss: 7.737e-03 | LR: 1.00e-04
+Epoch 2/100 | Train Loss: 1.103e-02 | Val Loss: 6.624e-03 | LR: 1.00e-04
+Epoch 3/100 | Train Loss: 7.387e-03 | Val Loss: 7.366e-03 | LR: 1.00e-04
+Epoch 4/100 | Train Loss: 5.598e-03 | Val Loss: 6.543e-03 | LR: 1.00e-04
+Epoch 5/100 | Train Loss: 4.151e-03 | Val Loss: 5.947e-03 | LR: 1.00e-04
+Epoch 6/100 | Train Loss: 3.019e-03 | Val Loss: 6.508e-03 | LR: 1.00e-04
+Epoch 7/100 | Train Loss: 2.201e-03 | Val Loss: 1.147e-02 | LR: 1.00e-04
+Epoch 8/100 | Train Loss: 1.688e-03 | Val Loss: 1.053e-02 | LR: 1.00e-04
+Epoch 9/100 | Train Loss: 1.451e-03 | Val Loss: 1.307e-02 | LR: 1.00e-04
+Epoch 10/100 | Train Loss: 1.322e-03 | Val Loss: 1.533e-02 | LR: 1.00e-04
+Epoch 11/100 | Train Loss: 1.268e-03 | Val Loss: 1.551e-02 | LR: 5.00e-05
+Epoch 12/100 | Train Loss: 1.067e-03 | Val Loss: 1.176e-02 | LR: 5.00e-05
+Epoch 13/100 | Train Loss: 1.021e-03 | Val Loss: 1.282e-02 | LR: 5.00e-05
+Epoch 14/100 | Train Loss: 9.133e-04 | Val Loss: 1.087e-02 | LR: 5.00e-05
+Epoch 15/100 | Train Loss: 8.224e-04 | Val Loss: 1.032e-02 | LR: 5.00e-05
+Early stopping triggered after 15 epochs!
+
+Evaluating after second update...
+Update 2 metrics: {'RMSE': 0.08441363, 'MAE': 0.07854097, 'MAPE': 9.314142167568207, 'R²': -46.6099739074707}
+Results saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/incremental_learning_20250405_142041/results
+PNN Incremental Learning Finished!
+
+All Done.

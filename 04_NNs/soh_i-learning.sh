@@ -3,7 +3,7 @@
 #SBATCH -o ./Results/myjob.%j.out
 #SBATCH -e ./Results/myjob.%j.err
 #SBATCH -D .
-#SBATCH -J LSTM
+#SBATCH -J Incrementatl Learning
 #SBATCH --cpus-per-task=2
 #SBATCH --gres=gpu:tesla:1
 #SBATCH --mem=96G
