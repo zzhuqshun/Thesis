@@ -20,8 +20,8 @@ from tqdm import tqdm
 # Set configurations
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-save_dir = Path(__file__).parent / f"models/ewc" # 10minresample
-# save_dir = Path(__file__).parent / f"models/optuna_tryout/trial_20_optuna"
+# save_dir = Path(__file__).parent / f"models/ewc" # 10minresample
+save_dir = Path(__file__).parent / f"models/optuna_tryout/trial_20_rerun"
 save_dir.mkdir(exist_ok=True)
 hyperparams = {
     "MODEL" : "LSTM reasmple mean 10min",
@@ -30,7 +30,7 @@ hyperparams = {
     "NUM_LAYERS": 3,
     "DROPOUT": 0.5,
     "BATCH_SIZE": 32,
-    "LEARNING_RATE": 1e-4,
+    "LEARNING_RATE": 0.0001,
     "EPOCHS": 200,
     "PATIENCE": 20,
     "WEIGHT_DECAY": 0.0,
@@ -99,7 +99,7 @@ def main():
     # Define TRAINING_MODE to control if the model should be trained or loaded
     TRAINING_MODE = False
     # Define which trained model to load and evaluate
-    LOAD_MODEL_TYPE = 'best'
+    LOAD_MODEL_TYPE = 'last'
     # 'best' or 'last'
  
     if TRAINING_MODE:

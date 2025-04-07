@@ -10,11 +10,11 @@ import numpy as np
 
 # Import from project modules
 from models.pnn import ProgressiveNN
+from models.ewc import EWC  # Import the EWC class
 from utils.data_processing import load_and_prepare_data, scale_data, split_by_cell
 from utils.common import set_seed
 from utils.training import train_model
 from utils.evaluation import evaluate_model, evaluate_pnn, plot_results, calc_metrics, plot_pnn_learning_curves
-from utils.ewc import EWC  # Import the EWC class
 from soh_lstm import SOHLSTM, BatteryDataset
 
 def main(model_type="parameter_based(EWC)"):
@@ -28,7 +28,7 @@ def main(model_type="parameter_based(EWC)"):
             - "data_based": Replay Buffer (not implemented)
     """
     # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    save_dir = Path(__file__).parent / f"models/ewc"
+    save_dir = Path(__file__).parent / f"models/EWC"
     save_dir.mkdir(exist_ok=True, parents=True)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
