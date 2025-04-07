@@ -19,21 +19,21 @@ from tqdm import tqdm
 
 # Set configurations
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-save_dir = Path(__file__).parent / f"models/trial_18_{timestamp}" # 10minresample
-# save_dir = Path(__file__).parent / f"models/optuna_tryout/best/01"
+# timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+save_dir = Path(__file__).parent / f"models/ewc" # 10minresample
+# save_dir = Path(__file__).parent / f"models/optuna_tryout/trial_20_optuna"
 save_dir.mkdir(exist_ok=True)
 hyperparams = {
     "MODEL" : "LSTM reasmple mean 10min",
-    "SEQUENCE_LENGTH": 864,
-    "HIDDEN_SIZE": 64,
-    "NUM_LAYERS": 5,
+    "SEQUENCE_LENGTH": 1008,
+    "HIDDEN_SIZE": 128,
+    "NUM_LAYERS": 3,
     "DROPOUT": 0.5,
     "BATCH_SIZE": 32,
-    "LEARNING_RATE": 1e-3,
+    "LEARNING_RATE": 1e-4,
     "EPOCHS": 200,
     "PATIENCE": 20,
-    "WEIGHT_DECAY": 1e-05,
+    "WEIGHT_DECAY": 0.0,
     "device": str(device)
 }
  
@@ -97,9 +97,10 @@ def main():
     }
 
     # Define TRAINING_MODE to control if the model should be trained or loaded
-    TRAINING_MODE = True
+    TRAINING_MODE = False
     # Define which trained model to load and evaluate
-    LOAD_MODEL_TYPE = 'best'  # 'best' or 'last'
+    LOAD_MODEL_TYPE = 'best'
+    # 'best' or 'last'
  
     if TRAINING_MODE:
         # Train and validate the model

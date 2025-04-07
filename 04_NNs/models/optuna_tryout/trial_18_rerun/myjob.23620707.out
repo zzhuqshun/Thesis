@@ -1,0 +1,62 @@
+Using device: cuda:0
+
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 8)
+Validation dataframe shape: (50697, 8)
+Testing dataframe shape: (23172, 8)
+
+Features scaled using StandardScaler
+
+----------------------------------------------------------------------
+Model architecture:
+SOHLSTM(
+  (lstm): LSTM(3, 64, num_layers=5, batch_first=True, dropout=0.5)
+  (fc_layers): Sequential(
+    (0): Linear(in_features=64, out_features=32, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+    (2): Dropout(p=0.5, inplace=False)
+    (3): Linear(in_features=32, out_features=1, bias=True)
+  )
+)
+----------------------------------------------------------------------
+Total parameters: 152897
+Estimated model size: 0.58 MB
+----------------------------------------------------------------------
+
+Start training...
+Epoch 1/200 | Training Loss: 1.269e-02 | Validation Loss: 3.247e-03 | LR: 1.00e-03
+Epoch 2/200 | Training Loss: 3.643e-03 | Validation Loss: 7.604e-04 | LR: 1.00e-03
+Epoch 3/200 | Training Loss: 2.403e-03 | Validation Loss: 4.190e-04 | LR: 1.00e-03
+Epoch 4/200 | Training Loss: 1.968e-03 | Validation Loss: 5.233e-04 | LR: 1.00e-03
+Epoch 5/200 | Training Loss: 1.694e-03 | Validation Loss: 1.051e-03 | LR: 1.00e-03
+Epoch 6/200 | Training Loss: 1.585e-03 | Validation Loss: 7.286e-04 | LR: 1.00e-03
+Epoch 7/200 | Training Loss: 1.209e-03 | Validation Loss: 5.197e-04 | LR: 1.00e-03
+Epoch 8/200 | Training Loss: 1.106e-03 | Validation Loss: 4.645e-04 | LR: 1.00e-03
+Epoch 9/200 | Training Loss: 9.359e-04 | Validation Loss: 6.445e-04 | LR: 5.00e-04
+Epoch 10/200 | Training Loss: 8.048e-04 | Validation Loss: 5.993e-04 | LR: 5.00e-04
+Epoch 11/200 | Training Loss: 7.847e-04 | Validation Loss: 7.143e-04 | LR: 5.00e-04
+Epoch 12/200 | Training Loss: 7.782e-04 | Validation Loss: 1.271e-03 | LR: 5.00e-04
+Epoch 13/200 | Training Loss: 7.491e-04 | Validation Loss: 2.469e-03 | LR: 5.00e-04
+Epoch 14/200 | Training Loss: 7.310e-04 | Validation Loss: 1.393e-03 | LR: 5.00e-04
+Epoch 15/200 | Training Loss: 7.447e-04 | Validation Loss: 1.069e-03 | LR: 2.50e-04
+Epoch 16/200 | Training Loss: 6.836e-04 | Validation Loss: 9.910e-04 | LR: 2.50e-04
+Epoch 17/200 | Training Loss: 6.835e-04 | Validation Loss: 1.243e-03 | LR: 2.50e-04
+Epoch 18/200 | Training Loss: 6.703e-04 | Validation Loss: 1.048e-03 | LR: 2.50e-04
+Epoch 19/200 | Training Loss: 7.149e-04 | Validation Loss: 1.034e-03 | LR: 2.50e-04
+Epoch 20/200 | Training Loss: 6.718e-04 | Validation Loss: 1.018e-03 | LR: 2.50e-04
+Epoch 21/200 | Training Loss: 6.611e-04 | Validation Loss: 7.911e-04 | LR: 1.25e-04
+Epoch 22/200 | Training Loss: 6.193e-04 | Validation Loss: 1.311e-03 | LR: 1.25e-04
+Epoch 23/200 | Training Loss: 6.049e-04 | Validation Loss: 9.967e-04 | LR: 1.25e-04
+Early stopping triggered after 23 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/trial_18_20250406_095938/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/trial_18_20250406_095938/train_history.parquet
+
+Evaluating the model on the testing set...
+RMSE: 0.0119
+MAE: 0.0090
+MAPE: 0.0102
+R²: 0.9404
