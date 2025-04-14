@@ -1,0 +1,97 @@
+Using device: cuda:0
+Current model_type: parameter_based(EWC)
+
+Test cell: df_21.parquet
+Base training cells: ['df_17.parquet', 'df_29.parquet', 'df_15.parquet', 'df_13.parquet']
+Update 1 cells: ['df_23.parquet', 'df_27.parquet', 'df_11.parquet', 'df_05.parquet', 'df_19.parquet']
+Update 2 cells: ['df_07.parquet', 'df_09.parquet', 'df_25.parquet', 'df_01.parquet', 'df_03.parquet']
+
+Base training data shape: (46125, 8)
+Update 1 data shape: (109434, 8)
+Update 2 data shape: (107962, 8)
+Test data shape: (23172, 8)
+
+Features scaled using StandardScaler fitted on base training data.
+
+Base - Training cells: ['13', '17', '15']
+Base - Validation cells: ['29']
+Update1 - Training cells: ['19', '11', '23', '05']
+Update1 - Validation cells: ['27']
+Update2 - Training cells: ['03', '25', '07', '01']
+Update2 - Validation cells: ['09']
+================================================================================
+Method: Elastic Weight Consolidation (EWC)
+================================================================================
+
+Training on base data...
+Epoch 1/100 | Train Loss: 7.960e-02 | Val Loss: 1.413e-02 | LR: 1.00e-04
+Epoch 2/100 | Train Loss: 2.799e-02 | Val Loss: 1.573e-02 | LR: 1.00e-04
+Epoch 3/100 | Train Loss: 2.163e-02 | Val Loss: 1.673e-02 | LR: 1.00e-04
+Epoch 4/100 | Train Loss: 1.789e-02 | Val Loss: 1.007e-02 | LR: 1.00e-04
+Epoch 5/100 | Train Loss: 1.660e-02 | Val Loss: 1.401e-02 | LR: 1.00e-04
+Epoch 6/100 | Train Loss: 1.405e-02 | Val Loss: 1.590e-02 | LR: 1.00e-04
+Epoch 7/100 | Train Loss: 1.102e-02 | Val Loss: 1.785e-02 | LR: 1.00e-04
+Epoch 8/100 | Train Loss: 1.283e-02 | Val Loss: 1.228e-02 | LR: 1.00e-04
+Epoch 9/100 | Train Loss: 1.329e-02 | Val Loss: 1.342e-02 | LR: 1.00e-04
+Epoch 10/100 | Train Loss: 1.146e-02 | Val Loss: 4.400e-03 | LR: 1.00e-04
+Epoch 11/100 | Train Loss: 8.984e-03 | Val Loss: 7.763e-03 | LR: 1.00e-04
+Epoch 12/100 | Train Loss: 6.523e-03 | Val Loss: 1.336e-02 | LR: 1.00e-04
+Epoch 13/100 | Train Loss: 5.647e-03 | Val Loss: 1.831e-02 | LR: 1.00e-04
+Epoch 14/100 | Train Loss: 4.934e-03 | Val Loss: 1.522e-02 | LR: 1.00e-04
+Epoch 15/100 | Train Loss: 4.012e-03 | Val Loss: 1.366e-02 | LR: 1.00e-04
+Epoch 16/100 | Train Loss: 3.381e-03 | Val Loss: 1.428e-02 | LR: 5.00e-05
+Epoch 17/100 | Train Loss: 2.807e-03 | Val Loss: 1.624e-02 | LR: 5.00e-05
+Epoch 18/100 | Train Loss: 2.471e-03 | Val Loss: 2.080e-02 | LR: 5.00e-05
+Epoch 19/100 | Train Loss: 2.139e-03 | Val Loss: 2.596e-02 | LR: 5.00e-05
+Epoch 20/100 | Train Loss: 1.963e-03 | Val Loss: 2.348e-02 | LR: 5.00e-05
+Early stopping triggered after 20 epochs!
+
+Evaluating base model...
+Base model metrics: {'RMSE': 0.0705151, 'MAE': 0.06754855, 'MAPE': 7.017449289560318, 'R²': -21.911701202392578}
+
+Computing Fisher information matrix...
+
+Training on update1 data with EWC regularization...
+Epoch 1/100 | Train Loss: 7.600e-03 | Val Loss: 1.788e-03 | LR: 1.00e-04
+Epoch 2/100 | Train Loss: 7.863e-03 | Val Loss: 1.301e-03 | LR: 1.00e-04
+Epoch 3/100 | Train Loss: 7.032e-03 | Val Loss: 6.663e-04 | LR: 1.00e-04
+Epoch 4/100 | Train Loss: 6.541e-03 | Val Loss: 3.016e-04 | LR: 1.00e-04
+Epoch 5/100 | Train Loss: 6.319e-03 | Val Loss: 6.310e-04 | LR: 1.00e-04
+Epoch 6/100 | Train Loss: 6.299e-03 | Val Loss: 4.506e-04 | LR: 1.00e-04
+Epoch 7/100 | Train Loss: 6.344e-03 | Val Loss: 5.797e-04 | LR: 1.00e-04
+Epoch 8/100 | Train Loss: 6.060e-03 | Val Loss: 2.633e-03 | LR: 1.00e-04
+Epoch 9/100 | Train Loss: 5.910e-03 | Val Loss: 4.215e-04 | LR: 1.00e-04
+Epoch 10/100 | Train Loss: 6.250e-03 | Val Loss: 7.006e-04 | LR: 5.00e-05
+Epoch 11/100 | Train Loss: 5.996e-03 | Val Loss: 6.600e-04 | LR: 5.00e-05
+Epoch 12/100 | Train Loss: 5.742e-03 | Val Loss: 7.827e-04 | LR: 5.00e-05
+Epoch 13/100 | Train Loss: 5.695e-03 | Val Loss: 3.863e-04 | LR: 5.00e-05
+Epoch 14/100 | Train Loss: 5.659e-03 | Val Loss: 3.108e-04 | LR: 5.00e-05
+Early stopping triggered after 14 epochs!
+
+Evaluating after first update...
+Update 1 metrics: {'RMSE': 0.060876098, 'MAE': 0.054904986, 'MAPE': 6.092290580272675, 'R²': -14.965217590332031}
+
+Updating Fisher information matrix...
+
+Training on update2 data with EWC regularization...
+Epoch 1/100 | Train Loss: 5.726e-03 | Val Loss: 8.734e-03 | LR: 1.00e-04
+Epoch 2/100 | Train Loss: 5.312e-03 | Val Loss: 8.266e-03 | LR: 1.00e-04
+Epoch 3/100 | Train Loss: 5.147e-03 | Val Loss: 7.509e-03 | LR: 1.00e-04
+Epoch 4/100 | Train Loss: 5.085e-03 | Val Loss: 1.220e-02 | LR: 1.00e-04
+Epoch 5/100 | Train Loss: 5.021e-03 | Val Loss: 1.143e-02 | LR: 1.00e-04
+Epoch 6/100 | Train Loss: 5.025e-03 | Val Loss: 1.141e-02 | LR: 1.00e-04
+Epoch 7/100 | Train Loss: 5.000e-03 | Val Loss: 1.304e-02 | LR: 1.00e-04
+Epoch 8/100 | Train Loss: 4.959e-03 | Val Loss: 1.331e-02 | LR: 1.00e-04
+Epoch 9/100 | Train Loss: 4.937e-03 | Val Loss: 1.720e-02 | LR: 5.00e-05
+Epoch 10/100 | Train Loss: 4.814e-03 | Val Loss: 1.440e-02 | LR: 5.00e-05
+Epoch 11/100 | Train Loss: 4.791e-03 | Val Loss: 1.711e-02 | LR: 5.00e-05
+Epoch 12/100 | Train Loss: 4.821e-03 | Val Loss: 1.563e-02 | LR: 5.00e-05
+Epoch 13/100 | Train Loss: 4.832e-03 | Val Loss: 1.671e-02 | LR: 5.00e-05
+Early stopping triggered after 13 epochs!
+
+Evaluating after second update...
+Update 2 metrics: {'RMSE': 0.074187495, 'MAE': 0.07180794, 'MAPE': 8.507178723812103, 'R²': -35.773433685302734}
+Results saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/EWC/results
+EWC Incremental Learning Finished!
+
+All Done.
