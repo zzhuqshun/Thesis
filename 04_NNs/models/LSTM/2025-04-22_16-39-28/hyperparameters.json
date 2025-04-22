@@ -1,0 +1,13 @@
+{
+    "MODEL": "LSTM(10 min resampling; SOH standard scaled)",
+    "SEQUENCE_LENGTH": 1008,
+    "HIDDEN_SIZE": 128,
+    "NUM_LAYERS": 3,
+    "DROPOUT": 0.5,
+    "BATCH_SIZE": 32,
+    "LEARNING_RATE": 0.001,
+    "WEIGHT_DECAY": 0.0,
+    "EPOCHS": 200,
+    "PATIENCE": 20,
+    "device": "cuda:0"
+}

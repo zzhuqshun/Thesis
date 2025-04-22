@@ -9,30 +9,48 @@ import random
 import os
 from pathlib import Path
 from datetime import datetime
+from torch.utils.data import DataLoader
 
-# ===== 导入你原先的脚本 =====
+# ===== Import from your original script =====
 from soh_lstm import (
     set_seed,
-    # load_data,  # 我们将替换成下面定义的consistent_load_data
     scale_data,
     BatteryDataset,
     SOHLSTM,
     train_and_validate_model,
-    # evaluate_model,
-    device  # soh_lstm.py 中定义的 device
+    device
 )
+config = {
+    "INFO": [
+        "Hyperparameter tuning",
+        "LSTM(10 min resampling)",
+        "val_id:['01', '15', '17']",
+        "test_id:[random]",
+        "Standard scaled ['Voltage[V]', 'Current[A]', 'Temperature[°C]', 'SOH_ZHU']"
+        ],
+    "Search": {
+        "seq_length": [144, 288, 432, 576, 720, 864, 1008],
+        "hidden_size": [32, 64, 96, 128, 160, 192, 224, 256],
+        "num_layers": [2, 3, 4, 5],
+        "dropout": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
+        "learning_rate": [1e-4, 1e-3],
+        "weight_decay": [0.0, 1e-6, 1e-5, 1e-4],
+        "batch_size": [16, 32, 64, 128],
+        "epochs": 100,
+        "patience": 10
+    }
+    }
 
-from torch.utils.data import DataLoader
-
-# 创建保存优化结果的全局目录
-# timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-optuna_dir = Path(__file__).parent / f"models/optuna_with_dataset_split"
+# Create directory for optimization results
+optuna_dir = Path(__file__).parent / "models/HPT"
 optuna_dir.mkdir(exist_ok=True, parents=True)
 
-# 重新实现load_data函数，确保数据集划分一致性
+with open(optuna_dir / "config.json", "w") as f:
+    json.dump(config, f, indent=4)
+
 def consistent_load_data(data_dir: Path, resample='10min', split_file_path='dataset_split.json'):
     """
-    Load training, validation and test data with persistent dataset split.
+    Load training, validation, and test data with persistent dataset split.
     Saves the split on first run, then reuses the same split on subsequent runs.
     
     Args:
@@ -43,7 +61,7 @@ def consistent_load_data(data_dir: Path, resample='10min', split_file_path='data
     # Get all parquet files and sort them by the numeric part of the filename
     parquet_files = sorted(
         [f for f in data_dir.glob('*.parquet') if f.is_file()],
-        key=lambda x: int(x.stem.split('_')[-1])  # Sort by the number after the last underscore
+        key=lambda x: int(x.stem.split('_')[-1])
     )
     
     # Convert Path objects to strings for JSON serialization
@@ -62,7 +80,7 @@ def consistent_load_data(data_dir: Path, resample='10min', split_file_path='data
         train_files = [Path(f) for f in split_config['train_files']]
         val_files = [Path(f) for f in split_config['val_files']]
         
-        print(f"Using predefined split")
+        print("Using predefined split")
     else:
         # First run - create a new split
         print(f"Creating new dataset split (will be saved to {split_file_path})")
@@ -72,15 +90,16 @@ def consistent_load_data(data_dir: Path, resample='10min', split_file_path='data
         
         # Randomly select one file as the test set
         test_file = random.choice(parquet_files)
+        remaining_files = [f for f in parquet_files if f != test_file]
+    
+        # Set fixed validation cell IDs
+        val_cell_ids = ['01', '15', '17']
         
-        # Remaining files for training and validation
-        train_val_files = [f for f in parquet_files if f != test_file]
+        # Find validation files based on cell IDs from remaining files
+        val_files = [f for f in remaining_files if f.stem.split('_')[1] in val_cell_ids]
         
-        # Randomly select 1/5 of the files for validation
-        val_files = random.sample(train_val_files, len(train_val_files) // 5)
-        
-        # The remaining files are for training
-        train_files = [f for f in train_val_files if f not in val_files]
+        # Remaining files are for training
+        train_files = [f for f in remaining_files if f not in val_files]
         
         # Save the split configuration for future runs
         split_config = {
@@ -95,7 +114,7 @@ def consistent_load_data(data_dir: Path, resample='10min', split_file_path='data
         with open(split_file, 'w') as f:
             json.dump(split_config, f, indent=4)
         
-        print(f"Created and saved new dataset split")
+        print("Created and saved new dataset split")
 
     # Print filenames for each dataset
     print(f"Training files: {[f.name for f in train_files]}")
@@ -113,6 +132,7 @@ def consistent_load_data(data_dir: Path, resample='10min', split_file_path='data
 
         df_processed = df[columns_to_keep].copy()
         df_processed.dropna(inplace=True)
+        
         # Process time column into integers and generate corresponding Datetime column
         df_processed['Testtime[s]'] = df_processed['Testtime[s]'].round().astype(int)
         start_date = pd.Timestamp("2023-02-02")
@@ -124,7 +144,6 @@ def consistent_load_data(data_dir: Path, resample='10min', split_file_path='data
         
         # Sample data every 10 minutes to reduce data size
         df_sampled = df_processed.resample(resample, on='Datetime').mean().reset_index(drop=False)
-        
         df_sampled["cell_id"] = file_path.stem.split('_')[1]
         
         return df_sampled, file_path.name
@@ -145,25 +164,26 @@ def consistent_load_data(data_dir: Path, resample='10min', split_file_path='data
 
     return df_train, df_val, df_test
 
+
 def objective(trial):
     """
-    Optuna 的目标函数，在每个 trial（试验）中被调用一次。
-    会根据每个 trial 采样一组超参数，训练模型，并把验证集上的最佳损失返回给 Optuna。
+    Optuna objective function, called once per trial.
+    Samples a set of hyperparameters for each trial, trains the model,
+    and returns the best validation loss to Optuna.
     """
-
-    # 1. 设置随机种子，保证结果可重复
+    # 1. Set random seed for reproducibility
     set_seed(42)
 
-    # 2. 为本 trial 采样一组超参数（你可以根据需要自由调整搜索空间）
+    # 2. Sample hyperparameters for this trial
     seq_length = trial.suggest_int("SEQUENCE_LENGTH", 144, 1008, step=144)
-    hidden_size = trial.suggest_categorical("HIDDEN_SIZE", [32, 64, 128])
+    hidden_size = trial.suggest_int("HIDDEN_SIZE", 32, 256, step=32)
     num_layers = trial.suggest_int("NUM_LAYERS", 2, 5)
     dropout = trial.suggest_float("DROPOUT", 0.0, 0.5, step=0.1)
     learning_rate = trial.suggest_categorical("LEARNING_RATE", [1e-4, 1e-3])
     weight_decay = trial.suggest_categorical("WEIGHT_DECAY", [0.0, 1e-6, 1e-5, 1e-4])
-    batch_size = trial.suggest_categorical("BATCH_SIZE", [32, 64, 128])
+    batch_size = trial.suggest_categorical("BATCH_SIZE", [16, 32, 64, 128])
 
-    # 3. 定义超参数字典
+    # 3. Define hyperparameter dictionary
     hyperparams = {
         "SEQUENCE_LENGTH": seq_length,
         "HIDDEN_SIZE": hidden_size,
@@ -176,31 +196,29 @@ def objective(trial):
         "PATIENCE": 10
     }
 
-    # 4. 数据加载与预处理 - 使用一致的数据划分
+    # 4. Load and preprocess data with consistent splitting
     data_dir = Path("../01_Datenaufbereitung/Output/Calculated/")
     df_train, df_val, df_test = consistent_load_data(data_dir, split_file_path='optuna_dataset_split.json')
 
-    df_train_scaled, df_val_scaled, df_test_scaled = scale_data(
-        df_train, df_val, df_test, scaler_type='standard'
-    )
+    df_train_scaled, df_val_scaled, df_test_scaled = scale_data(df_train, df_val, df_test)
 
     train_dataset = BatteryDataset(df_train_scaled, hyperparams["SEQUENCE_LENGTH"])
-    val_dataset   = BatteryDataset(df_val_scaled,   hyperparams["SEQUENCE_LENGTH"])
+    val_dataset = BatteryDataset(df_val_scaled, hyperparams["SEQUENCE_LENGTH"])
 
     train_loader = DataLoader(train_dataset, batch_size=hyperparams["BATCH_SIZE"], shuffle=True)
-    val_loader   = DataLoader(val_dataset,   batch_size=hyperparams["BATCH_SIZE"], shuffle=False)
+    val_loader = DataLoader(val_dataset, batch_size=hyperparams["BATCH_SIZE"], shuffle=False)
 
-    # 5. 针对本 trial，创建一个**独立的**文件夹，用来保存 best/last 模型、训练历史文件
+    # 5. Create a separate directory for this trial to save models and training history
     trial_save_dir = optuna_dir / f"trial_{trial.number}"
     trial_save_dir.mkdir(exist_ok=True, parents=True)
 
     save_path = {
-        'best':    trial_save_dir / 'best_soh_model.pth',
-        'last':    trial_save_dir / 'last_soh_model.pth',
+        'best': trial_save_dir / 'best_soh_model.pth',
+        'last': trial_save_dir / 'last_soh_model.pth',
         'history': trial_save_dir / 'train_history.parquet'
     }
 
-    # 6. 定义并训练模型，获取历史和最优验证 loss
+    # 6. Define and train model, get history and best validation loss
     model = SOHLSTM(
         input_size=3,
         hidden_size=hyperparams["HIDDEN_SIZE"],
@@ -215,32 +233,32 @@ def objective(trial):
         save_path
     )
     
-    # 7. 保存超参数和 best_val_loss 到 trial 文件夹
+    # 7. Save hyperparameters and best_val_loss to trial folder
     hyperparam_path = trial_save_dir / "hyperparams.json"
     with open(hyperparam_path, "w") as f:
-        # 建议把需要的信息放进一个 dict，一并保存
+        # Add necessary information to the dict for saving
         hyperparams["best_val_loss"] = best_val_loss
         json.dump(hyperparams, f, indent=4)
     
-    # 8. 将训练中的最佳epoch数作为附加信息存储到trial中
+    # 8. Store the best epoch number as additional information in the trial
     if isinstance(history, dict) and 'val_loss' in history:
         best_epoch = np.argmin(history['val_loss']) + 1
         trial.set_user_attr('best_epoch', int(best_epoch))
     
-    # 9. 把 best_val_loss 返回给 Optuna
+    # 9. Return best_val_loss to Optuna
     return best_val_loss
 
 
 def main():
     """
-    运行 Optuna 超参数搜索，并输出搜索到的最佳结果。
+    Run Optuna hyperparameter search and output the best results.
     """
-    # 创建study并设置方向为最小化 - 使用固定随机种子
+    # Create study and set direction to minimize - use fixed random seed
     study = optuna.create_study(
         direction="minimize", 
         sampler=optuna.samplers.TPESampler(seed=42)
     )
-    study.optimize(objective, n_trials=50, timeout=None)
+    study.optimize(objective, n_trials=100, timeout=None)
 
     print("\n============================")
     print("      Search Finished!      ")
@@ -252,10 +270,10 @@ def main():
         print(f"    {key}: {value}")
     print("============================")
 
-    # 保存最佳超参数
+    # Save best hyperparameters
     best_params_path = optuna_dir / "best_hyperparams.json"
     with open(best_params_path, "w") as f:
-        # 添加额外信息到最佳参数
+        # Add extra information to best parameters
         best_params = study.best_trial.params.copy()
         best_params["best_val_loss"] = study.best_trial.value
         best_params["trial_number"] = study.best_trial.number
@@ -263,70 +281,13 @@ def main():
             best_params["best_epoch"] = study.best_trial.user_attrs['best_epoch']
         json.dump(best_params, f, indent=4)
 
-    # 保存完整的优化历史
+    # Save complete optimization history
     trials_df = study.trials_dataframe()
     trials_df.to_csv(optuna_dir / "optuna_history.csv", index=False)
     
-    # 保存完整study对象(包含所有trials信息)
+    # Save complete study object (containing all trials information)
     with open(optuna_dir / "study.pkl", "wb") as f:
         pickle.dump(study, f)
-    
-    # 绘制优化过程的可视化图
-    try:
-        create_optuna_visualizations(study, optuna_dir)
-    except ImportError:
-        print("无法创建可视化，可能需要安装plotly和kaleido包")
-
-
-def create_optuna_visualizations(study, save_dir):
-    """创建Optuna优化过程的可视化图"""
-    try:
-        import plotly
-        
-        # 1. 优化历史
-        fig = optuna.visualization.plot_optimization_history(study)
-        fig.write_image(str(save_dir / "optimization_history.png"))
-        
-        # 2. 参数重要性
-        try:
-            fig = optuna.visualization.plot_param_importances(study)
-            fig.write_image(str(save_dir / "param_importances.png"))
-        except:
-            print("无法生成参数重要性图")
-        
-        # 3. 超参数间的交互效应
-        try:
-            fig = optuna.visualization.plot_contour(study)
-            fig.write_image(str(save_dir / "contour.png"))
-        except:
-            print("无法生成超参数轮廓图")
-        
-        # 4. 平行坐标图
-        fig = optuna.visualization.plot_parallel_coordinate(study)
-        fig.write_image(str(save_dir / "parallel_coordinate.png"))
-        
-        # 5. 切片图
-        fig = optuna.visualization.plot_slice(study)
-        fig.write_image(str(save_dir / "slice.png"))
-    
-    except Exception as e:
-        print(f"创建可视化时发生错误: {e}")
-        print("尝试保存简单的可视化...")
-        
-        # 简单的优化历史图
-        plt.figure(figsize=(10, 6))
-        trials = study.trials
-        values = [t.value for t in trials if t.value is not None]
-        best_values = np.minimum.accumulate(values)
-        plt.plot(values, 'o-', label='Trial values')
-        plt.plot(best_values, 'r-', label='Best value')
-        plt.xlabel('Trial number')
-        plt.ylabel('Value')
-        plt.title('Optimization History')
-        plt.legend()
-        plt.grid(True)
-        plt.savefig(str(save_dir / "simple_history.png"))
-        plt.close()
 
 
 if __name__ == "__main__":

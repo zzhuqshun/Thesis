@@ -1,0 +1,83 @@
+Using device: cuda:0
+
+Training files: ['df_05.parquet', 'df_07.parquet', 'df_09.parquet', 'df_11.parquet', 'df_13.parquet', 'df_15.parquet', 'df_17.parquet', 'df_19.parquet', 'df_23.parquet', 'df_25.parquet', 'df_27.parquet', 'df_29.parquet']
+Validation files: ['df_03.parquet', 'df_01.parquet']
+Testing file: df_21.parquet
+
+Training dataframe shape: (212824, 8)
+Validation dataframe shape: (50697, 8)
+Testing dataframe shape: (23172, 8)
+
+Features scaled using StandardScaler
+
+----------------------------------------------------------------------
+Model architecture:
+SOHLSTM(
+  (lstm): LSTM(3, 32, num_layers=2, batch_first=True, dropout=0.5)
+  (fc_layers): Sequential(
+    (0): Linear(in_features=32, out_features=16, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+    (2): Dropout(p=0.5, inplace=False)
+    (3): Linear(in_features=16, out_features=1, bias=True)
+  )
+)
+----------------------------------------------------------------------
+Total parameters: 13729
+Estimated model size: 0.05 MB
+----------------------------------------------------------------------
+
+Start training...
+Epoch 1/200 | Training Loss: 1.301e-01 | Validation Loss: 8.594e-03 | LR: 1.00e-04
+Epoch 2/200 | Training Loss: 3.542e-02 | Validation Loss: 6.759e-03 | LR: 1.00e-04
+Epoch 3/200 | Training Loss: 1.616e-02 | Validation Loss: 9.444e-03 | LR: 1.00e-04
+Epoch 4/200 | Training Loss: 6.760e-03 | Validation Loss: 1.457e-03 | LR: 1.00e-04
+Epoch 5/200 | Training Loss: 3.661e-03 | Validation Loss: 5.586e-04 | LR: 1.00e-04
+Epoch 6/200 | Training Loss: 2.672e-03 | Validation Loss: 1.074e-03 | LR: 1.00e-04
+Epoch 7/200 | Training Loss: 2.260e-03 | Validation Loss: 4.778e-04 | LR: 1.00e-04
+Epoch 8/200 | Training Loss: 2.017e-03 | Validation Loss: 4.671e-03 | LR: 1.00e-04
+Epoch 9/200 | Training Loss: 1.885e-03 | Validation Loss: 5.316e-04 | LR: 1.00e-04
+Epoch 10/200 | Training Loss: 1.795e-03 | Validation Loss: 5.985e-04 | LR: 1.00e-04
+Epoch 11/200 | Training Loss: 1.789e-03 | Validation Loss: 9.021e-04 | LR: 1.00e-04
+Epoch 12/200 | Training Loss: 1.708e-03 | Validation Loss: 7.459e-04 | LR: 1.00e-04
+Epoch 13/200 | Training Loss: 1.770e-03 | Validation Loss: 8.673e-04 | LR: 5.00e-05
+Epoch 14/200 | Training Loss: 1.581e-03 | Validation Loss: 4.642e-04 | LR: 5.00e-05
+Epoch 15/200 | Training Loss: 1.464e-03 | Validation Loss: 4.148e-04 | LR: 5.00e-05
+Epoch 16/200 | Training Loss: 1.421e-03 | Validation Loss: 4.818e-04 | LR: 5.00e-05
+Epoch 17/200 | Training Loss: 1.374e-03 | Validation Loss: 4.149e-04 | LR: 5.00e-05
+Epoch 18/200 | Training Loss: 1.342e-03 | Validation Loss: 4.316e-04 | LR: 5.00e-05
+Epoch 19/200 | Training Loss: 1.327e-03 | Validation Loss: 4.258e-04 | LR: 5.00e-05
+Epoch 20/200 | Training Loss: 1.314e-03 | Validation Loss: 4.462e-04 | LR: 5.00e-05
+Epoch 21/200 | Training Loss: 1.295e-03 | Validation Loss: 4.239e-04 | LR: 2.50e-05
+Epoch 22/200 | Training Loss: 1.251e-03 | Validation Loss: 4.787e-04 | LR: 2.50e-05
+Epoch 23/200 | Training Loss: 1.238e-03 | Validation Loss: 4.180e-04 | LR: 2.50e-05
+Epoch 24/200 | Training Loss: 1.223e-03 | Validation Loss: 3.999e-04 | LR: 2.50e-05
+Epoch 25/200 | Training Loss: 1.220e-03 | Validation Loss: 4.190e-04 | LR: 2.50e-05
+Epoch 26/200 | Training Loss: 1.208e-03 | Validation Loss: 4.630e-04 | LR: 2.50e-05
+Epoch 27/200 | Training Loss: 1.222e-03 | Validation Loss: 4.446e-04 | LR: 2.50e-05
+Epoch 28/200 | Training Loss: 1.215e-03 | Validation Loss: 4.541e-04 | LR: 2.50e-05
+Epoch 29/200 | Training Loss: 1.208e-03 | Validation Loss: 5.373e-04 | LR: 2.50e-05
+Epoch 30/200 | Training Loss: 1.211e-03 | Validation Loss: 4.423e-04 | LR: 1.25e-05
+Epoch 31/200 | Training Loss: 1.194e-03 | Validation Loss: 4.509e-04 | LR: 1.25e-05
+Epoch 32/200 | Training Loss: 1.176e-03 | Validation Loss: 4.494e-04 | LR: 1.25e-05
+Epoch 33/200 | Training Loss: 1.177e-03 | Validation Loss: 4.657e-04 | LR: 1.25e-05
+Epoch 34/200 | Training Loss: 1.175e-03 | Validation Loss: 4.419e-04 | LR: 1.25e-05
+Epoch 35/200 | Training Loss: 1.175e-03 | Validation Loss: 4.659e-04 | LR: 1.25e-05
+Epoch 36/200 | Training Loss: 1.165e-03 | Validation Loss: 4.373e-04 | LR: 6.25e-06
+Epoch 37/200 | Training Loss: 1.159e-03 | Validation Loss: 4.511e-04 | LR: 6.25e-06
+Epoch 38/200 | Training Loss: 1.154e-03 | Validation Loss: 4.624e-04 | LR: 6.25e-06
+Epoch 39/200 | Training Loss: 1.148e-03 | Validation Loss: 4.536e-04 | LR: 6.25e-06
+Epoch 40/200 | Training Loss: 1.150e-03 | Validation Loss: 4.468e-04 | LR: 6.25e-06
+Epoch 41/200 | Training Loss: 1.151e-03 | Validation Loss: 4.335e-04 | LR: 6.25e-06
+Epoch 42/200 | Training Loss: 1.145e-03 | Validation Loss: 4.836e-04 | LR: 3.13e-06
+Epoch 43/200 | Training Loss: 1.145e-03 | Validation Loss: 4.609e-04 | LR: 3.13e-06
+Epoch 44/200 | Training Loss: 1.138e-03 | Validation Loss: 4.517e-04 | LR: 3.13e-06
+Early stopping triggered after 44 epochs!
+
+last model saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/optuna_tryout_best/last_soh_model.pth
+Training history saved to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/optuna_tryout_best/train_history.parquet
+
+Evaluating the model on the testing set...
+RMSE: 0.0116
+MAE: 0.0089
+MAPE: 0.0098
+R²: 0.9434

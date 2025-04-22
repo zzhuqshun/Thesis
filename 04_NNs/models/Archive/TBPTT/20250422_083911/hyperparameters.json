@@ -1,0 +1,14 @@
+{
+    "INPUT_DIM": 3,
+    "HIDDEN_DIM": 32,
+    "NUM_LAYERS": 2,
+    "DROPOUT": 0.5,
+    "BATCH_SIZE": 64,
+    "TBPTT_LEN": 144,
+    "LR": 0.0001,
+    "WEIGHT_DECAY": 0.0001,
+    "MAX_EPOCHS": 100,
+    "PATIENCE": 10,
+    "RESAMPLE_RULE": "10min",
+    "MODEL_DIR": "E:\\00_Thesis\\04_NNs\\models\\TBPTT\\20250422_083911"
+}
