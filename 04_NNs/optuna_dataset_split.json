@@ -1,21 +1,21 @@
 {
-    "test_file": "..\\01_Datenaufbereitung\\Output\\Calculated\\df_21.parquet",
+    "test_file": "../01_Datenaufbereitung/Output/Calculated/df_21.parquet",
     "train_files": [
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_03.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_05.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_07.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_09.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_11.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_13.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_19.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_23.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_25.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_27.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_29.parquet"
+        "../01_Datenaufbereitung/Output/Calculated/df_03.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_05.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_07.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_09.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_11.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_13.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_19.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_23.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_25.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_27.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_29.parquet"
     ],
     "val_files": [
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_01.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_15.parquet",
-        "..\\01_Datenaufbereitung\\Output\\Calculated\\df_17.parquet"
+        "../01_Datenaufbereitung/Output/Calculated/df_01.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_15.parquet",
+        "../01_Datenaufbereitung/Output/Calculated/df_17.parquet"
     ]
 }

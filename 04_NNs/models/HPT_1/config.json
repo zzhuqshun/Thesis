@@ -1,0 +1,62 @@
+{
+    "INFO": [
+        "Hyperparameter tuning",
+        "LSTM(10 min resampling)",
+        "val_id:['01', '15', '17']",
+        "test_id:[random]",
+        "Standard scaled ['Voltage[V]', 'Current[A]', 'Temperature[\u00b0C]', 'SOH_ZHU']"
+    ],
+    "Search": {
+        "seq_length": [
+            144,
+            288,
+            432,
+            576,
+            720,
+            864,
+            1008
+        ],
+        "hidden_size": [
+            32,
+            64,
+            96,
+            128,
+            160,
+            192,
+            224,
+            256
+        ],
+        "num_layers": [
+            2,
+            3,
+            4,
+            5
+        ],
+        "dropout": [
+            0.0,
+            0.1,
+            0.2,
+            0.3,
+            0.4,
+            0.5
+        ],
+        "learning_rate": [
+            0.0001,
+            0.001
+        ],
+        "weight_decay": [
+            0.0,
+            1e-06,
+            1e-05,
+            0.0001
+        ],
+        "batch_size": [
+            16,
+            32,
+            64,
+            128
+        ],
+        "epochs": 100,
+        "patience": 10
+    }
+}

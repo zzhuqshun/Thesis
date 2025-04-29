@@ -12,7 +12,7 @@ from datetime import datetime
 from torch.utils.data import DataLoader
 
 # ===== Import from your original script =====
-from soh_lstm import (
+from base import (
     set_seed,
     scale_data,
     BatteryDataset,
@@ -42,7 +42,7 @@ config = {
     }
 
 # Create directory for optimization results
-optuna_dir = Path(__file__).parent / "models/HPT"
+optuna_dir = Path(__file__).parent / "models/HPT_1"
 optuna_dir.mkdir(exist_ok=True, parents=True)
 
 with open(optuna_dir / "config.json", "w") as f:
@@ -200,7 +200,7 @@ def objective(trial):
     data_dir = Path("../01_Datenaufbereitung/Output/Calculated/")
     df_train, df_val, df_test = consistent_load_data(data_dir, split_file_path='optuna_dataset_split.json')
 
-    df_train_scaled, df_val_scaled, df_test_scaled = scale_data(df_train, df_val, df_test)
+    df_train_scaled, df_val_scaled, df_test_scaled, scaler = scale_data(df_train, df_val, df_test)
 
     train_dataset = BatteryDataset(df_train_scaled, hyperparams["SEQUENCE_LENGTH"])
     val_dataset = BatteryDataset(df_val_scaled, hyperparams["SEQUENCE_LENGTH"])
