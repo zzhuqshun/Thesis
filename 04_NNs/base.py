@@ -9,37 +9,36 @@ from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, r2_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 # Set device for computation (GPU if available, otherwise CPU)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-# Create save directory
-save_dir = Path(__file__).parent / "models/LSTM" / "without_early_stopping"
-# save_dir = Path("models/LSTM/2025-04-22_17-16-56")
+# Create save directory with descriptive name
+save_dir = Path(__file__).parent / "models/LSTM" / "seq144_3val_1test"
 save_dir.mkdir(exist_ok=True, parents=True)
 
-# Model hyperparameters
+# Model hyperparameters - centralized configuration for easy adjustment
 hyperparams = {
     "INFO": [
-        "Model:SOH_LSTM",
-        "LSTM(10 min resampling)",
-        "val_id:['01', '15', '17']",
-        "test_id:[random]",
-        "Standard scaled ['Voltage[V]', 'Current[A]', 'Temperature[°C]', 'SOH_ZHU']"
+        "Model: SOH_LSTM",
+        "Data: 10-minute resampling of battery cycle data",
+        "Degradation categories: normal, fast, faster",
+        "Data split: Train (11 cells), Validation (3 cells), Test (1 cell)",
+        "Features: Standard scaled voltage, current, temperature"
     ],
-    "SEQUENCE_LENGTH": 1008,
-    "HIDDEN_SIZE": 128,
-    "NUM_LAYERS": 3,
-    "DROPOUT": 0.5,
-    "BATCH_SIZE": 32,
-    "LEARNING_RATE": 1e-4,
-    "WEIGHT_DECAY": 0.0,
-    "EPOCHS": 500,
-    "PATIENCE": 500,
-    "device": str(device)
+    "SEQUENCE_LENGTH": 1008,    # Number of time steps in each sequence
+    "HIDDEN_SIZE": 128,        # Size of LSTM hidden layers
+    "NUM_LAYERS": 3,           # Number of LSTM layers
+    "DROPOUT": 0.5,            # Dropout rate for regularization
+    "BATCH_SIZE": 32,          # Batch size for training
+    "LEARNING_RATE": 1e-4,     # Learning rate for optimizer
+    "WEIGHT_DECAY": 0.0,       # L2 regularization
+    "EPOCHS": 100,             # Maximum number of training epochs
+    "PATIENCE": 10,            # Early stopping patience
+    "device": str(device)      # Computation device
 }
 
 def main():
@@ -54,12 +53,12 @@ def main():
     print(f'Using device: {device}\n')
 
     # ==================== Data Preprocessing ====================
-    # Load data
+    # Load and prepare data
     data_dir = Path("../01_Datenaufbereitung/Output/Calculated/")
     df_train, df_val, df_test = load_data(data_dir)
 
-    # Scale the data
-    df_train_scaled, df_val_scaled, df_test_scaled, scaler = scale_data(df_train, df_val, df_test)
+    # Scale features using StandardScaler
+    df_train_scaled, df_val_scaled, df_test_scaled = scale_data(df_train, df_val, df_test)
 
     # Create datasets and data loaders
     train_dataset = BatteryDataset(df_train_scaled, hyperparams["SEQUENCE_LENGTH"])
@@ -71,18 +70,18 @@ def main():
     test_loader = DataLoader(test_dataset, batch_size=hyperparams['BATCH_SIZE'], shuffle=False)
 
     # ==================== Model Initialization ====================
-    # Initialize the LSTM model
+    # Initialize the LSTM model for SOH prediction
     model = SOHLSTM(
-        input_size=3,  # Voltage, current, temperature
+        input_size=3,  # Features: voltage, current, temperature
         hidden_size=hyperparams['HIDDEN_SIZE'],
         num_layers=hyperparams['NUM_LAYERS'],
         dropout=hyperparams['DROPOUT']
     ).to(device)
     
-    # Print model information
+    # Print model summary
     total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f'Model architecture:\n{model}')
-    print(f'Total parameters: {total_params}')
+    print(f'Total trainable parameters: {total_params:,}')
 
     # Define model save paths
     save_path = {
@@ -92,21 +91,22 @@ def main():
     }
 
     # Choose whether to train a new model or load an existing one
-    TRAINING_MODE = True
+    TRAINING_MODE = False
     
     if TRAINING_MODE:
         # Train and validate the model
-        history, _ = train_and_validate_model(model, train_loader, val_loader, save_path)
+        history, best_val_loss = train_and_validate_model(model, train_loader, val_loader, save_path)
+        print(f"\nTraining complete. Best validation loss: {best_val_loss:.6f}")
     else:
-        # Load the model
-        model_path = save_path['best']
+        # Load a previously trained model
+        model_path = save_path['last']
         if os.path.exists(model_path):
             print(f"\nLoading model from {model_path}...")
-            model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
+            model.load_state_dict(torch.load(model_path, map_location=device))
             print("Model loaded successfully!")
         else:
-            print(f"\nWarning: Model file {model_path} does not exist.")
-            exit(1)
+            print(f"\nError: Model file {model_path} does not exist.")
+            return
 
     # ==================== Model Evaluation ====================
     print("\nEvaluating the model on the testing set...")
@@ -120,15 +120,22 @@ def main():
     results_dir = save_dir / "results"
     results_dir.mkdir(exist_ok=True, parents=True)
     
+    # Plot training and validation loss curves
     if save_path['history'].exists():
         plot_losses(pd.read_parquet(save_path['history']), results_dir)
     
-    # 将scaler传递给绘图函数
-    plot_predictions(predictions, targets, metrics, df_test_scaled, results_dir, scaler)
+    # Plot predictions vs actual values
+    plot_predictions(predictions, targets, df_test_scaled, results_dir)
+    plot_prediction_scatter(predictions, targets, results_dir, cell_id="17")
 
-# Set seed for reproducibility
+
 def set_seed(seed=42):
-    """Set random seeds for reproducibility"""
+    """
+    Set random seeds for reproducibility across all libraries
+    
+    Args:
+        seed: Integer seed value
+    """
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -138,118 +145,148 @@ def set_seed(seed=42):
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
+
 def load_data(data_dir: Path, resample='10min'):
     """
-    Load and prepare battery data, splitting into train, validation, and test sets
-    
+    Load battery cell data files, compute degradation rates, categorize cells,
+    and split into train/validation/test sets.
+
     Args:
-        data_dir: Directory containing parquet files
-        resample: Time interval for resampling data
-        
+        data_dir: Directory containing battery data parquet files
+        resample: Time interval for resampling the data
+
     Returns:
-        Tuple of three dataframes (df_train, df_val, df_test)
+        Tuple of three DataFrames: (train, validation, test)
     """
-    # Get all parquet files
+    # 1. List and sort parquet files by the numeric cell ID
     parquet_files = sorted(
         [f for f in data_dir.glob('*.parquet') if f.is_file()],
         key=lambda x: int(x.stem.split('_')[-1])
     )
 
-    # Randomly select test file
-    test_file = random.choice(parquet_files)
-    remaining_files = [f for f in parquet_files if f != test_file]
-    
-    # Set fixed validation cell IDs
-    val_cell_ids = ['01', '15', '17']
-    
-    # Find validation files based on cell IDs from remaining files
-    val_files = [f for f in remaining_files if f.stem.split('_')[1] in val_cell_ids]
-    
-    # Remaining files are for training
-    train_files = [f for f in remaining_files if f not in val_files]
-
-    def process_file(file_path: Path):
-        """Process a single parquet file into a resampled dataframe"""
-        df = pd.read_parquet(file_path)
-        columns_to_keep = ['Testtime[s]', 'Voltage[V]', 'Current[A]', 
-                          'Temperature[°C]', 'SOH_ZHU']
-        df_processed = df[columns_to_keep].copy()
-        df_processed.dropna(inplace=True)
+    def process_file(fp: Path):
+        """Process a single battery cell data file"""
+        # Read and clean data
+        raw = pd.read_parquet(fp)[
+            ['Testtime[s]', 'SOH_ZHU', 'Voltage[V]', 'Current[A]', 'Temperature[°C]']
+        ].dropna().copy()
         
-        # Create datetime column for resampling
-        df_processed['Testtime[s]'] = df_processed['Testtime[s]'].round().astype(int)
-        start_date = pd.Timestamp("2023-02-02")
-        df_processed['Datetime'] = pd.date_range(
-            start=start_date,
-            periods=len(df_processed),
-            freq='s'
+        # Round and convert timestamps
+        raw['Testtime[s]'] = raw['Testtime[s]'].round().astype(int)
+        
+        # Convert to datetime using Testtime offset from a reference
+        raw['Datetime'] = pd.to_datetime(
+            raw['Testtime[s]'], unit='s', origin=pd.Timestamp("2023-02-02")
         )
         
-        # Resample data to reduce size
-        df_sampled = df_processed.resample(resample, on='Datetime').mean().reset_index(drop=False)
-        df_sampled["cell_id"] = file_path.stem.split('_')[1]
+        # Resample to uniform time interval
+        df_s = raw.set_index('Datetime').resample(resample).mean().reset_index()
+        df_s['cell_id'] = fp.stem.split('_')[1]
         
-        return df_sampled, file_path.name
+        return raw, df_s
 
-    # Process files for each dataset
-    test_data = [process_file(test_file)]
-    val_data = [process_file(f) for f in val_files]
-    train_data = [process_file(f) for f in train_files]
+    # 2. Process files and compute degradation rate on raw data
+    records = []
+    for fp in parquet_files:
+        raw_df, df_s = process_file(fp)
+        cid = df_s['cell_id'].iloc[0]
+        
+        # Compute degradation rate (SOH loss per day)
+        total_days = (raw_df['Datetime'].iloc[-1] - raw_df['Datetime'].iloc[0]).total_seconds() / (3600*24)
+        rate = (raw_df['SOH_ZHU'].iloc[0] - raw_df['SOH_ZHU'].iloc[-1]) / total_days
+        
+        records.append({'file': fp, 'df': df_s, 'cell_id': cid, 'rate': rate})
+    
+    rates_df = pd.DataFrame(records)[['cell_id', 'rate']]
 
-    # Print dataset information
-    print(f"Training files: {[t[1] for t in train_data]}")
-    print(f"Validation files: {[v[1] for v in val_data]}")
-    print(f"Testing file: {test_data[0][1]}")
+    # 3. Categorize cells into degradation rate bins
+    q1, q2 = rates_df['rate'].quantile([0.33, 0.66])
+    rates_df['category'] = pd.cut(
+        rates_df['rate'], 
+        bins=[-np.inf, q1, q2, np.inf], 
+        labels=['normal', 'fast', 'faster']
+    )
 
-    # Combine data
-    df_train = pd.concat([t[0] for t in train_data], ignore_index=True)
-    df_val = pd.concat([v[0] for v in val_data], ignore_index=True)
-    df_test = test_data[0][0]
+    # 4. Stratified sampling for validation and test sets
+    random.seed(42)
+    val_ids, test_ids = [], ['17']  # Cell 17 is designated as test cell
+    
+    # Select one validation cell from each degradation category
+    # Ensure we don't select the test cell for validation
+    for cat in ['normal', 'fast', 'faster']:
+        cat_ids = rates_df.loc[rates_df['category'] == cat, 'cell_id'].tolist()
+        # Remove test cell ID from candidate list if present
+        cat_ids = [cid for cid in cat_ids if cid not in test_ids]
+        val_ids.append(random.choice(cat_ids))
+    
+    # Remaining cells go to training
+    train_ids = [i for i in rates_df['cell_id'] if i not in val_ids + test_ids]
 
-    print(f"\nTraining data shape: {df_train.shape}")
-    print(f"Validation data shape: {df_val.shape}")
-    print(f"Testing data shape: {df_test.shape}\n")
+    # 5. Aggregate DataFrames by set
+    df_train = pd.concat([r['df'] for r in records if r['cell_id'] in train_ids], ignore_index=True)
+    df_val = pd.concat([r['df'] for r in records if r['cell_id'] in val_ids], ignore_index=True)
+    
+    # Fixed: Proper test set creation
+    df_test = pd.concat([r['df'] for r in records if r['cell_id'] in test_ids], ignore_index=True)
+
+    # 6. Log information about the dataset split
+    print("Degradation categories and rates:\n", rates_df, "\n")
+    print(f"Train IDs: {train_ids}, Val IDs: {val_ids}, Test IDs: {test_ids}")
+    print(f"Shapes -> Train: {df_train.shape}, Val: {df_val.shape}, Test: {df_test.shape}\n")
 
     return df_train, df_val, df_test
+
 
 def scale_data(df_train, df_val, df_test):
     """
     Scale features using StandardScaler fitted on training data
     
     Args:
-        df_train, df_val, df_test: DataFrames containing features to scale
+        df_train: Training data DataFrame
+        df_val: Validation data DataFrame
+        df_test: Test data DataFrame
         
     Returns:
-        Scaled versions of the input dataframes
+        Tuple of scaled DataFrames (train_scaled, val_scaled, test_scaled)
     """
-    features_to_scale = ['Voltage[V]', 'Current[A]', 'Temperature[°C]', 'SOH_ZHU']
+    features_to_scale = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
 
-    # Create copies of the dataframes
+    # Create copies of the dataframes to avoid modifying originals
     df_train_scaled = df_train.copy()
     df_val_scaled = df_val.copy()
     df_test_scaled = df_test.copy()
 
-    # Fit scaler on training data only
-    scaler = StandardScaler()
-    scaler.fit(df_train[features_to_scale])
-
-    # Transform all datasets
-    df_train_scaled[features_to_scale] = scaler.transform(df_train[features_to_scale])
-    df_val_scaled[features_to_scale] = scaler.transform(df_val[features_to_scale])
-    df_test_scaled[features_to_scale] = scaler.transform(df_test[features_to_scale])
-
-    print('Features scaled using StandardScaler\n')
+    # Fit scaler on training data only to prevent data leakage
+    feature_scaler = StandardScaler()
+    feature_scaler.fit(df_train[features_to_scale])
     
-    return df_train_scaled, df_val_scaled, df_test_scaled, scaler
+    # Transform all datasets using the fitted scaler
+    df_train_scaled[features_to_scale] = feature_scaler.transform(df_train[features_to_scale])
+    df_val_scaled[features_to_scale] = feature_scaler.transform(df_val[features_to_scale])
+    df_test_scaled[features_to_scale] = feature_scaler.transform(df_test[features_to_scale])
+    
+    print('Features scaled with StandardScaler')
+    
+    return df_train_scaled, df_val_scaled, df_test_scaled
+
 
 class BatteryDataset(Dataset):
-    """Dataset for battery SOH prediction with sequence data"""
+    """Dataset for battery SOH prediction using sequence data"""
     def __init__(self, df, sequence_length):
+        """
+        Initialize the dataset by creating sequences from the input DataFrame
+        
+        Args:
+            df: DataFrame containing the battery data
+            sequence_length: Number of time steps in each input sequence
+        """
         self.sequence_length = sequence_length
         
-        # Extract features and labels
+        # Extract features and target variable
         features_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
         label_col = 'SOH_ZHU'
+        
+        # Convert to PyTorch tensors
         features = torch.tensor(df[features_cols].values, dtype=torch.float32)
         labels = torch.tensor(df[label_col].values, dtype=torch.float32)
         
@@ -258,35 +295,47 @@ class BatteryDataset(Dataset):
         self.features = torch.zeros((n_samples, sequence_length, len(features_cols)), dtype=torch.float32)
         self.labels = torch.zeros(n_samples, dtype=torch.float32)
         
-        # Build sequences using tensor slicing
+        # Build sequences using tensor slicing for efficiency
         for i in range(n_samples):
             self.features[i] = features[i:i+sequence_length]
-            self.labels[i] = labels[i+sequence_length]
+            self.labels[i] = labels[i+sequence_length]  # Predict the SOH at the end of sequence
 
     def __len__(self):
+        """Return the number of sequences in the dataset"""
         return len(self.features)
 
     def __getitem__(self, idx):
+        """Return a specific sequence and its target SOH value"""
         return self.features[idx], self.labels[idx]
 
+
 class SOHLSTM(nn.Module):
-    """LSTM model for SOH prediction"""
+    """LSTM model for battery State of Health (SOH) prediction"""
     def __init__(self, input_size, hidden_size, num_layers, dropout=0.2):
+        """
+        Initialize the LSTM model for SOH prediction
+        
+        Args:
+            input_size: Number of input features (voltage, current, temperature)
+            hidden_size: Size of LSTM hidden layers
+            num_layers: Number of LSTM layers
+            dropout: Dropout rate for regularization
+        """
         super(SOHLSTM, self).__init__()
 
         self.hidden_size = hidden_size
         self.num_layers = num_layers
 
-        # LSTM layer
+        # LSTM layer for sequence modeling
         self.lstm = nn.LSTM(
             input_size=input_size,
             hidden_size=hidden_size,
             num_layers=num_layers,
-            batch_first=True,
-            dropout=dropout if num_layers > 1 else 0
+            batch_first=True,  # Expect input as [batch, seq, feature]
+            dropout=dropout if num_layers > 1 else 0  # Apply dropout between LSTM layers
         )
 
-        # Fully connected layers for prediction
+        # Fully connected layers for regression prediction
         self.fc_layers = nn.Sequential(
             nn.Linear(hidden_size, hidden_size // 2),
             nn.LeakyReLU(),
@@ -304,32 +353,33 @@ class SOHLSTM(nn.Module):
         Returns:
             Model prediction of shape [batch_size]
         """
-        # Initialize hidden and cell states
+        # Initialize hidden and cell states with zeros
         batch_size = x.size(0)
         h0 = torch.zeros(self.num_layers, batch_size, self.hidden_size, device=x.device)
         c0 = torch.zeros(self.num_layers, batch_size, self.hidden_size, device=x.device)
         
         # Forward propagate LSTM
         lstm_out, _ = self.lstm(x, (h0, c0))  # lstm_out shape: [batch_size, seq_len, hidden_size]
-
+        
         # Take only the output from the last time step
-        out = lstm_out[:, -1, :]  # shape: [batch_size, hidden_size]
-
+        last_time_step = lstm_out[:, -1, :]  # shape: [batch_size, hidden_size]
+        
         # Pass through fully connected layers
-        out = self.fc_layers(out)  # shape: [batch_size, 1]
+        out = self.fc_layers(last_time_step)  # shape: [batch_size, 1]
         
         return out.squeeze(-1)  # shape: [batch_size]
 
+
 def train_and_validate_model(model, train_loader, val_loader, save_path):
     """
-    Train and validate the model with early stopping
-    
+    Train and validate the model with early stopping.
+
     Args:
         model: PyTorch model to train
         train_loader: DataLoader for training data
         val_loader: DataLoader for validation data
         save_path: Dict with paths for saving model and history
-        
+
     Returns:
         history: Training history dictionary
         best_val_loss: Best validation loss achieved
@@ -337,11 +387,11 @@ def train_and_validate_model(model, train_loader, val_loader, save_path):
     # Loss function and optimizer
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(
-        model.parameters(), 
-        lr=hyperparams['LEARNING_RATE'], 
+        model.parameters(),
+        lr=hyperparams['LEARNING_RATE'],
         weight_decay=hyperparams['WEIGHT_DECAY']
     )
-    
+
     # Learning rate scheduler
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode='min', factor=0.5, patience=5
@@ -352,61 +402,57 @@ def train_and_validate_model(model, train_loader, val_loader, save_path):
     best_val_loss = float('inf')
 
     # Training history
-    history = {
-        'train_loss': [],
-        'val_loss': [],
-        'epoch': []
-    }
+    history = {'train_loss': [], 'val_loss': [], 'epoch': []}
 
-    # Training loop
     print('\nStart training...')
     for epoch in range(hyperparams['EPOCHS']):
-        # Training phase
+        # === Training phase ===
         model.train()
         train_loss = 0.0
 
-        with tqdm(total=len(train_loader), desc=f'Epoch {epoch+1}/{hyperparams["EPOCHS"]}', leave=False) as pbar:
+        with tqdm(total=len(train_loader),
+                  desc=f'Epoch {epoch+1}/{hyperparams["EPOCHS"]}',
+                  leave=False) as pbar:
             for features, labels in train_loader:
                 features, labels = features.to(device), labels.to(device)
-                
+
+                # Forward pass
                 optimizer.zero_grad()
-                outputs = model(features)
+                outputs = model(features)  # [batch_size]
                 loss = criterion(outputs, labels)
+
+                # Backward + optimize
                 loss.backward()
                 nn.utils.clip_grad_norm_(model.parameters(), max_norm=1)
                 optimizer.step()
-                
+
                 train_loss += loss.item()
                 pbar.update(1)
 
         train_loss /= len(train_loader)
         history['train_loss'].append(train_loss)
 
-        # Validation phase
+        # === Validation phase ===
         model.eval()
         val_loss = 0.0
-
         with torch.no_grad():
             for features, labels in val_loader:
                 features, labels = features.to(device), labels.to(device)
                 outputs = model(features)
-                loss = criterion(outputs, labels)
-                val_loss += loss.item()
-
+                val_loss += criterion(outputs, labels).item()
         val_loss /= len(val_loader)
+
         history['val_loss'].append(val_loss)
         history['epoch'].append(epoch + 1)
 
-        # Update learning rate
+        # Scheduler step
         scheduler.step(val_loss)
 
-        # Print progress
-        print(f'Epoch {epoch + 1}/{hyperparams["EPOCHS"]} | '
-              f'Training Loss: {train_loss:.3e} | '
-              f'Validation Loss: {val_loss:.3e} | '
+        print(f'Epoch {epoch+1}/{hyperparams["EPOCHS"]} | '
+              f'Train Loss: {train_loss:.3e} | Val Loss: {val_loss:.3e} | '
               f'LR: {optimizer.param_groups[0]["lr"]:.2e}')
 
-        # Check for early stopping and save best model
+        # Early stopping & saving best
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             epochs_no_improve = 0
@@ -414,151 +460,182 @@ def train_and_validate_model(model, train_loader, val_loader, save_path):
         else:
             epochs_no_improve += 1
             if epochs_no_improve >= hyperparams['PATIENCE']:
-                print(f'Early stopping triggered after {epoch + 1} epochs!')
+                print(f'Early stopping at epoch {epoch+1}')
                 break
-        
-    # Save the final model and training history
+
+    # Save final model and history
     torch.save(model.state_dict(), save_path['last'])
-    history_df = pd.DataFrame(history)
-    history_df.to_parquet(save_path['history'], index=False)
+    pd.DataFrame(history).to_parquet(save_path['history'], index=False)
 
     return history, best_val_loss
-
-def evaluate_model(model, data_loader):
-    """
-    Evaluate model performance on a dataset
-    
-    Args:
-        model: Trained PyTorch model
-        data_loader: DataLoader for evaluation data
-        
-    Returns:
-        predictions: Model predictions
-        targets: Ground truth values
-        metrics: Dictionary of performance metrics
-    """
-    model.eval()
-    criterion = nn.MSELoss()
-    
-    all_predictions = []
-    all_targets = []
-
-    with torch.no_grad():
-        for features, labels in data_loader:
-            features, labels = features.to(device), labels.to(device)
-            outputs = model(features)
-            
-            all_predictions.append(outputs.cpu().numpy())
-            all_targets.append(labels.cpu().numpy())
-
-    # Concatenate batches
-    predictions = np.concatenate(all_predictions)
-    targets = np.concatenate(all_targets)
-
-    # Calculate performance metrics
-    metrics = {
-        'RMSE': np.sqrt(mean_squared_error(targets, predictions)),
-        'MAE': mean_absolute_error(targets, predictions),
-        'MAPE': mean_absolute_percentage_error(targets, predictions),
-        'R²': r2_score(targets, predictions)
-    }
-
-    return predictions, targets, metrics
 
 def plot_losses(history_df, results_dir):
     """Plot training and validation loss curves"""
     plt.figure(figsize=(10, 6))
-    plt.plot(history_df['epoch'], history_df['train_loss'], label='Training Loss', 
+    plt.semilogy(history_df['epoch'], history_df['train_loss'], label='Training Loss', 
             marker='o', markersize=4, lw=2)
-    plt.plot(history_df['epoch'], history_df['val_loss'], label='Validation Loss', 
+    plt.semilogy(history_df['epoch'], history_df['val_loss'], label='Validation Loss', 
             marker='o', markersize=4, lw=2)
     
     plt.title('Training and Validation Losses')
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.legend()
-    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.grid(True)
     plt.tight_layout()
     
     plt.savefig(results_dir / "train_val_loss.png")
     plt.close()
 
-def plot_predictions(predictions, targets, metrics, df_test_scaled, results_dir, scaler):
+def evaluate_model(model, test_loader):
     """
-    Create visualizations of model predictions and errors
+    评估 LSTM模型在测试数据集上的性能
     
     Args:
-        predictions: Model predictions (scaled)
-        targets: Ground truth values (scaled)
-        metrics: Dictionary of performance metrics
-        df_test_scaled: Scaled test data with datetime information
-        results_dir: Directory to save plots
-        scaler: StandardScaler object used for data scaling
+        model: 训练好的PyTorch模型
+        test_dataset: BatteryDataset对象
+        batch_size: 用于评估的batch size
+        device: 计算设备
+        
+    Returns:
+        predictions: 模型预测值数组
+        targets: 真实值数组
+        cell_ids: 对应每个样本的cell_id
+        metrics: 性能指标字典
     """
-    # 转换标准化的预测和目标值回原始尺度
-    # 创建一个与scaler拟合时相同格式的数组
-    soh_idx = 3  # 假设SOH_ZHU是第4列, 索引为3
+    model.eval()
+    # 重置模型的隐藏状态
+    model.hidden_states = {}
     
-    # 创建一个零矩阵，形状为(预测数量, 特征数量)
-    inverse_predictions = np.zeros((len(predictions), 4))
-    inverse_targets = np.zeros((len(targets), 4))
+    all_preds, all_tgts = [], []
     
-    # 只在SOH列（索引为3）放入预测和目标值
-    inverse_predictions[:, soh_idx] = predictions
-    inverse_targets[:, soh_idx] = targets
-    
-    # 使用scaler进行反向转换
-    inverse_predictions = scaler.inverse_transform(inverse_predictions)
-    inverse_targets = scaler.inverse_transform(inverse_targets)
-    
-    # 提取SOH列的值
-    unscaled_predictions = inverse_predictions[:, soh_idx]
-    unscaled_targets = inverse_targets[:, soh_idx]
-    
-    # 重新计算反向转换后的指标
-    unscaled_metrics = {
-        'RMSE': np.sqrt(mean_squared_error(unscaled_targets, unscaled_predictions)),
-        'MAE': mean_absolute_error(unscaled_targets, unscaled_predictions),
-        'R²': r2_score(unscaled_targets, unscaled_predictions),
-        'MAPE': mean_absolute_percentage_error(unscaled_targets, unscaled_predictions)
-    }
+    with torch.no_grad():
+        for feats, labs in test_loader:
+            feats, labs = feats.to(device), labs.to(device)
+            # 始终使用测试cell_id的状态
+            out = model(feats)
+            all_preds.extend(out.cpu().numpy())
+            all_tgts.extend(labs.cpu().numpy())
 
-    # Plot 1: Time series of actual vs predicted values (using unscaled values)
-    plt.figure(figsize=(10, 6))
-    datetime_vals = df_test_scaled['Datetime'].iloc[hyperparams['SEQUENCE_LENGTH']:].values
-    plt.plot(datetime_vals, unscaled_targets, label='Actual SOH', lw=2)
-    plt.plot(datetime_vals, unscaled_predictions, label='Predicted SOH', alpha=0.7)
+    preds = np.array(all_preds)
+    tgts = np.array(all_tgts)
     
-    plt.title(f'Actual vs. Predicted SOH Values\n'
-              f'RMSE={unscaled_metrics["RMSE"]:.4f}, MAE={unscaled_metrics["MAE"]:.4f}, '
-              f'MAPE={unscaled_metrics["MAPE"]:.4f}, R²={unscaled_metrics["R²"]:.4f}')
-    plt.xlabel('Datetime')
-    plt.ylabel('SOH')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.gcf().autofmt_xdate()
+    # 计算性能指标
+    metrics = {
+        'RMSE': np.sqrt(mean_squared_error(tgts, preds)),
+        'MAE': mean_absolute_error(tgts, preds),
+        'R²': r2_score(tgts, preds)
+    }
+    
+    return preds, tgts, metrics
+
+def plot_predictions(predictions, targets, df_test_scaled, results_dir):
+    """
+    为测试电池创建SOH预测曲线对比图
+    
+    Args:
+        predictions: 模型预测值数组
+        targets: 真实值数组
+        df_test_scaled: 带有'Datetime'和'cell_id'列的测试集DataFrame
+        results_dir: 保存图像的目录
+        cell_ids: 与predictions/targets顺序对应的cell_id
+    """
+    # 由于只有一个cell_id，我们可以简化代码
+    test_cell_id = '17'  # 所有cell_ids都应该相同
+    
+    # 构造用于绘图的数据框
+    df_plot = pd.DataFrame({
+        'Datetime': df_test_scaled['Datetime'].iloc[hyperparams['SEQUENCE_LENGTH']:].values,
+        'predicted_SOH': predictions,
+        'actual_SOH': targets
+    })
+    
+    # 计算cell特定的指标
+    cell_metrics = {
+        'RMSE': np.sqrt(mean_squared_error(df_plot['actual_SOH'], df_plot['predicted_SOH'])),
+        'MAE': mean_absolute_error(df_plot['actual_SOH'], df_plot['predicted_SOH']),
+        'R²': r2_score(df_plot['actual_SOH'], df_plot['predicted_SOH'])
+    }
+    
+    # 创建更详细的可视化
+    plt.figure(figsize=(12, 7))
+    
+    # 绘制实际和预测的SOH
+    plt.plot(df_plot['Datetime'], df_plot['actual_SOH'], 
+            label='Actual SOH', lw=2.5, color='#3366CC')
+    plt.plot(df_plot['Datetime'], df_plot['predicted_SOH'], 
+            label='Predicted SOH', lw=2, color='#FF9900')
+    
+    # 添加带有指标的标题
+    plt.title(f'Battery Cell {test_cell_id} - Actual vs Predicted SOH\n'
+             f"Evaluate Metrics: RMSE={cell_metrics['RMSE']:.4f}, MAE={cell_metrics['MAE']:.4f}, R²={cell_metrics['R²']:.4f}",
+             fontsize=13)
+    
+    # 设置轴标签和格式
+    plt.xlabel('Date')
+    plt.ylabel('State of Health (SOH)')
+    plt.legend(loc='best')
+    plt.grid(True)
+    plt.gcf().autofmt_xdate()  # 自动格式化日期标签
     plt.tight_layout()
     
-    plt.savefig(results_dir / "prediction_time_series.png")
+    # 保存图像
+    plt.savefig(results_dir / f"prediction_cell_{test_cell_id}.png", dpi=300)
     plt.close()
-
-    # Plot 2: Scatter plot of actual vs predicted values (using unscaled values)
-    plt.figure(figsize=(8, 8))
-    plt.scatter(unscaled_targets, unscaled_predictions, alpha=0.5)
     
-    # Add diagonal line (perfect prediction)
-    min_val = min(unscaled_targets.min(), unscaled_predictions.min())
-    max_val = max(unscaled_targets.max(), unscaled_predictions.max())
+    print(f"Prediction plot saved for cell {test_cell_id}")
+
+def plot_prediction_scatter(predictions, targets, results_dir, cell_id="17"):
+    """
+    创建实际SOH值与预测SOH值的散点图，并显示性能指标
+    
+    Args:
+        predictions: 模型预测值数组
+        targets: 真实值数组
+        results_dir: 保存图像的目录
+        cell_id: 电池ID
+    """
+    # 计算评估指标
+    rmse = np.sqrt(mean_squared_error(targets, predictions))
+    mae = mean_absolute_error(targets, predictions)
+    r2 = r2_score(targets, predictions)
+    
+    # 创建散点图
+    plt.figure(figsize=(10, 8))
+    
+    # 绘制散点图
+    plt.scatter(targets, predictions, alpha=0.7, color='#0066CC', s=20)
+    
+    # 添加理想预测线（y=x线）
+    min_val = min(np.min(targets), np.min(predictions))
+    max_val = max(np.max(targets), np.max(predictions))
     plt.plot([min_val, max_val], [min_val, max_val], 'r--', lw=2)
     
-    plt.title('Actual vs. Predicted SOH Values')
-    plt.xlabel('Actual SOH')
-    plt.ylabel('Predicted SOH')
-    plt.grid(True, alpha=0.3)
+    # 设置标题和标签
+    plt.title(f'Actual vs. Predicted SOH values\n(RMSE={rmse:.4f}, MAE={mae:.4f},  R²={r2:.4f})', 
+              fontsize=14)
+    plt.xlabel('Actual SOH', fontsize=12)
+    plt.ylabel('Predicted SOH', fontsize=12)
+    
+    # 添加网格线
+    plt.grid(True, linestyle='--', alpha=0.7)
+    
+    # 设置轴范围稍微扩展一点
+    buffer = (max_val - min_val) * 0.02  # 2%的缓冲区
+    plt.xlim(min_val - buffer, max_val + buffer)
+    plt.ylim(min_val - buffer, max_val + buffer)
+    
+    # 确保图形是正方形的
+    plt.axis('square')
+    
+    # 添加紧凑布局
     plt.tight_layout()
     
-    plt.savefig(results_dir / "prediction_scatter.png")
+    # 保存图像
+    plt.savefig(results_dir / f"prediction_scatter_cell_{cell_id}.png", dpi=300)
     plt.close()
-
+    
+    print(f"Prediction scatter plot saved for cell {cell_id}")
+    
 if __name__ == "__main__":
     main()

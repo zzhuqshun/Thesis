@@ -30,10 +30,10 @@ config = {
         ],
     "Search": {
         "seq_length": [144, 288, 432, 576, 720, 864, 1008],
-        "hidden_size": [32, 64, 96, 128, 160, 192, 224, 256],
+        "hidden_size": [32, 64, 128, 256],
         "num_layers": [2, 3, 4, 5],
         "dropout": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
-        "learning_rate": [1e-4, 1e-3],
+        "learning_rate": 1e-4,
         "weight_decay": [0.0, 1e-6, 1e-5, 1e-4],
         "batch_size": [16, 32, 64, 128],
         "epochs": 100,
@@ -42,7 +42,7 @@ config = {
     }
 
 # Create directory for optimization results
-optuna_dir = Path(__file__).parent / "models/HPT_1"
+optuna_dir = Path(__file__).parent / "models/HPT"
 optuna_dir.mkdir(exist_ok=True, parents=True)
 
 with open(optuna_dir / "config.json", "w") as f:
@@ -63,9 +63,6 @@ def consistent_load_data(data_dir: Path, resample='10min', split_file_path='data
         [f for f in data_dir.glob('*.parquet') if f.is_file()],
         key=lambda x: int(x.stem.split('_')[-1])
     )
-    
-    # Convert Path objects to strings for JSON serialization
-    parquet_files_str = [str(f) for f in parquet_files]
     
     # Check if split file exists (from a previous run)
     split_file = Path(split_file_path)
@@ -88,18 +85,24 @@ def consistent_load_data(data_dir: Path, resample='10min', split_file_path='data
         # Set seed to ensure the split is reproducible
         random.seed(42)
         
-        # Randomly select one file as the test set
-        test_file = random.choice(parquet_files)
-        remaining_files = [f for f in parquet_files if f != test_file]
-    
-        # Set fixed validation cell IDs
-        val_cell_ids = ['01', '15', '17']
+        # Define test and validation cell IDs
+        test_cell_id = '17'  # Cell 17 for test
+        val_cell_ids = ['01', '13', '19']  # Cells 1, 13, 19 for validation
         
-        # Find validation files based on cell IDs from remaining files
-        val_files = [f for f in remaining_files if f.stem.split('_')[1] in val_cell_ids]
+        # Find test file based on cell ID
+        test_file = next((f for f in parquet_files if f.stem.split('_')[1] == test_cell_id), None)
+        if test_file is None:
+            raise ValueError(f"Test cell ID '{test_cell_id}' not found in dataset")
+        
+        # Find validation files based on cell IDs
+        val_files = [f for f in parquet_files if f.stem.split('_')[1] in val_cell_ids]
+        if len(val_files) != len(val_cell_ids):
+            found_ids = [f.stem.split('_')[1] for f in val_files]
+            missing_ids = [vid for vid in val_cell_ids if vid not in found_ids]
+            print(f"Warning: Could not find all validation cell IDs. Missing: {missing_ids}")
         
         # Remaining files are for training
-        train_files = [f for f in remaining_files if f not in val_files]
+        train_files = [f for f in parquet_files if f not in [test_file] and f not in val_files]
         
         # Save the split configuration for future runs
         split_config = {
@@ -128,39 +131,55 @@ def consistent_load_data(data_dir: Path, resample='10min', split_file_path='data
         
         # Keep only needed columns to reduce memory usage
         columns_to_keep = ['Testtime[s]', 'Voltage[V]', 'Current[A]', 
-                           'Temperature[°C]', 'SOC_ZHU', 'SOH_ZHU']
+                           'Temperature[°C]', 'SOH_ZHU']
 
         df_processed = df[columns_to_keep].copy()
         df_processed.dropna(inplace=True)
         
         # Process time column into integers and generate corresponding Datetime column
         df_processed['Testtime[s]'] = df_processed['Testtime[s]'].round().astype(int)
-        start_date = pd.Timestamp("2023-02-02")
-        df_processed['Datetime'] = pd.date_range(
-            start=start_date,
-            periods=len(df_processed),
-            freq='s'
+        
+        # Convert to datetime using Testtime offset from a reference
+        df_processed['Datetime'] = pd.to_datetime(
+            df_processed['Testtime[s]'], unit='s', origin=pd.Timestamp("2023-02-02")
         )
         
-        # Sample data every 10 minutes to reduce data size
-        df_sampled = df_processed.resample(resample, on='Datetime').mean().reset_index(drop=False)
+        # Sample data at specified interval
+        df_sampled = df_processed.set_index('Datetime').resample(resample).mean().reset_index()
+        
+        # Add cell_id column
         df_sampled["cell_id"] = file_path.stem.split('_')[1]
         
         return df_sampled, file_path.name
 
     # Process training, validation, and test files
-    test_data = [process_file(test_file)]
+    print("\nProcessing test file...")
+    test_data = process_file(test_file)
+    
+    print("Processing validation files...")
     val_data = [process_file(f) for f in val_files]
+    
+    print("Processing training files...")
     train_data = [process_file(f) for f in train_files]
 
     # Combine data
     df_train = pd.concat([t[0] for t in train_data], ignore_index=True)
     df_val = pd.concat([v[0] for v in val_data], ignore_index=True)
-    df_test = test_data[0][0]
+    df_test = test_data[0]
 
-    print(f"\nTraining dataframe shape: {df_train.shape}")
-    print(f"Validation dataframe shape: {df_val.shape}")
-    print(f"Testing dataframe shape: {df_test.shape}\n")
+    print(f"\nDataset statistics:")
+    print(f"Training set: {df_train.shape[0]} samples, {len(train_files)} cells")
+    print(f"Validation set: {df_val.shape[0]} samples, {len(val_files)} cells")
+    print(f"Testing set: {df_test.shape[0]} samples, 1 cell (ID: {test_cell_id})")
+    
+    # Print unique cell IDs in each set
+    train_cells = sorted(df_train['cell_id'].unique())
+    val_cells = sorted(df_val['cell_id'].unique())
+    test_cells = sorted(df_test['cell_id'].unique())
+    
+    print(f"\nTraining cells: {train_cells}")
+    print(f"Validation cells: {val_cells}")
+    print(f"Test cell: {test_cells}")
 
     return df_train, df_val, df_test
 
@@ -176,12 +195,11 @@ def objective(trial):
 
     # 2. Sample hyperparameters for this trial
     seq_length = trial.suggest_int("SEQUENCE_LENGTH", 144, 1008, step=144)
-    hidden_size = trial.suggest_int("HIDDEN_SIZE", 32, 256, step=32)
+    hidden_size = trial.suggest_categorical("HIDDEN_SIZE", [32, 64, 128, 256])
     num_layers = trial.suggest_int("NUM_LAYERS", 2, 5)
     dropout = trial.suggest_float("DROPOUT", 0.0, 0.5, step=0.1)
-    learning_rate = trial.suggest_categorical("LEARNING_RATE", [1e-4, 1e-3])
     weight_decay = trial.suggest_categorical("WEIGHT_DECAY", [0.0, 1e-6, 1e-5, 1e-4])
-    batch_size = trial.suggest_categorical("BATCH_SIZE", [16, 32, 64, 128])
+    batch_size = trial.suggest_categorical("BATCH_SIZE", [16, 32, 64])
 
     # 3. Define hyperparameter dictionary
     hyperparams = {
@@ -189,7 +207,7 @@ def objective(trial):
         "HIDDEN_SIZE": hidden_size,
         "NUM_LAYERS": num_layers,
         "DROPOUT": dropout,
-        "LEARNING_RATE": learning_rate,
+        "LEARNING_RATE": 1e-4,
         "WEIGHT_DECAY": weight_decay,
         "BATCH_SIZE": batch_size,
         "EPOCHS": 100,
@@ -200,7 +218,7 @@ def objective(trial):
     data_dir = Path("../01_Datenaufbereitung/Output/Calculated/")
     df_train, df_val, df_test = consistent_load_data(data_dir, split_file_path='optuna_dataset_split.json')
 
-    df_train_scaled, df_val_scaled, df_test_scaled, scaler = scale_data(df_train, df_val, df_test)
+    df_train_scaled, df_val_scaled, _ = scale_data(df_train, df_val, df_test)
 
     train_dataset = BatteryDataset(df_train_scaled, hyperparams["SEQUENCE_LENGTH"])
     val_dataset = BatteryDataset(df_val_scaled, hyperparams["SEQUENCE_LENGTH"])
@@ -258,7 +276,7 @@ def main():
         direction="minimize", 
         sampler=optuna.samplers.TPESampler(seed=42)
     )
-    study.optimize(objective, n_trials=100, timeout=None)
+    study.optimize(objective, n_trials=50, timeout=None)
 
     print("\n============================")
     print("      Search Finished!      ")

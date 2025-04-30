@@ -1,0 +1,20 @@
+{
+    "INFO": [
+        "Model:Stateful_SOH_LSTM",
+        "LSTM(10 min resampling)",
+        "Degradation rate categories: normal, fast, faster",
+        "Train: 9 cells, Val: 3 cells, Test: 3 cells",
+        "Standard scaled ['Voltage[V]', 'Current[A]', 'Temperature[\u00b0C]']",
+        "Minmax scaled ['SOH_ZHU']"
+    ],
+    "SEQUENCE_LENGTH": 144,
+    "HIDDEN_SIZE": 64,
+    "NUM_LAYERS": 3,
+    "DROPOUT": 0.5,
+    "BATCH_SIZE": 32,
+    "LEARNING_RATE": 0.0001,
+    "WEIGHT_DECAY": 0.0,
+    "EPOCHS": 100,
+    "PATIENCE": 10,
+    "device": "cuda:0"
+}
