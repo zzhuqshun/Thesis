@@ -1,0 +1,11 @@
+{
+    "SEQUENCE_LENGTH": 124,
+    "HIDDEN_SIZE": 32,
+    "NUM_LAYERS": 3,
+    "DROPOUT": 0.2,
+    "WEIGHT_DECAY": 1e-06,
+    "BATCH_SIZE": 64,
+    "best_val_loss": 0.0002333354428569145,
+    "trial_number": 34,
+    "best_epoch": 53
+}

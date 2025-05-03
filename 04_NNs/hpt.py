@@ -24,12 +24,12 @@ config = {
     "INFO": [
         "Hyperparameter tuning",
         "LSTM(10 min resampling)",
-        "val_id:['01', '15', '17']",
-        "test_id:[random]",
+        "val_id:['01', '13', '19']",
+        "test_id:['17']",
         "Standard scaled ['Voltage[V]', 'Current[A]', 'Temperature[°C]', 'SOH_ZHU']"
         ],
     "Search": {
-        "seq_length": [144, 288, 432, 576, 720, 864, 1008],
+        "seq_length": [1, 144],
         "hidden_size": [32, 64, 128, 256],
         "num_layers": [2, 3, 4, 5],
         "dropout": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
@@ -42,7 +42,7 @@ config = {
     }
 
 # Create directory for optimization results
-optuna_dir = Path(__file__).parent / "models/HPT"
+optuna_dir = Path(__file__).parent / "models/HPT1-144"
 optuna_dir.mkdir(exist_ok=True, parents=True)
 
 with open(optuna_dir / "config.json", "w") as f:
@@ -74,6 +74,7 @@ def consistent_load_data(data_dir: Path, resample='10min', split_file_path='data
             
         # Convert string paths back to Path objects
         test_file = Path(split_config['test_file'])
+        test_cell_id = test_file.stem.split('_')[1]
         train_files = [Path(f) for f in split_config['train_files']]
         val_files = [Path(f) for f in split_config['val_files']]
         
@@ -194,7 +195,7 @@ def objective(trial):
     set_seed(42)
 
     # 2. Sample hyperparameters for this trial
-    seq_length = trial.suggest_int("SEQUENCE_LENGTH", 144, 1008, step=144)
+    seq_length = trial.suggest_int("SEQUENCE_LENGTH", 1, 144)
     hidden_size = trial.suggest_categorical("HIDDEN_SIZE", [32, 64, 128, 256])
     num_layers = trial.suggest_int("NUM_LAYERS", 2, 5)
     dropout = trial.suggest_float("DROPOUT", 0.0, 0.5, step=0.1)

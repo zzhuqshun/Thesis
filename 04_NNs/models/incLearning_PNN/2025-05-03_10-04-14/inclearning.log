@@ -1,0 +1,67 @@
+2025-05-03 10:04:14,504 - INFO - Logs will be saved to: /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/models/incLearning_PNN/2025-05-03_10-04-14/inclearning.log
+2025-05-03 10:04:14,920 - INFO - Using device: cuda:0
+2025-05-03 10:05:14,996 - INFO - Cell Assignment Summary:
+2025-05-03 10:05:15,015 - INFO - Normal cells (8): ['01', '03', '05', '07', '19', '21', '23', '27']
+2025-05-03 10:05:15,033 - INFO - Fast cells (3): ['09', '11', '25']
+2025-05-03 10:05:15,056 - INFO - Faster cells (3): ['13', '15', '29']
+2025-05-03 10:05:15,077 - INFO - 
+Training Sets:
+2025-05-03 10:05:15,097 - INFO - Base training set: ['03', '01', '21', '05', '27']
+2025-05-03 10:05:15,117 - INFO - Base validation set: ['23', '19']
+2025-05-03 10:05:15,137 - INFO - Update1 training set: ['23', '19', '07', '09', '11']
+2025-05-03 10:05:15,163 - INFO - Update1 validation set: ['25']
+2025-05-03 10:05:15,187 - INFO - Update2 training set: ['25', '13', '15']
+2025-05-03 10:05:15,208 - INFO - Update2 validation set: ['29']
+2025-05-03 10:06:54,569 - INFO - 
+Dataset Sizes:
+2025-05-03 10:06:54,587 - INFO - Base training set: 119705 samples, validation set: 47296 samples
+2025-05-03 10:06:54,602 - INFO - Update1 training set: 102537 samples, validation set: 18326 samples
+2025-05-03 10:06:54,619 - INFO - Update2 training set: 33511 samples, validation set: 8068 samples
+2025-05-03 10:06:54,639 - INFO - 
+Test Sets:
+2025-05-03 10:06:54,655 - INFO - Test cell: 17
+2025-05-03 10:06:54,677 - INFO - Base test set (SOH ≥ 0.9): 11139 samples
+2025-05-03 10:06:54,697 - INFO - Update1 test set (0.8 ≤ SOH < 0.9): 6312 samples
+2025-05-03 10:06:54,718 - INFO - Update2 test set (SOH < 0.8): 5421 samples
+2025-05-03 10:06:54,833 - INFO - ================================================================================
+2025-05-03 10:06:54,852 - INFO - Method: Progressive Neural Network (PNN)
+2025-05-03 10:06:54,875 - INFO - ================================================================================
+2025-05-03 10:06:55,991 - INFO - 
+Phase 1: Training on base data for column 0...
+2025-05-03 10:20:31,343 - INFO - Epoch 1/100 | Train Loss: 3.105e-02 | Val Loss: 1.540e-03
+2025-05-03 10:25:12,907 - INFO - Epoch 2/100 | Train Loss: 6.710e-03 | Val Loss: 2.207e-03
+2025-05-03 10:29:52,771 - INFO - Epoch 3/100 | Train Loss: 5.571e-03 | Val Loss: 1.750e-03
+2025-05-03 10:34:31,008 - INFO - Epoch 4/100 | Train Loss: 4.799e-03 | Val Loss: 1.834e-03
+2025-05-03 10:39:15,555 - INFO - Epoch 5/100 | Train Loss: 4.229e-03 | Val Loss: 1.400e-03
+2025-05-03 10:43:54,909 - INFO - Epoch 6/100 | Train Loss: 3.745e-03 | Val Loss: 1.973e-03
+2025-05-03 10:48:35,618 - INFO - Epoch 7/100 | Train Loss: 3.189e-03 | Val Loss: 1.505e-03
+2025-05-03 10:53:20,069 - INFO - Epoch 8/100 | Train Loss: 2.686e-03 | Val Loss: 1.810e-03
+2025-05-03 10:57:58,053 - INFO - Epoch 9/100 | Train Loss: 2.251e-03 | Val Loss: 1.659e-03
+2025-05-03 11:02:50,286 - INFO - Epoch 10/100 | Train Loss: 1.861e-03 | Val Loss: 1.579e-03
+2025-05-03 11:08:13,503 - INFO - Epoch 11/100 | Train Loss: 1.594e-03 | Val Loss: 2.009e-03
+2025-05-03 11:13:11,701 - INFO - Epoch 12/100 | Train Loss: 1.317e-03 | Val Loss: 3.664e-03
+2025-05-03 11:17:47,231 - INFO - Epoch 13/100 | Train Loss: 1.171e-03 | Val Loss: 2.607e-03
+2025-05-03 11:22:37,459 - INFO - Epoch 14/100 | Train Loss: 1.059e-03 | Val Loss: 3.291e-03
+2025-05-03 11:27:59,873 - INFO - Epoch 15/100 | Train Loss: 9.230e-04 | Val Loss: 5.441e-03
+2025-05-03 11:27:59,888 - INFO - Early stopping at epoch 15
+2025-05-03 11:28:18,370 - INFO - Column 0 metrics: {'RMSE': 0.02498661, 'MAE': 0.021264194, 'R2': -0.01585698127746582}
+2025-05-03 11:28:18,378 - INFO - 
+Phase 2: Adding column 1 and training on update1 data...
+2025-05-03 11:34:52,686 - INFO - Epoch 1/100 | Train Loss: 2.428e-02 | Val Loss: 1.070e-02
+2025-05-03 11:41:27,798 - INFO - Epoch 2/100 | Train Loss: 7.899e-03 | Val Loss: 9.435e-03
+2025-05-03 11:48:17,903 - INFO - Epoch 3/100 | Train Loss: 6.214e-03 | Val Loss: 4.732e-03
+2025-05-03 11:55:01,043 - INFO - Epoch 4/100 | Train Loss: 5.021e-03 | Val Loss: 4.998e-03
+2025-05-03 12:02:25,626 - INFO - Epoch 5/100 | Train Loss: 4.135e-03 | Val Loss: 2.185e-03
+2025-05-03 12:09:15,769 - INFO - Epoch 6/100 | Train Loss: 3.696e-03 | Val Loss: 3.712e-03
+2025-05-03 12:15:56,879 - INFO - Epoch 7/100 | Train Loss: 3.255e-03 | Val Loss: 4.194e-03
+2025-05-03 12:21:44,742 - INFO - Epoch 8/100 | Train Loss: 2.744e-03 | Val Loss: 4.760e-03
+2025-05-03 12:27:31,973 - INFO - Epoch 9/100 | Train Loss: 2.882e-03 | Val Loss: 1.766e-03
+2025-05-03 12:33:20,399 - INFO - Epoch 10/100 | Train Loss: 2.341e-03 | Val Loss: 6.030e-03
+2025-05-03 12:39:07,801 - INFO - Epoch 11/100 | Train Loss: 2.126e-03 | Val Loss: 4.959e-03
+2025-05-03 12:44:54,912 - INFO - Epoch 12/100 | Train Loss: 2.063e-03 | Val Loss: 2.489e-03
+2025-05-03 12:50:41,329 - INFO - Epoch 13/100 | Train Loss: 1.570e-03 | Val Loss: 2.598e-03
+2025-05-03 12:56:28,353 - INFO - Epoch 14/100 | Train Loss: 1.413e-03 | Val Loss: 2.575e-03
+2025-05-03 13:02:18,686 - INFO - Epoch 15/100 | Train Loss: 1.370e-03 | Val Loss: 2.514e-03
+2025-05-03 13:08:11,731 - INFO - Epoch 16/100 | Train Loss: 1.043e-03 | Val Loss: 2.332e-03
+2025-05-03 13:14:50,202 - INFO - Epoch 17/100 | Train Loss: 9.125e-04 | Val Loss: 2.084e-03
+2025-05-03 13:21:11,414 - INFO - Epoch 18/100 | Train Loss: 7.782e-04 | Val Loss: 1.858e-03
