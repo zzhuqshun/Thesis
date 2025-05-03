@@ -1,0 +1,77 @@
+Using device: cuda:0
+
+Degradation categories and rates:
+    cell_id      rate category
+0       01  0.000391   normal
+1       03  0.000518   normal
+2       05  0.000499   normal
+3       07  0.000750   normal
+4       09  0.003106   faster
+5       11  0.003046   faster
+6       13  0.008297   faster
+7       15  0.006153   faster
+8       17  0.001771     fast
+9       19  0.001001     fast
+10      21  0.001098     fast
+11      23  0.000973     fast
+12      25  0.002719     fast
+13      27  0.000463   normal
+14      29  0.006876   faster 
+
+Train IDs: ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29'], Val IDs: ['01', '19', '13'], Test IDs: ['17']
+Shapes -> Train: (205444, 7), Val: (58110, 7), Test: (22846, 7)
+
+Features scaled with StandardScaler
+Model architecture:
+SOHLSTM(
+  (lstm): LSTM(3, 128, num_layers=3, batch_first=True, dropout=0.5)
+  (fc_layers): Sequential(
+    (0): Linear(in_features=128, out_features=64, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+    (2): Dropout(p=0.5, inplace=False)
+    (3): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+Total trainable parameters: 340,609
+
+Start training...
+Epoch 1/100 | Train Loss: 2.921e-02 | Val Loss: 2.386e-03 | LR: 1.00e-04
+Epoch 2/100 | Train Loss: 8.243e-03 | Val Loss: 2.334e-03 | LR: 1.00e-04
+Epoch 3/100 | Train Loss: 3.410e-03 | Val Loss: 1.697e-03 | LR: 1.00e-04
+Epoch 4/100 | Train Loss: 1.384e-03 | Val Loss: 8.460e-04 | LR: 1.00e-04
+Epoch 5/100 | Train Loss: 1.068e-03 | Val Loss: 6.903e-04 | LR: 1.00e-04
+Epoch 6/100 | Train Loss: 7.115e-04 | Val Loss: 8.812e-04 | LR: 1.00e-04
+Epoch 7/100 | Train Loss: 5.924e-04 | Val Loss: 6.775e-04 | LR: 1.00e-04
+Epoch 8/100 | Train Loss: 4.407e-04 | Val Loss: 5.822e-04 | LR: 1.00e-04
+Epoch 9/100 | Train Loss: 3.438e-04 | Val Loss: 5.538e-04 | LR: 1.00e-04
+Epoch 10/100 | Train Loss: 2.977e-04 | Val Loss: 5.713e-04 | LR: 1.00e-04
+Epoch 11/100 | Train Loss: 2.468e-04 | Val Loss: 3.454e-04 | LR: 1.00e-04
+Epoch 12/100 | Train Loss: 2.293e-04 | Val Loss: 3.191e-04 | LR: 1.00e-04
+Epoch 13/100 | Train Loss: 2.052e-04 | Val Loss: 3.710e-04 | LR: 1.00e-04
+Epoch 14/100 | Train Loss: 2.139e-04 | Val Loss: 3.455e-04 | LR: 1.00e-04
+Epoch 15/100 | Train Loss: 1.946e-04 | Val Loss: 2.523e-04 | LR: 1.00e-04
+Epoch 16/100 | Train Loss: 1.815e-04 | Val Loss: 3.376e-04 | LR: 1.00e-04
+Epoch 17/100 | Train Loss: 1.788e-04 | Val Loss: 3.153e-04 | LR: 1.00e-04
+Epoch 18/100 | Train Loss: 1.731e-04 | Val Loss: 3.367e-04 | LR: 1.00e-04
+Epoch 19/100 | Train Loss: 1.737e-04 | Val Loss: 3.595e-04 | LR: 1.00e-04
+Epoch 20/100 | Train Loss: 1.726e-04 | Val Loss: 2.200e-04 | LR: 1.00e-04
+Epoch 21/100 | Train Loss: 1.759e-04 | Val Loss: 3.476e-04 | LR: 1.00e-04
+Epoch 22/100 | Train Loss: 1.775e-04 | Val Loss: 4.396e-04 | LR: 1.00e-04
+Epoch 23/100 | Train Loss: 1.670e-04 | Val Loss: 3.031e-04 | LR: 1.00e-04
+Epoch 24/100 | Train Loss: 1.624e-04 | Val Loss: 3.965e-04 | LR: 1.00e-04
+Epoch 25/100 | Train Loss: 1.626e-04 | Val Loss: 2.953e-04 | LR: 1.00e-04
+Epoch 26/100 | Train Loss: 1.620e-04 | Val Loss: 2.338e-04 | LR: 5.00e-05
+Epoch 27/100 | Train Loss: 1.537e-04 | Val Loss: 3.321e-04 | LR: 5.00e-05
+Epoch 28/100 | Train Loss: 1.507e-04 | Val Loss: 2.811e-04 | LR: 5.00e-05
+Epoch 29/100 | Train Loss: 1.486e-04 | Val Loss: 2.882e-04 | LR: 5.00e-05
+Epoch 30/100 | Train Loss: 1.464e-04 | Val Loss: 2.921e-04 | LR: 5.00e-05
+Early stopping at epoch 30
+
+Training complete. Best validation loss: 0.000220
+
+Evaluating the model on the testing set...
+RMSE: 0.0229
+MAE: 0.0202
+R²: 0.9254
+Prediction plot saved for cell 17
+Prediction scatter plot saved for cell 17

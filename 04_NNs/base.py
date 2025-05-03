@@ -17,28 +17,29 @@ from tqdm import tqdm
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # Create save directory with descriptive name
-save_dir = Path(__file__).parent / "models/LSTM" / "seq864_3val_1test"
+save_dir = Path(__file__).parent / "models/LSTM" / "resample-10min" / "seq7days_rerun"
 save_dir.mkdir(exist_ok=True, parents=True)
 
 # Model hyperparameters - centralized configuration for easy adjustment
 hyperparams = {
     "INFO": [
         "Model: SOH_LSTM",
-        "Data: 10-minute resampling of battery cycle data",
+        "Data: 10 min resampling of battery cycle data",
         "Degradation categories: normal, fast, faster",
         "Data split: Train (11 cells), Validation (3 cells), Test (1 cell)",
         "Features: Standard scaled voltage, current, temperature"
     ],
-    "SEQUENCE_LENGTH": 124,    # Number of time steps in each sequence
-    "HIDDEN_SIZE": 32,        # Size of LSTM hidden layers
-    "NUM_LAYERS": 3,           # Number of LSTM layers
-    "DROPOUT": 0.2,            # Dropout rate for regularization
-    "BATCH_SIZE": 64,          # Batch size for training
-    "LEARNING_RATE": 1e-4,     # Learning rate for optimizer
-    "WEIGHT_DECAY": 1e-6,       # L2 regularization
-    "EPOCHS": 200,             # Maximum number of training epochs
-    "PATIENCE": 20,            # Early stopping patience
-    "device": str(device)      # Computation device
+    "SEQUENCE_LENGTH": 1008,  
+    "HIDDEN_SIZE": 128,
+    "NUM_LAYERS": 3,
+    "DROPOUT": 0.5,
+    "BATCH_SIZE": 32,
+    "LEARNING_RATE": 0.0001,
+    "WEIGHT_DECAY": 0.0,
+    "RESAMPLE": '10min',
+    "EPOCHS": 100,
+    "PATIENCE": 10,
+    "device": str(device)      
 }
 
 def main():
@@ -55,7 +56,7 @@ def main():
     # ==================== Data Preprocessing ====================
     # Load and prepare data
     data_dir = Path("../01_Datenaufbereitung/Output/Calculated/")
-    df_train, df_val, df_test = load_data(data_dir)
+    df_train, df_val, df_test = load_data(data_dir, resample=hyperparams["RESAMPLE"])
 
     # Scale features using StandardScaler
     df_train_scaled, df_val_scaled, df_test_scaled = scale_data(df_train, df_val, df_test)
@@ -99,7 +100,7 @@ def main():
         print(f"\nTraining complete. Best validation loss: {best_val_loss:.6f}")
     else:
         # Load a previously trained model
-        model_path = save_path['last']
+        model_path = save_path['best']
         if os.path.exists(model_path):
             print(f"\nLoading model from {model_path}...")
             model.load_state_dict(torch.load(model_path, map_location=device))
@@ -146,7 +147,7 @@ def set_seed(seed=42):
         torch.backends.cudnn.benchmark = False
 
 
-def load_data(data_dir: Path, resample='10min'):
+def load_data(data_dir: Path, resample='h'):
     """
     Load battery cell data files, compute degradation rates, categorize cells,
     and split into train/validation/test sets.
@@ -456,7 +457,8 @@ def train_and_validate_model(model, train_loader, val_loader, save_path):
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             epochs_no_improve = 0
-            torch.save(model.state_dict(), save_path['best'])
+            best_model_state = model.state_dict()
+            torch.save(best_model_state, save_path['best'])
         else:
             epochs_no_improve += 1
             if epochs_no_improve >= hyperparams['PATIENCE']:
@@ -466,6 +468,10 @@ def train_and_validate_model(model, train_loader, val_loader, save_path):
     # Save final model and history
     torch.save(model.state_dict(), save_path['last'])
     pd.DataFrame(history).to_parquet(save_path['history'], index=False)
+    
+    if best_model_state:
+        model.load_state_dict(best_model_state)
+        print(f"Best model loaded from {save_path['best']}")
 
     return history, best_val_loss
 

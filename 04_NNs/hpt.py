@@ -23,32 +23,33 @@ from base import (
 config = {
     "INFO": [
         "Hyperparameter tuning",
-        "LSTM(10 min resampling)",
+        "LSTM(1 h resampling)",
         "val_id:['01', '13', '19']",
         "test_id:['17']",
-        "Standard scaled ['Voltage[V]', 'Current[A]', 'Temperature[°C]', 'SOH_ZHU']"
+        "Standard scaled ['Voltage[V]', 'Current[A]', 'Temperature[°C]']"
         ],
     "Search": {
-        "seq_length": [1, 144],
+        "seq_length": [24, 48, 72, 96, 120, 144, 168],
         "hidden_size": [32, 64, 128, 256],
         "num_layers": [2, 3, 4, 5],
         "dropout": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
         "learning_rate": 1e-4,
         "weight_decay": [0.0, 1e-6, 1e-5, 1e-4],
         "batch_size": [16, 32, 64, 128],
+        "resampling": ["min", "10min", "30min", "h"],
         "epochs": 100,
         "patience": 10
     }
     }
 
 # Create directory for optimization results
-optuna_dir = Path(__file__).parent / "models/HPT1-144"
+optuna_dir = Path(__file__).parent / "models/HPT-h-resampling"
 optuna_dir.mkdir(exist_ok=True, parents=True)
 
 with open(optuna_dir / "config.json", "w") as f:
     json.dump(config, f, indent=4)
 
-def consistent_load_data(data_dir: Path, resample='10min', split_file_path='dataset_split.json'):
+def consistent_load_data(data_dir: Path, resample='h', split_file_path='dataset_split.json'):
     """
     Load training, validation, and test data with persistent dataset split.
     Saves the split on first run, then reuses the same split on subsequent runs.
