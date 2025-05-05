@@ -1,0 +1,20 @@
+{
+    "INFO": [
+        "Model: SOH_LSTM",
+        "Data: 1 h resampling of battery cycle data",
+        "Degradation categories: normal, fast, faster",
+        "Data split: Train (11 cells), Validation (3 cells), Test (1 cell)",
+        "Features: Standard scaled voltage, current, temperature"
+    ],
+    "SEQUENCE_LENGTH": 864,
+    "HIDDEN_SIZE": 256,
+    "NUM_LAYERS": 2,
+    "DROPOUT": 0.4,
+    "BATCH_SIZE": 32,
+    "LEARNING_RATE": 0.0001,
+    "WEIGHT_DECAY": 1e-06,
+    "RESAMPLE": "h",
+    "EPOCHS": 100,
+    "PATIENCE": 10,
+    "device": "cuda:0"
+}

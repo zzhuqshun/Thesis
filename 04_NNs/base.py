@@ -17,7 +17,7 @@ from tqdm import tqdm
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # Create save directory with descriptive name
-save_dir = Path(__file__).parent / "models/LSTM" / "resample-10min" / "seq7days_rerun"
+save_dir = Path(__file__).parent / "models/LSTM" / "resample-10min" / "seq6days_rerun"
 save_dir.mkdir(exist_ok=True, parents=True)
 
 # Model hyperparameters - centralized configuration for easy adjustment
@@ -29,13 +29,13 @@ hyperparams = {
         "Data split: Train (11 cells), Validation (3 cells), Test (1 cell)",
         "Features: Standard scaled voltage, current, temperature"
     ],
-    "SEQUENCE_LENGTH": 1008,  
-    "HIDDEN_SIZE": 128,
-    "NUM_LAYERS": 3,
-    "DROPOUT": 0.5,
+    "SEQUENCE_LENGTH": 864,  
+    "HIDDEN_SIZE": 256,
+    "NUM_LAYERS": 2,
+    "DROPOUT": 0.4,
     "BATCH_SIZE": 32,
     "LEARNING_RATE": 0.0001,
-    "WEIGHT_DECAY": 0.0,
+    "WEIGHT_DECAY": 1e-6,
     "RESAMPLE": '10min',
     "EPOCHS": 100,
     "PATIENCE": 10,
@@ -100,7 +100,7 @@ def main():
         print(f"\nTraining complete. Best validation loss: {best_val_loss:.6f}")
     else:
         # Load a previously trained model
-        model_path = save_path['best']
+        model_path = save_path['last']
         if os.path.exists(model_path):
             print(f"\nLoading model from {model_path}...")
             model.load_state_dict(torch.load(model_path, map_location=device))
@@ -466,12 +466,12 @@ def train_and_validate_model(model, train_loader, val_loader, save_path):
                 break
 
     # Save final model and history
-    torch.save(model.state_dict(), save_path['last'])
+    last_model_state = model.state_dict()
+    torch.save(last_model_state, save_path['last'])
+    print(f"Final model saved to {save_path['last']}")
+    print(f"Best model saved to {save_path['best']}")
     pd.DataFrame(history).to_parquet(save_path['history'], index=False)
     
-    if best_model_state:
-        model.load_state_dict(best_model_state)
-        print(f"Best model loaded from {save_path['best']}")
 
     return history, best_val_loss
 
