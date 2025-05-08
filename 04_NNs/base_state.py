@@ -17,7 +17,7 @@ from tqdm import tqdm
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # Create save directory
-save_dir = Path(__file__).parent / "models/Stateful_LSTM" / "seq124_3val_1test"
+save_dir = Path(__file__).parent / "models/Stateful_LSTM" / "seq6days"
 save_dir.mkdir(exist_ok=True, parents=True)
 
 # Model hyperparameters
@@ -29,15 +29,15 @@ hyperparams = {
         "Data split: Train (11 cells), Validation (3 cells), Test (1 cell)",
         "Features: Standard scaled voltage, current, temperature"
     ],
-    "SEQUENCE_LENGTH": 124,    # Number of time steps in each sequence
-    "HIDDEN_SIZE": 32,        # Size of LSTM hidden layers
-    "NUM_LAYERS": 3,           # Number of LSTM layers
-    "DROPOUT": 0.2,            # Dropout rate for regularization
-    "BATCH_SIZE": 64,          # Batch size for training
+    "SEQUENCE_LENGTH": 864,    # Number of time steps in each sequence
+    "HIDDEN_SIZE": 256,        # Size of LSTM hidden layers
+    "NUM_LAYERS": 2,           # Number of LSTM layers
+    "DROPOUT": 0.4,            # Dropout rate for regularization
+    "BATCH_SIZE": 32,          # Batch size for training
     "LEARNING_RATE": 1e-4,     # Learning rate for optimizer
     "WEIGHT_DECAY": 1e-6,       # L2 regularization
-    "EPOCHS": 200,             # Maximum number of training epochs
-    "PATIENCE": 20,            # Early stopping patience    "device": str(device)      # Computation device
+    "EPOCHS": 100,             # Maximum number of training epochs
+    "PATIENCE": 10,            # Early stopping patience    "device": str(device)      # Computation device
 }
 
 

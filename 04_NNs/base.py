@@ -17,7 +17,7 @@ from tqdm import tqdm
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # Create save directory with descriptive name
-save_dir = Path(__file__).parent / "models/LSTM" / "resample-10min" / "seq6days_rerun"
+save_dir = Path(__file__).parent / "models/HPT/trial_15"
 save_dir.mkdir(exist_ok=True, parents=True)
 
 # Model hyperparameters - centralized configuration for easy adjustment
@@ -34,7 +34,7 @@ hyperparams = {
     "NUM_LAYERS": 2,
     "DROPOUT": 0.4,
     "BATCH_SIZE": 32,
-    "LEARNING_RATE": 0.0001,
+    "LEARNING_RATE": 1e-4,
     "WEIGHT_DECAY": 1e-6,
     "RESAMPLE": '10min',
     "EPOCHS": 100,
@@ -92,7 +92,7 @@ def main():
     }
 
     # Choose whether to train a new model or load an existing one
-    TRAINING_MODE = True
+    TRAINING_MODE = False
     
     if TRAINING_MODE:
         # Train and validate the model
@@ -100,10 +100,10 @@ def main():
         print(f"\nTraining complete. Best validation loss: {best_val_loss:.6f}")
     else:
         # Load a previously trained model
-        model_path = save_path['last']
+        model_path = save_path['best']
         if os.path.exists(model_path):
             print(f"\nLoading model from {model_path}...")
-            model.load_state_dict(torch.load(model_path, map_location=device))
+            model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
             print("Model loaded successfully!")
         else:
             print(f"\nError: Model file {model_path} does not exist.")

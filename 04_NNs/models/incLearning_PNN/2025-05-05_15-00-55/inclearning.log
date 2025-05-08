@@ -1,0 +1,34 @@
+2025-05-05 15:00:55,064 - INFO - Logs will be saved to: E:\00_Thesis\04_NNs\models\incLearning_PNN\2025-05-05_15-00-55\inclearning.log
+2025-05-05 15:00:55,124 - INFO - Using device: cuda:0
+2025-05-05 15:01:33,285 - INFO - Cell Assignment Summary:
+2025-05-05 15:01:33,317 - INFO - Normal cells (8): ['01', '03', '05', '07', '19', '21', '23', '27']
+2025-05-05 15:01:33,319 - INFO - Fast cells (3): ['09', '11', '25']
+2025-05-05 15:01:33,319 - INFO - Faster cells (3): ['13', '15', '29']
+2025-05-05 15:01:33,319 - INFO - 
+Training Sets:
+2025-05-05 15:01:33,319 - INFO - Base training set: ['03', '01', '21', '05', '27']
+2025-05-05 15:01:33,320 - INFO - Base validation set: ['23']
+2025-05-05 15:01:33,320 - INFO - Update1 training set: ['23', '07', '19', '09', '11']
+2025-05-05 15:01:33,322 - INFO - Update1 validation set: ['25']
+2025-05-05 15:01:33,322 - INFO - Update2 training set: ['25', '13', '15']
+2025-05-05 15:01:33,323 - INFO - Update2 validation set: ['29']
+2025-05-05 15:02:30,041 - INFO - 
+Dataset Sizes:
+2025-05-05 15:02:30,047 - INFO - Base training set: 119705 samples, validation set: 24176 samples
+2025-05-05 15:02:30,047 - INFO - Update1 training set: 102537 samples, validation set: 18326 samples
+2025-05-05 15:02:30,047 - INFO - Update2 training set: 33511 samples, validation set: 8068 samples
+2025-05-05 15:02:30,047 - INFO - 
+Test Sets:
+2025-05-05 15:02:30,048 - INFO - Test cell: 17
+2025-05-05 15:02:30,066 - INFO - Base test set (SOH ¡Ý 0.9): 11139 samples
+2025-05-05 15:02:30,067 - INFO - Update1 test set (0.8 ¡Ü SOH < 0.9): 6312 samples
+2025-05-05 15:02:30,068 - INFO - Update2 test set (SOH < 0.8): 5421 samples
+2025-05-05 15:02:30,292 - INFO - ================================================================================
+2025-05-05 15:02:30,293 - INFO - Method: Progressive Neural Network (PNN)
+2025-05-05 15:02:30,293 - INFO - ================================================================================
+2025-05-05 15:02:30,730 - INFO - 
+Phase 1: Training on base data for column 0...
+2025-05-05 15:05:02,290 - INFO - Epoch 1/100 | Train Loss: 1.395e-02 | Val Loss: 1.778e-03
+2025-05-05 15:07:33,756 - INFO - Epoch 2/100 | Train Loss: 3.738e-03 | Val Loss: 2.195e-03
+2025-05-05 15:10:24,660 - INFO - Epoch 3/100 | Train Loss: 2.292e-03 | Val Loss: 1.878e-03
+2025-05-05 15:13:35,038 - INFO - Epoch 4/100 | Train Loss: 1.383e-03 | Val Loss: 2.025e-03

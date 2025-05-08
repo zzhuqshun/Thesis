@@ -1,0 +1,30 @@
+2025-05-05 14:58:44,460 - INFO - Logs will be saved to: E:\00_Thesis\04_NNs\models\incLearning_PNN\2025-05-05_14-58-44\inclearning.log
+2025-05-05 14:58:44,514 - INFO - Using device: cuda:0
+2025-05-05 14:59:19,713 - INFO - Cell Assignment Summary:
+2025-05-05 14:59:19,742 - INFO - Normal cells (8): ['01', '03', '05', '07', '19', '21', '23', '27']
+2025-05-05 14:59:19,743 - INFO - Fast cells (3): ['09', '11', '25']
+2025-05-05 14:59:19,743 - INFO - Faster cells (3): ['13', '15', '29']
+2025-05-05 14:59:19,744 - INFO - 
+Training Sets:
+2025-05-05 14:59:19,744 - INFO - Base training set: ['03', '01', '21', '05', '27']
+2025-05-05 14:59:19,744 - INFO - Base validation set: ['23']
+2025-05-05 14:59:19,745 - INFO - Update1 training set: ['23', '07', '19', '09', '11']
+2025-05-05 14:59:19,747 - INFO - Update1 validation set: ['25']
+2025-05-05 14:59:19,747 - INFO - Update2 training set: ['25', '13', '15']
+2025-05-05 14:59:19,747 - INFO - Update2 validation set: ['29']
+2025-05-05 15:00:13,401 - INFO - 
+Dataset Sizes:
+2025-05-05 15:00:13,420 - INFO - Base training set: 119705 samples, validation set: 24176 samples
+2025-05-05 15:00:13,420 - INFO - Update1 training set: 102537 samples, validation set: 18326 samples
+2025-05-05 15:00:13,420 - INFO - Update2 training set: 33511 samples, validation set: 8068 samples
+2025-05-05 15:00:13,421 - INFO - 
+Test Sets:
+2025-05-05 15:00:13,421 - INFO - Test cell: 17
+2025-05-05 15:00:13,433 - INFO - Base test set (SOH ¡Ý 0.9): 11139 samples
+2025-05-05 15:00:13,434 - INFO - Update1 test set (0.8 ¡Ü SOH < 0.9): 6312 samples
+2025-05-05 15:00:13,434 - INFO - Update2 test set (SOH < 0.8): 5421 samples
+2025-05-05 15:00:13,624 - INFO - ================================================================================
+2025-05-05 15:00:13,624 - INFO - Method: Progressive Neural Network (PNN)
+2025-05-05 15:00:13,624 - INFO - ================================================================================
+2025-05-05 15:00:14,051 - INFO - 
+Phase 1: Training on base data for column 0...

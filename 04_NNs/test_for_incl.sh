@@ -19,4 +19,4 @@ source ~/miniconda3/bin/activate
 conda activate myenv
 
 # Run the Python script, passing the folder path as an argument
-python base_copy.py 
+python test_for_incl.py

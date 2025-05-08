@@ -23,27 +23,27 @@ from base import (
 config = {
     "INFO": [
         "Hyperparameter tuning",
-        "LSTM(1 h resampling)",
-        "val_id:['01', '13', '19']",
+        "LSTM(10 min resampling)",
+        "val_id:['23']",
         "test_id:['17']",
         "Standard scaled ['Voltage[V]', 'Current[A]', 'Temperature[°C]']"
         ],
     "Search": {
-        "seq_length": [24, 48, 72, 96, 120, 144, 168],
-        "hidden_size": [32, 64, 128, 256],
+        "seq_length": [36, 72, 144, 216, 288],
+        "hidden_size": [16, 32, 64, 128],
         "num_layers": [2, 3, 4, 5],
         "dropout": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
         "learning_rate": 1e-4,
         "weight_decay": [0.0, 1e-6, 1e-5, 1e-4],
-        "batch_size": [16, 32, 64, 128],
-        "resampling": ["min", "10min", "30min", "h"],
+        "batch_size": [16, 32, 64],
+        "resampling": "10min",
         "epochs": 100,
         "patience": 10
     }
     }
 
 # Create directory for optimization results
-optuna_dir = Path(__file__).parent / "models/HPT-h-resampling"
+optuna_dir = Path(__file__).parent / "models/HPT-incremental"
 optuna_dir.mkdir(exist_ok=True, parents=True)
 
 with open(optuna_dir / "config.json", "w") as f:
@@ -196,8 +196,8 @@ def objective(trial):
     set_seed(42)
 
     # 2. Sample hyperparameters for this trial
-    seq_length = trial.suggest_int("SEQUENCE_LENGTH", 1, 144)
-    hidden_size = trial.suggest_categorical("HIDDEN_SIZE", [32, 64, 128, 256])
+    seq_length = trial.suggest_categorical("SEQUENCE_LENGTH", [144, 288, 432, 576, 720, 864, 1008])
+    hidden_size = trial.suggest_categorical("HIDDEN_SIZE", [16, 32, 64, 128, 256])
     num_layers = trial.suggest_int("NUM_LAYERS", 2, 5)
     dropout = trial.suggest_float("DROPOUT", 0.0, 0.5, step=0.1)
     weight_decay = trial.suggest_categorical("WEIGHT_DECAY", [0.0, 1e-6, 1e-5, 1e-4])
