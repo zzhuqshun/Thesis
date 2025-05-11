@@ -1,12 +1,12 @@
 {
-    "SEQUENCE_LENGTH": 720,
-    "HIDDEN_SIZE": 96,
-    "NUM_LAYERS": 3,
-    "DROPOUT": 0.4,
-    "LEARNING_RATE": 0.001,
+    "SEQUENCE_LENGTH": 864,
+    "HIDDEN_SIZE": 32,
+    "NUM_LAYERS": 2,
+    "DROPOUT": 0.1,
+    "LEARNING_RATE": 0.0001,
     "WEIGHT_DECAY": 1e-06,
-    "BATCH_SIZE": 16,
+    "BATCH_SIZE": 64,
     "EPOCHS": 100,
     "PATIENCE": 10,
-    "best_val_loss": 0.046077283555822635
+    "best_val_loss": 0.0003793007572625129
 }
