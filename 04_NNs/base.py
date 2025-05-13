@@ -8,7 +8,7 @@ import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -18,7 +18,7 @@ from tqdm import tqdm
 # ----------------------------------------------------------------------------- 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-save_dir = Path(__file__).parent / "models/LSTM/MinMaxScaler" / "seq1days"
+save_dir = Path(__file__).parent / "models/LSTM/" / "resample-10min" / "seq6days_20earlystop"
 save_dir.mkdir(exist_ok=True, parents=True)
 
 hyperparams = {
@@ -27,18 +27,18 @@ hyperparams = {
         "Data: 10-min resampling of battery cycle data",
         "Degradation categories: normal, fast, faster",
         "Data split: Train (11 cells), Validation (3 cells), Test (1 cell)",
-        "Features: MinMax-scaled voltage & temperature (0-1), current (-1-1)",
+        "Features: StandardScaler on Voltage, Temperature, Current",
     ],
     "SEQUENCE_LENGTH": 864,
     "HIDDEN_SIZE": 256,
     "NUM_LAYERS": 2,
     "DROPOUT": 0.4,
     "BATCH_SIZE": 32,
-    "LEARNING_RATE": 3e-4,
-    "WEIGHT_DECAY": 3e-06,
+    "LEARNING_RATE": 1e-4,
+    "WEIGHT_DECAY": 1e-6,
     "RESAMPLE": "10min",
-    "EPOCHS": 100,
-    "PATIENCE": 10,
+    "EPOCHS": 200,
+    "PATIENCE": 20,
     "device": str(device),
 }
 
@@ -50,19 +50,24 @@ def main():
 
     set_seed(42)
     print(f"Using device: {device}\n")
-
+    
+    # ==================== Data Preprocessing ====================
     data_dir = Path("../01_Datenaufbereitung/Output/Calculated/")
     df_train, df_val, df_test = load_data(data_dir, resample=hyperparams["RESAMPLE"])
-    df_train_s, df_val_s, df_test_s = scale_data(df_train, df_val, df_test)
+    
+    # Scale data
+    df_train_scaled, df_val_scaled, df_test_scaled = scale_data(df_train, df_val, df_test)
 
-    train_ds = BatteryDataset(df_train_s, hyperparams["SEQUENCE_LENGTH"])
-    val_ds = BatteryDataset(df_val_s, hyperparams["SEQUENCE_LENGTH"])
-    test_ds = BatteryDataset(df_test_s, hyperparams["SEQUENCE_LENGTH"])
+    # Create datasets and dataloaders
+    train_dataset = BatteryDataset(df_train_scaled, hyperparams["SEQUENCE_LENGTH"])
+    val_dataset = BatteryDataset(df_val_scaled, hyperparams["SEQUENCE_LENGTH"])
+    test_dataset = BatteryDataset(df_test_scaled, hyperparams["SEQUENCE_LENGTH"])
 
-    train_loader = DataLoader(train_ds, batch_size=hyperparams["BATCH_SIZE"], shuffle=True)
-    val_loader = DataLoader(val_ds, batch_size=hyperparams["BATCH_SIZE"], shuffle=False)
-    test_loader = DataLoader(test_ds, batch_size=hyperparams["BATCH_SIZE"], shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=hyperparams["BATCH_SIZE"], shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=hyperparams["BATCH_SIZE"], shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=hyperparams["BATCH_SIZE"], shuffle=False)
 
+    # ==================== Model Initialization ====================
     model = SOHLSTM(
         input_size=3,
         hidden_size=hyperparams["HIDDEN_SIZE"],
@@ -124,22 +129,42 @@ def main():
             print("Error: No pre-trained model found!")
             return
 
-    print("\nEvaluating the model on the test set …")
-    preds, tgts, metrics = evaluate_model(model, test_loader)
-    for k, v in metrics.items():
-        print(f"{k}: {v:.4f}")
+    # ==================== Evaluate and Plot for Best and Last Models ====================
+    # Load history once
+    history_df = pd.read_parquet(model_paths['history']) if model_paths['history'].exists() else None
 
-    results_dir = save_dir / "results"
-    results_dir.mkdir(exist_ok=True, parents=True)
+    # Evaluate Best Model
+    print("\nEvaluating BEST model...")
+    best_results_dir = save_dir / "results_best"
+    best_results_dir.mkdir(exist_ok=True, parents=True)
+    # Load best model weights
+    model.load_state_dict(torch.load(model_paths['best'], map_location=device, weights_only=True))
+    # Plot losses
+    if history_df is not None:
+        plot_losses(history_df, best_results_dir)
+    # Evaluate
+    preds_best, targets_best, metrics_best = evaluate_model(model, test_loader)
+    for metric, value in metrics_best.items():
+        print(f"[BEST] {metric}: {value:.4f}")
+    # Plot predictions
+    plot_predictions(preds_best, targets_best, metrics_best, df_test_scaled, best_results_dir)
 
-    if model_paths["history"].exists():
-        plot_losses(pd.read_parquet(model_paths["history"]), results_dir)
+    # Evaluate Last Model
+    print("\nEvaluating LAST model...")
+    last_results_dir = save_dir / "results_last"
+    last_results_dir.mkdir(exist_ok=True, parents=True)
+    # Load last model weights
+    model.load_state_dict(torch.load(model_paths['last'], map_location=device, weights_only=True))
+    # Plot losses
+    if history_df is not None:
+        plot_losses(history_df, last_results_dir)
+    # Evaluate
+    preds_last, targets_last, metrics_last = evaluate_model(model, test_loader)
+    for metric, value in metrics_last.items():
+        print(f"[LAST] {metric}: {value:.4f}")
+    # Plot predictions
+    plot_predictions(preds_last, targets_last, metrics_last, df_test_scaled, last_results_dir)
 
-    plot_predictions(preds, tgts, metrics, df_test_s, results_dir)
-
-    with open(hyperparams_path, "w", encoding="utf-8") as f:
-        json.dump(hyperparams, f, indent=4)
-    print(f"\nUpdated run information written to {hyperparams_path.relative_to(Path.cwd())}")
 
 # ----------------------------------------------------------------------------- 
 # Utility functions 
@@ -234,26 +259,34 @@ def load_data(data_dir: Path, resample: str = "10min"):
 
 
 def scale_data(df_train, df_val, df_test):
-    df_train_s = df_train.copy()
-    df_val_s = df_val.copy()
-    df_test_s = df_test.copy()
+    df_train_scaled = df_train.copy()
+    df_val_scaled = df_val.copy()
+    df_test_scaled = df_test.copy()
 
-    vt_cols = ["Voltage[V]", "Temperature[°C]"]
-    c_col   = ["Current[A]"]
+    # StandardScaler
+    features = ["Voltage[V]", "Temperature[°C]", "Current[A]"]
+    scaler = StandardScaler().fit(df_train[features])
+    
+    df_train_scaled[features] = scaler.transform(df_train[features])
+    df_val_scaled[features]   = scaler.transform(df_val[features])
+    df_test_scaled[features]  = scaler.transform(df_test[features])
+    
+    # vt_cols = ["Voltage[V]", "Temperature[°C]"]
+    # c_col   = ["Current[A]"]
 
-    vt_scaler = MinMaxScaler((0, 1)).fit(df_train[vt_cols])
-    c_scaler  = MinMaxScaler((-1, 1)).fit(df_train[c_col])
+    # vt_scaler = MinMaxScaler((0, 1)).fit(df_train[vt_cols])
+    # c_scaler  = MinMaxScaler((-1, 1)).fit(df_train[c_col])
 
-    df_train_s[vt_cols] = vt_scaler.transform(df_train[vt_cols])
-    df_val_s[vt_cols]   = vt_scaler.transform(df_val[vt_cols])
-    df_test_s[vt_cols]  = vt_scaler.transform(df_test[vt_cols])
+    # df_train_scaled[vt_cols] = vt_scaler.transform(df_train[vt_cols])
+    # df_val_scaled[vt_cols]   = vt_scaler.transform(df_val[vt_cols])
+    # df_test_scaled[vt_cols]  = vt_scaler.transform(df_test[vt_cols])
 
-    df_train_s[c_col] = c_scaler.transform(df_train[c_col])
-    df_val_s[c_col]   = c_scaler.transform(df_val[c_col])
-    df_test_s[c_col]  = c_scaler.transform(df_test[c_col])
+    # df_train_scaled[c_col] = c_scaler.transform(df_train[c_col])
+    # df_val_scaled[c_col]   = c_scaler.transform(df_val[c_col])
+    # df_test_scaled[c_col]  = c_scaler.transform(df_test[c_col])
 
-    print("Voltage & temperature scaled to [0,1]; current to [-1,1]\n")
-    return df_train_s, df_val_s, df_test_s
+    print("Features Temperature, Voltage, Current scaled with StandardScaler")
+    return df_train_scaled, df_val_scaled, df_test_scaled
 
 class BatteryDataset(Dataset):
     def __init__(self, df: pd.DataFrame, seq_len: int):
@@ -414,8 +447,8 @@ def plot_losses(hist_df: pd.DataFrame, out_dir: Path):
     plt.savefig(out_dir / "loss_curves.png")
     plt.close()
 
-def plot_predictions(preds, tgts, metrics, df_test_s, out_dir: Path):
-    date_index = df_test_s["Datetime"].iloc[hyperparams["SEQUENCE_LENGTH"]:].values
+def plot_predictions(preds, tgts, metrics, df_test_scaled, out_dir: Path):
+    date_index = df_test_scaled["Datetime"].iloc[hyperparams["SEQUENCE_LENGTH"]:].values
     plt.figure(figsize=(12, 6))
     plt.plot(date_index, tgts, label="actual")
     plt.plot(date_index, preds, label="predicted", alpha=0.7)

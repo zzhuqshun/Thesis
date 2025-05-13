@@ -1,0 +1,60 @@
+Using device: cuda:0
+
+Degradation categories and rates:
+    cell_id      rate category
+0       01  0.000391   normal
+1       03  0.000518   normal
+2       05  0.000499   normal
+3       07  0.000750   normal
+4       09  0.003106   faster
+5       11  0.003046   faster
+6       13  0.008297   faster
+7       15  0.006153   faster
+8       17  0.001771     fast
+9       19  0.001001     fast
+10      21  0.001098     fast
+11      23  0.000973     fast
+12      25  0.002719     fast
+13      27  0.000463   normal
+14      29  0.006876   faster 
+
+Train IDs: ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29'], Val IDs: ['01', '19', '13'], Test IDs: ['17']
+Shapes -> Train: (205444, 7), Val: (58110, 7), Test: (22846, 7)
+
+Features Temperature, Voltage, Current scaled with StandardScaler
+
+No checkpoint found, starting training from scratch.
+
+Start training from epoch 1 …
+Epoch 1/100  |  train 1.582e-02  val 1.183e-03  lr 1.0e-04
+Epoch 2/100  |  train 4.727e-03  val 1.210e-03  lr 1.0e-04
+Epoch 3/100  |  train 3.117e-03  val 7.318e-04  lr 1.0e-04
+Epoch 4/100  |  train 1.932e-03  val 6.696e-04  lr 1.0e-04
+Epoch 5/100  |  train 1.210e-03  val 8.301e-04  lr 1.0e-04
+Epoch 6/100  |  train 6.918e-04  val 5.790e-04  lr 1.0e-04
+Epoch 7/100  |  train 4.588e-04  val 3.376e-04  lr 1.0e-04
+Epoch 8/100  |  train 3.403e-04  val 6.153e-04  lr 1.0e-04
+Epoch 9/100  |  train 2.766e-04  val 8.076e-04  lr 1.0e-04
+Epoch 10/100  |  train 2.200e-04  val 9.181e-04  lr 1.0e-04
+Epoch 11/100  |  train 2.534e-04  val 1.011e-03  lr 1.0e-04
+Epoch 12/100  |  train 2.124e-04  val 3.116e-04  lr 1.0e-04
+Epoch 13/100  |  train 2.474e-04  val 9.953e-04  lr 1.0e-04
+Epoch 14/100  |  train 1.847e-04  val 6.105e-04  lr 1.0e-04
+Epoch 15/100  |  train 1.612e-04  val 8.182e-04  lr 1.0e-04
+Epoch 16/100  |  train 1.449e-04  val 6.207e-04  lr 1.0e-04
+Epoch 17/100  |  train 1.354e-04  val 7.987e-04  lr 1.0e-04
+Epoch 18/100  |  train 1.303e-04  val 5.520e-04  lr 5.0e-05
+Epoch 19/100  |  train 1.068e-04  val 8.375e-04  lr 5.0e-05
+Epoch 20/100  |  train 1.023e-04  val 5.347e-04  lr 5.0e-05
+Epoch 21/100  |  train 1.010e-04  val 6.638e-04  lr 5.0e-05
+Epoch 22/100  |  train 9.773e-05  val 7.594e-04  lr 5.0e-05
+Early stopping at epoch 22
+
+Best validation loss: 0.0003
+
+Evaluating the model on the test set …
+RMSE: 0.0135
+MAE: 0.0113
+R²: 0.9741
+
+Updated run information written to models/LSTM/MinMaxScaler/seq6days_normal/hyperparameters.json

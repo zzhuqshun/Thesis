@@ -1,0 +1,126 @@
+{
+    "INFO": [
+        "Model: SOH_LSTM",
+        "Data: 10-min resampling of battery cycle data",
+        "Degradation categories: normal, fast, faster",
+        "Data split: Train (11 cells), Validation (3 cells), Test (1 cell)",
+        "Features: MinMax-scaled voltage & temperature (0-1), current (-1-1)"
+    ],
+    "SEQUENCE_LENGTH": 864,
+    "HIDDEN_SIZE": 256,
+    "NUM_LAYERS": 2,
+    "DROPOUT": 0.4,
+    "BATCH_SIZE": 32,
+    "LEARNING_RATE": 0.0003,
+    "WEIGHT_DECAY": 3e-06,
+    "RESAMPLE": "10min",
+    "EPOCHS": 100,
+    "PATIENCE": 10,
+    "device": "cuda:0",
+    "CELL_DEGRADATION": [
+        {
+            "cell_id": "01",
+            "rate": 0.00039061984941832505,
+            "category": "normal"
+        },
+        {
+            "cell_id": "03",
+            "rate": 0.0005183420915260482,
+            "category": "normal"
+        },
+        {
+            "cell_id": "05",
+            "rate": 0.000498875542360743,
+            "category": "normal"
+        },
+        {
+            "cell_id": "07",
+            "rate": 0.0007497234740455005,
+            "category": "normal"
+        },
+        {
+            "cell_id": "09",
+            "rate": 0.003105957078309386,
+            "category": "faster"
+        },
+        {
+            "cell_id": "11",
+            "rate": 0.0030456001998009413,
+            "category": "faster"
+        },
+        {
+            "cell_id": "13",
+            "rate": 0.008297488704577386,
+            "category": "faster"
+        },
+        {
+            "cell_id": "15",
+            "rate": 0.006153064537069255,
+            "category": "faster"
+        },
+        {
+            "cell_id": "17",
+            "rate": 0.0017705563893449943,
+            "category": "fast"
+        },
+        {
+            "cell_id": "19",
+            "rate": 0.001000894715629728,
+            "category": "fast"
+        },
+        {
+            "cell_id": "21",
+            "rate": 0.0010978270780390331,
+            "category": "fast"
+        },
+        {
+            "cell_id": "23",
+            "rate": 0.0009734675825117758,
+            "category": "fast"
+        },
+        {
+            "cell_id": "25",
+            "rate": 0.002718542328275268,
+            "category": "fast"
+        },
+        {
+            "cell_id": "27",
+            "rate": 0.0004629505981597093,
+            "category": "normal"
+        },
+        {
+            "cell_id": "29",
+            "rate": 0.006876256422496285,
+            "category": "faster"
+        }
+    ],
+    "DATA_SPLIT": {
+        "train_ids": [
+            "03",
+            "05",
+            "07",
+            "09",
+            "11",
+            "15",
+            "21",
+            "23",
+            "25",
+            "27",
+            "29"
+        ],
+        "val_ids": [
+            "01",
+            "19",
+            "13"
+        ],
+        "test_ids": [
+            "17"
+        ]
+    },
+    "BEST_VAL_LOSS": 0.0007786051764026127,
+    "TEST_METRICS": {
+        "RMSE": 0.017548810690641403,
+        "MAE": 0.015188530087471008,
+        "R\u00b2": 0.9562429189682007
+    }
+}

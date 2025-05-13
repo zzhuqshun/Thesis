@@ -18,7 +18,7 @@ from tqdm import tqdm
 # ----------------------------------------------------------------------------- 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-save_dir = Path(__file__).parent / "models/LSTM/test_for_incl" / "MinMAx" / "2025-05-10_10-18-14"
+save_dir = Path(__file__).parent / "models/LSTM/test_for_incl" / "MinMax" / "seq6days"
 save_dir.mkdir(exist_ok=True, parents=True)
 
 hyperparams = {
@@ -34,8 +34,8 @@ hyperparams = {
     "NUM_LAYERS": 2,
     "DROPOUT": 0.4,
     "BATCH_SIZE": 32,
-    "LEARNING_RATE": 3e-4,
-    "WEIGHT_DECAY": 3e-06,
+    "LEARNING_RATE": 1e-4,
+    "WEIGHT_DECAY": 1e-06,
     "RESAMPLE": "10min",
     "EPOCHS": 100,
     "PATIENCE": 10,
@@ -83,7 +83,7 @@ def main():
         "checkpoint": save_dir / "checkpoint.pth",
     }
 
-    TRAINING_MODE = False
+    TRAINING_MODE = True
 
     if TRAINING_MODE:
         if os.path.exists(model_paths["checkpoint"]):

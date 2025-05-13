@@ -1,0 +1,35 @@
+Using device: cuda:0
+
+Train IDs: ['01', '03', '25', '21', '27'], Val IDs: ['23'], Test IDs: ['17']
+Train shape: (113985, 7), Val shape: (24157, 7), Test shape (SOH>0.9): (11126, 7)
+Voltage & temperature scaled to [0,1]; current to [-1,1]
+
+
+No checkpoint found, starting training from scratch.
+
+Start training from epoch 1 …
+Epoch 1/100  |  train 2.217e-02  val 1.742e-03  lr 1.0e-04
+Epoch 2/100  |  train 6.653e-03  val 2.103e-03  lr 1.0e-04
+Epoch 3/100  |  train 5.465e-03  val 3.889e-03  lr 1.0e-04
+Epoch 4/100  |  train 4.650e-03  val 1.770e-03  lr 1.0e-04
+Epoch 5/100  |  train 3.799e-03  val 1.267e-03  lr 1.0e-04
+Epoch 6/100  |  train 3.226e-03  val 1.615e-03  lr 1.0e-04
+Epoch 7/100  |  train 2.719e-03  val 1.952e-03  lr 1.0e-04
+Epoch 8/100  |  train 2.100e-03  val 1.547e-03  lr 1.0e-04
+Epoch 9/100  |  train 1.746e-03  val 1.923e-03  lr 1.0e-04
+Epoch 10/100  |  train 1.411e-03  val 2.877e-03  lr 1.0e-04
+Epoch 11/100  |  train 1.140e-03  val 2.310e-03  lr 5.0e-05
+Epoch 12/100  |  train 9.107e-04  val 1.820e-03  lr 5.0e-05
+Epoch 13/100  |  train 8.012e-04  val 2.268e-03  lr 5.0e-05
+Epoch 14/100  |  train 7.556e-04  val 2.126e-03  lr 5.0e-05
+Epoch 15/100  |  train 6.891e-04  val 1.900e-03  lr 5.0e-05
+Early stopping at epoch 15
+
+Best validation loss: 0.0013
+
+Evaluating the model on the test set …
+RMSE: 0.0262
+MAE: 0.0217
+R²: -0.1192
+
+Updated run information written to models/LSTM/test_for_incl/MinMax/seq6days/hyperparameters.json

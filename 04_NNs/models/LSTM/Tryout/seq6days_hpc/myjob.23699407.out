@@ -1,0 +1,70 @@
+Using device: cuda:0
+
+Degradation categories and rates:
+    cell_id      rate category
+0       01  0.000391   normal
+1       03  0.000518   normal
+2       05  0.000499   normal
+3       07  0.000750   normal
+4       09  0.003106   faster
+5       11  0.003046   faster
+6       13  0.008297   faster
+7       15  0.006153   faster
+8       17  0.001771     fast
+9       19  0.001001     fast
+10      21  0.001098     fast
+11      23  0.000973     fast
+12      25  0.002719     fast
+13      27  0.000463   normal
+14      29  0.006876   faster 
+
+Train IDs: ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29'], Val IDs: ['01', '19', '13'], Test IDs: ['17']
+Shapes -> Train: (205444, 7), Val: (58110, 7), Test: (22846, 7)
+
+Voltage & temperature scaled to [0,1]; current to [-1,1]
+
+SOHLSTM(
+  (lstm): LSTM(3, 256, num_layers=2, batch_first=True, dropout=0.4)
+  (fc): Sequential(
+    (0): Linear(in_features=256, out_features=128, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+    (2): Dropout(p=0.4, inplace=False)
+    (3): Linear(in_features=128, out_features=1, bias=True)
+  )
+)
+Total trainable parameters: 826,625
+
+
+Start training …
+Epoch 1/100  |  train 1.253e-02  val 6.464e-03  lr 3.0e-04
+Epoch 2/100  |  train 3.886e-03  val 1.062e-02  lr 3.0e-04
+Epoch 3/100  |  train 1.873e-03  val 1.474e-02  lr 3.0e-04
+Epoch 4/100  |  train 1.343e-03  val 1.599e-02  lr 3.0e-04
+Epoch 5/100  |  train 5.196e-03  val 5.211e-03  lr 3.0e-04
+Epoch 6/100  |  train 3.802e-03  val 1.223e-02  lr 3.0e-04
+Epoch 7/100  |  train 3.417e-03  val 4.500e-03  lr 3.0e-04
+Epoch 8/100  |  train 3.533e-03  val 5.923e-03  lr 3.0e-04
+Epoch 9/100  |  train 8.562e-04  val 8.260e-03  lr 3.0e-04
+Epoch 10/100  |  train 5.277e-04  val 4.857e-03  lr 3.0e-04
+Epoch 11/100  |  train 2.915e-04  val 8.757e-04  lr 3.0e-04
+Epoch 12/100  |  train 2.238e-04  val 8.943e-04  lr 3.0e-04
+Epoch 13/100  |  train 1.994e-04  val 8.843e-04  lr 3.0e-04
+Epoch 14/100  |  train 1.899e-04  val 7.786e-04  lr 3.0e-04
+Epoch 15/100  |  train 1.832e-04  val 9.481e-04  lr 3.0e-04
+Epoch 16/100  |  train 1.715e-04  val 1.162e-03  lr 3.0e-04
+Epoch 17/100  |  train 1.644e-04  val 8.307e-04  lr 3.0e-04
+Epoch 18/100  |  train 1.633e-04  val 9.596e-04  lr 3.0e-04
+Epoch 19/100  |  train 1.609e-04  val 8.044e-04  lr 3.0e-04
+Epoch 20/100  |  train 1.609e-04  val 9.326e-04  lr 1.5e-04
+Epoch 21/100  |  train 1.244e-04  val 1.008e-03  lr 1.5e-04
+Epoch 22/100  |  train 1.219e-04  val 9.110e-04  lr 1.5e-04
+Epoch 23/100  |  train 1.204e-04  val 7.988e-04  lr 1.5e-04
+Epoch 24/100  |  train 1.240e-04  val 8.772e-04  lr 1.5e-04
+Early stopping at epoch 24
+
+Evaluating on test set …
+RMSE: 0.0175
+MAE: 0.0152
+R²: 0.9562
+
+Updated run information written to models/LSTM/MinMaxScaler/2025-05-10_14-47-39/hyperparameters.json

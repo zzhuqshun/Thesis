@@ -1,0 +1,39 @@
+Using device: cuda:0
+
+Train IDs: ['03', '01', '21', '05', '27'], Val IDs: ['23'], Test IDs: ['17']
+Train shape: (119595, 7), Val shape: (24157, 7), Test shape (SOH>0.9): (11126, 7)
+Voltage & temperature scaled to [0,1]; current to [-1,1]
+
+SOHLSTM(
+  (lstm): LSTM(3, 256, num_layers=2, batch_first=True, dropout=0.4)
+  (fc): Sequential(
+    (0): Linear(in_features=256, out_features=128, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+    (2): Dropout(p=0.4, inplace=False)
+    (3): Linear(in_features=128, out_features=1, bias=True)
+  )
+)
+Total trainable parameters: 826,625
+
+
+Start training …
+Epoch 1/100  |  train 1.583e-02  val 2.194e-03  lr 3.0e-04
+Epoch 2/100  |  train 2.183e-02  val 2.034e-03  lr 3.0e-04
+Epoch 3/100  |  train 2.128e-03  val 2.849e-03  lr 3.0e-04
+Epoch 4/100  |  train 1.102e-03  val 2.766e-03  lr 3.0e-04
+Epoch 5/100  |  train 8.787e-04  val 2.102e-03  lr 3.0e-04
+Epoch 6/100  |  train 9.757e-04  val 2.712e-03  lr 3.0e-04
+Epoch 7/100  |  train 1.208e-03  val 2.480e-03  lr 3.0e-04
+Epoch 8/100  |  train 1.210e-03  val 2.504e-03  lr 1.5e-04
+Epoch 9/100  |  train 7.288e-04  val 2.693e-03  lr 1.5e-04
+Epoch 10/100  |  train 7.035e-04  val 2.425e-03  lr 1.5e-04
+Epoch 11/100  |  train 7.578e-04  val 2.744e-03  lr 1.5e-04
+Epoch 12/100  |  train 7.498e-04  val 2.113e-03  lr 1.5e-04
+Early stopping at epoch 12
+
+Evaluating on test set …
+RMSE: 0.0440
+MAE: 0.0373
+R²: -2.1461
+
+Updated run information written to models/LSTM/test_for_incl/MinMax/2025-05-10_22-07-27/hyperparameters.json
