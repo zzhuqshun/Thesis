@@ -13,7 +13,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MaxAbsScaler, RobustScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 logger = logging.getLogger(__name__)
@@ -23,18 +23,31 @@ logger = logging.getLogger(__name__)
 # ===============================================================
 class Config:
     def __init__(self, **kwargs):
-        self.SEQUENCE_LENGTH = 864
-        self.HIDDEN_SIZE = 256
+        self.SEQUENCE_LENGTH =720
+        self.HIDDEN_SIZE = 128
         self.NUM_LAYERS = 2
-        self.DROPOUT = 0.4
+        self.DROPOUT = 0.3
         self.BATCH_SIZE = 32
         self.LEARNING_RATE = 1e-4
         self.EPOCHS = 200
         self.PATIENCE = 20
         self.WEIGHT_DECAY = 1e-6
+        self.SCALER = "RobustScaler"
         self.SEED = 42
         self.RESAMPLE = '10min'
         self.EWC_LAMBDA = 1000
+        self.Info = {
+            "description": "SOH prediction with LSTM",
+            "resample": "10min",
+            "trianing data": "['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29']",
+            "validation data": "['01','13','19']",
+            "test data": "['17']",
+            "base dataset": "['01', '03', '05', '07', '27'], ['23']",
+            "update1 dataset": "['11', '19', '21', '23'], ['25']",
+            "update2 dataset": "['09', '15', '25', '29'], ['13']",
+            "test dataset": "['17']",
+            "scaler": "RobustScaler"
+        }
         for k,v in kwargs.items(): setattr(self, k, v)
     def save(self, path):
         with open(path, 'w') as f:
@@ -48,10 +61,10 @@ class Config:
 # ===============================================================
 # Main Pipeline
 # ===============================================================
-def main():
+def main(skip_regular=False):
     # config and logging
     config   = Config()
-    base_dir = Path(__file__).parent / 'models' / 'EWC' / 'seq6days'
+    base_dir = Path(__file__).parent / 'models' / 'seq5days_new_datasplit1_robust'
     # ---- regular dirs ----
     reg_dir       = base_dir / 'regular'
     reg_ckpt_dir  = reg_dir / 'checkpoints'
@@ -73,60 +86,63 @@ def main():
     set_seed(config.SEED)
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-    # ------------------- Regular LSTM Training -------------------
-    logger.info("==== Regular LSTM Training Phase ====")
-    lstm_train_ids = ['03','05','07','09','11','15','21','23','25','27','29']
-    lstm_val_ids   = ['01','13','19']
-    dp_lstm = DataProcessor(
-        data_dir='../01_Datenaufbereitung/Output/Calculated/',
-        resample=config.RESAMPLE,
-        seed=config.SEED,
-        base_train_ids=lstm_train_ids,
-        base_val_ids=lstm_val_ids,
-        update1_train_ids=[], update1_val_ids=[],
-        update2_train_ids=[], update2_val_ids=[]
-    )
-    data_lstm    = dp_lstm.prepare_data()
-    loaders_lstm = create_dataloaders(data_lstm, config.SEQUENCE_LENGTH, config.BATCH_SIZE)
-    model_lstm   = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
-    trainer_lstm = Trainer(model_lstm, device, config, reg_ckpt_dir)
-    history_lstm = trainer_lstm.train_task(
-        train_loader=loaders_lstm['base_train'],
-        val_loader=loaders_lstm['base_val'],
-        task_id=0,
-        apply_ewc=False,
-        resume=True
-    )
-    # save losses & predictions under regular/results
-    plot_losses(history_lstm, reg_results)
-    for tag, ckpt in [('best', reg_ckpt_dir/'task0_best.pt'),
-                      ('last', reg_ckpt_dir/'task0_last.pt')]:
-        if ckpt.exists():
-            state = torch.load(ckpt, map_location=device)
-            model_lstm.load_state_dict(state['model_state'])
-            preds, tgts = get_predictions(model_lstm, loaders_lstm['test_full'], device)
-            metrics = {
-                'RMSE': np.sqrt(mean_squared_error(tgts, preds)),
-                'MAE':  mean_absolute_error(tgts, preds),
-                'R2':   r2_score(tgts, preds)
-            }
-            out_dir = reg_results / tag
-            plot_predictions(preds, tgts, metrics, data_lstm['test_full'], config.SEQUENCE_LENGTH, out_dir)
-            plot_prediction_scatter(preds, tgts, out_dir)
-            logger.info("[Regular %s] RMSE: %.4f, MAE: %.4f, R2: %.4f",
-                        tag.upper(), metrics['RMSE'], metrics['MAE'], metrics['R2'])
+    if not skip_regular:
+        # ------------------- Regular LSTM Training -------------------
+        logger.info("==== Regular LSTM Training Phase ====")
+        lstm_train_ids =  ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29']
+        lstm_val_ids   = ['01','19','13']
+        dp_lstm = DataProcessor(
+            data_dir='../01_Datenaufbereitung/Output/Calculated/',
+            resample=config.RESAMPLE,
+            config=config,
+            base_train_ids=lstm_train_ids,
+            base_val_ids=lstm_val_ids,
+            update1_train_ids=[], update1_val_ids=[],
+            update2_train_ids=[], update2_val_ids=[]
+        )
+        data_lstm    = dp_lstm.prepare_data()
+        loaders_lstm = create_dataloaders(data_lstm, config.SEQUENCE_LENGTH, config.BATCH_SIZE)
+        model_lstm   = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
+        trainer_lstm = Trainer(model_lstm, device, config, reg_ckpt_dir)
+        history_lstm = trainer_lstm.train_task(
+            train_loader=loaders_lstm['base_train'],
+            val_loader=loaders_lstm['base_val'],
+            task_id=0,
+            apply_ewc=False,
+            resume=True
+        )
+        # save losses & predictions under regular/results
+        plot_losses(history_lstm, reg_results)
+        for tag, ckpt in [('best', reg_ckpt_dir/'task0_best.pt'),
+                        ('last', reg_ckpt_dir/'task0_last.pt')]:
+            if ckpt.exists():
+                state = torch.load(ckpt, map_location=device)
+                model_lstm.load_state_dict(state['model_state'])
+                preds, tgts = get_predictions(model_lstm, loaders_lstm['test_full'], device)
+                metrics = {
+                    'RMSE': np.sqrt(mean_squared_error(tgts, preds)),
+                    'MAE':  mean_absolute_error(tgts, preds),
+                    'R2':   r2_score(tgts, preds)
+                }
+                out_dir = reg_results / tag
+                plot_predictions(preds, tgts, metrics, data_lstm['test_full'], config.SEQUENCE_LENGTH, out_dir)
+                plot_prediction_scatter(preds, tgts, out_dir)
+                logger.info("[Regular %s] RMSE: %.4f, MAE: %.4f, R2: %.4f",
+                            tag.upper(), metrics['RMSE'], metrics['MAE'], metrics['R2'])
+    else:
+        logger.info("==== Skipping Regular LSTM Training Phase ====")
 
     # ------------------- Incremental EWC Training -------------------
     logger.info("==== Incremental EWC Training Phase ====")
     dp_inc = DataProcessor(
         data_dir='../01_Datenaufbereitung/Output/Calculated/',
         resample=config.RESAMPLE,
-        seed=config.SEED,
-        base_train_ids=['01','03','05','21','27'],
-        base_val_ids=['23'],
-        update1_train_ids=['07','09','11','19','23'],
+        config=config,
+        base_train_ids=['01','03','05','27'],
+        base_val_ids=['07'],
+        update1_train_ids=['19','21','23'],
         update1_val_ids=['25'],
-        update2_train_ids=['15','25','29'],
+        update2_train_ids=['09', '15','11','29'],
         update2_val_ids=['13']
     )
     data_inc = dp_inc.prepare_data()
@@ -134,14 +150,14 @@ def main():
 
     # shared model & trainer (will swap checkpoint_dir per task)
     model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
-    trainer = Trainer(model, device, config, checkpoint_dir=None)
+    trainer = Trainer(model, device, config, checkpoint_dir=str(inc_dir))
 
     phases = [
-        ('task0', loaders['base_train'],    loaders['base_val'],    loaders['test_base'],    False),
-        ('task1', loaders['update1_train'], loaders['update1_val'], loaders['test_update1'], True),
-        ('task2', loaders['update2_train'], loaders['update2_val'], loaders['test_update2'], True),
+        ('task0', loaders['base_train'],    loaders['base_val'],    loaders['test_full'], data_inc['test_full'], False),
+        ('task1', loaders['update1_train'], loaders['update1_val'], loaders['test_full'], data_inc['test_full'], True),
+        ('task2', loaders['update2_train'], loaders['update2_val'], loaders['test_full'], data_inc['test_full'], True),
     ]
-    for i, (task_name, tr, val, tst, use_ewc) in enumerate(phases):
+    for i, (task_name, tr, val, tst, tst_df, use_ewc) in enumerate(phases):
         # prepare per-task dirs
         task_dir     = inc_dir / task_name
         ckpt_dir     = task_dir / 'checkpoints'
@@ -180,7 +196,7 @@ def main():
                     'R2':   r2_score(tgts, preds)
                 }
                 out_dir = results_dir / tag
-                plot_predictions(preds, tgts, metrics, data_inc[f'test_{task_name.split("task")[-1]}'], config.SEQUENCE_LENGTH, out_dir)
+                plot_predictions(preds, tgts, metrics, tst_df, config.SEQUENCE_LENGTH, out_dir)
                 plot_prediction_scatter(preds, tgts, out_dir)
                 logger.info("[%s %s] RMSE: %.4f, MAE: %.4f, R2: %.4f",
                             task_name, tag.upper(), metrics['RMSE'], metrics['MAE'], metrics['R2'])
@@ -217,7 +233,7 @@ def get_predictions(model, loader, device):
     with torch.no_grad():
         for x,y in loader:
             x, y = x.to(device), y.to(device)
-            out = model(x).cpu().numpy().ravel()
+            out = model(x).cpu().numpy()
             preds.append(out)
             tgts.append(y.cpu().numpy().ravel())
     return np.concatenate(preds), np.concatenate(tgts)
@@ -269,16 +285,22 @@ class BatteryDataset(Dataset):
         )
 
 class DataProcessor:
-    def __init__(self, data_dir, resample='10min', seed=42,
+    def __init__(self, data_dir, resample='10min', config = None,
                  base_train_ids=None, base_val_ids=None,
                  update1_train_ids=None, update1_val_ids=None,
                  update2_train_ids=None, update2_val_ids=None,
                  test_cell_id='17'):
         self.data_dir = Path(data_dir)
+        self.config = config or Config()
         self.resample = resample
-        self.seed = seed
-        self.scaler = StandardScaler()
-        random.seed(seed)
+        if config.SCALER == "StandardScaler":
+            self.scaler = StandardScaler()
+        elif config.SCALER == "MaxAbsScaler":
+            self.scaler = MaxAbsScaler()
+        elif config.SCALER == "RobustScaler":
+            self.scaler = RobustScaler()
+        else:
+            raise ValueError(f"Unknown scaler {config.SCALER}")
         # manual splits
         self.base_train_ids    = base_train_ids or []
         self.base_val_ids      = base_val_ids or []
@@ -310,7 +332,8 @@ class DataProcessor:
     def prepare_data(self):
         info_map, test_fp = self.load_cell_data()
         def build(ids):
-            if not ids: return pd.DataFrame()
+            if not ids: 
+                return pd.DataFrame()
             dfs = [self.process_file(info_map[c]) for c in ids]
             return pd.concat(dfs, ignore_index=True)
         
@@ -350,7 +373,8 @@ class DataProcessor:
         # fit scaler on base_train
         self.scaler.fit(df_btr[['Voltage[V]','Current[A]','Temperature[°C]']])
         def scale(df):
-            if df.empty: return df
+            if df.empty: 
+                return df
             df2 = df.copy()
             df2[['Voltage[V]','Current[A]','Temperature[°C]']] = \
                 self.scaler.transform(df2[['Voltage[V]','Current[A]','Temperature[°C]']])
@@ -384,7 +408,7 @@ class SOHLSTM(nn.Module):
     def forward(self, x):
         out,_ = self.lstm(x)
         h = out[:,-1,:]
-        return self.fc(h).squeeze()
+        return self.fc(h).squeeze(-1)
 
 class EWC:
     def __init__(self, model, dataloader, device):
@@ -468,7 +492,7 @@ class Trainer:
             for x,y in train_loader:
                 x,y = x.to(self.device), y.to(self.device)
                 optimizer.zero_grad()
-                out = self.model(x).squeeze()
+                out = self.model(x)
                 loss = F.mse_loss(out, y)
                 if apply_ewc and self.ewc_tasks:
                     loss += (self.config.EWC_LAMBDA/2)*sum(t.penalty(self.model) for t in self.ewc_tasks)
@@ -483,7 +507,7 @@ class Trainer:
             with torch.no_grad():
                 for x,y in val_loader:
                     x,y = x.to(self.device), y.to(self.device)
-                    val_loss += F.mse_loss(self.model(x).squeeze(), y).item()*x.size(0)
+                    val_loss += F.mse_loss(self.model(x), y).item()*x.size(0)
             val_loss /= len(val_loader.dataset)
             scheduler.step(val_loss)
             epoch_time = time.time() - epoch_start
