@@ -10,11 +10,11 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 # REG_TRAIN_IDS = ['03','05','07','09','11','15','21','23','25','27','29']
 # REG_VAL_IDS   = ['01','13','19']
 
-INC_BASE_TRAIN_IDS    = ['01', '03', '05', '07', '27']
+INC_BASE_TRAIN_IDS    = ['01', '03', '05', '21', '27']
 INC_BASE_VAL_IDS      = ['23']
-INC_UPDATE1_TRAIN_IDS = ['11','19', '21', '23']
+INC_UPDATE1_TRAIN_IDS = ['07','09', '11','19', '23']
 INC_UPDATE1_VAL_IDS   = ['25']
-INC_UPDATE2_TRAIN_IDS = ['09', '15', '25', '29']
+INC_UPDATE2_TRAIN_IDS = ['15', '25', '29']
 INC_UPDATE2_VAL_IDS   = ['13']
 
 # Data directory (adjust as needed)
@@ -121,8 +121,8 @@ def objective_incremental(trial, best_config_params):
     # Load best regular config (includes fixed learning rate)
     config = Config(**best_config_params)
     # Suggest EWC lambdas
-    lambda1 = trial.suggest_float('ewc_lambda_update1', 1e-1, 1e4, log=True)
-    lambda2 = trial.suggest_float('ewc_lambda_update2', 1e-1, 1e4, log=True)
+    lambda1 = trial.suggest_categorical('ewc_lambda_update1', [100, 300, 1000, 3000, 10000])
+    lambda2 = trial.suggest_categorical('ewc_lambda_update2', [100, 300, 1000, 3000, 10000] )
 
     # Unique trial checkpoint directory
     trial_dir = tmp_dir / 'incremental' / f'trial_{trial.number}'
