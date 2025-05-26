@@ -32,7 +32,7 @@ class Config:
         self.EPOCHS = 200
         self.PATIENCE = 20
         self.WEIGHT_DECAY = 1e-6
-        self.SCALER = "RobustScaler"
+        self.SCALER = "StandardScaler"
         self.SEED = 42
         self.RESAMPLE = '10min'
         self.EWC_LAMBDA = 1000
@@ -61,10 +61,10 @@ class Config:
 # ===============================================================
 # Main Pipeline
 # ===============================================================
-def main(skip_regular=False):
+def main(skip_regular=True):
     # config and logging
     config   = Config()
-    base_dir = Path(__file__).parent / 'models' / 'seq5days_new_datasplit1_robust'
+    base_dir = Path(__file__).parent / 'models' / 'seq5days_lambda_1000_300'
     # ---- regular dirs ----
     reg_dir       = base_dir / 'regular'
     reg_ckpt_dir  = reg_dir / 'checkpoints'
@@ -138,37 +138,42 @@ def main(skip_regular=False):
         data_dir='../01_Datenaufbereitung/Output/Calculated/',
         resample=config.RESAMPLE,
         config=config,
-        base_train_ids=['01','03','05','27'],
-        base_val_ids=['07'],
-        update1_train_ids=['19','21','23'],
+        base_train_ids=['01', '03', '05', '21', '27'],
+        base_val_ids=['23'],
+        update1_train_ids=['07', '09', '11', '19', '23'],
         update1_val_ids=['25'],
-        update2_train_ids=['09', '15','11','29'],
+        update2_train_ids=['15','25','29'],
         update2_val_ids=['13']
     )
     data_inc = dp_inc.prepare_data()
     loaders  = create_dataloaders(data_inc, config.SEQUENCE_LENGTH, config.BATCH_SIZE)
 
-    # shared model & trainer (will swap checkpoint_dir per task)
-    model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
+    # shared model & trainer
+    model   = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
     trainer = Trainer(model, device, config, checkpoint_dir=str(inc_dir))
-
+    
+    lambda1 = 1000
+    lambda2 = 300
+    
+    # define tasks with corresponding lambdas
     phases = [
-        ('task0', loaders['base_train'],    loaders['base_val'],    loaders['test_full'], data_inc['test_full'], False),
-        ('task1', loaders['update1_train'], loaders['update1_val'], loaders['test_full'], data_inc['test_full'], True),
-        ('task2', loaders['update2_train'], loaders['update2_val'], loaders['test_full'], data_inc['test_full'], True),
+        ('task0', loaders['base_train'],    loaders['base_val'],    loaders['test_full'], data_inc['test_full'], False, None),
+        ('task1', loaders['update1_train'], loaders['update1_val'], loaders['test_full'], data_inc['test_full'], True,  lambda1),
+        ('task2', loaders['update2_train'], loaders['update2_val'], loaders['test_full'], data_inc['test_full'], True,  lambda2),
     ]
-    for i, (task_name, tr, val, tst, tst_df, use_ewc) in enumerate(phases):
-        # prepare per-task dirs
-        task_dir     = inc_dir / task_name
-        ckpt_dir     = task_dir / 'checkpoints'
-        results_dir  = task_dir / 'results'
+
+    for i, (task_name, tr, val, tst, tst_df, use_ewc, lam) in enumerate(phases):
+        task_dir    = inc_dir / task_name
+        ckpt_dir    = task_dir / 'checkpoints'
+        results_dir = task_dir / 'results'
         ckpt_dir.mkdir(parents=True, exist_ok=True)
         results_dir.mkdir(parents=True, exist_ok=True)
-
-        # switch trainer to this checkpoint dir
         trainer.checkpoint_dir = ckpt_dir
 
-        # train (with resume if last exists)
+        # set lambda for EWC if needed
+        if use_ewc and lam is not None:
+            trainer.config.EWC_LAMBDA = lam
+
         last_ckpt = ckpt_dir / f"{task_name}_last.pt"
         if not (ckpt_dir / f"{task_name}.trained").exists():
             logger.info("[%s] Training...", task_name)
@@ -176,14 +181,12 @@ def main(skip_regular=False):
             (ckpt_dir / f"{task_name}.trained").write_text(datetime.now().isoformat())
             logger.info("[%s] Training completed.", task_name)
 
-        # consolidate
         if not (ckpt_dir / f"{task_name}.consolidated").exists():
             logger.info("[%s] Consolidating...", task_name)
             trainer.consolidate(tr)
             (ckpt_dir / f"{task_name}.consolidated").write_text(datetime.now().isoformat())
             logger.info("[%s] Consolidation completed.", task_name)
 
-        # evaluation for best & last
         for tag in ['best', 'last']:
             ckpt_file = ckpt_dir / f"{task_name}_{tag}.pt"
             if ckpt_file.exists():
@@ -202,6 +205,7 @@ def main(skip_regular=False):
                             task_name, tag.upper(), metrics['RMSE'], metrics['MAE'], metrics['R2'])
 
         logger.info("[%s] Finished.", task_name)
+
     logger.info("==== All tasks completed ====")
 
 # ===============================================================

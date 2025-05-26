@@ -1,0 +1,73 @@
+Using device: cuda:0
+
+Degradation categories and rates:
+    cell_id      rate category
+0       01  0.000391   normal
+1       03  0.000518   normal
+2       05  0.000499   normal
+3       07  0.000750   normal
+4       09  0.003106   faster
+5       11  0.003046   faster
+6       13  0.008297   faster
+7       15  0.006153   faster
+8       17  0.001771     fast
+9       19  0.001001     fast
+10      21  0.001098     fast
+11      23  0.000973     fast
+12      25  0.002719     fast
+13      27  0.000463   normal
+14      29  0.006876   faster 
+
+Train IDs: ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29'], Val IDs: ['01', '19', '13'], Test IDs: ['17']
+Shapes -> Train: (205444, 7), Val: (58110, 7), Test: (22846, 7)
+
+Features Temperature, Voltage, Current scaled with StandardScaler
+
+No checkpoint found, starting training from scratch.
+
+Start training from epoch 1 …
+Epoch 1/200  |  train 1.582e-02  val 1.183e-03  lr 1.0e-04
+Epoch 2/200  |  train 4.727e-03  val 1.210e-03  lr 1.0e-04
+Epoch 3/200  |  train 3.117e-03  val 7.318e-04  lr 1.0e-04
+Epoch 4/200  |  train 1.932e-03  val 6.696e-04  lr 1.0e-04
+Epoch 5/200  |  train 1.210e-03  val 8.301e-04  lr 1.0e-04
+Epoch 6/200  |  train 6.918e-04  val 5.790e-04  lr 1.0e-04
+Epoch 7/200  |  train 4.588e-04  val 3.376e-04  lr 1.0e-04
+Epoch 8/200  |  train 3.403e-04  val 6.153e-04  lr 1.0e-04
+Epoch 9/200  |  train 2.766e-04  val 8.076e-04  lr 1.0e-04
+Epoch 10/200  |  train 2.200e-04  val 9.181e-04  lr 1.0e-04
+Epoch 11/200  |  train 2.534e-04  val 1.011e-03  lr 1.0e-04
+Epoch 12/200  |  train 2.124e-04  val 3.116e-04  lr 1.0e-04
+Epoch 13/200  |  train 2.474e-04  val 9.953e-04  lr 1.0e-04
+Epoch 14/200  |  train 1.847e-04  val 6.105e-04  lr 1.0e-04
+Epoch 15/200  |  train 1.612e-04  val 8.182e-04  lr 1.0e-04
+Epoch 16/200  |  train 1.449e-04  val 6.207e-04  lr 1.0e-04
+Epoch 17/200  |  train 1.354e-04  val 7.987e-04  lr 1.0e-04
+Epoch 18/200  |  train 1.303e-04  val 5.520e-04  lr 5.0e-05
+Epoch 19/200  |  train 1.068e-04  val 8.375e-04  lr 5.0e-05
+Epoch 20/200  |  train 1.023e-04  val 5.347e-04  lr 5.0e-05
+Epoch 21/200  |  train 1.010e-04  val 6.638e-04  lr 5.0e-05
+Epoch 22/200  |  train 9.773e-05  val 7.594e-04  lr 5.0e-05
+Epoch 23/200  |  train 9.801e-05  val 6.562e-04  lr 5.0e-05
+Epoch 24/200  |  train 1.002e-04  val 5.539e-04  lr 2.5e-05
+Epoch 25/200  |  train 8.835e-05  val 6.014e-04  lr 2.5e-05
+Epoch 26/200  |  train 8.578e-05  val 5.507e-04  lr 2.5e-05
+Epoch 27/200  |  train 8.593e-05  val 6.397e-04  lr 2.5e-05
+Epoch 28/200  |  train 8.631e-05  val 4.740e-04  lr 2.5e-05
+Epoch 29/200  |  train 8.668e-05  val 6.522e-04  lr 2.5e-05
+Epoch 30/200  |  train 8.673e-05  val 5.620e-04  lr 1.3e-05
+Epoch 31/200  |  train 8.153e-05  val 6.969e-04  lr 1.3e-05
+Epoch 32/200  |  train 8.088e-05  val 6.717e-04  lr 1.3e-05
+Early stopping at epoch 32
+
+Best validation loss: 0.0003
+
+Evaluating BEST model...
+[BEST] RMSE: 0.0133
+[BEST] MAE: 0.0092
+[BEST] R²: 0.9747
+
+Evaluating LAST model...
+[LAST] RMSE: 0.0061
+[LAST] MAE: 0.0050
+[LAST] R²: 0.9946

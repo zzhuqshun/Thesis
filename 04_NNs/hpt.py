@@ -160,7 +160,7 @@ if __name__ == '__main__':
         'DROPOUT': 0.3,
         'BATCH_SIZE': 32,
         'LEARNING_RATE': 1e-4,
-        'WEIGHT_DECAY': 1e-5,
+        'WEIGHT_DECAY': 1e-6,
         'EPOCHS': 200,
         'PATIENCE': 20,
         'SEED': 42,
