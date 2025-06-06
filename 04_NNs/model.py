@@ -46,7 +46,9 @@ class Config:
             "update1 dataset": "['11', '19', '21', '23'], ['25']",
             "update2 dataset": "['09', '15', '25', '29'], ['13']",
             "test dataset": "['17']",
-            "scaler": "RobustScaler"
+            "scaler": "StandardScaler-partial_fit",
+            "EWC_lambda1": 1000,
+            "EWC_lambda2": 300,
         }
         for k,v in kwargs.items(): setattr(self, k, v)
     def save(self, path):
@@ -375,25 +377,48 @@ class DataProcessor:
         logger.info("Test update2 size: %d", len(df_t_update2))
         
         # fit scaler on base_train
-        self.scaler.fit(df_btr[['Voltage[V]','Current[A]','Temperature[°C]']])
-        def scale(df):
+        def scale_df(df):
             if df.empty: 
                 return df
             df2 = df.copy()
             df2[['Voltage[V]','Current[A]','Temperature[°C]']] = \
                 self.scaler.transform(df2[['Voltage[V]','Current[A]','Temperature[°C]']])
             return df2
+         # --------- 1) Base ：partial_fit on Base Train, scale Base train/val ---------
+        if not df_btr.empty:
+            self.scaler.partial_fit(df_btr[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        df_btr_scaled = scale_df(df_btr)
+        df_bval_scaled= scale_df(df_bval)
+
+        # --------- 2) Update1 ：partial_fit on Update1 Train, scale Update1 train/val ---------
+        if not df_u1t.empty:
+            self.scaler.partial_fit(df_u1t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        df_u1t_scaled = scale_df(df_u1t)
+        df_u1v_scaled = scale_df(df_u1v)
+
+        # --------- 3) Update2 ：partial_fit on Update2 Train, scale Update2 train/val ---------
+        if not df_u2t.empty:
+            self.scaler.partial_fit(df_u2t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        df_u2t_scaled = scale_df(df_u2t)
+        df_u2v_scaled = scale_df(df_u2v)
+
+        # --------- 4) Use the updated scaler to transform test ---------
+        df_test_scaled     = scale_df(df_test)
+        df_t_base_scaled   = scale_df(df_t_base)
+        df_t_update1_scaled= scale_df(df_t_update1)
+        df_t_update2_scaled= scale_df(df_t_update2)
+
         return {
-            'base_train':    scale(df_btr),
-            'base_val':      scale(df_bval),
-            'update1_train': scale(df_u1t),
-            'update1_val':   scale(df_u1v),
-            'update2_train': scale(df_u2t),
-            'update2_val':   scale(df_u2v),
-            'test_full':     scale(df_test),
-            'test_base':     scale(df_t_base),
-            'test_update1':  scale(df_t_update1),
-            'test_update2':  scale(df_t_update2)
+            'base_train':    df_btr_scaled,
+            'base_val':      df_bval_scaled,
+            'update1_train': df_u1t_scaled,
+            'update1_val':   df_u1v_scaled,
+            'update2_train': df_u2t_scaled,
+            'update2_val':   df_u2v_scaled,
+            'test_full':     df_test_scaled,
+            'test_base':     df_t_base_scaled,
+            'test_update1':  df_t_update1_scaled,
+            'test_update2':  df_t_update2_scaled
         }
 
 # ===============================================================
