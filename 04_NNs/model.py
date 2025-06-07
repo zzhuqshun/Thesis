@@ -2,6 +2,7 @@ import json
 import os
 import time
 import random
+import copy
 from pathlib import Path
 from datetime import datetime
 import logging
@@ -32,23 +33,25 @@ class Config:
         self.EPOCHS = 200
         self.PATIENCE = 20
         self.WEIGHT_DECAY = 1e-6
-        self.SCALER = "StandardScaler"
+        self.SCALER = "RobustScaler"
         self.SEED = 42
         self.RESAMPLE = '10min'
-        self.EWC_LAMBDA = 1000
+        self.EWC_LAMBDA = None
+        self.EWC_LAMBDA1 = 1000
+        self.EWC_LAMBDA2 = 300
         self.Info = {
             "description": "SOH prediction with LSTM",
-            "resample": "10min",
-            "trianing data": "['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29']",
+            "resample": self.RESAMPLE ,
+            "training data": "['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29']",
             "validation data": "['01','13','19']",
             "test data": "['17']",
             "base dataset": "['01', '03', '05', '07', '27'], ['23']",
             "update1 dataset": "['11', '19', '21', '23'], ['25']",
             "update2 dataset": "['09', '15', '25', '29'], ['13']",
             "test dataset": "['17']",
-            "scaler": "StandardScaler-partial_fit",
-            "EWC_lambda1": 1000,
-            "EWC_lambda2": 300,
+            "scaler": "RobustScaler-update",
+            "lambda1": self.EWC_LAMBDA1,
+            "lambda2": self.EWC_LAMBDA2,
         }
         for k,v in kwargs.items(): setattr(self, k, v)
     def save(self, path):
@@ -66,7 +69,7 @@ class Config:
 def main(skip_regular=True):
     # config and logging
     config   = Config()
-    base_dir = Path(__file__).parent / 'models' / 'seq5days_lambda_1000_300'
+    base_dir = Path(__file__).parent / 'models' / 'seq5days_partial_fit_lower_bound'
     # ---- regular dirs ----
     reg_dir       = base_dir / 'regular'
     reg_ckpt_dir  = reg_dir / 'checkpoints'
@@ -78,11 +81,14 @@ def main(skip_regular=True):
     inc_dir.mkdir(parents=True, exist_ok=True)
 
     # single log file for both phases
-    log_f = logging.FileHandler(base_dir / 'train.log')
-    log_f.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
     logger = logging.getLogger()
-    logger.addHandler(log_f)
     logger.setLevel(logging.INFO)
+    log_path = base_dir / 'train.log'
+    if not any(isinstance(h, logging.FileHandler) and getattr(h, 'baseFilename', '') == str(log_path)
+               for h in logger.handlers):
+        log_f = logging.FileHandler(log_path)
+        log_f.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
+        logger.addHandler(log_f)
 
     config.save(base_dir / 'config.json')
     set_seed(config.SEED)
@@ -118,19 +124,14 @@ def main(skip_regular=True):
         for tag, ckpt in [('best', reg_ckpt_dir/'task0_best.pt'),
                         ('last', reg_ckpt_dir/'task0_last.pt')]:
             if ckpt.exists():
-                state = torch.load(ckpt, map_location=device)
-                model_lstm.load_state_dict(state['model_state'])
-                preds, tgts = get_predictions(model_lstm, loaders_lstm['test_full'], device)
-                metrics = {
-                    'RMSE': np.sqrt(mean_squared_error(tgts, preds)),
-                    'MAE':  mean_absolute_error(tgts, preds),
-                    'R2':   r2_score(tgts, preds)
-                }
-                out_dir = reg_results / tag
-                plot_predictions(preds, tgts, metrics, data_lstm['test_full'], config.SEQUENCE_LENGTH, out_dir)
-                plot_prediction_scatter(preds, tgts, out_dir)
-                logger.info("[Regular %s] RMSE: %.4f, MAE: %.4f, R2: %.4f",
-                            tag.upper(), metrics['RMSE'], metrics['MAE'], metrics['R2'])
+                trainer_lstm.evaluate_checkpoint(
+                    ckpt_path=ckpt,
+                    loader=loaders_lstm['test_full'],
+                    df=data_lstm['test_full'],
+                    seq_len=config.SEQUENCE_LENGTH,
+                    out_dir=reg_results / tag,
+                    tag=f"Regular {tag.upper()}"
+                )
     else:
         logger.info("==== Skipping Regular LSTM Training Phase ====")
 
@@ -140,9 +141,9 @@ def main(skip_regular=True):
         data_dir='../01_Datenaufbereitung/Output/Calculated/',
         resample=config.RESAMPLE,
         config=config,
-        base_train_ids=['01', '03', '05', '21', '27'],
+        base_train_ids=['01','03','05','21','27'],
         base_val_ids=['23'],
-        update1_train_ids=['07', '09', '11', '19', '23'],
+        update1_train_ids=['07','09','11','19','23'],
         update1_val_ids=['25'],
         update2_train_ids=['15','25','29'],
         update2_val_ids=['13']
@@ -150,66 +151,88 @@ def main(skip_regular=True):
     data_inc = dp_inc.prepare_data()
     loaders  = create_dataloaders(data_inc, config.SEQUENCE_LENGTH, config.BATCH_SIZE)
 
-    # shared model & trainer
     model   = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
     trainer = Trainer(model, device, config, checkpoint_dir=str(inc_dir))
-    
-    lambda1 = 1000
-    lambda2 = 300
-    
-    # define tasks with corresponding lambdas
-    phases = [
-        ('task0', loaders['base_train'],    loaders['base_val'],    loaders['test_full'], data_inc['test_full'], False, None),
-        ('task1', loaders['update1_train'], loaders['update1_val'], loaders['test_full'], data_inc['test_full'], True,  lambda1),
-        ('task2', loaders['update2_train'], loaders['update2_val'], loaders['test_full'], data_inc['test_full'], True,  lambda2),
+
+    tasks = [
+        ('task0', 'base_train', 'base_val', 'test_base',    False, None),
+        ('task1', 'update1_train', 'update1_val', 'test_update1', True,  1000),
+        ('task2', 'update2_train', 'update2_val', 'test_update2', True,  300),
     ]
 
-    for i, (task_name, tr, val, tst, tst_df, use_ewc, lam) in enumerate(phases):
-        task_dir    = inc_dir / task_name
-        ckpt_dir    = task_dir / 'checkpoints'
-        results_dir = task_dir / 'results'
+    for i, (name, train_key, val_key, subset_key, use_ewc, lam) in enumerate(tasks):
+        ckpt_dir    = inc_dir / name / 'checkpoints'
+        results_dir = inc_dir / name / 'results'
         ckpt_dir.mkdir(parents=True, exist_ok=True)
-        results_dir.mkdir(parents=True, exist_ok=True)
+        results_dir.mkdir(parents=True, exist_ok=True) 
         trainer.checkpoint_dir = ckpt_dir
 
-        # set lambda for EWC if needed
         if use_ewc and lam is not None:
             trainer.config.EWC_LAMBDA = lam
+        else:
+            trainer.config.EWC_LAMBDA = 0
 
-        last_ckpt = ckpt_dir / f"{task_name}_last.pt"
-        if not (ckpt_dir / f"{task_name}.trained").exists():
-            logger.info("[%s] Training...", task_name)
-            trainer.train_task(tr, val, task_id=i, apply_ewc=use_ewc, resume=last_ckpt.exists())
-            (ckpt_dir / f"{task_name}.trained").write_text(datetime.now().isoformat())
-            logger.info("[%s] Training completed.", task_name)
+        tr_loader   = loaders.get(train_key)
+        val_loader  = loaders.get(val_key)
+        sub_loader  = loaders.get(subset_key)
+        sub_df      = data_inc.get(subset_key)
+        full_loader = loaders.get('test_full')
+        full_df     = data_inc.get('test_full')
 
-        if not (ckpt_dir / f"{task_name}.consolidated").exists():
-            logger.info("[%s] Consolidating...", task_name)
-            trainer.consolidate(tr)
-            (ckpt_dir / f"{task_name}.consolidated").write_text(datetime.now().isoformat())
-            logger.info("[%s] Consolidation completed.", task_name)
+        last_ckpt   = ckpt_dir / f"{name}_last.pt"
+        trained_f   = ckpt_dir / f"{name}.trained"
+        consol_f    = ckpt_dir / f"{name}.consolidated"
 
-        for tag in ['best', 'last']:
-            ckpt_file = ckpt_dir / f"{task_name}_{tag}.pt"
-            if ckpt_file.exists():
-                state = torch.load(ckpt_file, map_location=device)
-                model.load_state_dict(state['model_state'])
-                preds, tgts = get_predictions(model, tst, device)
-                metrics = {
-                    'RMSE': np.sqrt(mean_squared_error(tgts, preds)),
-                    'MAE':  mean_absolute_error(tgts, preds),
-                    'R2':   r2_score(tgts, preds)
-                }
-                out_dir = results_dir / tag
-                plot_predictions(preds, tgts, metrics, tst_df, config.SEQUENCE_LENGTH, out_dir)
-                plot_prediction_scatter(preds, tgts, out_dir)
-                logger.info("[%s %s] RMSE: %.4f, MAE: %.4f, R2: %.4f",
-                            task_name, tag.upper(), metrics['RMSE'], metrics['MAE'], metrics['R2'])
+        # Training phase
+        if tr_loader and val_loader and not trained_f.exists():
+            logger.info("[%s] Training...", name)
+            trainer.train_task(tr_loader, val_loader, task_id=i, apply_ewc=use_ewc, resume=last_ckpt.exists())
+            trained_f.write_text(datetime.now().isoformat())
+            logger.info("[%s] Training completed.", name)
+        else:
+            logger.info("[%s] Skipping training (already done or no data).", name)
 
-        logger.info("[%s] Finished.", task_name)
+        # Consolidate EWC
+        if tr_loader and not consol_f.exists():
+            logger.info("[%s] Consolidating EWC...", name)
+            trainer.consolidate(tr_loader, task_id=i)
+            consol_f.write_text(datetime.now().isoformat())
+            logger.info("[%s] Consolidation done.", name)
+        else:
+            logger.info("[%s] No EWC consolidation needed or already done.", name)
+
+        # Load best and last checkpoints
+        for tag in ('best', 'last'):
+            ckpt_file = ckpt_dir / f"{name}_{tag}.pt"
+            if not ckpt_file.exists():
+                continue
+            
+            logger.info("[%s] Evaluating %s checkpoint...", name, tag)
+            # Evaluate on subset
+            if sub_loader and len(sub_df) > config.SEQUENCE_LENGTH:
+                trainer.evaluate_checkpoint(
+                    ckpt_path=ckpt_file,
+                    loader=sub_loader,
+                    df=sub_df,
+                    seq_len=config.SEQUENCE_LENGTH,
+                    out_dir=results_dir / tag / subset_key,
+                    tag=f"{name} {tag.upper()} {subset_key}"
+                )
+
+            # Evaluate on full test set
+            if full_loader and len(full_df) > config.SEQUENCE_LENGTH:
+                trainer.evaluate_checkpoint(
+                    ckpt_path=ckpt_file,
+                    loader=full_loader,
+                    df=full_df,
+                    seq_len=config.SEQUENCE_LENGTH,
+                    out_dir=results_dir / tag / "test_full",
+                    tag=f"{name} {tag.upper()} test_full"
+                )
+
+        logger.info("[%s] Finished.", name)
 
     logger.info("==== All tasks completed ====")
-
 # ===============================================================
 # Utilities
 # ===============================================================
@@ -376,7 +399,7 @@ class DataProcessor:
         logger.info("Test update1 size: %d", len(df_t_update1))
         logger.info("Test update2 size: %d", len(df_t_update2))
         
-        # fit scaler on base_train
+        
         def scale_df(df):
             if df.empty: 
                 return df
@@ -384,30 +407,52 @@ class DataProcessor:
             df2[['Voltage[V]','Current[A]','Temperature[°C]']] = \
                 self.scaler.transform(df2[['Voltage[V]','Current[A]','Temperature[°C]']])
             return df2
-         # --------- 1) Base ：partial_fit on Base Train, scale Base train/val ---------
+        
+        # # fit scaler on base_train
+        # # scale all datasets
+        # self.scaler = self.scaler.fit(df_btr[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        # df_btr_scaled    = scale_df(df_btr)
+        # df_bval_scaled   = scale_df(df_bval)
+        # df_u1t_scaled    = scale_df(df_u1t)
+        # df_u1v_scaled    = scale_df(df_u1v)
+        # df_u2t_scaled    = scale_df(df_u2t)
+        # df_u2v_scaled    = scale_df(df_u2v)
+        # df_test_scaled     = scale_df(df_test)
+        # df_t_base_scaled   = scale_df(df_t_base)
+        # df_t_update1_scaled= scale_df(df_t_update1)
+        # df_t_update2_scaled= scale_df(df_t_update2)
+        
+        # --------- 1) Base ：partial_fit on Base Train, scale Base train/val ---------
         if not df_btr.empty:
             self.scaler.partial_fit(df_btr[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        logger.info("[Scaler after base train] mean=%s", self.scaler.mean_)
+        logger.info("[Scaler after base train] var=%s", self.scaler.var_)
         df_btr_scaled = scale_df(df_btr)
         df_bval_scaled= scale_df(df_bval)
-
+        df_t_base_scaled   = scale_df(df_t_base)
+        
         # --------- 2) Update1 ：partial_fit on Update1 Train, scale Update1 train/val ---------
         if not df_u1t.empty:
             self.scaler.partial_fit(df_u1t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        logger.info("[Scaler after update1 train] mean=%s", self.scaler.mean_)
+        logger.info("[Scaler after update1 train] var=%s", self.scaler.var_)
         df_u1t_scaled = scale_df(df_u1t)
         df_u1v_scaled = scale_df(df_u1v)
+        df_t_update1_scaled= scale_df(df_t_update1)
 
         # --------- 3) Update2 ：partial_fit on Update2 Train, scale Update2 train/val ---------
         if not df_u2t.empty:
             self.scaler.partial_fit(df_u2t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        logger.info("[Scaler after update2 train] mean=%s", self.scaler.mean_)
+        logger.info("[Scaler after update2 train] var=%s", self.scaler.var_)
         df_u2t_scaled = scale_df(df_u2t)
         df_u2v_scaled = scale_df(df_u2v)
+        df_t_update2_scaled= scale_df(df_t_update2)
 
         # --------- 4) Use the updated scaler to transform test ---------
         df_test_scaled     = scale_df(df_test)
-        df_t_base_scaled   = scale_df(df_t_base)
-        df_t_update1_scaled= scale_df(df_t_update1)
-        df_t_update2_scaled= scale_df(df_t_update2)
-
+        logger.info("Data scaling complete with %s", self.config.SCALER)
+        
         return {
             'base_train':    df_btr_scaled,
             'base_val':      df_bval_scaled,
@@ -448,20 +493,34 @@ class EWC:
         self.fisher = self._compute_fisher()
 
     def _compute_fisher(self):
-        was_training = self.model.training
-        self.model.train()
-        fisher = {n: torch.zeros_like(p) for n,p in self.model.named_parameters() if p.requires_grad}
-        for x,y in self.dataloader:
-            self.model.zero_grad()
-            x,y = x.to(self.device), y.to(self.device)
-            out = self.model(x).squeeze()
+        orig_mode = self.model.training
+
+        model_copy = copy.deepcopy(self.model).to(self.device)
+        model_copy.train()  
+
+        fisher = {n: torch.zeros_like(p) for n,p in model_copy.named_parameters() if p.requires_grad}
+        total_samples = len(self.dataloader.dataset)
+
+        for x, y in self.dataloader:
+            model_copy.zero_grad()
+            x, y = x.to(self.device), y.to(self.device)
+            out = model_copy(x).squeeze()
             loss = F.mse_loss(out, y)
             loss.backward()
-            for n,p in self.model.named_parameters():
-                if p.requires_grad:
-                    fisher[n] += p.grad.data.clone().pow(2)
-        for n in fisher: fisher[n] /= len(self.dataloader)
-        if not was_training: self.model.eval()
+
+            batch_size = x.size(0)
+            for n, p in model_copy.named_parameters():
+                if p.requires_grad and p.grad is not None:
+                    fisher[n] += p.grad.data.clone().pow(2) * batch_size
+
+        for n in fisher:
+            fisher[n] /= total_samples
+
+        if orig_mode:
+            self.model.train()
+        else:
+            self.model.eval()
+
         return fisher
 
     def penalty(self, model):
@@ -495,7 +554,7 @@ class Trainer:
         best_val = float('inf'); no_imp = 0
         # resume
         if resume and ckpt_last.exists():
-            ck = torch.load(ckpt_last, map_location=self.device)
+            ck = torch.load(ckpt_last, map_location=self.device, weights_only=False)
             self.model.load_state_dict(ck['model_state'])
             optimizer.load_state_dict(ck['optimizer_state'])
             scheduler.load_state_dict(ck['scheduler_state'])
@@ -515,7 +574,6 @@ class Trainer:
         
         for epoch in tqdm.tqdm(range(start_epoch, self.config.EPOCHS), desc="Training"):
             epoch_start = time.time() 
-            logger.info("Epoch %d/%d", epoch+1, self.config.EPOCHS)
             self.model.train()
             train_loss = 0
             for x,y in train_loader:
@@ -524,7 +582,8 @@ class Trainer:
                 out = self.model(x)
                 loss = F.mse_loss(out, y)
                 if apply_ewc and self.ewc_tasks:
-                    loss += (self.config.EWC_LAMBDA/2)*sum(t.penalty(self.model) for t in self.ewc_tasks)
+                    ewc_penalty = sum(t.penalty(self.model) for t in self.ewc_tasks)
+                    loss = loss + 0.5 * self.config.EWC_LAMBDA * ewc_penalty
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.model.parameters(), 1)
                 optimizer.step()
@@ -549,6 +608,7 @@ class Trainer:
             logger.info("Epoch %d, Train Loss: %.4e, Val Loss: %.4e, LR: %.4e, Time: %.2fs",
                         epoch+1, train_loss, val_loss,
                         optimizer.param_groups[0]['lr'], epoch_time)
+            
             # checkpoints
             state = {
                 'epoch': epoch,
@@ -565,9 +625,10 @@ class Trainer:
             }
             torch.save(state, ckpt_last)
             if val_loss < best_val:
-                best_val = val_loss; no_imp = 0
+                best_val = val_loss
+                no_imp = 0
                 best_path = self.checkpoint_dir/f"task{task_id}_best.pt"
-                torch.save({'model_state': self.model.state_dict()}, best_path)
+                torch.save(state, best_path)
             else:
                 no_imp += 1
                 if no_imp >= self.config.PATIENCE:
@@ -575,8 +636,57 @@ class Trainer:
                     break
         return history
 
-    def consolidate(self, loader):
+    def consolidate(self, loader, task_id=None):
         self.ewc_tasks.append(EWC(self.model, loader, self.device))
+        # embed into existing checkpoints
+        for suffix in ('last', 'best'):
+            path = self.checkpoint_dir / f"task{task_id}_{suffix}.pt"
+            if path.exists():
+                state = torch.load(path, map_location=self.device, weights_only=False)
+                state['ewc_tasks'] = [
+                    {'params':{n:p.cpu() for n,p in e.params.items()},
+                    'fisher':{n:f.cpu() for n,f in e.fisher.items()}}
+                    for e in self.ewc_tasks
+                ]
+                torch.save(state, path)
+                
+    def evaluate_checkpoint(
+        self,
+        ckpt_path: Path,
+        loader: DataLoader,
+        df: pd.DataFrame,
+        seq_len: int,
+        out_dir: Path,
+        tag: str = ""
+    ) -> dict:
+        """
+        Load the specified checkpoint, make predictions on the loader's data,
+        compute RMSE/MAE/R2, save time series and scatter plots to out_dir, and log results.
+        """
+        state = torch.load(ckpt_path, map_location=self.device, weights_only=True)
+        self.model.load_state_dict(state['model_state'])
+        self.model.to(self.device).eval()
+
+        preds, tgts = get_predictions(self.model, loader, self.device)
+
+        metrics = {
+            'RMSE': np.sqrt(mean_squared_error(tgts, preds)),
+            'MAE':  mean_absolute_error(tgts, preds),
+            'R2':   r2_score(tgts, preds)
+        }
+
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        plot_predictions(preds, tgts, metrics, df, seq_len, out_dir)
+        plot_prediction_scatter(preds, tgts, out_dir)
+
+        prefix = f"[{tag}]" if tag else ""
+        logger.info(
+            "%s RMSE: %.4f, MAE: %.4f, R2: %.4f",
+            prefix, metrics['RMSE'], metrics['MAE'], metrics['R2']
+        )
+
+        return metrics
 
 if __name__ == '__main__':
     main()
