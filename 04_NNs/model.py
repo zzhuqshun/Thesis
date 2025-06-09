@@ -37,8 +37,8 @@ class Config:
         self.SEED = 42
         self.RESAMPLE = '10min'
         self.EWC_LAMBDA = None
-        self.EWC_LAMBDA1 = 1000
-        self.EWC_LAMBDA2 = 300
+        self.EWC_LAMBDA1 = None
+        self.EWC_LAMBDA2 = None
         self.Info = {
             "description": "SOH prediction with LSTM",
             "resample": self.RESAMPLE ,
@@ -69,7 +69,7 @@ class Config:
 def main(skip_regular=True):
     # config and logging
     config   = Config()
-    base_dir = Path(__file__).parent / 'models' / 'seq5days_partial_fit_lower_bound'
+    base_dir = Path(__file__).parent / 'models' / 'seq5days_Robustscaler_update_lowerbound'
     # ---- regular dirs ----
     reg_dir       = base_dir / 'regular'
     reg_ckpt_dir  = reg_dir / 'checkpoints'
@@ -155,9 +155,9 @@ def main(skip_regular=True):
     trainer = Trainer(model, device, config, checkpoint_dir=str(inc_dir))
 
     tasks = [
-        ('task0', 'base_train', 'base_val', 'test_base',    False, None),
-        ('task1', 'update1_train', 'update1_val', 'test_update1', True,  1000),
-        ('task2', 'update2_train', 'update2_val', 'test_update2', True,  300),
+        ('task0', 'base_train', 'base_val', 'test_base',    False, config.EWC_LAMBDA), # no EWC for base task
+        ('task1', 'update1_train', 'update1_val', 'test_update1', True,  config.EWC_LAMBDA1), # EWC for update1
+        ('task2', 'update2_train', 'update2_val', 'test_update2', True,  config.EWC_LAMBDA2) # EWC for update2
     ]
 
     for i, (name, train_key, val_key, subset_key, use_ewc, lam) in enumerate(tasks):
@@ -422,32 +422,58 @@ class DataProcessor:
         # df_t_update1_scaled= scale_df(df_t_update1)
         # df_t_update2_scaled= scale_df(df_t_update2)
         
-        # --------- 1) Base ：partial_fit on Base Train, scale Base train/val ---------
-        if not df_btr.empty:
-            self.scaler.partial_fit(df_btr[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
-        logger.info("[Scaler after base train] mean=%s", self.scaler.mean_)
-        logger.info("[Scaler after base train] var=%s", self.scaler.var_)
-        df_btr_scaled = scale_df(df_btr)
-        df_bval_scaled= scale_df(df_bval)
-        df_t_base_scaled   = scale_df(df_t_base)
-        
-        # --------- 2) Update1 ：partial_fit on Update1 Train, scale Update1 train/val ---------
-        if not df_u1t.empty:
-            self.scaler.partial_fit(df_u1t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
-        logger.info("[Scaler after update1 train] mean=%s", self.scaler.mean_)
-        logger.info("[Scaler after update1 train] var=%s", self.scaler.var_)
-        df_u1t_scaled = scale_df(df_u1t)
-        df_u1v_scaled = scale_df(df_u1v)
-        df_t_update1_scaled= scale_df(df_t_update1)
+        # --------- 1) Base train: 初始化 all_seen, 更新 scaler ---------
+        all_seen = df_btr.copy()
+        if isinstance(self.scaler, RobustScaler):
+            # RobustScaler 只能重新 fit
+            self.scaler.fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        else:
+            # StandardScaler / MaxAbsScaler 支持 partial_fit
+            self.scaler.partial_fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        # 打印当前 scaler 属性
+        if hasattr(self.scaler, 'mean_'):
+            logger.info("[Scaler after base train] mean=%s",  self.scaler.mean_)
+            logger.info("[Scaler after base train] var =%s", self.scaler.var_)
+        else:
+            logger.info("[Scaler after base train] center_=%s", self.scaler.center_)
+            logger.info("[Scaler after base train] scale_ =%s", self.scaler.scale_)
+        df_btr_scaled     = scale_df(df_btr)
+        df_bval_scaled    = scale_df(df_bval)
+        df_t_base_scaled  = scale_df(df_t_base)
 
-        # --------- 3) Update2 ：partial_fit on Update2 Train, scale Update2 train/val ---------
+        # --------- 2) Update1 train: 累加 all_seen，再更新 scaler ---------
+        if not df_u1t.empty:
+            all_seen = pd.concat([all_seen, df_u1t], ignore_index=True)
+            if isinstance(self.scaler, RobustScaler):
+                self.scaler.fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+            else:
+                self.scaler.partial_fit(df_u1t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        if hasattr(self.scaler, 'mean_'):
+            logger.info("[Scaler after update1 train] mean=%s",  self.scaler.mean_)
+            logger.info("[Scaler after update1 train] var =%s", self.scaler.var_)
+        else:
+            logger.info("[Scaler after update1 train] center_=%s", self.scaler.center_)
+            logger.info("[Scaler after update1 train] scale_ =%s", self.scaler.scale_)
+        df_u1t_scaled     = scale_df(df_u1t)
+        df_u1v_scaled     = scale_df(df_u1v)
+        df_t_update1_scaled = scale_df(df_t_update1)
+
+        # --------- 3) Update2 train: 再次累加 all_seen，并更新 scaler ---------
         if not df_u2t.empty:
-            self.scaler.partial_fit(df_u2t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
-        logger.info("[Scaler after update2 train] mean=%s", self.scaler.mean_)
-        logger.info("[Scaler after update2 train] var=%s", self.scaler.var_)
-        df_u2t_scaled = scale_df(df_u2t)
-        df_u2v_scaled = scale_df(df_u2v)
-        df_t_update2_scaled= scale_df(df_t_update2)
+            all_seen = pd.concat([all_seen, df_u2t], ignore_index=True)
+            if isinstance(self.scaler, RobustScaler):
+                self.scaler.fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+            else:
+                self.scaler.partial_fit(df_u2t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        if hasattr(self.scaler, 'mean_'):
+            logger.info("[Scaler after update2 train] mean=%s",  self.scaler.mean_)
+            logger.info("[Scaler after update2 train] var =%s", self.scaler.var_)
+        else:
+            logger.info("[Scaler after update2 train] center_=%s", self.scaler.center_)
+            logger.info("[Scaler after update2 train] scale_ =%s", self.scaler.scale_)
+        df_u2t_scaled     = scale_df(df_u2t)
+        df_u2v_scaled     = scale_df(df_u2v)
+        df_t_update2_scaled = scale_df(df_t_update2)
 
         # --------- 4) Use the updated scaler to transform test ---------
         df_test_scaled     = scale_df(df_test)
