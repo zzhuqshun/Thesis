@@ -1,7 +1,9 @@
+from __future__ import annotations
 import json
 import os
 import time
 import random
+import tempfile
 import copy
 from pathlib import Path
 from datetime import datetime
@@ -37,19 +39,22 @@ class Config:
         self.SEED = 42
         self.RESAMPLE = '10min'
         self.EWC_LAMBDA = None
-        self.EWC_LAMBDA1 = None
-        self.EWC_LAMBDA2 = None
+        self.EWC_LAMBDA1 = 1000
+        self.EWC_LAMBDA2 = 1000
+        self.EWC_LAMBDA_DECAY = 0.9
+        self.EWC_LAMBDA_MIN_ratio = 0.1
         self.Info = {
-            "description": "SOH prediction with LSTM",
+            "description": "Incremental learning with EWC",
             "resample": self.RESAMPLE ,
             "training data": "['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29']",
             "validation data": "['01','13','19']",
             "test data": "['17']",
-            "base dataset": "['01', '03', '05', '07', '27'], ['23']",
-            "update1 dataset": "['11', '19', '21', '23'], ['25']",
-            "update2 dataset": "['09', '15', '25', '29'], ['13']",
+            "base dataset": "['03', '05', '07', '27'], ['01']",
+            "update1 dataset": "[ '21', '23', '25'], ['19']",
+            "update2 dataset": "['09', '11', '15', '29'], ['13']",
             "test dataset": "['17']",
-            "scaler": "RobustScaler-update",
+            "scaler": "RobustScaler-update after each task",
+            "lambda-types": "None for all tasks",
             "lambda1": self.EWC_LAMBDA1,
             "lambda2": self.EWC_LAMBDA2,
         }
@@ -69,13 +74,7 @@ class Config:
 def main(skip_regular=True):
     # config and logging
     config   = Config()
-    base_dir = Path(__file__).parent / 'models' / 'seq5days_Robustscaler_update_lowerbound'
-    # ---- regular dirs ----
-    reg_dir       = base_dir / 'regular'
-    reg_ckpt_dir  = reg_dir / 'checkpoints'
-    reg_results   = reg_dir / 'results'
-    reg_ckpt_dir.mkdir(parents=True, exist_ok=True)
-    reg_results.mkdir(parents=True, exist_ok=True)
+    base_dir = Path(__file__).parent / 'model' / 'Incremental_EWC'
     # ---- incremental dir ----
     inc_dir = base_dir / 'incremental'
     inc_dir.mkdir(parents=True, exist_ok=True)
@@ -96,6 +95,12 @@ def main(skip_regular=True):
 
     if not skip_regular:
         # ------------------- Regular LSTM Training -------------------
+        # ---- regular dirs ----
+        reg_dir       = base_dir / 'regular'
+        reg_ckpt_dir  = reg_dir / 'checkpoints'
+        reg_results   = reg_dir / 'results'
+        reg_ckpt_dir.mkdir(parents=True, exist_ok=True)
+        reg_results.mkdir(parents=True, exist_ok=True)
         logger.info("==== Regular LSTM Training Phase ====")
         lstm_train_ids =  ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29']
         lstm_val_ids   = ['01','19','13']
@@ -121,17 +126,16 @@ def main(skip_regular=True):
         )
         # save losses & predictions under regular/results
         plot_losses(history_lstm, reg_results)
-        for tag, ckpt in [('best', reg_ckpt_dir/'task0_best.pt'),
-                        ('last', reg_ckpt_dir/'task0_last.pt')]:
-            if ckpt.exists():
-                trainer_lstm.evaluate_checkpoint(
-                    ckpt_path=ckpt,
-                    loader=loaders_lstm['test_full'],
-                    df=data_lstm['test_full'],
-                    seq_len=config.SEQUENCE_LENGTH,
-                    out_dir=reg_results / tag,
-                    tag=f"Regular {tag.upper()}"
-                )
+        best_ckpt = reg_ckpt_dir / f"task0_best.pt"
+        if best_ckpt.exists():
+            trainer_lstm.evaluate_checkpoint(
+                ckpt_path=best_ckpt,
+                loader=loaders_lstm['test_full'],
+                df=data_lstm['test_full'],
+                seq_len=config.SEQUENCE_LENGTH,
+                out_dir=reg_results ,
+                tag=f"Joint training best model predictions"
+            )
     else:
         logger.info("==== Skipping Regular LSTM Training Phase ====")
 
@@ -141,11 +145,11 @@ def main(skip_regular=True):
         data_dir='../01_Datenaufbereitung/Output/Calculated/',
         resample=config.RESAMPLE,
         config=config,
-        base_train_ids=['01','03','05','21','27'],
-        base_val_ids=['23'],
-        update1_train_ids=['07','09','11','19','23'],
-        update1_val_ids=['25'],
-        update2_train_ids=['15','25','29'],
+        base_train_ids=['03', '05', '07', '27'],
+        base_val_ids=['01'],
+        update1_train_ids=['21', '23', '25'],
+        update1_val_ids=['19'],
+        update2_train_ids=['09', '11', '15', '29'],
         update2_val_ids=['13']
     )
     data_inc = dp_inc.prepare_data()
@@ -155,44 +159,60 @@ def main(skip_regular=True):
     trainer = Trainer(model, device, config, checkpoint_dir=str(inc_dir))
 
     tasks = [
-        ('task0', 'base_train', 'base_val', 'test_base',    False, config.EWC_LAMBDA), # no EWC for base task
-        ('task1', 'update1_train', 'update1_val', 'test_update1', True,  config.EWC_LAMBDA1), # EWC for update1
-        ('task2', 'update2_train', 'update2_val', 'test_update2', True,  config.EWC_LAMBDA2) # EWC for update2
+        ('task0', 'base_train',    'base_val',    'test_base',      False, config.EWC_LAMBDA), # no EWC for base task
+        ('task1', 'update1_train', 'update1_val', 'test_update1',   True,  config.EWC_LAMBDA1), # EWC for update1
+        ('task2', 'update2_train', 'update2_val', 'test_update2',   True,  config.EWC_LAMBDA2) # EWC for update2
     ]
 
-    for i, (name, train_key, val_key, subset_key, use_ewc, lam) in enumerate(tasks):
+    for i, (name, train_key, val_key, test_key, use_ewc, lam) in enumerate(tasks):
+        tr_loader   = loaders.get(train_key)
+        val_loader  = loaders.get(val_key)
+        test_loader = loaders.get(test_key)
+        full_loader = loaders.get('test_full')
+        full_df     = data_inc.get('test_full')
+        
+        if i > 0:
+            prev_name, *_ = tasks[i-1]
+            best_ckpt = inc_dir / prev_name / 'checkpoints' / f"{prev_name}_best.pt"
+            if best_ckpt.exists():
+                logger.info("[%s] Loading best checkpoint from previous task %s...", name, prev_name)
+                state = torch.load(best_ckpt, map_location=device, weights_only=True)
+                trainer.model.load_state_dict(state['model_state'])
+                trainer.ewc_tasks = []
+                for data in state.get('ewc_tasks', []):
+                    e = EWC.__new__(EWC)
+                    e.params = {n: p.to(device) for n, p in data['params'].items()}
+                    e.fisher = {n: f.to(device) for n, f in data['fisher'].items()}
+                    trainer.ewc_tasks.append(e)
+            else:
+                logger.warning("[%s] Previous best checkpoint not found, skipping load", name)
+
+
         ckpt_dir    = inc_dir / name / 'checkpoints'
         results_dir = inc_dir / name / 'results'
         ckpt_dir.mkdir(parents=True, exist_ok=True)
         results_dir.mkdir(parents=True, exist_ok=True) 
         trainer.checkpoint_dir = ckpt_dir
 
-        if use_ewc and lam is not None:
-            trainer.config.EWC_LAMBDA = lam
-        else:
-            trainer.config.EWC_LAMBDA = 0
-
-        tr_loader   = loaders.get(train_key)
-        val_loader  = loaders.get(val_key)
-        sub_loader  = loaders.get(subset_key)
-        sub_df      = data_inc.get(subset_key)
-        full_loader = loaders.get('test_full')
-        full_df     = data_inc.get('test_full')
+        trainer.config.EWC_LAMBDA = lam if use_ewc and lam is not None else 0
 
         last_ckpt   = ckpt_dir / f"{name}_last.pt"
         trained_f   = ckpt_dir / f"{name}.trained"
         consol_f    = ckpt_dir / f"{name}.consolidated"
-
-        # Training phase
+        
+        # ---------------------- Training phase ----------------
         if tr_loader and val_loader and not trained_f.exists():
             logger.info("[%s] Training...", name)
-            trainer.train_task(tr_loader, val_loader, task_id=i, apply_ewc=use_ewc, resume=last_ckpt.exists())
+            history = trainer.train_task(tr_loader, val_loader, task_id=i, apply_ewc=use_ewc, resume=last_ckpt.exists())
+            pd.DataFrame(history).to_csv(ckpt_dir / f"{name}_history.csv", index=False)
+            # Save last checkpoint
+            plot_losses(history, results_dir / 'losses')
             trained_f.write_text(datetime.now().isoformat())
             logger.info("[%s] Training completed.", name)
         else:
             logger.info("[%s] Skipping training (already done or no data).", name)
 
-        # Consolidate EWC
+        # ---------------- Consolidation phase ----------------
         if tr_loader and not consol_f.exists():
             logger.info("[%s] Consolidating EWC...", name)
             trainer.consolidate(tr_loader, task_id=i)
@@ -200,37 +220,40 @@ def main(skip_regular=True):
             logger.info("[%s] Consolidation done.", name)
         else:
             logger.info("[%s] No EWC consolidation needed or already done.", name)
+        
+        # ---------------- Backward testing on test subsets ----------------
+        if i > 0:
+            for j in range(i):
+                prev_name, _, _, prev_test_key, _, _ = tasks[j]
+                prev_ckpt = inc_dir / prev_name / 'checkpoints' / f"{prev_name}_best.pt"
+                prev_loader = loaders.get(prev_test_key)
+                prev_df     = data_inc.get(prev_test_key)
+                if prev_ckpt.exists() and prev_loader:
+                    logger.info("[%s] Backward testing on %s...", name, prev_name)
+                    trainer.evaluate_checkpoint(
+                        ckpt_path=prev_ckpt,
+                        loader=prev_loader,
+                        df=prev_df,
+                        seq_len=config.SEQUENCE_LENGTH,
+                        out_dir=inc_dir / name / 'results' / 'backward' / prev_name,
+                        tag=f"{name} BACKWARD on {prev_name}"
+                    )
+            logger.info("[%s] Backward tests completed.", name)
 
-        # Load best and last checkpoints
-        for tag in ('best', 'last'):
-            ckpt_file = ckpt_dir / f"{name}_{tag}.pt"
-            if not ckpt_file.exists():
-                continue
-            
-            logger.info("[%s] Evaluating %s checkpoint...", name, tag)
-            # Evaluate on subset
-            if sub_loader and len(sub_df) > config.SEQUENCE_LENGTH:
-                trainer.evaluate_checkpoint(
-                    ckpt_path=ckpt_file,
-                    loader=sub_loader,
-                    df=sub_df,
-                    seq_len=config.SEQUENCE_LENGTH,
-                    out_dir=results_dir / tag / subset_key,
-                    tag=f"{name} {tag.upper()} {subset_key}"
-                )
+        # ---------------- Forward testing on full test set ----------------
+        best_ckpt = ckpt_dir / f"{name}_best.pt"
+        if best_ckpt.exists():
+            logger.info("[%s] Evaluating BEST checkpoint...", name)
+            trainer.evaluate_checkpoint(
+                ckpt_path=best_ckpt,
+                loader=full_loader,
+                df=full_df,
+                seq_len=config.SEQUENCE_LENGTH,
+                out_dir=results_dir / "forward" / "best" / "test_full",
+                tag=f"{name} FORWARD on test"
+            )
 
-            # Evaluate on full test set
-            if full_loader and len(full_df) > config.SEQUENCE_LENGTH:
-                trainer.evaluate_checkpoint(
-                    ckpt_path=ckpt_file,
-                    loader=full_loader,
-                    df=full_df,
-                    seq_len=config.SEQUENCE_LENGTH,
-                    out_dir=results_dir / tag / "test_full",
-                    tag=f"{name} {tag.upper()} test_full"
-                )
-
-        logger.info("[%s] Finished.", name)
+        logger.info("[%s] Forward testing completed.", name)
 
     logger.info("==== All tasks completed ====")
 # ===============================================================
@@ -408,76 +431,76 @@ class DataProcessor:
                 self.scaler.transform(df2[['Voltage[V]','Current[A]','Temperature[°C]']])
             return df2
         
-        # # fit scaler on base_train
-        # # scale all datasets
-        # self.scaler = self.scaler.fit(df_btr[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
-        # df_btr_scaled    = scale_df(df_btr)
-        # df_bval_scaled   = scale_df(df_bval)
-        # df_u1t_scaled    = scale_df(df_u1t)
-        # df_u1v_scaled    = scale_df(df_u1v)
-        # df_u2t_scaled    = scale_df(df_u2t)
-        # df_u2v_scaled    = scale_df(df_u2v)
-        # df_test_scaled     = scale_df(df_test)
-        # df_t_base_scaled   = scale_df(df_t_base)
-        # df_t_update1_scaled= scale_df(df_t_update1)
-        # df_t_update2_scaled= scale_df(df_t_update2)
-        
-        # --------- 1) Base train: 初始化 all_seen, 更新 scaler ---------
-        all_seen = df_btr.copy()
-        if isinstance(self.scaler, RobustScaler):
-            # RobustScaler 只能重新 fit
-            self.scaler.fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
-        else:
-            # StandardScaler / MaxAbsScaler 支持 partial_fit
-            self.scaler.partial_fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
-        # 打印当前 scaler 属性
-        if hasattr(self.scaler, 'mean_'):
-            logger.info("[Scaler after base train] mean=%s",  self.scaler.mean_)
-            logger.info("[Scaler after base train] var =%s", self.scaler.var_)
-        else:
-            logger.info("[Scaler after base train] center_=%s", self.scaler.center_)
-            logger.info("[Scaler after base train] scale_ =%s", self.scaler.scale_)
-        df_btr_scaled     = scale_df(df_btr)
-        df_bval_scaled    = scale_df(df_bval)
-        df_t_base_scaled  = scale_df(df_t_base)
-
-        # --------- 2) Update1 train: 累加 all_seen，再更新 scaler ---------
-        if not df_u1t.empty:
-            all_seen = pd.concat([all_seen, df_u1t], ignore_index=True)
-            if isinstance(self.scaler, RobustScaler):
-                self.scaler.fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
-            else:
-                self.scaler.partial_fit(df_u1t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
-        if hasattr(self.scaler, 'mean_'):
-            logger.info("[Scaler after update1 train] mean=%s",  self.scaler.mean_)
-            logger.info("[Scaler after update1 train] var =%s", self.scaler.var_)
-        else:
-            logger.info("[Scaler after update1 train] center_=%s", self.scaler.center_)
-            logger.info("[Scaler after update1 train] scale_ =%s", self.scaler.scale_)
-        df_u1t_scaled     = scale_df(df_u1t)
-        df_u1v_scaled     = scale_df(df_u1v)
-        df_t_update1_scaled = scale_df(df_t_update1)
-
-        # --------- 3) Update2 train: 再次累加 all_seen，并更新 scaler ---------
-        if not df_u2t.empty:
-            all_seen = pd.concat([all_seen, df_u2t], ignore_index=True)
-            if isinstance(self.scaler, RobustScaler):
-                self.scaler.fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
-            else:
-                self.scaler.partial_fit(df_u2t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
-        if hasattr(self.scaler, 'mean_'):
-            logger.info("[Scaler after update2 train] mean=%s",  self.scaler.mean_)
-            logger.info("[Scaler after update2 train] var =%s", self.scaler.var_)
-        else:
-            logger.info("[Scaler after update2 train] center_=%s", self.scaler.center_)
-            logger.info("[Scaler after update2 train] scale_ =%s", self.scaler.scale_)
-        df_u2t_scaled     = scale_df(df_u2t)
-        df_u2v_scaled     = scale_df(df_u2v)
-        df_t_update2_scaled = scale_df(df_t_update2)
-
-        # --------- 4) Use the updated scaler to transform test ---------
+        # fit scaler on base_train
+        # scale all datasets
+        self.scaler = self.scaler.fit(df_btr[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        df_btr_scaled    = scale_df(df_btr)
+        df_bval_scaled   = scale_df(df_bval)
+        df_u1t_scaled    = scale_df(df_u1t)
+        df_u1v_scaled    = scale_df(df_u1v)
+        df_u2t_scaled    = scale_df(df_u2t)
+        df_u2v_scaled    = scale_df(df_u2v)
         df_test_scaled     = scale_df(df_test)
-        logger.info("Data scaling complete with %s", self.config.SCALER)
+        df_t_base_scaled   = scale_df(df_t_base)
+        df_t_update1_scaled= scale_df(df_t_update1)
+        df_t_update2_scaled= scale_df(df_t_update2)
+        
+        # # --------- 1) Base train: 初始化 all_seen, 更新 scaler ---------
+        # all_seen = df_btr.copy()
+        # if isinstance(self.scaler, RobustScaler):
+        #     # RobustScaler 只能重新 fit
+        #     self.scaler.fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        # else:
+        #     # StandardScaler / MaxAbsScaler 支持 partial_fit
+        #     self.scaler.partial_fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        # # 打印当前 scaler 属性
+        # if hasattr(self.scaler, 'mean_'):
+        #     logger.info("[Scaler after base train] mean=%s",  self.scaler.mean_)
+        #     logger.info("[Scaler after base train] var =%s", self.scaler.var_)
+        # else:
+        #     logger.info("[Scaler after base train] center_=%s", self.scaler.center_)
+        #     logger.info("[Scaler after base train] scale_ =%s", self.scaler.scale_)
+        # df_btr_scaled     = scale_df(df_btr)
+        # df_bval_scaled    = scale_df(df_bval)
+        # df_t_base_scaled  = scale_df(df_t_base)
+
+        # # --------- 2) Update1 train: 累加 all_seen，再更新 scaler ---------
+        # if not df_u1t.empty:
+        #     all_seen = pd.concat([all_seen, df_u1t], ignore_index=True)
+        #     if isinstance(self.scaler, RobustScaler):
+        #         self.scaler.fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        #     else:
+        #         self.scaler.partial_fit(df_u1t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        # if hasattr(self.scaler, 'mean_'):
+        #     logger.info("[Scaler after update1 train] mean=%s",  self.scaler.mean_)
+        #     logger.info("[Scaler after update1 train] var =%s", self.scaler.var_)
+        # else:
+        #     logger.info("[Scaler after update1 train] center_=%s", self.scaler.center_)
+        #     logger.info("[Scaler after update1 train] scale_ =%s", self.scaler.scale_)
+        # df_u1t_scaled     = scale_df(df_u1t)
+        # df_u1v_scaled     = scale_df(df_u1v)
+        # df_t_update1_scaled = scale_df(df_t_update1)
+
+        # # --------- 3) Update2 train: 再次累加 all_seen，并更新 scaler ---------
+        # if not df_u2t.empty:
+        #     all_seen = pd.concat([all_seen, df_u2t], ignore_index=True)
+        #     if isinstance(self.scaler, RobustScaler):
+        #         self.scaler.fit(all_seen[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        #     else:
+        #         self.scaler.partial_fit(df_u2t[['Voltage[V]', 'Current[A]', 'Temperature[°C]']])
+        # if hasattr(self.scaler, 'mean_'):
+        #     logger.info("[Scaler after update2 train] mean=%s",  self.scaler.mean_)
+        #     logger.info("[Scaler after update2 train] var =%s", self.scaler.var_)
+        # else:
+        #     logger.info("[Scaler after update2 train] center_=%s", self.scaler.center_)
+        #     logger.info("[Scaler after update2 train] scale_ =%s", self.scaler.scale_)
+        # df_u2t_scaled     = scale_df(df_u2t)
+        # df_u2v_scaled     = scale_df(df_u2v)
+        # df_t_update2_scaled = scale_df(df_t_update2)
+
+        # # --------- 4) Use the updated scaler to transform test ---------
+        # df_test_scaled     = scale_df(df_test)
+        # logger.info("Data scaling complete with %s", self.config.SCALER)
         
         return {
             'base_train':    df_btr_scaled,
@@ -565,11 +588,19 @@ class Trainer:
         self.device = device
         self.config = config
         self.ewc_tasks = []
-        self.checkpoint_dir = Path(checkpoint_dir)
-        self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
+        if checkpoint_dir is None:
+            self.checkpoint_dir = None
+        else:
+            self.checkpoint_dir = Path(checkpoint_dir)
+            self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
     def train_task(self, train_loader, val_loader, task_id,
                    apply_ewc=True, resume=False):
+        
+        # lambda0 = 0.0 if self.config.EWC_LAMBDA is None else float(self.config.EWC_LAMBDA)
+        # lambda_min = lambda0 * self.config.EWC_LAMBDA_MIN_ratio
+        # decay_factor = self.config.EWC_LAMBDA_DECAY
+        
         optimizer = torch.optim.Adam(self.model.parameters(),
                                      lr=self.config.LEARNING_RATE,
                                      weight_decay=self.config.WEIGHT_DECAY)
@@ -599,6 +630,10 @@ class Trainer:
         history = {'epoch':[], 'train_loss':[], 'val_loss':[], 'lr':[], 'time':[]}
         
         for epoch in tqdm.tqdm(range(start_epoch, self.config.EPOCHS), desc="Training"):
+            # if apply_ewc:
+            #     cur_lambda = max(lambda0 * decay_factor**epoch, lambda_min)
+            # else:
+            #     cur_lambda = 0.0
             epoch_start = time.time() 
             self.model.train()
             train_loss = 0
@@ -609,7 +644,8 @@ class Trainer:
                 loss = F.mse_loss(out, y)
                 if apply_ewc and self.ewc_tasks:
                     ewc_penalty = sum(t.penalty(self.model) for t in self.ewc_tasks)
-                    loss = loss + 0.5 * self.config.EWC_LAMBDA * ewc_penalty
+                    # loss = loss + 0.5 * cur_lambda * ewc_penalty
+                    loss = loss + self.config.EWC_LAMBDA * ewc_penalty
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.model.parameters(), 1)
                 optimizer.step()
@@ -700,11 +736,11 @@ class Trainer:
             'MAE':  mean_absolute_error(tgts, preds),
             'R2':   r2_score(tgts, preds)
         }
+        if out_dir is not None:
+            out_dir.mkdir(parents=True, exist_ok=True)
 
-        out_dir.mkdir(parents=True, exist_ok=True)
-
-        plot_predictions(preds, tgts, metrics, df, seq_len, out_dir)
-        plot_prediction_scatter(preds, tgts, out_dir)
+            plot_predictions(preds, tgts, metrics, df, seq_len, out_dir)
+            plot_prediction_scatter(preds, tgts, out_dir)
 
         prefix = f"[{tag}]" if tag else ""
         logger.info(

@@ -14,6 +14,8 @@
     "EWC_LAMBDA": null,
     "EWC_LAMBDA1": null,
     "EWC_LAMBDA2": null,
+    "EWC_LAMBDA_DECAY": 0.9,
+    "EWC_LAMBDA_MIN_ratio": 0.1,
     "Info": {
         "description": "SOH prediction with LSTM",
         "resample": "10min",
