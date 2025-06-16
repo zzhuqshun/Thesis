@@ -16,7 +16,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler, MaxAbsScaler, RobustScaler
+from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 logger = logging.getLogger(__name__)
@@ -39,18 +39,16 @@ class Config:
         self.SEED = 42
         self.RESAMPLE = '10min'
         self.EWC_LAMBDA = None
-        self.EWC_LAMBDA1 = 1000
-        self.EWC_LAMBDA2 = 1000
-        self.EWC_LAMBDA_DECAY = 0.9
-        self.EWC_LAMBDA_MIN_ratio = 0.1
+        self.EWC_LAMBDA1 = 14.16
+        self.EWC_LAMBDA2 = 4549.99
         self.Info = {
-            "description": "Incremental learning with EWC",
+            "description": "Incremental learning",
             "resample": self.RESAMPLE ,
             "training data": "['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29']",
             "validation data": "['01','13','19']",
             "test data": "['17']",
             "base dataset": "['03', '05', '07', '27'], ['01']",
-            "update1 dataset": "[ '21', '23', '25'], ['19']",
+            "update1 dataset": "['21', '23', '25'], ['19']",
             "update2 dataset": "['09', '11', '15', '29'], ['13']",
             "test dataset": "['17']",
             "scaler": "RobustScaler-update after each task",
@@ -71,10 +69,10 @@ class Config:
 # ===============================================================
 # Main Pipeline
 # ===============================================================
-def main(skip_regular=True):
+def main(skip_regular=False):
     # config and logging
     config   = Config()
-    base_dir = Path(__file__).parent / 'model' / 'Incremental_EWC'
+    base_dir = Path(__file__).parent / 'model' / 'Naive_Fine_Tuning'
     # ---- incremental dir ----
     inc_dir = base_dir / 'incremental'
     inc_dir.mkdir(parents=True, exist_ok=True)
@@ -126,15 +124,15 @@ def main(skip_regular=True):
         )
         # save losses & predictions under regular/results
         plot_losses(history_lstm, reg_results)
-        best_ckpt = reg_ckpt_dir / f"task0_best.pt"
+        best_ckpt = reg_ckpt_dir / "task0_best.pt"
         if best_ckpt.exists():
             trainer_lstm.evaluate_checkpoint(
                 ckpt_path=best_ckpt,
                 loader=loaders_lstm['test_full'],
                 df=data_lstm['test_full'],
                 seq_len=config.SEQUENCE_LENGTH,
-                out_dir=reg_results ,
-                tag=f"Joint training best model predictions"
+                out_dir=reg_results,
+                tag="Joint training best model predictions"
             )
     else:
         logger.info("==== Skipping Regular LSTM Training Phase ====")
@@ -160,8 +158,8 @@ def main(skip_regular=True):
 
     tasks = [
         ('task0', 'base_train',    'base_val',    'test_base',      False, config.EWC_LAMBDA), # no EWC for base task
-        ('task1', 'update1_train', 'update1_val', 'test_update1',   True,  config.EWC_LAMBDA1), # EWC for update1
-        ('task2', 'update2_train', 'update2_val', 'test_update2',   True,  config.EWC_LAMBDA2) # EWC for update2
+        ('task1', 'update1_train', 'update1_val', 'test_update1',   False,  config.EWC_LAMBDA1), # EWC for update1
+        ('task2', 'update2_train', 'update2_val', 'test_update2',   False,  config.EWC_LAMBDA2) # EWC for update2
     ]
 
     for i, (name, train_key, val_key, test_key, use_ewc, lam) in enumerate(tasks):
@@ -196,6 +194,7 @@ def main(skip_regular=True):
 
         trainer.config.EWC_LAMBDA = lam if use_ewc and lam is not None else 0
 
+        best_ckpt = ckpt_dir / f"{name}_best.pt"
         last_ckpt   = ckpt_dir / f"{name}_last.pt"
         trained_f   = ckpt_dir / f"{name}.trained"
         consol_f    = ckpt_dir / f"{name}.consolidated"
@@ -225,23 +224,32 @@ def main(skip_regular=True):
         if i > 0:
             for j in range(i):
                 prev_name, _, _, prev_test_key, _, _ = tasks[j]
-                prev_ckpt = inc_dir / prev_name / 'checkpoints' / f"{prev_name}_best.pt"
                 prev_loader = loaders.get(prev_test_key)
                 prev_df     = data_inc.get(prev_test_key)
-                if prev_ckpt.exists() and prev_loader:
-                    logger.info("[%s] Backward testing on %s...", name, prev_name)
+                if best_ckpt.exists() and prev_loader:
+                    logger.info("[%s] Backward testing on previous task %s...", name, prev_name)
                     trainer.evaluate_checkpoint(
-                        ckpt_path=prev_ckpt,
+                        ckpt_path=best_ckpt,
                         loader=prev_loader,
                         df=prev_df,
                         seq_len=config.SEQUENCE_LENGTH,
                         out_dir=inc_dir / name / 'results' / 'backward' / prev_name,
                         tag=f"{name} BACKWARD on {prev_name}"
                     )
-            logger.info("[%s] Backward tests completed.", name)
 
+        logger.info("[%s] Backward on own task %s ...", name, name)
+        # ---------------- Backward testing on own task ----------------
+        if best_ckpt.exists() and test_loader:
+            trainer.evaluate_checkpoint(
+                ckpt_path=best_ckpt,
+                loader=test_loader,
+                df=data_inc.get(test_key),
+                seq_len=config.SEQUENCE_LENGTH,
+                out_dir=results_dir / 'backward' / name / 'test',
+                tag=f"{name} BACKWARD on {name}"
+            )
+        logger.info("[%s] Backward testing completed.", name)
         # ---------------- Forward testing on full test set ----------------
-        best_ckpt = ckpt_dir / f"{name}_best.pt"
         if best_ckpt.exists():
             logger.info("[%s] Evaluating BEST checkpoint...", name)
             trainer.evaluate_checkpoint(
@@ -249,10 +257,9 @@ def main(skip_regular=True):
                 loader=full_loader,
                 df=full_df,
                 seq_len=config.SEQUENCE_LENGTH,
-                out_dir=results_dir / "forward" / "best" / "test_full",
+                out_dir=results_dir / "forward" / "test_full",
                 tag=f"{name} FORWARD on test"
             )
-
         logger.info("[%s] Forward testing completed.", name)
 
     logger.info("==== All tasks completed ====")
@@ -345,14 +352,8 @@ class DataProcessor:
         self.data_dir = Path(data_dir)
         self.config = config or Config()
         self.resample = resample
-        if config.SCALER == "StandardScaler":
-            self.scaler = StandardScaler()
-        elif config.SCALER == "MaxAbsScaler":
-            self.scaler = MaxAbsScaler()
-        elif config.SCALER == "RobustScaler":
-            self.scaler = RobustScaler()
-        else:
-            raise ValueError(f"Unknown scaler {config.SCALER}")
+        self.scaler = RobustScaler()
+
         # manual splits
         self.base_train_ids    = base_train_ids or []
         self.base_val_ids      = base_val_ids or []
@@ -424,12 +425,12 @@ class DataProcessor:
         
         
         def scale_df(df):
-            if df.empty: 
+            if df.empty:
                 return df
             df2 = df.copy()
             df2[['Voltage[V]','Current[A]','Temperature[°C]']] = \
                 self.scaler.transform(df2[['Voltage[V]','Current[A]','Temperature[°C]']])
-            return df2
+            return df2 
         
         # fit scaler on base_train
         # scale all datasets
@@ -444,6 +445,9 @@ class DataProcessor:
         df_t_base_scaled   = scale_df(df_t_base)
         df_t_update1_scaled= scale_df(df_t_update1)
         df_t_update2_scaled= scale_df(df_t_update2)
+        # logger.info("[Scaler after fit] center_=%s", self.scaler.center_)
+        # logger.info("[Scaler after fit] scale_ =%s", self.scaler.scale_)
+        logger.info("Resampling and scaling complete with %s", self.config.SCALER)
         
         # # --------- 1) Base train: 初始化 all_seen, 更新 scaler ---------
         # all_seen = df_btr.copy()
@@ -596,11 +600,6 @@ class Trainer:
 
     def train_task(self, train_loader, val_loader, task_id,
                    apply_ewc=True, resume=False):
-        
-        # lambda0 = 0.0 if self.config.EWC_LAMBDA is None else float(self.config.EWC_LAMBDA)
-        # lambda_min = lambda0 * self.config.EWC_LAMBDA_MIN_ratio
-        # decay_factor = self.config.EWC_LAMBDA_DECAY
-        
         optimizer = torch.optim.Adam(self.model.parameters(),
                                      lr=self.config.LEARNING_RATE,
                                      weight_decay=self.config.WEIGHT_DECAY)
@@ -630,10 +629,6 @@ class Trainer:
         history = {'epoch':[], 'train_loss':[], 'val_loss':[], 'lr':[], 'time':[]}
         
         for epoch in tqdm.tqdm(range(start_epoch, self.config.EPOCHS), desc="Training"):
-            # if apply_ewc:
-            #     cur_lambda = max(lambda0 * decay_factor**epoch, lambda_min)
-            # else:
-            #     cur_lambda = 0.0
             epoch_start = time.time() 
             self.model.train()
             train_loss = 0
@@ -644,7 +639,6 @@ class Trainer:
                 loss = F.mse_loss(out, y)
                 if apply_ewc and self.ewc_tasks:
                     ewc_penalty = sum(t.penalty(self.model) for t in self.ewc_tasks)
-                    # loss = loss + 0.5 * cur_lambda * ewc_penalty
                     loss = loss + self.config.EWC_LAMBDA * ewc_penalty
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.model.parameters(), 1)
@@ -701,16 +695,15 @@ class Trainer:
     def consolidate(self, loader, task_id=None):
         self.ewc_tasks.append(EWC(self.model, loader, self.device))
         # embed into existing checkpoints
-        for suffix in ('last', 'best'):
-            path = self.checkpoint_dir / f"task{task_id}_{suffix}.pt"
-            if path.exists():
-                state = torch.load(path, map_location=self.device, weights_only=False)
-                state['ewc_tasks'] = [
-                    {'params':{n:p.cpu() for n,p in e.params.items()},
-                    'fisher':{n:f.cpu() for n,f in e.fisher.items()}}
-                    for e in self.ewc_tasks
-                ]
-                torch.save(state, path)
+        path = self.checkpoint_dir / f"task{task_id}_best.pt"
+        if path.exists():
+            state = torch.load(path, map_location=self.device, weights_only=False)
+            state['ewc_tasks'] = [
+                {'params':{n:p.cpu() for n,p in e.params.items()},
+                'fisher':{n:f.cpu() for n,f in e.fisher.items()}}
+                for e in self.ewc_tasks
+            ]
+            torch.save(state, path)
                 
     def evaluate_checkpoint(
         self,
