@@ -39,8 +39,8 @@ class Config:
         self.SEED = 42
         self.RESAMPLE = '10min'
         self.EWC_LAMBDA = None
-        self.EWC_LAMBDA1 = 14.16
-        self.EWC_LAMBDA2 = 4549.99
+        self.EWC_LAMBDA1 = 1919.1667298329062
+        self.EWC_LAMBDA2 = 0.18393944199331227
         self.Info = {
             "description": "Incremental learning",
             "resample": self.RESAMPLE ,
@@ -72,7 +72,7 @@ class Config:
 def main(skip_regular=False):
     # config and logging
     config   = Config()
-    base_dir = Path(__file__).parent / 'model' / 'Naive_Fine_Tuning'
+    base_dir = Path(__file__).parent / 'model' / 'naive_fine_tuning'
     # ---- incremental dir ----
     inc_dir = base_dir / 'incremental'
     inc_dir.mkdir(parents=True, exist_ok=True)
@@ -83,7 +83,7 @@ def main(skip_regular=False):
     log_path = base_dir / 'train.log'
     if not any(isinstance(h, logging.FileHandler) and getattr(h, 'baseFilename', '') == str(log_path)
                for h in logger.handlers):
-        log_f = logging.FileHandler(log_path)
+        log_f = logging.FileHandler(log_path, encoding='utf-8')
         log_f.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
         logger.addHandler(log_f)
 
@@ -139,6 +139,7 @@ def main(skip_regular=False):
 
     # ------------------- Incremental EWC Training -------------------
     logger.info("==== Incremental EWC Training Phase ====")
+
     dp_inc = DataProcessor(
         data_dir='../01_Datenaufbereitung/Output/Calculated/',
         resample=config.RESAMPLE,
@@ -157,11 +158,19 @@ def main(skip_regular=False):
     trainer = Trainer(model, device, config, checkpoint_dir=str(inc_dir))
 
     tasks = [
-        ('task0', 'base_train',    'base_val',    'test_base',      False, config.EWC_LAMBDA), # no EWC for base task
-        ('task1', 'update1_train', 'update1_val', 'test_update1',   False,  config.EWC_LAMBDA1), # EWC for update1
-        ('task2', 'update2_train', 'update2_val', 'test_update2',   False,  config.EWC_LAMBDA2) # EWC for update2
+        ('task0', 'base_train',    'base_val',    'test_base',      False,  config.EWC_LAMBDA), # no EWC for base task
+        ('task1', 'update1_train', 'update1_val', 'test_update1',   False,   config.EWC_LAMBDA1), # EWC for update1
+        ('task2', 'update2_train', 'update2_val', 'test_update2',   False,   config.EWC_LAMBDA2) # EWC for update2
     ]
 
+    baseline_metrics: dict[str, dict] = {}
+    best_mae   = {}      
+    curr_mae   = {}      
+    tilde_mae  = {}     
+    metric_hist = []     
+    delta_hist  = []     
+
+    
     for i, (name, train_key, val_key, test_key, use_ewc, lam) in enumerate(tasks):
         tr_loader   = loaders.get(train_key)
         val_loader  = loaders.get(val_key)
@@ -199,9 +208,24 @@ def main(skip_regular=False):
         trained_f   = ckpt_dir / f"{name}.trained"
         consol_f    = ckpt_dir / f"{name}.consolidated"
         
+        # ---------------------- Pre-FWT baseline on the incoming task ----------------
+        if i > 0 and test_loader:
+            metrics_pre = trainer.evaluate_checkpoint(
+                ckpt_path = None,       
+                loader    = test_loader,
+                df        = data_inc.get(test_key),
+                seq_len   = config.SEQUENCE_LENGTH,
+                out_dir   = None,             
+                tag       = f"{name} Pre-FWT baseline",
+                print_r2  = False
+            )
+            tilde_mae[name] = metrics_pre['MAE']     
+        
+        
         # ---------------------- Training phase ----------------
         if tr_loader and val_loader and not trained_f.exists():
             logger.info("[%s] Training...", name)
+            logger.info("[%s] Using ewc_lambda=%s", name, trainer.config.EWC_LAMBDA)
             history = trainer.train_task(tr_loader, val_loader, task_id=i, apply_ewc=use_ewc, resume=last_ckpt.exists())
             pd.DataFrame(history).to_csv(ckpt_dir / f"{name}_history.csv", index=False)
             # Save last checkpoint
@@ -219,6 +243,24 @@ def main(skip_regular=False):
             logger.info("[%s] Consolidation done.", name)
         else:
             logger.info("[%s] No EWC consolidation needed or already done.", name)
+    
+
+        # ---------------- Baseline testing on own task ----------------
+        if best_ckpt.exists() and test_loader:
+            logger.info("[%s] Baseline evaluation on own task %s ...", name, name)
+            metrics_own = trainer.evaluate_checkpoint(
+                ckpt_path=best_ckpt,
+                loader=test_loader,
+                df=data_inc.get(test_key),
+                seq_len=config.SEQUENCE_LENGTH,
+                out_dir=results_dir / 'baseline' / name / 'test',
+                tag=f"{name} Baseline on {name}",
+                print_r2=False
+            )
+            baseline_metrics[name] = metrics_own
+            best_mae.setdefault(name, metrics_own['MAE'])
+            curr_mae[name] = metrics_own['MAE']
+        logger.info("[%s] Baseline testing completed.", name)
         
         # ---------------- Backward testing on test subsets ----------------
         if i > 0:
@@ -227,28 +269,47 @@ def main(skip_regular=False):
                 prev_loader = loaders.get(prev_test_key)
                 prev_df     = data_inc.get(prev_test_key)
                 if best_ckpt.exists() and prev_loader:
+                    #  Backward testing on previous task 
                     logger.info("[%s] Backward testing on previous task %s...", name, prev_name)
-                    trainer.evaluate_checkpoint(
+                    metrics_prev = trainer.evaluate_checkpoint(
                         ckpt_path=best_ckpt,
                         loader=prev_loader,
                         df=prev_df,
                         seq_len=config.SEQUENCE_LENGTH,
                         out_dir=inc_dir / name / 'results' / 'backward' / prev_name,
-                        tag=f"{name} BACKWARD on {prev_name}"
+                        tag=f"{name} BACKWARD on {prev_name}",
+                        print_r2=False
                     )
+                    curr_mae[prev_name] = metrics_prev['MAE']
 
-        logger.info("[%s] Backward on own task %s ...", name, name)
-        # ---------------- Backward testing on own task ----------------
-        if best_ckpt.exists() and test_loader:
-            trainer.evaluate_checkpoint(
-                ckpt_path=best_ckpt,
-                loader=test_loader,
-                df=data_inc.get(test_key),
-                seq_len=config.SEQUENCE_LENGTH,
-                out_dir=results_dir / 'backward' / name / 'test',
-                tag=f"{name} BACKWARD on {name}"
-            )
-        logger.info("[%s] Backward testing completed.", name)
+        # ---------------- ACC / BWT / FWT /  ----------------
+        old_tasks = [t for t in best_mae if t != name]
+
+        for t in old_tasks:
+            delta = curr_mae[t] - best_mae[t]           
+            delta_hist.append({'stage': name, 'task': t, 'ΔMAE': delta})
+            logger.info("[%s] ΔMAE on %s: %+.4e", name, t, delta)
+
+        # ---- ACC (Average Accuracy)  -------------------------------
+        ACC = - np.mean(list(curr_mae.values()))         
+        logger.info("[%s] ACC (-MAE): %.4e", name, ACC)
+
+        # Backward-transfer (positive ⇒ forgetting, negative ⇒ backward boost)
+        if old_tasks:
+            BWT = np.mean([curr_mae[t] - best_mae[t] for t in old_tasks])
+            logger.info("[%s] BWT: %+.4e", name, BWT)
+        else:
+            BWT = np.nan
+
+        # Forward-transfer on the new task (positive ⇒ prior knowledge helped)
+        if name in tilde_mae:
+            FWT = tilde_mae[name] - curr_mae[name]        
+            logger.info("[%s] FWT: %+.4e", name, FWT)
+        else:
+            FWT = np.nan
+
+        metric_hist.append({'task': name, 'ACC': ACC, 'BWT': BWT, 'FWT': FWT})
+                        
         # ---------------- Forward testing on full test set ----------------
         if best_ckpt.exists():
             logger.info("[%s] Evaluating BEST checkpoint...", name)
@@ -261,6 +322,23 @@ def main(skip_regular=False):
                 tag=f"{name} FORWARD on test"
             )
         logger.info("[%s] Forward testing completed.", name)
+
+    # ---------------- Save final metrics and delta MAE history ----------------
+    df_m = pd.DataFrame(metric_hist)
+    df_m.to_csv(inc_dir / "continual_metrics.csv", index=False)
+    logger.info("Saved ACC/BWT/FWT history to %s", inc_dir / "continual_metrics.csv")
+
+    # ---------------- Plot transfer curves ----------------
+    plt.figure(figsize=(6,4))
+    plt.plot(df_m['task'], df_m['BWT'], marker='o', label='BWT')
+    plt.plot(df_m['task'], df_m['FWT'], marker='s', label='FWT')
+    plt.ylabel('MAE difference'); plt.grid(True); plt.legend()
+    plt.savefig(inc_dir / "transfer_curves.png"); plt.close()
+
+    # ---------------- Save delta MAE history ----------------
+    if delta_hist:
+        pd.DataFrame(delta_hist).to_csv(inc_dir / "delta_MAE_history.csv", index=False)
+
 
     logger.info("==== All tasks completed ====")
 # ===============================================================
@@ -445,8 +523,8 @@ class DataProcessor:
         df_t_base_scaled   = scale_df(df_t_base)
         df_t_update1_scaled= scale_df(df_t_update1)
         df_t_update2_scaled= scale_df(df_t_update2)
-        # logger.info("[Scaler after fit] center_=%s", self.scaler.center_)
-        # logger.info("[Scaler after fit] scale_ =%s", self.scaler.scale_)
+        logger.info("[Scaler after fit] center_=%s", self.scaler.center_)
+        logger.info("[Scaler after fit] scale_ =%s", self.scaler.scale_)
         logger.info("Resampling and scaling complete with %s", self.config.SCALER)
         
         # # --------- 1) Base train: 初始化 all_seen, 更新 scaler ---------
@@ -712,14 +790,16 @@ class Trainer:
         df: pd.DataFrame,
         seq_len: int,
         out_dir: Path,
-        tag: str = ""
+        tag: str = "",
+        print_r2: bool = True
     ) -> dict:
         """
         Load the specified checkpoint, make predictions on the loader's data,
         compute RMSE/MAE/R2, save time series and scatter plots to out_dir, and log results.
         """
-        state = torch.load(ckpt_path, map_location=self.device, weights_only=True)
-        self.model.load_state_dict(state['model_state'])
+        if ckpt_path and Path(ckpt_path).exists():
+            state = torch.load(ckpt_path, map_location=self.device, weights_only=True)
+            self.model.load_state_dict(state["model_state"])
         self.model.to(self.device).eval()
 
         preds, tgts = get_predictions(self.model, loader, self.device)
@@ -736,10 +816,16 @@ class Trainer:
             plot_prediction_scatter(preds, tgts, out_dir)
 
         prefix = f"[{tag}]" if tag else ""
-        logger.info(
-            "%s RMSE: %.4f, MAE: %.4f, R2: %.4f",
-            prefix, metrics['RMSE'], metrics['MAE'], metrics['R2']
-        )
+        if print_r2:
+            logger.info(
+                "%s RMSE: %.4e, MAE: %.4e, R2: %.4f",
+                prefix, metrics['RMSE'], metrics['MAE'], metrics['R2']
+            )
+        else:   
+            logger.info(
+                "%s RMSE: %.4e, MAE: %.4e",
+                prefix, metrics['RMSE'], metrics['MAE']
+            )
 
         return metrics
 

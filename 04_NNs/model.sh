@@ -8,7 +8,7 @@
 #SBATCH --gres=gpu:tesla:1
 #SBATCH --mem=32G
 #SBATCH --time=24:00:00
-#SBATCH --partition=gpu
+#SBATCH --partition=gpu_short
 
 # Job status via email:
 #SBATCH --mail-type=ALL
