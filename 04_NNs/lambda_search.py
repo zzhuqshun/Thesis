@@ -141,6 +141,8 @@ def train_incremental(
     cfg: Config,
     lambda0: float,
     lambda1: float,
+    alpha1: float,
+    alpha2: float,
     trial_id: int,
     base_ckpt: Path,
     loaders,
@@ -164,6 +166,11 @@ def train_incremental(
         e.fisher = {n: f.to(device) for n, f in e_data["fisher"].items()}
         e.lam = lambda0          # ★ overwrite with current λ0
         trainer.ewc_tasks.append(e)
+    
+    import copy
+    trainer.old_model = copy.deepcopy(trainer.model).to(device).eval()
+    for p in trainer.old_model.parameters():
+        p.requires_grad_(False)
 
     # ——— metrics BEFORE any update ———
     preds_b0, tgts_b0 = get_predictions(trainer.model, loaders["test_base"], device)
@@ -172,7 +179,8 @@ def train_incremental(
     # ────────────────── Phase-1 : update-1 ──────────────────
     trainer.train_task(
         loaders["update1_train"], loaders["update1_val"],
-        task_id=1, apply_ewc=True, resume=False,
+        task_id=1, apply_ewc=True, 
+        alpha_lwf=alpha1, resume=False,
     )
     best1 = trainer.checkpoint_dir / "task1_best.pt"
     state1 = torch.load(best1, map_location=device)
@@ -185,7 +193,8 @@ def train_incremental(
     # ────────────────── Phase-2 : update-2  (no extra penalty) ──────────────────
     trainer.train_task(
         loaders["update2_train"], loaders["update2_val"],
-        task_id=2, apply_ewc=True, resume=False,  # will use existing λ0 & λ1 only
+        task_id=2, apply_ewc=True, 
+        alpha_lwf=alpha2, resume=False,  # will use existing λ0 & λ1 only
     )
     # 不再 consolidate update-2，因为之后不再继续训练
     best2 = trainer.checkpoint_dir / "task2_best.pt"
@@ -217,11 +226,16 @@ def objective(trial: optuna.trial.Trial, cfg_dict, base_ckpt: Path):
     set_seed(cfg_dict["SEED"] + trial.number)
     cfg = Config(**cfg_dict)
 
-    lambda0 = trial.suggest_float("lambda0", 1e-2, 1e5, log=True)
-    lambda1 = trial.suggest_float("lambda1", 1e-2, 1e5, log=True)
+    lambda0 = trial.suggest_float("lambda0", 1e1, 1e4, log=True)
+    lambda1 = trial.suggest_float("lambda1", 1e1, 1e4, log=True)
+    
+    alpha1  = trial.suggest_float("alpha1", 0.05, 5.0, log=True)   # task1
+    alpha2  = trial.suggest_float("alpha2", 0.05, 5.0, log=True)   # task2
 
     loaders = build_loaders(cfg)
-    ACC, BWT = train_incremental(cfg, lambda0, lambda1, trial.number, base_ckpt, loaders)
+    ACC, BWT = train_incremental(cfg, lambda0, lambda1, 
+                                 alpha1, alpha2,
+                                 trial.number, base_ckpt, loaders)
 
     trial.set_user_attr("ACC", ACC)
     trial.set_user_attr("BWT", BWT)

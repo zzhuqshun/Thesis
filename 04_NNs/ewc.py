@@ -38,7 +38,11 @@ class Config:
         self.SCALER = "RobustScaler"
         self.SEED = 42
         self.RESAMPLE = '10min'
-        self.LWF_LAMBDA = 0.0
+        
+        self.LWF_ALPHA0 = 0.0  # No LWF for task0
+        self.LWF_ALPHA1 = 1.0
+        self.LWF_ALPHA2 = 1.0
+                
         self.EWC_LAMBDA0 = 69.45356257424775  
         self.EWC_LAMBDA1 = 1014.6717394418031
         self.EWC_LAMBDA2 = 1000 # Default value for lambda2, can be adjusted later
@@ -54,7 +58,9 @@ class Config:
             "test dataset": "['17']",
             "scaler": "RobustScaler - fit on base train",
             "lambda-types": "None for all tasks",
-            "LWF_LAMBDA": self.LWF_LAMBDA,
+            "lwf_alpha0": self.LWF_ALPHA0,
+            "lwf_alpha1": self.LWF_ALPHA1,
+            "lwf_alpha2": self.LWF_ALPHA2,
             "lambda0": self.EWC_LAMBDA0,
             "lambda1": self.EWC_LAMBDA1,
             "lambda2": self.EWC_LAMBDA2,
@@ -75,7 +81,7 @@ class Config:
 def main(joint_training: bool = False):
     # config and logging
     config   = Config()
-    base_dir = Path(__file__).parent / 'model' / 'ewc' 
+    base_dir = Path(__file__).parent / 'model' / 'ewc_lwf' 
     base_dir.mkdir(parents=True, exist_ok=True)
     # single log file for both phases
     logger = logging.getLogger()
@@ -161,9 +167,9 @@ def main(joint_training: bool = False):
         trainer = Trainer(model, device, config, checkpoint_dir=str(inc_dir))
 
         tasks = [
-            ('task0', 'base_train',    'base_val',    'test_base',      False,  config.EWC_LAMBDA0), # Save lambda0 for future tasks
-            ('task1', 'update1_train', 'update1_val', 'test_update1',   True,   config.EWC_LAMBDA1), # EWC on task 0; Save lambda1 for future tasks
-            ('task2', 'update2_train', 'update2_val', 'test_update2',   True,   config.EWC_LAMBDA2) # EWC on task0,1;
+            ('task0', 'base_train',    'base_val',    'test_base',      False,  config.EWC_LAMBDA0, config.LWF_ALPHA0), # Save lambda0 for future tasks
+            ('task1', 'update1_train', 'update1_val', 'test_update1',   True,   config.EWC_LAMBDA1, config.LWF_ALPHA1), # EWC on task 0; Save lambda1 for future tasks
+            ('task2', 'update2_train', 'update2_val', 'test_update2',   True,   config.EWC_LAMBDA2, config.LWF_ALPHA2) # EWC on task0,1;
         ]
 
         baseline_metrics: dict[str, dict] = {}
@@ -174,7 +180,7 @@ def main(joint_training: bool = False):
         delta_hist  = []     
 
         
-        for i, (name, train_key, val_key, test_key, use_ewc, lam) in enumerate(tasks):
+        for i, (name, train_key, val_key, test_key, use_ewc, lam, alpha) in enumerate(tasks):
             tr_loader   = loaders.get(train_key)
             val_loader  = loaders.get(val_key)
             test_loader = loaders.get(test_key)
@@ -228,15 +234,20 @@ def main(joint_training: bool = False):
             if tr_loader and val_loader and not trained_f.exists():
                 logger.info("[%s] Training...", name)
                 if trainer.ewc_tasks:                     
-                    active = [f"{e.lam:.2g}" for e in trainer.ewc_tasks]
-                    logger.info("[%s] EWC active: %s (from %d tasks)",
-                                name, ", ".join(active), len(active))
+                    lam_map = {f"Task {idx}": float(f"{e.lam:.4e}")          
+                        for idx, e in enumerate(trainer.ewc_tasks)}
+                    logger.info("[%s] EWC active: %s", name, json.dumps(lam_map))
                 else:
                     logger.info("[%s] EWC active: None (no previous tasks)", name)
 
-                logger.info("[%s] This task will be stored with λ = %.2g%s",
+                logger.info("[%s] This task will be stored with λ = %s%s",
                             name, lam, "" if use_ewc else " (not used)")
-                history = trainer.train_task(tr_loader, val_loader, task_id=i, apply_ewc=use_ewc, resume=last_ckpt.exists())
+                logger.info("[%s] Training with alpha LWF = %.2f", name, alpha)
+                history = trainer.train_task(
+                    tr_loader, val_loader, task_id=i, 
+                    apply_ewc=use_ewc, 
+                    alpha_lwf=alpha,
+                    resume=last_ckpt.exists())
                 pd.DataFrame(history).to_csv(ckpt_dir / f"{name}_history.csv", index=False)
                 # Save last checkpoint
                 plot_losses(history, results_dir / 'losses')
@@ -654,7 +665,7 @@ class Trainer:
             self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
     def train_task(self, train_loader, val_loader, task_id,
-                   apply_ewc=True, resume=False):
+                   apply_ewc=True, alpha_lwf=0.0, resume=False):
         optimizer = torch.optim.Adam(self.model.parameters(),
                                      lr=self.config.LEARNING_RATE,
                                      weight_decay=self.config.WEIGHT_DECAY)
@@ -692,7 +703,6 @@ class Trainer:
             epoch_start = time.time() 
             self.model.train()
             train_loss = 0
-            alpha_lwf = getattr(self.config, "LWF_LAMBDA", 0.0)
             sum_task, sum_kd, sum_ewc = 0., 0., 0.
             for x, y in train_loader:
                 x,y = x.to(self.device), y.to(self.device)
@@ -745,7 +755,7 @@ class Trainer:
             
             
             logger.info(
-                "E%03d | task %.4e | kd %.4e | ewc %.4e | val %.4e | lr %.2e | %.2fs",
+                "Epoch %03d | task %.4e | kd %.4e | ewc %.4e | val %.4e | lr %.2e | %.2fs",
                 epoch+1, task_mean, kd_mean, ewc_mean, val_loss,
                 optimizer.param_groups[0]['lr'], epoch_time
             )

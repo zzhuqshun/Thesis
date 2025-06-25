@@ -12,8 +12,8 @@
     "SEED": 42,
     "RESAMPLE": "10min",
     "LWF_LAMBDA": 0.0,
-    "EWC_LAMBDA0": 191.91667298329062,
-    "EWC_LAMBDA1": 1919.1667298329062,
+    "EWC_LAMBDA0": 69.45356257424775,
+    "EWC_LAMBDA1": 1014.6717394418031,
     "EWC_LAMBDA2": 1000,
     "Info": {
         "description": "Incremental learning",
@@ -28,8 +28,8 @@
         "scaler": "RobustScaler - fit on base train",
         "lambda-types": "None for all tasks",
         "LWF_LAMBDA": 0.0,
-        "lambda0": 191.91667298329062,
-        "lambda1": 1919.1667298329062,
+        "lambda0": 69.45356257424775,
+        "lambda1": 1014.6717394418031,
         "lambda2": 1000
     }
 }
