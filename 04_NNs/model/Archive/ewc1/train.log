@@ -1,0 +1,182 @@
+2025-06-23 18:40:05,121 - ==== Skipping joint LSTM Training Phase ====
+2025-06-23 18:40:05,123 - ==== Incremental EWC Training Phase ====
+2025-06-23 18:41:29,732 - Base train IDs: ['03', '05', '07', '27']
+2025-06-23 18:41:29,749 - Base train size: 92079
+2025-06-23 18:41:29,750 - Base val IDs: ['01']
+2025-06-23 18:41:29,752 - Base val size: 28612
+2025-06-23 18:41:29,753 - Update1 train IDs: ['21', '23', '25']
+2025-06-23 18:41:29,754 - Update1 train size: 65674
+2025-06-23 18:41:29,755 - Update1 val IDs: ['19']
+2025-06-23 18:41:29,757 - Update1 val size: 23120
+2025-06-23 18:41:29,758 - Update2 train IDs: ['09', '11', '15', '29']
+2025-06-23 18:41:29,759 - Update2 train size: 47891
+2025-06-23 18:41:29,760 - Update2 val IDs: ['13']
+2025-06-23 18:41:29,762 - Update2 val size: 6445
+2025-06-23 18:41:38,225 - Test cell ID: 17
+2025-06-23 18:41:38,226 - Test size: 22872
+2025-06-23 18:41:38,227 - Test base size: 11139
+2025-06-23 18:41:38,229 - Test update1 size: 6312
+2025-06-23 18:41:38,230 - Test update2 size: 5421
+2025-06-23 18:41:38,269 - [Scaler after fit] center_=[ 3.31975183  0.         27.55116667]
+2025-06-23 18:41:38,275 - [Scaler after fit] scale_ =[0.20016217 1.86108033 1.05333333]
+2025-06-23 18:41:38,276 - Resampling and scaling complete with RobustScaler
+2025-06-23 18:41:39,970 - [task0] Training...
+2025-06-23 18:41:39,971 - [task0] (Fine-Tuning, no EWC)
+2025-06-23 18:43:30,177 - Epoch 1, Train Loss: 3.8182e-02, Val Loss: 3.7162e-04, LR: 1.0000e-04, Time: 79.54s
+2025-06-23 18:44:47,773 - Epoch 2, Train Loss: 7.2867e-03, Val Loss: 1.0398e-03, LR: 1.0000e-04, Time: 77.29s
+2025-06-23 18:46:03,565 - Epoch 3, Train Loss: 5.3097e-03, Val Loss: 3.9763e-04, LR: 1.0000e-04, Time: 75.74s
+2025-06-23 18:47:19,848 - Epoch 4, Train Loss: 4.3294e-03, Val Loss: 5.3001e-04, LR: 1.0000e-04, Time: 76.24s
+2025-06-23 18:48:47,724 - Epoch 5, Train Loss: 3.4420e-03, Val Loss: 4.4389e-04, LR: 1.0000e-04, Time: 87.81s
+2025-06-23 18:50:10,119 - Epoch 6, Train Loss: 2.6740e-03, Val Loss: 4.3592e-04, LR: 1.0000e-04, Time: 82.37s
+2025-06-23 18:51:28,158 - Epoch 7, Train Loss: 2.0609e-03, Val Loss: 4.5443e-04, LR: 5.0000e-05, Time: 77.95s
+2025-06-23 18:52:50,156 - Epoch 8, Train Loss: 1.6517e-03, Val Loss: 4.0441e-04, LR: 5.0000e-05, Time: 81.89s
+2025-06-23 18:54:06,130 - Epoch 9, Train Loss: 1.4034e-03, Val Loss: 4.0720e-04, LR: 5.0000e-05, Time: 75.92s
+2025-06-23 18:55:22,313 - Epoch 10, Train Loss: 1.1964e-03, Val Loss: 5.0908e-04, LR: 5.0000e-05, Time: 76.11s
+2025-06-23 18:56:40,638 - Epoch 11, Train Loss: 1.0292e-03, Val Loss: 4.2328e-04, LR: 5.0000e-05, Time: 78.25s
+2025-06-23 18:58:04,498 - Epoch 12, Train Loss: 8.7673e-04, Val Loss: 4.3260e-04, LR: 5.0000e-05, Time: 83.80s
+2025-06-23 18:59:21,403 - Epoch 13, Train Loss: 7.6261e-04, Val Loss: 4.6050e-04, LR: 2.5000e-05, Time: 76.82s
+2025-06-23 19:00:37,830 - Epoch 14, Train Loss: 6.8891e-04, Val Loss: 4.3581e-04, LR: 2.5000e-05, Time: 76.39s
+2025-06-23 19:01:53,735 - Epoch 15, Train Loss: 6.5224e-04, Val Loss: 4.0288e-04, LR: 2.5000e-05, Time: 75.88s
+2025-06-23 19:03:10,215 - Epoch 16, Train Loss: 6.1891e-04, Val Loss: 4.0849e-04, LR: 2.5000e-05, Time: 76.42s
+2025-06-23 19:04:31,299 - Epoch 17, Train Loss: 5.8846e-04, Val Loss: 4.4307e-04, LR: 2.5000e-05, Time: 81.03s
+2025-06-23 19:05:51,572 - Epoch 18, Train Loss: 5.6076e-04, Val Loss: 4.2150e-04, LR: 2.5000e-05, Time: 80.21s
+2025-06-23 19:07:09,071 - Epoch 19, Train Loss: 5.3125e-04, Val Loss: 4.3309e-04, LR: 1.2500e-05, Time: 77.43s
+2025-06-23 19:08:25,870 - Epoch 20, Train Loss: 5.0491e-04, Val Loss: 3.9249e-04, LR: 1.2500e-05, Time: 76.76s
+2025-06-23 19:09:43,191 - Epoch 21, Train Loss: 4.9213e-04, Val Loss: 3.9523e-04, LR: 1.2500e-05, Time: 77.28s
+2025-06-23 19:09:43,255 - Early stopping at epoch 21
+2025-06-23 19:09:45,213 - [task0] Training completed.
+2025-06-23 19:09:45,216 - [task0] Consolidating EWC...
+2025-06-23 19:10:49,568 - [task0] Consolidation done.
+2025-06-23 19:10:49,596 - [task0] Baseline evaluation on own task task0 ...
+2025-06-23 19:10:54,760 - [task0 Baseline on task0] RMSE: 5.1834e-02, MAE: 4.5294e-02
+2025-06-23 19:10:54,762 - [task0] Baseline testing completed.
+2025-06-23 19:10:54,764 - [task0] ACC (-MAE): -4.5294e-02
+2025-06-23 19:10:54,766 - [task0] Evaluating BEST checkpoint...
+2025-06-23 19:11:03,318 - [task0 Evaluation on full test set] RMSE: 8.5567e-02, MAE: 6.7164e-02, R2: -0.0342
+2025-06-23 19:11:03,320 - [task0] Evaluation completed.
+2025-06-23 19:11:03,323 - [task1] Loading best checkpoint from previous task task0...
+2025-06-23 19:11:05,058 - [task1 Pre-FWT baseline] RMSE: 5.6626e-02, MAE: 4.3428e-02
+2025-06-23 19:11:05,063 - [task1] Training...
+2025-06-23 19:11:05,064 - [task1] EWC penalty λ=1919
+2025-06-23 19:12:02,455 - Epoch 1, Train Loss: 8.6539e-03, Val Loss: 1.4929e-03, LR: 1.0000e-04, Time: 57.37s
+2025-06-23 19:12:59,807 - Epoch 2, Train Loss: 6.9575e-03, Val Loss: 1.9482e-03, LR: 1.0000e-04, Time: 57.28s
+2025-06-23 19:13:57,254 - Epoch 3, Train Loss: 6.0598e-03, Val Loss: 1.7421e-03, LR: 1.0000e-04, Time: 57.37s
+2025-06-23 19:14:55,846 - Epoch 4, Train Loss: 5.4301e-03, Val Loss: 2.1904e-03, LR: 1.0000e-04, Time: 58.56s
+2025-06-23 19:16:09,218 - Epoch 5, Train Loss: 4.7954e-03, Val Loss: 1.9647e-03, LR: 1.0000e-04, Time: 73.31s
+2025-06-23 19:17:24,317 - Epoch 6, Train Loss: 4.0399e-03, Val Loss: 1.6198e-03, LR: 1.0000e-04, Time: 74.97s
+2025-06-23 19:18:34,180 - Epoch 7, Train Loss: 3.5849e-03, Val Loss: 1.0400e-03, LR: 1.0000e-04, Time: 69.73s
+2025-06-23 19:19:34,124 - Epoch 8, Train Loss: 3.0624e-03, Val Loss: 1.8743e-03, LR: 1.0000e-04, Time: 59.82s
+2025-06-23 19:20:31,910 - Epoch 9, Train Loss: 2.8341e-03, Val Loss: 1.2170e-03, LR: 1.0000e-04, Time: 57.72s
+2025-06-23 19:21:29,413 - Epoch 10, Train Loss: 2.2150e-03, Val Loss: 1.7948e-03, LR: 1.0000e-04, Time: 57.41s
+2025-06-23 19:22:26,934 - Epoch 11, Train Loss: 1.8689e-03, Val Loss: 1.4164e-03, LR: 1.0000e-04, Time: 57.46s
+2025-06-23 19:23:24,759 - Epoch 12, Train Loss: 1.5526e-03, Val Loss: 8.4154e-04, LR: 1.0000e-04, Time: 57.79s
+2025-06-23 19:24:22,355 - Epoch 13, Train Loss: 1.0892e-03, Val Loss: 1.6245e-03, LR: 1.0000e-04, Time: 57.51s
+2025-06-23 19:25:28,540 - Epoch 14, Train Loss: 9.8350e-04, Val Loss: 1.6004e-03, LR: 1.0000e-04, Time: 66.11s
+2025-06-23 19:26:26,057 - Epoch 15, Train Loss: 8.4239e-04, Val Loss: 2.3336e-03, LR: 1.0000e-04, Time: 57.44s
+2025-06-23 19:27:23,498 - Epoch 16, Train Loss: 8.3478e-04, Val Loss: 3.1352e-03, LR: 1.0000e-04, Time: 57.36s
+2025-06-23 19:28:20,950 - Epoch 17, Train Loss: 6.2773e-04, Val Loss: 2.6945e-03, LR: 1.0000e-04, Time: 57.38s
+2025-06-23 19:29:17,609 - Epoch 18, Train Loss: 6.5683e-04, Val Loss: 2.8230e-03, LR: 5.0000e-05, Time: 56.62s
+2025-06-23 19:30:14,421 - Epoch 19, Train Loss: 5.1792e-04, Val Loss: 3.5868e-03, LR: 5.0000e-05, Time: 56.77s
+2025-06-23 19:31:11,371 - Epoch 20, Train Loss: 4.9776e-04, Val Loss: 3.8303e-03, LR: 5.0000e-05, Time: 56.92s
+2025-06-23 19:32:08,280 - Epoch 21, Train Loss: 4.2743e-04, Val Loss: 3.6783e-03, LR: 5.0000e-05, Time: 56.87s
+2025-06-23 19:33:05,011 - Epoch 22, Train Loss: 4.0077e-04, Val Loss: 4.1828e-03, LR: 5.0000e-05, Time: 56.67s
+2025-06-23 19:34:02,371 - Epoch 23, Train Loss: 4.4303e-04, Val Loss: 4.0107e-03, LR: 5.0000e-05, Time: 57.31s
+2025-06-23 19:34:59,989 - Epoch 24, Train Loss: 3.7735e-04, Val Loss: 4.0778e-03, LR: 2.5000e-05, Time: 57.58s
+2025-06-23 19:35:57,628 - Epoch 25, Train Loss: 3.4940e-04, Val Loss: 4.4630e-03, LR: 2.5000e-05, Time: 57.60s
+2025-06-23 19:36:56,128 - Epoch 26, Train Loss: 3.2893e-04, Val Loss: 4.4858e-03, LR: 2.5000e-05, Time: 58.46s
+2025-06-23 19:37:53,073 - Epoch 27, Train Loss: 3.2450e-04, Val Loss: 4.5128e-03, LR: 2.5000e-05, Time: 56.90s
+2025-06-23 19:38:55,160 - Epoch 28, Train Loss: 3.1858e-04, Val Loss: 4.3360e-03, LR: 2.5000e-05, Time: 62.03s
+2025-06-23 19:40:05,738 - Epoch 29, Train Loss: 3.2582e-04, Val Loss: 4.4433e-03, LR: 2.5000e-05, Time: 70.45s
+2025-06-23 19:41:28,490 - Epoch 30, Train Loss: 2.9082e-04, Val Loss: 4.3998e-03, LR: 1.2500e-05, Time: 82.62s
+2025-06-23 19:42:50,691 - Epoch 31, Train Loss: 2.9921e-04, Val Loss: 4.4527e-03, LR: 1.2500e-05, Time: 82.07s
+2025-06-23 19:44:09,678 - Epoch 32, Train Loss: 2.8368e-04, Val Loss: 4.2364e-03, LR: 1.2500e-05, Time: 78.70s
+2025-06-23 19:44:09,814 - Early stopping at epoch 32
+2025-06-23 19:44:10,935 - [task1] Training completed.
+2025-06-23 19:44:10,956 - [task1] Consolidating EWC...
+2025-06-23 19:44:57,165 - [task1] Consolidation done.
+2025-06-23 19:44:57,177 - [task1] Baseline evaluation on own task task1 ...
+2025-06-23 19:45:01,431 - [task1 Baseline on task1] RMSE: 5.9958e-02, MAE: 5.4392e-02
+2025-06-23 19:45:01,438 - [task1] Baseline testing completed.
+2025-06-23 19:45:01,452 - [task1] Backward testing on previous task task0...
+2025-06-23 19:45:06,429 - [task1 BACKWARD on task0] RMSE: 2.2820e-02, MAE: 1.9819e-02
+2025-06-23 19:45:06,431 - [task1] ΔMAE on task0: -2.5475e-02
+2025-06-23 19:45:06,432 - [task1] ACC (-MAE): -3.7105e-02
+2025-06-23 19:45:06,433 - [task1] BWT: -2.5475e-02
+2025-06-23 19:45:06,434 - [task1] FWT: -1.0964e-02
+2025-06-23 19:45:06,437 - [task1] Evaluating BEST checkpoint...
+2025-06-23 19:45:14,923 - [task1 Evaluation on full test set] RMSE: 7.2776e-02, MAE: 5.5645e-02, R2: 0.2519
+2025-06-23 19:45:14,925 - [task1] Evaluation completed.
+2025-06-23 19:45:14,927 - [task2] Loading best checkpoint from previous task task1...
+2025-06-23 19:45:16,396 - [task2 Pre-FWT baseline] RMSE: 1.3424e-01, MAE: 1.3323e-01
+2025-06-23 19:45:16,400 - [task2] Training...
+2025-06-23 19:45:16,401 - [task2] EWC penalty λ=0.1839
+2025-06-23 19:45:56,197 - Epoch 1, Train Loss: 5.2939e-03, Val Loss: 3.3189e-03, LR: 1.0000e-04, Time: 39.76s
+2025-06-23 19:46:36,151 - Epoch 2, Train Loss: 2.4472e-03, Val Loss: 4.3218e-03, LR: 1.0000e-04, Time: 39.86s
+2025-06-23 19:47:16,491 - Epoch 3, Train Loss: 1.7430e-03, Val Loss: 3.5104e-03, LR: 1.0000e-04, Time: 40.28s
+2025-06-23 19:47:56,302 - Epoch 4, Train Loss: 1.4771e-03, Val Loss: 2.3823e-03, LR: 1.0000e-04, Time: 39.74s
+2025-06-23 19:48:37,455 - Epoch 5, Train Loss: 1.4258e-03, Val Loss: 1.9726e-03, LR: 1.0000e-04, Time: 41.04s
+2025-06-23 19:49:17,475 - Epoch 6, Train Loss: 1.2207e-03, Val Loss: 2.8857e-03, LR: 1.0000e-04, Time: 39.93s
+2025-06-23 19:49:57,235 - Epoch 7, Train Loss: 1.0512e-03, Val Loss: 2.4231e-03, LR: 1.0000e-04, Time: 39.71s
+2025-06-23 19:50:37,354 - Epoch 8, Train Loss: 9.6196e-04, Val Loss: 1.4547e-03, LR: 1.0000e-04, Time: 40.07s
+2025-06-23 19:51:17,198 - Epoch 9, Train Loss: 9.5912e-04, Val Loss: 1.5059e-03, LR: 1.0000e-04, Time: 39.75s
+2025-06-23 19:51:57,012 - Epoch 10, Train Loss: 9.2238e-04, Val Loss: 1.2839e-03, LR: 1.0000e-04, Time: 39.76s
+2025-06-23 19:52:37,073 - Epoch 11, Train Loss: 8.0743e-04, Val Loss: 1.5266e-03, LR: 1.0000e-04, Time: 39.96s
+2025-06-23 19:53:17,040 - Epoch 12, Train Loss: 8.5845e-04, Val Loss: 1.8102e-03, LR: 1.0000e-04, Time: 39.90s
+2025-06-23 19:53:57,094 - Epoch 13, Train Loss: 8.1547e-04, Val Loss: 1.2730e-03, LR: 1.0000e-04, Time: 40.01s
+2025-06-23 19:54:37,030 - Epoch 14, Train Loss: 8.2434e-04, Val Loss: 1.4873e-03, LR: 1.0000e-04, Time: 39.83s
+2025-06-23 19:55:16,779 - Epoch 15, Train Loss: 7.3790e-04, Val Loss: 1.1021e-03, LR: 1.0000e-04, Time: 39.70s
+2025-06-23 19:55:56,511 - Epoch 16, Train Loss: 8.1273e-04, Val Loss: 1.5747e-03, LR: 1.0000e-04, Time: 39.65s
+2025-06-23 19:56:35,964 - Epoch 17, Train Loss: 9.4175e-04, Val Loss: 1.2157e-03, LR: 1.0000e-04, Time: 39.41s
+2025-06-23 19:57:15,990 - Epoch 18, Train Loss: 6.9470e-04, Val Loss: 1.0495e-03, LR: 1.0000e-04, Time: 39.94s
+2025-06-23 19:57:57,345 - Epoch 19, Train Loss: 6.4805e-04, Val Loss: 1.0102e-03, LR: 1.0000e-04, Time: 41.26s
+2025-06-23 19:58:39,034 - Epoch 20, Train Loss: 8.5403e-04, Val Loss: 8.4178e-04, LR: 1.0000e-04, Time: 41.56s
+2025-06-23 19:59:19,134 - Epoch 21, Train Loss: 7.3577e-04, Val Loss: 9.5958e-04, LR: 1.0000e-04, Time: 39.95s
+2025-06-23 19:59:59,155 - Epoch 22, Train Loss: 6.2814e-04, Val Loss: 1.2463e-03, LR: 1.0000e-04, Time: 39.97s
+2025-06-23 20:00:39,462 - Epoch 23, Train Loss: 6.1551e-04, Val Loss: 7.4206e-04, LR: 1.0000e-04, Time: 40.26s
+2025-06-23 20:01:19,377 - Epoch 24, Train Loss: 1.0002e-03, Val Loss: 8.1033e-04, LR: 1.0000e-04, Time: 39.79s
+2025-06-23 20:01:59,337 - Epoch 25, Train Loss: 7.0962e-04, Val Loss: 1.5084e-03, LR: 1.0000e-04, Time: 39.69s
+2025-06-23 20:02:39,061 - Epoch 26, Train Loss: 5.7809e-04, Val Loss: 9.6557e-04, LR: 1.0000e-04, Time: 39.65s
+2025-06-23 20:03:19,969 - Epoch 27, Train Loss: 7.3219e-04, Val Loss: 8.1962e-04, LR: 1.0000e-04, Time: 40.86s
+2025-06-23 20:04:08,928 - Epoch 28, Train Loss: 8.7015e-04, Val Loss: 8.7637e-04, LR: 1.0000e-04, Time: 48.86s
+2025-06-23 20:04:58,081 - Epoch 29, Train Loss: 5.6594e-04, Val Loss: 5.7583e-04, LR: 1.0000e-04, Time: 49.04s
+2025-06-23 20:05:52,916 - Epoch 30, Train Loss: 7.0181e-04, Val Loss: 1.0628e-03, LR: 1.0000e-04, Time: 54.64s
+2025-06-23 20:06:53,097 - Epoch 31, Train Loss: 6.4754e-04, Val Loss: 8.9253e-04, LR: 1.0000e-04, Time: 60.04s
+2025-06-23 20:07:54,074 - Epoch 32, Train Loss: 6.2923e-04, Val Loss: 1.0645e-03, LR: 1.0000e-04, Time: 60.79s
+2025-06-23 20:09:00,870 - Epoch 33, Train Loss: 5.4978e-04, Val Loss: 9.8073e-04, LR: 1.0000e-04, Time: 66.63s
+2025-06-23 20:10:07,821 - Epoch 34, Train Loss: 5.9954e-04, Val Loss: 1.0569e-03, LR: 1.0000e-04, Time: 66.78s
+2025-06-23 20:11:13,296 - Epoch 35, Train Loss: 6.6052e-04, Val Loss: 1.5272e-03, LR: 5.0000e-05, Time: 65.30s
+2025-06-23 20:12:10,700 - Epoch 36, Train Loss: 5.0221e-04, Val Loss: 9.1696e-04, LR: 5.0000e-05, Time: 57.14s
+2025-06-23 20:13:10,902 - Epoch 37, Train Loss: 4.7550e-04, Val Loss: 8.0008e-04, LR: 5.0000e-05, Time: 60.01s
+2025-06-23 20:14:09,389 - Epoch 38, Train Loss: 4.6100e-04, Val Loss: 8.3849e-04, LR: 5.0000e-05, Time: 58.29s
+2025-06-23 20:15:04,224 - Epoch 39, Train Loss: 3.9192e-04, Val Loss: 9.9226e-04, LR: 5.0000e-05, Time: 54.68s
+2025-06-23 20:15:47,005 - Epoch 40, Train Loss: 4.0625e-04, Val Loss: 8.1628e-04, LR: 5.0000e-05, Time: 42.73s
+2025-06-23 20:16:26,694 - Epoch 41, Train Loss: 4.2536e-04, Val Loss: 8.1587e-04, LR: 2.5000e-05, Time: 39.64s
+2025-06-23 20:17:06,328 - Epoch 42, Train Loss: 3.4146e-04, Val Loss: 8.6054e-04, LR: 2.5000e-05, Time: 39.59s
+2025-06-23 20:17:45,962 - Epoch 43, Train Loss: 3.4281e-04, Val Loss: 7.9444e-04, LR: 2.5000e-05, Time: 39.57s
+2025-06-23 20:18:25,671 - Epoch 44, Train Loss: 3.1964e-04, Val Loss: 8.2767e-04, LR: 2.5000e-05, Time: 39.65s
+2025-06-23 20:19:05,359 - Epoch 45, Train Loss: 3.1988e-04, Val Loss: 7.3057e-04, LR: 2.5000e-05, Time: 39.64s
+2025-06-23 20:19:45,056 - Epoch 46, Train Loss: 3.2734e-04, Val Loss: 7.9028e-04, LR: 2.5000e-05, Time: 39.65s
+2025-06-23 20:20:25,071 - Epoch 47, Train Loss: 3.2285e-04, Val Loss: 7.5316e-04, LR: 1.2500e-05, Time: 39.97s
+2025-06-23 20:21:04,841 - Epoch 48, Train Loss: 2.8845e-04, Val Loss: 7.0144e-04, LR: 1.2500e-05, Time: 39.72s
+2025-06-23 20:21:44,522 - Epoch 49, Train Loss: 2.8346e-04, Val Loss: 7.4941e-04, LR: 1.2500e-05, Time: 39.64s
+2025-06-23 20:21:44,570 - Early stopping at epoch 49
+2025-06-23 20:21:45,259 - [task2] Training completed.
+2025-06-23 20:21:45,261 - [task2] Consolidating EWC...
+2025-06-23 20:22:18,971 - [task2] Consolidation done.
+2025-06-23 20:22:18,974 - [task2] Baseline evaluation on own task task2 ...
+2025-06-23 20:22:22,764 - [task2 Baseline on task2] RMSE: 7.9444e-02, MAE: 7.7137e-02
+2025-06-23 20:22:22,766 - [task2] Baseline testing completed.
+2025-06-23 20:22:22,768 - [task2] Backward testing on previous task task0...
+2025-06-23 20:22:27,986 - [task2 BACKWARD on task0] RMSE: 5.3700e-02, MAE: 4.7646e-02
+2025-06-23 20:22:27,989 - [task2] Backward testing on previous task task1...
+2025-06-23 20:22:32,069 - [task2 BACKWARD on task1] RMSE: 4.2547e-02, MAE: 3.8732e-02
+2025-06-23 20:22:32,070 - [task2] ΔMAE on task0: +2.3512e-03
+2025-06-23 20:22:32,072 - [task2] ΔMAE on task1: -1.5659e-02
+2025-06-23 20:22:32,073 - [task2] ACC (-MAE): -5.4505e-02
+2025-06-23 20:22:32,074 - [task2] BWT: -6.6541e-03
+2025-06-23 20:22:32,075 - [task2] FWT: +5.6088e-02
+2025-06-23 20:22:32,077 - [task2] Evaluating BEST checkpoint...
+2025-06-23 20:22:40,803 - [task2 Evaluation on full test set] RMSE: 5.7287e-02, MAE: 5.1302e-02, R2: 0.5364
+2025-06-23 20:22:40,805 - [task2] Evaluation completed.
+2025-06-23 20:22:40,848 - Saved ACC/BWT/FWT history to /beegfs/home/users/z/zzhuqshun/Thesis/04_NNs/model/ewc/incremental/continual_metrics.csv
+2025-06-23 20:22:41,525 - ==== All tasks completed ====

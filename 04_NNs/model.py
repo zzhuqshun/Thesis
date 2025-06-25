@@ -72,7 +72,7 @@ class Config:
 def main(skip_regular=False):
     # config and logging
     config   = Config()
-    base_dir = Path(__file__).parent / 'model' / 'naive_fine_tuning'
+    base_dir = Path(__file__).parent / 'model' / 'ewc'
     # ---- incremental dir ----
     inc_dir = base_dir / 'incremental'
     inc_dir.mkdir(parents=True, exist_ok=True)
@@ -159,8 +159,8 @@ def main(skip_regular=False):
 
     tasks = [
         ('task0', 'base_train',    'base_val',    'test_base',      False,  config.EWC_LAMBDA), # no EWC for base task
-        ('task1', 'update1_train', 'update1_val', 'test_update1',   False,   config.EWC_LAMBDA1), # EWC for update1
-        ('task2', 'update2_train', 'update2_val', 'test_update2',   False,   config.EWC_LAMBDA2) # EWC for update2
+        ('task1', 'update1_train', 'update1_val', 'test_update1',   True,   config.EWC_LAMBDA1), # EWC for update1
+        ('task2', 'update2_train', 'update2_val', 'test_update2',   True,   config.EWC_LAMBDA2) # EWC for update2
     ]
 
     baseline_metrics: dict[str, dict] = {}
@@ -310,7 +310,7 @@ def main(skip_regular=False):
 
         metric_hist.append({'task': name, 'ACC': ACC, 'BWT': BWT, 'FWT': FWT})
                         
-        # ---------------- Forward testing on full test set ----------------
+        # ---------------- Evaluate on full test set ----------------
         if best_ckpt.exists():
             logger.info("[%s] Evaluating BEST checkpoint...", name)
             trainer.evaluate_checkpoint(
@@ -319,9 +319,9 @@ def main(skip_regular=False):
                 df=full_df,
                 seq_len=config.SEQUENCE_LENGTH,
                 out_dir=results_dir / "forward" / "test_full",
-                tag=f"{name} FORWARD on test"
+                tag=f"{name} Evaluation on full test set"
             )
-        logger.info("[%s] Forward testing completed.", name)
+        logger.info("[%s] Evaluation completed.", name)
 
     # ---------------- Save final metrics and delta MAE history ----------------
     df_m = pd.DataFrame(metric_hist)
