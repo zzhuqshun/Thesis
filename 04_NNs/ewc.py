@@ -287,7 +287,7 @@ def main(joint_training: bool = False):
             # ---------------- Backward testing on test subsets ----------------
             if i > 0:
                 for j in range(i):
-                    prev_name, _, _, prev_test_key, _, _ = tasks[j]
+                    prev_name, _, _, prev_test_key, _, _, _ = tasks[j]
                     prev_loader = loaders.get(prev_test_key)
                     prev_df     = data_inc.get(prev_test_key)
                     if best_ckpt.exists() and prev_loader:
