@@ -40,12 +40,12 @@ class Config:
         self.RESAMPLE = '10min'
         
         self.LWF_ALPHA0 = 0.0  # No LWF for task0
-        self.LWF_ALPHA1 = 1.0
-        self.LWF_ALPHA2 = 1.0
+        self.LWF_ALPHA1 = 1.9161084252463925
+        self.LWF_ALPHA2 = 0.5711627077804184
                 
-        self.EWC_LAMBDA0 = 69.45356257424775  
-        self.EWC_LAMBDA1 = 1014.6717394418031
-        self.EWC_LAMBDA2 = 1000 # Default value for lambda2, can be adjusted later
+        self.EWC_LAMBDA0 = 0.0  
+        self.EWC_LAMBDA1 = 0.0
+        self.EWC_LAMBDA2 = 0.0 # Default value for lambda2, can be adjusted later
         self.Info = {
             "description": "Incremental learning",
             "resample": self.RESAMPLE ,
@@ -81,7 +81,7 @@ class Config:
 def main(joint_training: bool = False):
     # config and logging
     config   = Config()
-    base_dir = Path(__file__).parent / 'model' / 'ewc_lwf' 
+    base_dir = Path(__file__).parent / 'model' / 'ewc_trial2_without_ewc' 
     base_dir.mkdir(parents=True, exist_ok=True)
     # single log file for both phases
     logger = logging.getLogger()
