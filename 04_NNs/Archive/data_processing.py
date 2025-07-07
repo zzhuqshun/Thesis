@@ -149,33 +149,86 @@ def split_data(all_data: pd.DataFrame,
     
     return train_df, val_df, test_df
 
-def plot_dataset_soh(data_df: pd.DataFrame, title: str, figsize=(10, 7), cell_filter=None):
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+
+def plot_dataset_soh(data_df: pd.DataFrame,
+                     title: str,
+                     figsize=(10, 7),
+                     cell_filter=None):
     """
-    Plot the SOH curves for each cell in the dataset.
-    
-    Parameters:
-    - data_df: 输入的DataFrame，必须包含 'cell_id', 'Testtime[min]' 和 'SOH_ZHU' 列。
-    - title: 图表标题的一部分。
-    - figsize: 图表大小，默认为(10, 7)。
-    - cell_filter: 可选参数，可以是单个cell id或cell id的列表，用于过滤数据，只绘制指定cell的曲线。
+    1) 画出所有 cell 的 SOH 曲线  
+    2) 按 LOW/MID/HIGH 三类分别着色画出同样的曲线
+
+    参数同原版，多了内部的 categories 定义
     """
-    # 如果提供了cell_filter，则进行过滤
+    # 如果提供了 cell_filter，则先过滤
     if cell_filter is not None:
         if isinstance(cell_filter, (list, tuple, set)):
             data_df = data_df[data_df['cell_id'].isin(cell_filter)]
         else:
             data_df = data_df[data_df['cell_id'] == cell_filter]
-    
+
+    # ---------- 1) 所有曲线 ---------
     plt.figure(figsize=figsize)
     for cell, group in data_df.groupby('cell_id'):
         plt.plot(group['Testtime[min]'], group['SOH_ZHU'], label=cell)
-    
-    plt.title(f'{title} Set SOH Curves')
-    plt.xlabel('Time')
+    plt.title(f'{title} Set SOH Curves (all cells)')
+    plt.xlabel('Time (10 min intervals)')
     plt.ylabel('SOH')
     plt.grid(True)
-    plt.legend(loc='upper right')
+    plt.legend(loc='upper right', ncol=2, fontsize='small')
+    plt.tight_layout()
     plt.show()
+
+    # ---------- 2) 按类别着色的曲线 ---------
+    # 定义三类 ID
+    categories = {
+        'LOW':  ['C01', 'C03', 'C05', 'C07', 'C27'],
+        'MID':  ['C17', 'C19', 'C21', 'C23', 'C25'],
+        'HIGH': ['C09', 'C11', 'C13', 'C15', 'C29'],
+    }
+    # 给每类指定颜色+线型
+    styles = {
+        'LOW':  {'color': 'tab:blue',   'linestyle': '-'},
+        'MID':  {'color': 'tab:orange', 'linestyle': '-'},
+        'HIGH': {'color': 'tab:green',  'linestyle': '-'},
+    }
+
+    plt.figure(figsize=figsize)
+    for cat, ids in categories.items():
+        for cell in ids:
+            subset = data_df[data_df['cell_id'] == cell]
+            # 如果过滤后某些 IDs 不存在，就跳过
+            if subset.empty:
+                continue
+            plt.plot(
+                subset['Testtime[min]'],
+                subset['SOH_ZHU'],
+                label=cell,
+                **styles[cat]
+            )
+
+    # 构造一个分类图例
+    legend_handles = [
+        Line2D([0], [0],
+               color=styles[cat]['color'],
+               linestyle=styles[cat]['linestyle'],
+               lw=2)
+        for cat in categories
+    ]
+    plt.legend(handles=legend_handles,
+               labels=categories.keys(),
+               title='Category',
+               loc='upper right')
+
+    plt.title(f'{title} Set SOH Curves (by LOW/MID/HIGH)')
+    plt.xlabel('Time (10 min intervals)')
+    plt.ylabel('SOH')
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
 
 
 def scale_data(train_df: pd.DataFrame, 
