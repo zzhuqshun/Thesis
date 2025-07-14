@@ -3,7 +3,7 @@
 #SBATCH -o ./Results/myjob.%j.out
 #SBATCH -e ./Results/myjob.%j.err
 #SBATCH -D .
-#SBATCH -J inc_search
+#SBATCH -J ewc_search
 #SBATCH --cpus-per-task=2
 #SBATCH --gres=gpu:tesla:1
 #SBATCH --mem=32G
@@ -19,4 +19,4 @@ source ~/miniconda3/bin/activate
 conda activate myenv
 
 # Run the Python script, passing the folder path as an argument
-python inc_search.py
+python ewc_search.py

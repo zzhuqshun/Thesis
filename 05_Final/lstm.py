@@ -559,12 +559,14 @@ def run_incremental_learning(config, base_dir, device):
     baseline_model = SOHLSTM(len(config.FEATURES_COLS), config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
     baseline_trainer = Trainer(baseline_model, device, config)
     fwt_baseline_mae = {}
+    
     for phase in ['base', 'update1', 'update2']:
         test_key = f'test_{phase}'
         if test_key in loaders:
             metrics, _, _ = baseline_trainer.evaluate(loaders[test_key])
             fwt_baseline_mae[test_key] = metrics['MAE']
             logger.info("    (FWT BASELINE) [%s] MAE = %.4e", test_key, metrics['MAE'])
+            
     for task_name, data_key, task_id, use_ewc, ewc_lambda, lwf_alpha in tasks:
         logger.info("\n" + "=" * 60)
         logger.info("[TASK] %s (phase=%s, id=%d)", task_name, data_key, task_id)
@@ -573,6 +575,7 @@ def run_incremental_learning(config, base_dir, device):
         task_dir.mkdir(parents=True, exist_ok=True)
         train_loader = loaders.get(f'{data_key}_train')
         val_loader = loaders.get(f'{data_key}_val')
+        
         if trainer.ewc_tasks:
             ewc_lambdas = {f"Task {i}": float(f"{ewc.lam:.2f}") for i, ewc in enumerate(trainer.ewc_tasks)}
             logger.info("  (EWC) Active penalty: %s", json.dumps(ewc_lambdas))
@@ -584,6 +587,7 @@ def run_incremental_learning(config, base_dir, device):
         )
         plot_losses(history, task_dir / 'training_curves.png')
         logger.info("  (TRAIN) Finished. Loss curves saved: %s", task_dir / 'training_curves.png')
+        
         if ewc_lambda > 0:
             logger.info("  (EWC) Consolidating penalty (λ = %.4f) after %s", ewc_lambda, task_name)
             trainer.consolidate(train_loader, ewc_lambda)
@@ -592,6 +596,7 @@ def run_incremental_learning(config, base_dir, device):
             'task1': ['test_base', 'test_update1'],
             'task2': ['test_base', 'test_update1', 'test_update2']
         }
+        
         all_task_test_mae[task_name] = {}
         all_task_test_results[task_name] = {}
         test_results = {}
@@ -607,6 +612,7 @@ def run_incremental_learning(config, base_dir, device):
                     plot_predictions(preds, targets, task_dir / 'predictions')
                     logger.info("    (EVAL) Prediction plots saved: %s", task_dir / 'predictions')
         task_performance[task_name] = test_results
+        
         bwt_sum, bwt_count, bwt_norm_list = 0.0, 0, []
         if task_id > 0:
             for prev_task_idx in range(task_id):
@@ -626,6 +632,8 @@ def run_incremental_learning(config, base_dir, device):
             avg_bwt_norm = np.mean(bwt_norm_list) if bwt_norm_list else 0.0
         else:
             avg_bwt, avg_bwt_norm = 0.0, 0.0
+            
+            
         fwt_sum, fwt_count = 0.0, 0
         if task_id > 0:
             this_test_key = f'test_{data_key}'
@@ -643,7 +651,10 @@ def run_incremental_learning(config, base_dir, device):
             avg_fwt = fwt_sum / fwt_count if fwt_count else 0.0
         else:
             avg_fwt = 0.0
+            
         acc = np.mean([m['MAE'] for m in test_results.values()]) if test_results else float('nan')
+        
+        
         logger.info("  (SUMMARY) %s -- ACC: %.4e, BWT: %.4e, BWT_NORM: %.4e, FWT: %.4e",
                     task_name, acc, avg_bwt, avg_bwt_norm, avg_fwt)
         torch.save(trainer.model.state_dict(), task_dir / 'model.pt')
