@@ -1,0 +1,7 @@
+Loading all parquet files once …
+Data cached in memory.
+Preparing base task (no EWC) …
+Base prepared. MAE(test_base) = 0.020222
+Search finished.
+Best λ values: {'lambda1': 1919.1667298329062, 'lambda2': 0.18393944199331227}
+Best score: 0.7382322826176173

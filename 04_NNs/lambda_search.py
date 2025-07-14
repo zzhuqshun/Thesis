@@ -229,8 +229,10 @@ def objective(trial: optuna.trial.Trial, cfg_dict, base_ckpt: Path):
     lambda0 = trial.suggest_float("lambda0", 1e1, 1e4, log=True)
     lambda1 = trial.suggest_float("lambda1", 1e1, 1e4, log=True)
     
-    alpha1  = trial.suggest_float("alpha1", 0.05, 5.0, log=True)   # task1
-    alpha2  = trial.suggest_float("alpha2", 0.05, 5.0, log=True)   # task2
+    # alpha1  = trial.suggest_float("alpha1", 0.05, 5.0, log=True)   # task1
+    # alpha2  = trial.suggest_float("alpha2", 0.05, 5.0, log=True)   # task2
+    alpha1 = 0.0
+    alpha2 = 0.0
 
     loaders = build_loaders(cfg)
     ACC, BWT = train_incremental(cfg, lambda0, lambda1, 

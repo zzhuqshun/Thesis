@@ -3,7 +3,7 @@
 #SBATCH -o ./Results/myjob.%j.out
 #SBATCH -e ./Results/myjob.%j.err
 #SBATCH -D .
-#SBATCH -J ewc
+#SBATCH -J lstm
 #SBATCH --cpus-per-task=2
 #SBATCH --gres=gpu:tesla:1
 #SBATCH --mem=32G
@@ -20,3 +20,4 @@ conda activate myenv
 
 # Run the Python script, passing the folder path as an argument
 python lstm.py
+

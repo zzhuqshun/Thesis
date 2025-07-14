@@ -1,0 +1,53 @@
+2025-07-13 19:47:18,392 - INFO - [EXPERIMENT] Directory: model/tryouts/4inputs/joint_cellsplit
+2025-07-13 19:47:18,419 - INFO - [EXPERIMENT] Device: cuda
+2025-07-13 19:47:18,422 - INFO - ============================================================
+2025-07-13 19:47:18,424 - INFO - [JOINT] Starting Joint Training
+2025-07-13 19:47:18,426 - INFO - ============================================================
+2025-07-13 19:47:18,429 - INFO - [DATA] Mode: JOINT
+2025-07-13 19:47:18,431 - INFO - [DATA] Resample rate: 10min
+2025-07-13 19:47:18,433 - INFO -   (Split) Train IDs: ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29']
+2025-07-13 19:47:18,435 - INFO -   (Split) Val IDs: ['01', '19', '13']
+2025-07-13 19:48:33,231 - INFO -   (Split) joint_train: 205644 samples
+2025-07-13 19:48:53,573 - INFO -   (Split) joint_val: 58177 samples
+2025-07-13 19:49:00,716 - INFO -   (Split) joint_test_full: 22872 samples
+2025-07-13 19:49:00,718 - INFO - [DATA] Fitting scaler: RobustScaler
+2025-07-13 19:49:00,739 - INFO -   (Scaler) Features scaled: ['Voltage[V]', 'Current[A]', 'Temperature[°C]', 'EFC']
+2025-07-13 19:49:00,758 - INFO - [DATA] Preparation complete. Keys: ['joint_train', 'joint_val', 'test_full']
+2025-07-13 19:49:00,760 - INFO - [DATA] Grouping datasets by cell_id: True
+2025-07-13 19:49:06,000 - INFO - [DATA] Created dataset with 197724 samples
+2025-07-13 19:49:07,429 - INFO - [DATA] Created dataset with 56017 samples
+2025-07-13 19:49:07,906 - INFO - [DATA] Created dataset with 22152 samples
+2025-07-13 19:49:07,909 - INFO -   (DATA) Dataloaders created for: ['joint_train', 'joint_val', 'test_full']
+2025-07-13 19:49:08,134 - INFO -   (MODEL) SOHLSTM initialized: input_size=4, hidden=128, layers=2, dropout=0.30
+2025-07-13 19:49:10,213 - INFO -   (TRAIN) Start training on joint dataset ...
+2025-07-13 19:53:43,321 - INFO - [TRAIN] Epoch 0: Train Loss: 1.8433e-02, Val Loss: 2.3423e-03, Task: 1.8433e-02, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-13 19:59:21,620 - INFO - [TRAIN] Epoch 2: Train Loss: 3.1527e-03, Val Loss: 1.5547e-03, Task: 3.1527e-03, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-13 20:02:07,189 - INFO - [TRAIN] Epoch 3: Train Loss: 1.7832e-03, Val Loss: 3.0638e-03, Task: 1.7832e-03, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-13 20:04:52,787 - INFO - [TRAIN] Epoch 4: Train Loss: 9.2652e-04, Val Loss: 3.1899e-03, Task: 9.2652e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-13 20:07:38,030 - INFO - [TRAIN] Epoch 5: Train Loss: 6.0868e-04, Val Loss: 2.9181e-03, Task: 6.0868e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-13 20:10:23,113 - INFO - [TRAIN] Epoch 6: Train Loss: 4.7474e-04, Val Loss: 3.9050e-03, Task: 4.7474e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-13 20:13:09,076 - INFO - [TRAIN] Epoch 7: Train Loss: 4.2190e-04, Val Loss: 3.7303e-03, Task: 4.2190e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-13 20:15:54,743 - INFO - [TRAIN] Epoch 8: Train Loss: 4.1207e-04, Val Loss: 3.0661e-03, Task: 4.1207e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-13 20:18:40,437 - INFO - [TRAIN] Epoch 9: Train Loss: 2.4805e-04, Val Loss: 3.7987e-03, Task: 2.4805e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-13 20:21:25,887 - INFO - [TRAIN] Epoch 10: Train Loss: 2.1846e-04, Val Loss: 2.9345e-03, Task: 2.1846e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-13 20:24:11,506 - INFO - [TRAIN] Epoch 11: Train Loss: 1.9458e-04, Val Loss: 3.3462e-03, Task: 1.9458e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-13 20:26:56,363 - INFO - [TRAIN] Epoch 12: Train Loss: 1.7225e-04, Val Loss: 2.1544e-03, Task: 1.7225e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-13 20:29:41,004 - INFO - [TRAIN] Epoch 13: Train Loss: 1.6588e-04, Val Loss: 2.6705e-03, Task: 1.6588e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-13 20:32:25,655 - INFO - [TRAIN] Epoch 14: Train Loss: 1.5828e-04, Val Loss: 2.6087e-03, Task: 1.5828e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-13 20:35:10,298 - INFO - [TRAIN] Epoch 15: Train Loss: 1.3737e-04, Val Loss: 3.3959e-03, Task: 1.3737e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-13 20:37:57,717 - INFO - [TRAIN] Epoch 16: Train Loss: 1.2866e-04, Val Loss: 3.1260e-03, Task: 1.2866e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-13 20:40:42,613 - INFO - [TRAIN] Epoch 17: Train Loss: 1.2781e-04, Val Loss: 3.1354e-03, Task: 1.2781e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-13 20:43:29,195 - INFO - [TRAIN] Epoch 18: Train Loss: 1.2549e-04, Val Loss: 2.8140e-03, Task: 1.2549e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-13 20:46:16,051 - INFO - [TRAIN] Epoch 19: Train Loss: 1.2287e-04, Val Loss: 2.9521e-03, Task: 1.2287e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-13 20:49:01,509 - INFO - [TRAIN] Epoch 20: Train Loss: 1.2398e-04, Val Loss: 2.8846e-03, Task: 1.2398e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.250000e-05
+2025-07-13 20:51:48,262 - INFO - [TRAIN] Epoch 21: Train Loss: 1.1277e-04, Val Loss: 3.2235e-03, Task: 1.1277e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.250000e-05
+2025-07-13 20:54:36,877 - INFO - [TRAIN] Epoch 22: Train Loss: 1.1447e-04, Val Loss: 3.3331e-03, Task: 1.1447e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.250000e-05
+2025-07-13 20:54:36,924 - INFO - [TRAIN] Early stopping at epoch 22
+2025-07-13 20:54:42,275 - INFO -   (TRAIN) Finished. Loss curves saved: model/tryouts/4inputs/joint_cellsplit/joint_training/training_curves.png
+2025-07-13 20:54:48,831 - INFO -   (EVAL) [Test] RMSE: 3.2413e-02, MAE: 2.2326e-02, R2: 0.8516
+2025-07-13 20:54:50,266 - INFO -   (EVAL) Prediction plots saved: model/tryouts/4inputs/joint_cellsplit/joint_training/predictions
+2025-07-13 20:54:50,362 - INFO -   (MODEL) Checkpoint saved: model/tryouts/4inputs/joint_cellsplit/joint_training/model.pt
+2025-07-13 20:54:50,364 - INFO - ============================================================
+2025-07-13 20:54:50,365 - INFO - [JOINT] Joint training finished.
+2025-07-13 20:54:50,367 - INFO - ============================================================
+2025-07-13 20:54:50,368 - INFO - [EXPERIMENT] Completed!
