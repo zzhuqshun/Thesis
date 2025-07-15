@@ -116,7 +116,8 @@ def incremental_objective(trial, cfg_dict, data_cached, base_ckpt_path):
     trial.set_user_attr("mae_base", mae_base)
     trial.set_user_attr("mae_update1", mae_u1)
     trial.set_user_attr("mae_update2", mae_u2)
-    return acc
+    return acc 
+#(sum_Q)
 
 if __name__ == "__main__":
     print("[INFO] Caching data ...")

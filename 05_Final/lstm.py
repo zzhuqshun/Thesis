@@ -27,8 +27,8 @@ logger = logging.getLogger(__name__)
 class Config:
     def __init__(self, **kwargs):
         # Training Mode
-        self.MODE = 'joint'  # 'joint' or 'incremental'
-        self.BASE_DIR = Path('model/tryouts/3inputs/joint_crosscell')
+        self.MODE = 'incremental'  # 'joint' or 'incremental'
+        self.BASE_DIR = Path('model/tryouts/3inputs/incremental')
         # Model parameters
         self.SEQUENCE_LENGTH = 720
         self.HIDDEN_SIZE = 128
@@ -542,9 +542,9 @@ def run_incremental_learning(config, base_dir, device):
     datasets = processor.prepare_data()
     loaders = create_dataloaders(datasets, config)
     logger.info("  (DATA) Dataloaders created for: %s", list(loaders.keys()))
-    model = SOHLSTM(4, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT)
-    logger.info("  (MODEL) SOHLSTM initialized: input_size=4, hidden=%d, layers=%d, dropout=%.2f",
-                config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT)
+    model = SOHLSTM(len(config.FEATURES_COLS), config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT)
+    logger.info("  (MODEL) SOHLSTM initialized: input_size=%d, hidden=%d, layers=%d, dropout=%.2f",
+                len(config.FEATURES_COLS), config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT)
     trainer = Trainer(model, device, config)
     tasks = [
         ('task0', 'base', 0, False, config.EWC_LAMBDA[0], config.LWF_ALPHA[0]),
