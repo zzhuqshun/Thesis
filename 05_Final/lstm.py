@@ -28,7 +28,7 @@ class Config:
     def __init__(self, **kwargs):
         # Training Mode
         self.MODE = 'incremental'  # 'joint' or 'incremental'
-        self.BASE_DIR = Path('model/tryouts/3inputs/incremental')
+        self.BASE_DIR = Path('model/incremental')
         # Model parameters
         self.SEQUENCE_LENGTH = 720
         self.HIDDEN_SIZE = 128
@@ -176,11 +176,11 @@ class DataProcessor:
             
             logger.info("  (Split) Train IDs: %s", all_train_ids)
             logger.info("  (Split) Val IDs: %s", all_val_ids)
-            dfs = [self.process_file(file_map[id]) for id in all_train_ids]
-            datasets['joint_train'] = pd.concat(dfs, ignore_index=True)
+            dfs_train = [self.process_file(file_map[id]) for id in all_train_ids]
+            datasets['joint_train'] = pd.concat(dfs_train, ignore_index=True)
             logger.info("  (Split) joint_train: %d samples", len(datasets['joint_train']))
-            dfs = [self.process_file(file_map[id]) for id in all_val_ids]
-            datasets['joint_val'] = pd.concat(dfs, ignore_index=True)
+            dfs_val = [self.process_file(file_map[id]) for id in all_val_ids]
+            datasets['joint_val'] = pd.concat(dfs_val, ignore_index=True)
             logger.info("  (Split) joint_val: %d samples", len(datasets['joint_val']))
             
             scaler_data = datasets['joint_train'][self.feature_cols]
@@ -538,7 +538,7 @@ def run_incremental_learning(config, base_dir, device):
     logger.info("=" * 60)
     logger.info("[INCREMENTAL] Starting Incremental Learning")
     logger.info("=" * 60)
-    processor = DataProcessor('../01_Datenaufbereitung/Output/Calculated/', config)
+    processor = DataProcessor('../../01_Datenaufbereitung/Output/Calculated/', config)
     datasets = processor.prepare_data()
     loaders = create_dataloaders(datasets, config)
     logger.info("  (DATA) Dataloaders created for: %s", list(loaders.keys()))
@@ -581,6 +581,7 @@ def run_incremental_learning(config, base_dir, device):
             logger.info("  (EWC) Active penalty: %s", json.dumps(ewc_lambdas))
         else:
             logger.info("  (EWC) Active penalty: None")
+        logger.info("  (LWF) Active knowledge distillation with alpha = %.4f", lwf_alpha)
         history = trainer.train_task(
             train_loader, val_loader, task_id,
             apply_ewc=use_ewc, alpha_lwf=lwf_alpha

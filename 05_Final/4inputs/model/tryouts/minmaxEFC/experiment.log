@@ -1,0 +1,57 @@
+2025-07-17 11:32:54,040 - INFO - [EXPERIMENT] Directory: model/tryouts/minmaxEFC
+2025-07-17 11:32:54,045 - INFO - [EXPERIMENT] Device: cuda
+2025-07-17 11:32:54,049 - INFO - ============================================================
+2025-07-17 11:32:54,056 - INFO - [JOINT] Starting Joint Training
+2025-07-17 11:32:54,060 - INFO - ============================================================
+2025-07-17 11:32:54,067 - INFO - Initialized DataProcessor with data_dir=../../01_Datenaufbereitung/Output/Calculated, MODE=joint, features=['Voltage[V]', 'Current[A]', 'Temperature[°C]', 'EFC']
+2025-07-17 11:32:54,082 - INFO - Found 15 parquet files in ../../01_Datenaufbereitung/Output/Calculated
+2025-07-17 11:32:54,088 - INFO - [DATA] Mode: JOINT
+2025-07-17 11:32:54,095 - INFO - [DATA] Resample rate: 10min
+2025-07-17 11:32:54,101 - INFO - [DATA] Train IDs: ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29']
+2025-07-17 11:32:54,107 - INFO - [DATA] Val IDs: ['01', '19', '13']
+2025-07-17 11:34:04,019 - INFO - [DATA] joint_train: 205644 samples
+2025-07-17 11:34:23,044 - INFO - [DATA] joint_val: 58177 samples
+2025-07-17 11:34:30,094 - INFO - [DATA] joint_test_full: 22872 samples
+2025-07-17 11:34:30,157 - INFO - Fitted RobustScaler on features ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
+2025-07-17 11:34:30,168 - INFO - Scaler parameters: centers=[ 3.342422    0.17992967 27.75      ], scales=[0.18428363 1.77955483 1.81783333]
+2025-07-17 11:34:30,191 - INFO - Fitted MinMaxScaler (0,1) on EFC with min=48.78220027675168, max=3065.2032327630795
+2025-07-17 11:34:30,222 - INFO - Scaled dataset 'joint_train' with shape (205644, 8)
+2025-07-17 11:34:30,246 - INFO - Scaled dataset 'joint_val' with shape (58177, 8)
+2025-07-17 11:34:30,267 - INFO - Scaled dataset 'test_full' with shape (22872, 8)
+2025-07-17 11:34:30,280 - INFO - [DATA] Grouping datasets by cell_id: True
+2025-07-17 11:34:35,157 - INFO - [DATA] Created dataset with 197724 samples
+2025-07-17 11:34:36,528 - INFO - [DATA] Created dataset with 56017 samples
+2025-07-17 11:34:36,986 - INFO - [DATA] Created dataset with 22152 samples
+2025-07-17 11:34:36,997 - INFO -   (DATA) Dataloaders created for: ['joint_train', 'joint_val', 'test_full']
+2025-07-17 11:34:37,134 - INFO -   (MODEL) SOHLSTM initialized: input_size=4, hidden=128, layers=2, dropout=0.30
+2025-07-17 11:34:38,238 - INFO -   (TRAIN) Start training on joint dataset ...
+2025-07-17 11:40:51,497 - INFO - [TRAIN] Epoch 0: Train Loss: 1.8511e-02, Val Loss: 2.2804e-03, Task: 1.8511e-02, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-17 11:44:52,181 - INFO - [TRAIN] Epoch 1: Train Loss: 5.2593e-03, Val Loss: 1.4033e-02, Task: 5.2593e-03, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-17 11:49:20,445 - INFO - [TRAIN] Epoch 2: Train Loss: 3.1221e-03, Val Loss: 3.5758e-03, Task: 3.1221e-03, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-17 11:52:55,776 - INFO - [TRAIN] Epoch 3: Train Loss: 1.6924e-03, Val Loss: 4.2267e-03, Task: 1.6924e-03, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-17 11:55:40,593 - INFO - [TRAIN] Epoch 4: Train Loss: 8.9781e-04, Val Loss: 4.7505e-03, Task: 8.9781e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-17 11:58:26,970 - INFO - [TRAIN] Epoch 5: Train Loss: 5.7086e-04, Val Loss: 4.2677e-03, Task: 5.7086e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.000000e-04
+2025-07-17 12:01:16,339 - INFO - [TRAIN] Epoch 6: Train Loss: 3.9210e-04, Val Loss: 4.0986e-03, Task: 3.9210e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-17 12:04:02,110 - INFO - [TRAIN] Epoch 7: Train Loss: 2.7228e-04, Val Loss: 3.7970e-03, Task: 2.7228e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-17 12:06:50,070 - INFO - [TRAIN] Epoch 8: Train Loss: 2.2947e-04, Val Loss: 3.4214e-03, Task: 2.2947e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-17 12:10:10,499 - INFO - [TRAIN] Epoch 9: Train Loss: 1.9678e-04, Val Loss: 3.3685e-03, Task: 1.9678e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-17 12:13:03,699 - INFO - [TRAIN] Epoch 10: Train Loss: 1.7762e-04, Val Loss: 4.3049e-03, Task: 1.7762e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-17 12:15:48,337 - INFO - [TRAIN] Epoch 11: Train Loss: 1.6386e-04, Val Loss: 3.7783e-03, Task: 1.6386e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 5.000000e-05
+2025-07-17 12:18:33,183 - INFO - [TRAIN] Epoch 12: Train Loss: 1.5562e-04, Val Loss: 3.6250e-03, Task: 1.5562e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-17 12:21:18,341 - INFO - [TRAIN] Epoch 13: Train Loss: 1.3473e-04, Val Loss: 3.6388e-03, Task: 1.3473e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-17 12:24:04,280 - INFO - [TRAIN] Epoch 14: Train Loss: 1.3167e-04, Val Loss: 3.5163e-03, Task: 1.3167e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-17 12:26:50,000 - INFO - [TRAIN] Epoch 15: Train Loss: 1.2840e-04, Val Loss: 4.0977e-03, Task: 1.2840e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-17 12:29:36,201 - INFO - [TRAIN] Epoch 16: Train Loss: 1.2546e-04, Val Loss: 3.9212e-03, Task: 1.2546e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-17 12:32:20,965 - INFO - [TRAIN] Epoch 17: Train Loss: 1.2395e-04, Val Loss: 4.4995e-03, Task: 1.2395e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 2.500000e-05
+2025-07-17 12:35:05,783 - INFO - [TRAIN] Epoch 18: Train Loss: 1.2418e-04, Val Loss: 4.2653e-03, Task: 1.2418e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.250000e-05
+2025-07-17 12:37:51,776 - INFO - [TRAIN] Epoch 19: Train Loss: 1.1543e-04, Val Loss: 3.6556e-03, Task: 1.1543e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.250000e-05
+2025-07-17 12:40:52,883 - INFO - [TRAIN] Epoch 20: Train Loss: 1.1628e-04, Val Loss: 3.8425e-03, Task: 1.1628e-04, KD: 0.0000e+00, EWC: 0.0000e+00, LR: 1.250000e-05
+2025-07-17 12:40:52,886 - INFO - [TRAIN] Early stopping at epoch 20
+2025-07-17 12:40:57,460 - INFO -   (TRAIN) Finished. Loss curves saved: model/tryouts/minmaxEFC/joint_training/training_curves.png
+2025-07-17 12:41:03,973 - INFO -   (EVAL) [Test] RMSE: 2.8839e-02, MAE: 2.2001e-02, R2: 0.8825
+2025-07-17 12:41:07,686 - INFO -   (EVAL) Prediction plots saved: model/tryouts/minmaxEFC/joint_training/predictions
+2025-07-17 12:41:07,750 - INFO -   (MODEL) Checkpoint saved: model/tryouts/minmaxEFC/joint_training/model.pt
+2025-07-17 12:41:07,753 - INFO - ============================================================
+2025-07-17 12:41:07,755 - INFO - [JOINT] Joint training finished.
+2025-07-17 12:41:07,757 - INFO - ============================================================
+2025-07-17 12:41:07,759 - INFO - [EXPERIMENT] Completed!

@@ -43,9 +43,9 @@ class Config:
         self.LWF_ALPHA1 = 1.9161084252463925
         self.LWF_ALPHA2 = 0.5711627077804184
                 
-        self.EWC_LAMBDA0 = 0.0  
-        self.EWC_LAMBDA1 = 7780.1555769014285
-        self.EWC_LAMBDA2 = 141.35935551752303 # Default value for lambda2, can be adjusted later
+        self.EWC_LAMBDA0 = 7780.1555769014285
+        self.EWC_LAMBDA1 = 141.35935551752303
+        self.EWC_LAMBDA2 = 1000 # Default value for lambda2, can be adjusted later
         self.Info = {
             "description": "Incremental learning",
             "resample": self.RESAMPLE ,

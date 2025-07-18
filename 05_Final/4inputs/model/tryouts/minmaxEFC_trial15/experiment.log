@@ -1,0 +1,14 @@
+2025-07-17 13:32:48,862 - INFO - [EXPERIMENT] Directory: model/tryouts/minmaxEFC_trial15
+2025-07-17 13:32:48,867 - INFO - [EXPERIMENT] Device: cuda
+2025-07-17 13:32:48,869 - INFO - ============================================================
+2025-07-17 13:32:48,872 - INFO - [JOINT] Starting Joint Training
+2025-07-17 13:32:48,874 - INFO - ============================================================
+2025-07-17 13:32:48,876 - INFO - Initialized DataProcessor with data_dir=../../01_Datenaufbereitung/Output/Calculated, MODE=joint, features=['Voltage[V]', 'Current[A]', 'Temperature[°C]', 'EFC']
+2025-07-17 13:32:48,880 - INFO - Found 15 parquet files in ../../01_Datenaufbereitung/Output/Calculated
+2025-07-17 13:32:48,882 - INFO - [DATA] Mode: JOINT
+2025-07-17 13:32:48,884 - INFO - [DATA] Resample rate: 10min
+2025-07-17 13:32:48,887 - INFO - [DATA] Train IDs: ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29']
+2025-07-17 13:32:48,889 - INFO - [DATA] Val IDs: ['01', '19', '13']
+2025-07-17 13:33:54,476 - INFO - [DATA] joint_train: 205644 samples
+2025-07-17 13:34:12,903 - INFO - [DATA] joint_val: 58177 samples
+2025-07-17 13:34:19,750 - INFO - [DATA] joint_test_full: 22872 samples
