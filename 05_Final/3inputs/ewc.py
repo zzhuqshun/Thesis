@@ -43,9 +43,9 @@ class Config:
         self.LWF_ALPHA1 = 0.0
         self.LWF_ALPHA2 = 0.0
                 
-        self.EWC_LAMBDA0 = 668.578401267148
-        self.EWC_LAMBDA1 = 135.50539567718891
-        self.EWC_LAMBDA2 = 1000 # Default value for lambda2, can be adjusted later
+        self.EWC_LAMBDA0 = 0.0
+        self.EWC_LAMBDA1 = 0.0
+        self.EWC_LAMBDA2 = 0.0 # Default value for lambda2, can be adjusted later
         self.Info = {
             "description": "Incremental learning",
             "resample": self.RESAMPLE ,
@@ -81,7 +81,7 @@ class Config:
 def main(joint_training: bool = False):
     # config and logging
     config   = Config()
-    base_dir = Path(__file__).parent / 'model' / 'incl_trial42-robust' 
+    base_dir = Path(__file__).parent / 'model' / 'fine-tuning-ewc' 
     base_dir.mkdir(parents=True, exist_ok=True)
     # single log file for both phases
     logger = logging.getLogger()

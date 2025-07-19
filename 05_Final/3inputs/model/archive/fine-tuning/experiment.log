@@ -1,0 +1,139 @@
+2025-07-18 11:07:04,339 - INFO - [EXPERIMENT] Directory: model/fine-tuning
+2025-07-18 11:07:04,343 - INFO - [EXPERIMENT] Device: cuda
+2025-07-18 11:07:04,345 - INFO - ============================================================
+2025-07-18 11:07:04,347 - INFO - [INCREMENTAL] Starting Incremental Learning
+2025-07-18 11:07:04,349 - INFO - ============================================================
+2025-07-18 11:07:04,352 - INFO - [DATA] Mode: INCREMENTAL
+2025-07-18 11:07:04,354 - INFO - [DATA] Resample rate: 10min
+2025-07-18 11:08:34,033 - INFO -   (Split) Details:
+    base_train: 92079 samples, ids=['03', '05', '07', '27']
+    base_val: 28612 samples, ids=['01']
+    update1_train: 65674 samples, ids=['21', '23', '25']
+    update1_val: 23120 samples, ids=['19']
+    update2_train: 47891 samples, ids=['09', '11', '15', '29']
+    update2_val: 6445 samples, ids=['13']
+2025-07-18 11:08:41,281 - INFO -   (Split) Test splits: test_full(22872), test_base(11139), test_update1(6312), test_update2(5421)
+2025-07-18 11:08:41,285 - INFO - [DATA] Fitting scaler: RobustScaler
+2025-07-18 11:08:41,300 - INFO -   (Scaler) Scaler centers: [ 3.31975183  0.         27.55116667]
+2025-07-18 11:08:41,308 - INFO -   (Scaler) Scaler scales: [0.20016217 1.86108033 1.05333333]
+2025-07-18 11:08:41,311 - INFO -   (Scaler) Features scaled: ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
+2025-07-18 11:08:41,341 - INFO - [DATA] Preparation complete. Keys: ['base_train', 'base_val', 'update1_train', 'update1_val', 'update2_train', 'update2_val', 'test_full', 'test_base', 'test_update1', 'test_update2']
+2025-07-18 11:08:41,365 - INFO -   (DATA) Dataloaders: ['base_train', 'base_val', 'update1_train', 'update1_val', 'update2_train', 'update2_val', 'test_full', 'test_base', 'test_update1', 'test_update2']
+2025-07-18 11:08:41,386 - INFO -   (MODEL) SOHLSTM: in=3, hidden=128, layers=2, drop=0.30
+2025-07-18 11:08:42,135 - INFO -   (FWT) Computing random-init baselines …
+2025-07-18 11:08:45,565 - INFO -     (BASELINE) test_base  MAE=9.7065e-01
+2025-07-18 11:08:47,125 - INFO -     (BASELINE) test_update1  MAE=8.7252e-01
+2025-07-18 11:08:48,439 - INFO -     (BASELINE) test_update2  MAE=7.6615e-01
+2025-07-18 11:08:48,443 - INFO - 
+============================================================
+[TASK] task0  phase=base  id=0
+------------------------------------------------------------
+2025-07-18 11:08:51,348 - INFO -     (PRE) MAE before training = 1.0481e+00
+2025-07-18 11:11:25,832 - INFO - [TRAIN] Epoch 0: Train Loss: 3.8119e-02, Val Loss: 3.7718e-04, Task: 3.8119e-02, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:12:58,594 - INFO - [TRAIN] Epoch 1: Train Loss: 7.3216e-03, Val Loss: 1.0778e-03, Task: 7.3216e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:14:24,824 - INFO - [TRAIN] Epoch 2: Train Loss: 5.3169e-03, Val Loss: 3.9792e-04, Task: 5.3169e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:15:58,215 - INFO - [TRAIN] Epoch 3: Train Loss: 4.3350e-03, Val Loss: 4.2493e-04, Task: 4.3350e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:17:32,498 - INFO - [TRAIN] Epoch 4: Train Loss: 3.4104e-03, Val Loss: 3.9689e-04, Task: 3.4104e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:18:56,862 - INFO - [TRAIN] Epoch 5: Train Loss: 2.6824e-03, Val Loss: 3.9226e-04, Task: 2.6824e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:20:16,880 - INFO - [TRAIN] Epoch 6: Train Loss: 2.0629e-03, Val Loss: 4.6299e-04, Task: 2.0629e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:21:36,364 - INFO - [TRAIN] Epoch 7: Train Loss: 1.6348e-03, Val Loss: 4.0652e-04, Task: 1.6348e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:22:56,442 - INFO - [TRAIN] Epoch 8: Train Loss: 1.3996e-03, Val Loss: 4.2514e-04, Task: 1.3996e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:24:17,088 - INFO - [TRAIN] Epoch 9: Train Loss: 1.2010e-03, Val Loss: 5.0842e-04, Task: 1.2010e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:25:37,570 - INFO - [TRAIN] Epoch 10: Train Loss: 1.0315e-03, Val Loss: 4.0422e-04, Task: 1.0315e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:26:58,001 - INFO - [TRAIN] Epoch 11: Train Loss: 8.8565e-04, Val Loss: 4.5692e-04, Task: 8.8565e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:28:18,629 - INFO - [TRAIN] Epoch 12: Train Loss: 7.7172e-04, Val Loss: 4.0641e-04, Task: 7.7172e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:29:37,842 - INFO - [TRAIN] Epoch 13: Train Loss: 6.9358e-04, Val Loss: 4.1009e-04, Task: 6.9358e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:30:57,742 - INFO - [TRAIN] Epoch 14: Train Loss: 6.5655e-04, Val Loss: 4.2221e-04, Task: 6.5655e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:32:16,821 - INFO - [TRAIN] Epoch 15: Train Loss: 6.1958e-04, Val Loss: 4.1290e-04, Task: 6.1958e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:33:35,284 - INFO - [TRAIN] Epoch 16: Train Loss: 5.9001e-04, Val Loss: 4.1259e-04, Task: 5.9001e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:34:54,091 - INFO - [TRAIN] Epoch 17: Train Loss: 5.6064e-04, Val Loss: 4.1786e-04, Task: 5.6064e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:36:13,757 - INFO - [TRAIN] Epoch 18: Train Loss: 5.3699e-04, Val Loss: 4.2819e-04, Task: 5.3699e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:37:32,585 - INFO - [TRAIN] Epoch 19: Train Loss: 5.1219e-04, Val Loss: 4.0065e-04, Task: 5.1219e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:38:51,450 - INFO - [TRAIN] Epoch 20: Train Loss: 4.9730e-04, Val Loss: 4.1578e-04, Task: 4.9730e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:38:51,454 - INFO - [TRAIN] Early stopping at epoch 20
+2025-07-18 11:38:55,126 - INFO -     (EWC) Consolidate with λ = 0.0000
+2025-07-18 11:40:02,497 - INFO -     (POST) MAE after training = 3.9038e-02
+2025-07-18 11:40:14,341 - INFO -     (SUMMARY) R²_full -0.0775 | ACC 3.9038e-02 | BWT 0.0000e+00 | FWT 0.0000e+00
+2025-07-18 11:40:14,354 - INFO - 
+============================================================
+[TASK] task1  phase=update1  id=1
+------------------------------------------------------------
+2025-07-18 11:40:15,960 - INFO -     (PRE) MAE before training = 5.0327e-02
+2025-07-18 11:41:18,245 - INFO - [TRAIN] Epoch 0: Train Loss: 8.4926e-03, Val Loss: 1.2992e-03, Task: 8.4926e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:42:20,822 - INFO - [TRAIN] Epoch 1: Train Loss: 6.9345e-03, Val Loss: 1.8924e-03, Task: 6.9345e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:43:23,739 - INFO - [TRAIN] Epoch 2: Train Loss: 6.0721e-03, Val Loss: 2.1713e-03, Task: 6.0721e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:44:26,766 - INFO - [TRAIN] Epoch 3: Train Loss: 5.4542e-03, Val Loss: 2.0394e-03, Task: 5.4542e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:45:29,393 - INFO - [TRAIN] Epoch 4: Train Loss: 4.8378e-03, Val Loss: 2.0804e-03, Task: 4.8378e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:46:30,545 - INFO - [TRAIN] Epoch 5: Train Loss: 4.2635e-03, Val Loss: 9.7564e-04, Task: 4.2635e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:47:33,829 - INFO - [TRAIN] Epoch 6: Train Loss: 3.5712e-03, Val Loss: 3.4791e-03, Task: 3.5712e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:48:35,219 - INFO - [TRAIN] Epoch 7: Train Loss: 3.2262e-03, Val Loss: 1.1969e-03, Task: 3.2262e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:49:38,122 - INFO - [TRAIN] Epoch 8: Train Loss: 2.4110e-03, Val Loss: 2.7201e-03, Task: 2.4110e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:50:39,358 - INFO - [TRAIN] Epoch 9: Train Loss: 1.9944e-03, Val Loss: 1.9473e-03, Task: 1.9944e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:51:39,948 - INFO - [TRAIN] Epoch 10: Train Loss: 1.5932e-03, Val Loss: 2.3348e-03, Task: 1.5932e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:52:40,761 - INFO - [TRAIN] Epoch 11: Train Loss: 1.3395e-03, Val Loss: 1.7843e-03, Task: 1.3395e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:53:41,660 - INFO - [TRAIN] Epoch 12: Train Loss: 1.0643e-03, Val Loss: 2.0456e-03, Task: 1.0643e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:54:42,023 - INFO - [TRAIN] Epoch 13: Train Loss: 9.2620e-04, Val Loss: 2.1558e-03, Task: 9.2620e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:55:42,583 - INFO - [TRAIN] Epoch 14: Train Loss: 8.4160e-04, Val Loss: 2.1812e-03, Task: 8.4160e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:56:43,608 - INFO - [TRAIN] Epoch 15: Train Loss: 7.7585e-04, Val Loss: 2.3574e-03, Task: 7.7585e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:57:44,544 - INFO - [TRAIN] Epoch 16: Train Loss: 7.0651e-04, Val Loss: 2.3997e-03, Task: 7.0651e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:58:45,288 - INFO - [TRAIN] Epoch 17: Train Loss: 6.3090e-04, Val Loss: 2.6722e-03, Task: 6.3090e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 11:59:46,251 - INFO - [TRAIN] Epoch 18: Train Loss: 5.1172e-04, Val Loss: 2.7713e-03, Task: 5.1172e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:00:47,289 - INFO - [TRAIN] Epoch 19: Train Loss: 4.9677e-04, Val Loss: 3.0157e-03, Task: 4.9677e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:01:48,411 - INFO - [TRAIN] Epoch 20: Train Loss: 4.7464e-04, Val Loss: 3.5471e-03, Task: 4.7464e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:02:49,269 - INFO - [TRAIN] Epoch 21: Train Loss: 4.5117e-04, Val Loss: 4.2534e-03, Task: 4.5117e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:03:50,299 - INFO - [TRAIN] Epoch 22: Train Loss: 4.4900e-04, Val Loss: 3.8338e-03, Task: 4.4900e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:04:50,838 - INFO - [TRAIN] Epoch 23: Train Loss: 4.3701e-04, Val Loss: 4.9520e-03, Task: 4.3701e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:05:51,548 - INFO - [TRAIN] Epoch 24: Train Loss: 4.0024e-04, Val Loss: 4.3485e-03, Task: 4.0024e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:06:52,073 - INFO - [TRAIN] Epoch 25: Train Loss: 3.9180e-04, Val Loss: 5.8263e-03, Task: 3.9180e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:06:52,077 - INFO - [TRAIN] Early stopping at epoch 25
+2025-07-18 12:06:54,154 - INFO -     (EWC) Consolidate with λ = 0.0000
+2025-07-18 12:07:41,173 - INFO -     (POST) MAE after training = 5.7805e-02
+2025-07-18 12:07:44,183 - INFO -         (BWT) task0  current 2.2904e-02  init 3.9038e-02  Δ=-1.6134e-02
+2025-07-18 12:07:57,670 - INFO -     (SUMMARY) R²_full 0.1777 | ACC 4.0354e-02 | BWT -1.6134e-02 | FWT 8.2219e-01
+2025-07-18 12:07:57,684 - INFO - 
+============================================================
+[TASK] task2  phase=update2  id=2
+------------------------------------------------------------
+2025-07-18 12:07:59,037 - INFO -     (PRE) MAE before training = 1.3765e-01
+2025-07-18 12:08:43,206 - INFO - [TRAIN] Epoch 0: Train Loss: 5.5064e-03, Val Loss: 1.5564e-03, Task: 5.5064e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:09:30,007 - INFO - [TRAIN] Epoch 1: Train Loss: 3.7107e-03, Val Loss: 2.9775e-03, Task: 3.7107e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:10:22,527 - INFO - [TRAIN] Epoch 2: Train Loss: 3.1645e-03, Val Loss: 1.3697e-03, Task: 3.1645e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:11:15,413 - INFO - [TRAIN] Epoch 3: Train Loss: 2.5599e-03, Val Loss: 1.4044e-03, Task: 2.5599e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:12:11,108 - INFO - [TRAIN] Epoch 4: Train Loss: 2.3646e-03, Val Loss: 1.1868e-03, Task: 2.3646e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:13:08,950 - INFO - [TRAIN] Epoch 5: Train Loss: 2.1886e-03, Val Loss: 9.0145e-04, Task: 2.1886e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:14:21,601 - INFO - [TRAIN] Epoch 6: Train Loss: 1.9151e-03, Val Loss: 9.8915e-04, Task: 1.9151e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:15:15,846 - INFO - [TRAIN] Epoch 7: Train Loss: 1.7748e-03, Val Loss: 9.7116e-04, Task: 1.7748e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:16:28,656 - INFO - [TRAIN] Epoch 8: Train Loss: 1.6334e-03, Val Loss: 1.7505e-03, Task: 1.6334e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:17:47,221 - INFO - [TRAIN] Epoch 9: Train Loss: 1.4111e-03, Val Loss: 1.0216e-03, Task: 1.4111e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:19:07,667 - INFO - [TRAIN] Epoch 10: Train Loss: 1.2145e-03, Val Loss: 5.9088e-04, Task: 1.2145e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:20:23,585 - INFO - [TRAIN] Epoch 11: Train Loss: 1.0787e-03, Val Loss: 8.8571e-04, Task: 1.0787e-03, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:21:44,650 - INFO - [TRAIN] Epoch 12: Train Loss: 9.7683e-04, Val Loss: 9.0863e-04, Task: 9.7683e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:23:06,451 - INFO - [TRAIN] Epoch 13: Train Loss: 8.5189e-04, Val Loss: 5.6235e-04, Task: 8.5189e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:24:28,518 - INFO - [TRAIN] Epoch 14: Train Loss: 7.3784e-04, Val Loss: 5.8800e-04, Task: 7.3784e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:25:46,544 - INFO - [TRAIN] Epoch 15: Train Loss: 6.7268e-04, Val Loss: 4.7674e-04, Task: 6.7268e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:27:05,217 - INFO - [TRAIN] Epoch 16: Train Loss: 5.7153e-04, Val Loss: 7.0020e-04, Task: 5.7153e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:28:19,731 - INFO - [TRAIN] Epoch 17: Train Loss: 5.7145e-04, Val Loss: 5.9677e-04, Task: 5.7145e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:29:34,601 - INFO - [TRAIN] Epoch 18: Train Loss: 5.2424e-04, Val Loss: 8.3747e-04, Task: 5.2424e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:30:51,274 - INFO - [TRAIN] Epoch 19: Train Loss: 4.6890e-04, Val Loss: 7.4898e-04, Task: 4.6890e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:32:11,477 - INFO - [TRAIN] Epoch 20: Train Loss: 4.4385e-04, Val Loss: 8.4784e-04, Task: 4.4385e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:33:30,607 - INFO - [TRAIN] Epoch 21: Train Loss: 5.1096e-04, Val Loss: 1.9889e-03, Task: 5.1096e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:34:38,085 - INFO - [TRAIN] Epoch 22: Train Loss: 4.9317e-04, Val Loss: 1.5493e-03, Task: 4.9317e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:35:38,404 - INFO - [TRAIN] Epoch 23: Train Loss: 4.2773e-04, Val Loss: 1.8363e-03, Task: 4.2773e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:36:38,188 - INFO - [TRAIN] Epoch 24: Train Loss: 3.6032e-04, Val Loss: 1.4523e-03, Task: 3.6032e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:37:33,823 - INFO - [TRAIN] Epoch 25: Train Loss: 3.7901e-04, Val Loss: 1.7339e-03, Task: 3.7901e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:38:29,974 - INFO - [TRAIN] Epoch 26: Train Loss: 3.5859e-04, Val Loss: 1.4965e-03, Task: 3.5859e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:39:13,954 - INFO - [TRAIN] Epoch 27: Train Loss: 3.2987e-04, Val Loss: 1.5515e-03, Task: 3.2987e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:39:57,871 - INFO - [TRAIN] Epoch 28: Train Loss: 2.9647e-04, Val Loss: 1.5337e-03, Task: 2.9647e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:40:41,663 - INFO - [TRAIN] Epoch 29: Train Loss: 2.9334e-04, Val Loss: 1.4252e-03, Task: 2.9334e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:41:25,705 - INFO - [TRAIN] Epoch 30: Train Loss: 2.9476e-04, Val Loss: 1.5221e-03, Task: 2.9476e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:42:09,488 - INFO - [TRAIN] Epoch 31: Train Loss: 2.8209e-04, Val Loss: 1.7071e-03, Task: 2.8209e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:42:53,478 - INFO - [TRAIN] Epoch 32: Train Loss: 2.8192e-04, Val Loss: 1.3254e-03, Task: 2.8192e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:43:37,456 - INFO - [TRAIN] Epoch 33: Train Loss: 2.6435e-04, Val Loss: 1.1027e-03, Task: 2.6435e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:44:21,370 - INFO - [TRAIN] Epoch 34: Train Loss: 2.5356e-04, Val Loss: 8.1405e-04, Task: 2.5356e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:45:06,837 - INFO - [TRAIN] Epoch 35: Train Loss: 2.5063e-04, Val Loss: 8.5729e-04, Task: 2.5063e-04, KD: 0.0000e+00, EWC: 0.0000e+00
+2025-07-18 12:45:06,840 - INFO - [TRAIN] Early stopping at epoch 35
+2025-07-18 12:45:09,123 - INFO -     (EWC) Consolidate with λ = 0.0000
+2025-07-18 12:45:43,411 - INFO -     (POST) MAE after training = 1.8422e-01
+2025-07-18 12:45:46,411 - INFO -         (BWT) task0  current 3.4505e-02  init 3.9038e-02  Δ=-4.5325e-03
+2025-07-18 12:45:48,023 - INFO -         (BWT) task1  current 1.1939e-01  init 5.7805e-02  Δ=6.1584e-02
+2025-07-18 12:46:02,994 - INFO -     (SUMMARY) R²_full -0.8036 | ACC 1.1270e-01 | BWT 2.8526e-02 | FWT 6.2850e-01

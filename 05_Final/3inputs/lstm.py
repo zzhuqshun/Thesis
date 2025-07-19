@@ -27,8 +27,8 @@ logger = logging.getLogger(__name__)
 class Config:
     def __init__(self, **kwargs):
         # Training Mode
-        self.MODE = 'incremental'  # 'joint' or 'incremental'
-        self.BASE_DIR = Path('model/trial24')
+        self.MODE = 'joint'  # 'joint' or 'incremental'
+        self.BASE_DIR = Path('model/joint_training')  # Base directory for outputs
         # Model parameters
         self.SEQUENCE_LENGTH = 720
         self.HIDDEN_SIZE = 128
@@ -44,7 +44,7 @@ class Config:
         
         # Data processing
         self.SCALER = "RobustScaler"
-        self.GROUP_BY_CELL = False # Group data by cell_id
+
         self.FEATURES_COLS = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
         self.SEED = 42
         self.RESAMPLE = '10min'
@@ -54,7 +54,10 @@ class Config:
         # self.EWC_LAMBDA = [7780.1555769014285, 141.35935551752303, 1000.0]
         
         self.LWF_ALPHA = [0.0, 0.0, 0.0]
-        self.EWC_LAMBDA = [106.55897372508032, 388.9925746974312, 1000.0]
+        self.EWC_LAMBDA = [0.0, 0.0, 0.0]
+        
+        # self.LWF_ALPHA = [0.0, 0.0, 0.0]
+        # self.EWC_LAMBDA = [106.55897372508032, 388.9925746974312, 1000.0]
         
         # Dataset splits
         # Joint
@@ -99,48 +102,26 @@ class Config:
 # Dataset
 # ===============================================================
 class BatteryDataset(Dataset):
-    def __init__(self, df, config):
-        self.seq_len = config.SEQUENCE_LENGTH
-        self.samples = []
-        self.config = config
-        self.group_by_cell = config.GROUP_BY_CELL
-        
-        if self.group_by_cell:
-            for cell_id, group in df.groupby('cell_id'):
-                group = group.reset_index(drop=True)
-                feats = group[config.FEATURES_COLS].values
-                targets = group['SOH_ZHU'].values
-                
-                n_samples = max(0, len(feats) - self.seq_len)
-                for i in range(n_samples):
-                    x = torch.tensor(feats[i:i+self.seq_len], dtype=torch.float32)
-                    y = torch.tensor(targets[i+self.seq_len], dtype=torch.float32)
-                    self.samples.append((x, y))
-        else:
-            feats = df[config.FEATURES_COLS].values
-            targets = df['SOH_ZHU'].values
-            n_samples = max(0, len(feats) - self.seq_len)
-            for i in range(n_samples):
-                x = torch.tensor(feats[i:i+self.seq_len], dtype=torch.float32)
-                y = torch.tensor(targets[i+self.seq_len], dtype=torch.float32)
-                self.samples.append((x, y))
-        
-        logger.info("[DATA] Created dataset with %d samples", len(self.samples))
-    
-    def __len__(self):
-        return len(self.samples)
-    
+    def __init__(self, df, seq_len):
+        feats = df[['Voltage[V]','Current[A]','Temperature[°C]']].values
+        self.X = torch.tensor(feats, dtype=torch.float32)
+        self.y = torch.tensor(df['SOH_ZHU'].values, dtype=torch.float32)
+        self.seq_len = seq_len
+    def __len__(self): return len(self.X) - self.seq_len
     def __getitem__(self, idx):
-        return self.samples[idx]
+        return (
+            self.X[idx:idx+self.seq_len],
+            self.y[idx+self.seq_len]
+        )
     
 def create_dataloaders(datasets, config):
+    seq_len = config.SEQUENCE_LENGTH
+    batch_size = config.BATCH_SIZE
     loaders = {}
-    logger.info("[DATA] Grouping datasets by cell_id: %s", config.GROUP_BY_CELL)
     for key, df in datasets.items():
-        if not df.empty and any(x in key for x in ['train', 'val', 'test']):
-            dataset = BatteryDataset(df, config)
-            shuffle = 'train' in key
-            loader = DataLoader(dataset, batch_size=config.BATCH_SIZE, shuffle=shuffle)
+        if not df.empty and ('train' in key or 'val' in key or 'test' in key):
+            ds = BatteryDataset(df, seq_len)
+            loader = DataLoader(ds, batch_size=batch_size, shuffle=('train' in key))
             loaders[key] = loader
     return loaders
 
@@ -156,7 +137,7 @@ class DataProcessor:
     
     def process_file(self, filepath):
         df = pd.read_parquet(filepath)[
-            ['Testtime[s]', 'Voltage[V]', 'Current[A]', 'Temperature[°C]', 'EFC', 'SOH_ZHU']
+            ['Testtime[s]', 'Voltage[V]', 'Current[A]', 'Temperature[°C]', 'SOH_ZHU']
         ]
         df = df.dropna().reset_index(drop=True)
         df['Testtime[s]'] = df['Testtime[s]'].round().astype(int)
@@ -174,8 +155,8 @@ class DataProcessor:
             
             logger.info("[DATA] Mode: JOINT")
             logger.info("[DATA] Resample rate: %s", self.config.RESAMPLE)
-            all_train_ids = ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29']
-            all_val_ids = ['01', '19', '13']
+            all_train_ids = self.config.dataset_joint['train']
+            all_val_ids = self.config.dataset_joint['val']
             
             logger.info("  (Split) Train IDs: %s", all_train_ids)
             logger.info("  (Split) Val IDs: %s", all_val_ids)
@@ -191,6 +172,7 @@ class DataProcessor:
             df_test = self.process_file(file_map[test_id])
             datasets['test_full'] = df_test
             logger.info("  (Split) joint_test_full: %d samples", len(datasets['test_full']))
+            
         elif self.config.MODE == 'incremental':
             logger.info("[DATA] Mode: INCREMENTAL")
             logger.info("[DATA] Resample rate: %s", self.config.RESAMPLE)
@@ -217,7 +199,7 @@ class DataProcessor:
             logger.info("  (Split) Test splits: test_full(%d), test_base(%d), test_update1(%d), test_update2(%d)",
                         len(df_test), len(datasets['test_base']), len(datasets['test_update1']), len(datasets['test_update2']))
         else:
-            raise ValueError(f"Unknown MODE: {self.MODE}. Should be 'joint' or 'incremental'.")
+            raise ValueError(f"Unknown MODE: {self.config.MODE}. Should be 'joint' or 'incremental'.")
 
         logger.info("[DATA] Fitting scaler: %s", self.config.SCALER)
         self.scaler.fit(scaler_data)
@@ -338,8 +320,8 @@ class Trainer:
                 'ewc_loss': train_metrics['ewc'],
                 'lr': optimizer.param_groups[0]['lr']
             })
-            logger.info("[TRAIN] Epoch %d: Train Loss: %.4e, Val Loss: %.4e, Task: %.4e, KD: %.4e, EWC: %.4e, LR: %.6e",
-                        epoch, train_metrics['total'], val_loss, train_metrics['task'], train_metrics['kd'], train_metrics['ewc'], optimizer.param_groups[0]['lr'])
+            logger.info("[TRAIN] Epoch %d: Train Loss: %.4e, Val Loss: %.4e, Task: %.4e, KD: %.4e, EWC: %.4e",
+                        epoch, train_metrics['total'], val_loss, train_metrics['task'], train_metrics['kd'], train_metrics['ewc'])
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
                 no_improvement = 0
@@ -357,40 +339,43 @@ class Trainer:
         task_loss = 0
         kd_loss = 0
         ewc_loss = 0
-        n_samples = 0
         for x, y in loader:
             x, y = x.to(self.device), y.to(self.device)
             optimizer.zero_grad()
+            
             y_pred = self.model(x)
             loss_task = F.mse_loss(y_pred, y)
-            loss_kd = torch.zeros(1, device=self.device)
+            
+            loss_kd = torch.tensor(0., device=self.device)
             if alpha_lwf > 0 and self.old_model is not None:
                 with torch.no_grad():
                     y_old = self.old_model(x)
                 loss_kd = F.mse_loss(y_pred, y_old)
-            loss_ewc = torch.zeros(1, device=self.device)
+                
+            loss_ewc = torch.tensor(0., device=self.device)
             if apply_ewc and self.ewc_tasks:
                 loss_ewc = sum(task.penalty(self.model) for task in self.ewc_tasks)
+                
             loss = loss_task + alpha_lwf * loss_kd + loss_ewc
             loss.backward()
-            nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
+            nn.utils.clip_grad_norm_(self.model.parameters(), 1)
             optimizer.step()
+            
             batch_size = x.size(0)
-            n_samples += batch_size
             total_loss += loss.item() * batch_size
             task_loss += loss_task.item() * batch_size
             kd_loss += loss_kd.item() * batch_size
             ewc_loss += loss_ewc.item() * batch_size
+        dataset_size = len(loader.dataset)
         return {
-            'total': total_loss / n_samples,
-            'task': task_loss / n_samples,
-            'kd': kd_loss / n_samples,
-            'ewc': ewc_loss / n_samples
+            'total': total_loss / dataset_size,
+            'task': task_loss / dataset_size,
+            'kd': kd_loss / dataset_size,
+            'ewc': ewc_loss / dataset_size
         }
     
     def _validate(self, loader):
         total_loss = 0
-        n_samples = 0
         with torch.no_grad():
             for x, y in loader:
                 x, y = x.to(self.device), y.to(self.device)
@@ -398,8 +383,8 @@ class Trainer:
                 loss = F.mse_loss(y_pred, y)
                 batch_size = x.size(0)
                 total_loss += loss.item() * batch_size
-                n_samples += batch_size
-        return total_loss / n_samples
+        total_loss /= len(loader.dataset)
+        return total_loss 
     
     def consolidate(self, loader, lam):
         ewc = EWC(self.model, loader, self.device, lam)
@@ -409,7 +394,7 @@ class Trainer:
         for p in self.old_model.parameters():
             p.requires_grad_(False)
     
-    def evaluate(self, loader, dataset_df=None):
+    def evaluate(self, loader):
         self.model.eval()
         preds = []
         targets = []
@@ -421,13 +406,25 @@ class Trainer:
                 targets.extend(y.cpu().numpy())
         preds = np.array(preds)
         targets = np.array(targets)
+        
         metrics = {
             'RMSE': np.sqrt(mean_squared_error(targets, preds)),
             'MAE': mean_absolute_error(targets, preds),
-            'R2': r2_score(targets, preds)
+            'R2': r2_score(targets, preds),
+            'NEG_MAE': -mean_absolute_error(targets, preds)  # Add negative MAE
         }
         return metrics, preds, targets
-
+    
+    def evaluate_smooth(self, loader, alpha=0.1):
+        _, preds, targets = self.evaluate(loader)
+        preds_smooth = pd.Series(preds).ewm(alpha=alpha, adjust=False).mean().to_numpy()
+        smooth_metrics = {
+            'RMSE': np.sqrt(mean_squared_error(targets, preds_smooth)),
+            'MAE': mean_absolute_error(targets, preds_smooth),
+            'R2': r2_score(targets, preds_smooth),
+            'NEG_MAE': -mean_absolute_error(targets, preds_smooth)  # Add negative MAE
+        }
+        return smooth_metrics, preds_smooth, targets
 # ===============================================================
 # Visualization
 # ===============================================================
@@ -510,10 +507,10 @@ def run_joint_training(config, base_dir, device):
     processor = DataProcessor('../../01_Datenaufbereitung/Output/Calculated/', config)
     datasets = processor.prepare_data()
     loaders = create_dataloaders(datasets, config)
-    logger.info("  (DATA) Dataloaders created for: %s", list(loaders.keys()))
+
     model = SOHLSTM(len(config.FEATURES_COLS), config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT)
-    logger.info("  (MODEL) SOHLSTM initialized: input_size=4, hidden=%d, layers=%d, dropout=%.2f",
-                config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT)
+    logger.info("  (MODEL) SOHLSTM: in=%d, hidden=%d, layers=%d, drop=%.2f",
+                len(config.FEATURES_COLS), config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT)
     trainer = Trainer(model, device, config)
     logger.info("  (TRAIN) Start training on joint dataset ...")
     history = trainer.train_task(
@@ -525,6 +522,8 @@ def run_joint_training(config, base_dir, device):
     )
     joint_dir = base_dir / 'joint_training'
     joint_dir.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(history).to_csv(joint_dir / 'history.csv', index=False)
+    
     plot_losses(history, joint_dir / 'training_curves.png')
     logger.info("  (TRAIN) Finished. Loss curves saved: %s", joint_dir / 'training_curves.png')
     metrics, preds, targets = trainer.evaluate(loaders['test_full'])
@@ -539,30 +538,29 @@ def run_joint_training(config, base_dir, device):
     logger.info("=" * 60)
 
 def run_incremental_learning(config: Config, base_dir: Path, device: torch.device):
-    """Incremental (continual) training pipeline with EWC + LWF and proper metric tracking.
+    """Incremental (continual) training pipeline with GEM-style metric evaluation using negative MAE.
 
     Flow
     ----
     1. Prepare data loaders (base/update1/update2 + all test splits)
-    2. For each task
-       2.1  Pre-training evaluation  -> FWT
-       2.2  Train one task (optionally EWC & LWF)
-       2.3  Consolidate Fisher information (EWC)
-       2.4  Post-training evaluation  -> BWT, global R²
-    3. Save curves / predictions / metrics history
+    2. For each task:
+       2.1 Train one task (optionally EWC & LWF)
+       2.2 Consolidate Fisher information (EWC)
+       2.3 Evaluate on current task and test_full only
+    3. After all tasks: compute ACC, BWT, FWT according to GEM definitions using negative MAE
+    4. Save final metrics and predictions
     """
 
     logger.info("=" * 60)
-    logger.info("[INCREMENTAL] Starting Incremental Learning")
+    logger.info("[INCREMENTAL] Starting Incremental Learning with -MAE evaluation")
     logger.info("=" * 60)
 
     # ─────────────────── Data ───────────────────
     processor = DataProcessor('../../01_Datenaufbereitung/Output/Calculated/', config)
     datasets  = processor.prepare_data()
     loaders   = create_dataloaders(datasets, config)
-    logger.info("  (DATA) Dataloaders: %s", list(loaders.keys()))
-
-    # Make sure the root incremental folder exists ----------------------------
+    
+    # Make sure the root incremental folder exists
     (base_dir / 'incremental').mkdir(parents=True, exist_ok=True)
 
     # ─────────────────── Model / Trainer ───────────────────
@@ -574,111 +572,226 @@ def run_incremental_learning(config: Config, base_dir: Path, device: torch.devic
                 len(config.FEATURES_COLS), config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT)
     trainer = Trainer(model, device, config)
 
-    # Task setup ----------------------------------------------------------------
+    # Task setup
     tasks = [
         ('task0', 'base',    0, False, config.EWC_LAMBDA[0], config.LWF_ALPHA[0]),
         ('task1', 'update1', 1, True,  config.EWC_LAMBDA[1], config.LWF_ALPHA[1]),
         ('task2', 'update2', 2, True,  config.EWC_LAMBDA[2], config.LWF_ALPHA[2]),
     ]
 
-    # ───────── Baseline MAE for FWT (random-init model) ─────────
-    logger.info("  (FWT) Computing random-init baselines …")
-    baseline_model   = SOHLSTM(len(config.FEATURES_COLS),
-                               config.HIDDEN_SIZE,
-                               config.NUM_LAYERS,
-                               config.DROPOUT).to(device)
-    baseline_trainer = Trainer(baseline_model, device, config)
-    fwt_baseline_mae = {}
-    for ph in ['base', 'update1', 'update2']:
-        tk = f'test_{ph}'
-        if tk in loaders:
-            m, _, _ = baseline_trainer.evaluate(loaders[tk])
-            fwt_baseline_mae[tk] = m['MAE']
-            logger.info("    (BASELINE) %s  MAE=%.4e", tk, m['MAE'])
+    # ───────── Baseline -MAE for FWT (random-init model) ─────────
+    logger.info("  (FWT) Computing random-init baselines using -MAE …")
+    fwt_baseline_neg_mae = {}
+    with torch.no_grad():  # 不需要梯度计算
+        baseline_model = SOHLSTM(len(config.FEATURES_COLS),
+                                config.HIDDEN_SIZE,
+                                config.NUM_LAYERS,
+                                config.DROPOUT).to(device)
+        baseline_trainer = Trainer(baseline_model, device, config)
+        
+        for ph in ['base', 'update1', 'update2']:
+            tk = f'test_{ph}'
+            if tk in loaders:
+                m, _, _ = baseline_trainer.evaluate(loaders[tk])
+                fwt_baseline_neg_mae[tk] = m['NEG_MAE']  # Use negative MAE
+                logger.info("    (BASELINE) %s  -MAE=%.4f", tk, m['NEG_MAE'])
+        
+        # 显式清理
+        del baseline_model
+        del baseline_trainer
+    
+    # 强制释放GPU缓存
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        torch.cuda.synchronize()
+    
+    logger.info("  (FWT) Baseline computation complete, memory cleaned")
 
-    # Containers ----------------------------------------------------------------
-    metrics_history = []
-    task_init_mae   = {}   # R_{j,j}
-    pretrain_mae    = {}   # R_{j-1,j}
+    # Containers for final metric computation
+    R_matrix = {}  # R_{i,j}: performance of model after task i on task j (using -MAE)
+    task_order = []  # 记录任务顺序
+    process_metrics = []  # 记录每个任务的过程指标
 
-    # ───────────────────── Main loop ────────────────────────
-    for tag, phase, tid, use_ewc, lam, alpha in tasks:
+    # ───────────────────── Main Training Loop ────────────────────────
+    for task_idx, (tag, phase, tid, use_ewc, lam, alpha) in enumerate(tasks):
         logger.info("\n%s\n[TASK] %s  phase=%s  id=%d\n%s", "="*60, tag, phase, tid, "-"*60)
 
+        task_order.append(tag)
         test_key    = f'test_{phase}'
         tr_loader   = loaders.get(f'{phase}_train')
-        val_loader  = loaders.get(f'{phase}_val') or tr_loader  # fallback if no val split
+        val_loader  = loaders.get(f'{phase}_val') or tr_loader
         te_loader   = loaders[test_key]
         full_loader = loaders['test_full']
 
-        # ── 1 ▸ Pre-training evaluation (FWT) ──────────────────────────
-        pre_mae = trainer.evaluate(te_loader)[0]['MAE']
-        pretrain_mae[tag] = pre_mae
-        logger.info("    (PRE) MAE before training = %.4e", pre_mae)
-
-        # ── 2 ▸ Training ───────────────────────────────────────────────
+        # ── Training ───────────────────────────────────────────────
+        logger.info("    (TRAIN) Starting training for %s ...", tag)
         hist = trainer.train_task(tr_loader, val_loader, tid,
                                   apply_ewc=use_ewc, alpha_lwf=alpha)
+        
+        # Save training history
         out_dir = base_dir / 'incremental' / tag
         out_dir.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame(hist).to_csv(out_dir / 'history.csv', index=False)
         plot_losses(hist, out_dir / 'training_curves.png')
 
-        # ── 3 ▸ Consolidate Fisher (EWC) ───────────────────────────────
+        # ── Consolidate Fisher (EWC) ───────────────────────────────
         logger.info("    (EWC) Consolidate with λ = %.4f", lam)
         trainer.consolidate(tr_loader, lam)
 
-        # ── 4 ▸ Post-training evaluation ───────────────────────────────
-        met_self, _, _ = trainer.evaluate(te_loader)
-        current_mae_self = met_self['MAE']
-        logger.info("    (POST) MAE after training = %.4e", current_mae_self)
-
-        # Store R_{j,j} only once
-        task_init_mae.setdefault(tag, current_mae_self)
-
-        # ---- BWT ------------------------------------------------------
-        bwt_deltas = []
-        for prev_tag, prev_phase, _prev_tid, *_ in tasks[:tid]:
-            prev_mae_now = trainer.evaluate(loaders[f'test_{prev_phase}'])[0]['MAE']
-            delta_mae    = prev_mae_now - task_init_mae[prev_tag]   # ↑ means forgetting
-            bwt_deltas.append(delta_mae)
-            logger.info("        (BWT) %s  current %.4e  init %.4e  Δ=%.4e",
-                        prev_tag, prev_mae_now, task_init_mae[prev_tag], delta_mae)
-        BWT = float(np.mean(bwt_deltas)) if bwt_deltas else 0.0
-
-        # ---- FWT ------------------------------------------------------
-        FWT = 0.0
-        if tid > 0:
-            baseline = fwt_baseline_mae[test_key]
-            FWT = baseline - pretrain_mae[tag]  # >0 ⇒ positive transfer
-
-        # ---- Global metrics ------------------------------------------
+        # ── Evaluate only on current task and test_full ───────────
+        # Current task evaluation
+        met_current, preds_current, tgts_current = trainer.evaluate(te_loader)
+        logger.info("    (EVAL) Current Task (%s): -MAE=%.4f, MAE=%.4f, R²=%.4f", 
+                    tag, met_current['NEG_MAE'], met_current['MAE'], met_current['R2'])
+        
+        # Test full evaluation
         met_full, preds_full, tgts_full = trainer.evaluate(full_loader)
-        plot_predictions(preds_full, tgts_full, out_dir / 'predictions')
-
-        # ---- ACC ------------------------------------------------------
-        all_mae = [trainer.evaluate(loaders[f'test_{p}'])[0]['MAE']
-                   for _, p, *_ in tasks[:tid+1]]
-        ACC = np.mean(all_mae)
-
-        # ---- Log & save ----------------------------------------------
-        logger.info("    (SUMMARY) R²_full %.4f | ACC %.4e | BWT %.4e | FWT %.4e",
-                    met_full['R2'], ACC, BWT, FWT)
-        metrics_history.append({
-            'task'   : tag,
-            'R2_full': met_full['R2'],
-            'ACC'    : ACC,
-            'BWT'    : BWT,
-            'FWT'    : FWT
-        })
-
+        logger.info("    (EVAL) Test Full: -MAE=%.4f, MAE=%.4f, R²=%.4f", 
+                    met_full['NEG_MAE'], met_full['MAE'], met_full['R2'])
+        
+        # Save predictions for current task
+        plot_predictions(preds_current, tgts_current, out_dir / 'predictions_current')
+        plot_predictions(preds_full, tgts_full, out_dir / 'predictions_full')
+        
+        # Save model checkpoint
         torch.save(trainer.model.state_dict(), out_dir / 'model.pt')
+        
+        # Save detailed predictions as CSV
+        pred_df_current = pd.DataFrame({
+            'actual': tgts_current,
+            'predicted': preds_current
+        })
+        pred_df_current.to_csv(out_dir / 'predictions_current.csv', index=False)
+        
+        pred_df_full = pd.DataFrame({
+            'actual': tgts_full,
+            'predicted': preds_full
+        })
+        pred_df_full.to_csv(out_dir / 'predictions_full.csv', index=False)
+        
+        # Save current task metrics
+        task_metrics = {
+            "task": tag,
+            "current_task_NEG_MAE": float(met_current["NEG_MAE"]),
+            "current_task_MAE":     float(met_current["MAE"]),
+            "current_task_R2":      float(met_current["R2"]),
+            "current_task_RMSE":    float(met_current["RMSE"]),
+            "test_full_NEG_MAE":    float(met_full["NEG_MAE"]),
+            "test_full_MAE":        float(met_full["MAE"]),
+            "test_full_R2":         float(met_full["R2"]),
+            "test_full_RMSE":       float(met_full["RMSE"]),
+            "EWC_lambda":           float(lam),  
+            "LWF_alpha":            float(alpha),  
+        }
+        process_metrics.append(task_metrics)
+        
+        # Save individual task metrics
+        with open(out_dir / 'task_metrics.json', 'w') as f:
+            json.dump(task_metrics, f, indent=4)
 
-    # ───────── Save history ─────────
-    out_metrics = base_dir / 'incremental' / 'metrics.json'
-    with open(out_metrics, 'w') as f:
-        json.dump(metrics_history, f, indent=4)
-    logger.info("=" * 60)
-    logger.info("[INCREMENTAL] Metrics saved → %s", out_metrics)
+        # ── Store performance matrix for final metric computation ──
+        # Evaluate on all tasks seen so far to build R_matrix (using -MAE)
+        with torch.no_grad():      
+            for j, (prev_tag, prev_phase, _, _, _, _) in enumerate(tasks[:task_idx + 1]):
+                prev_test_key = f'test_{prev_phase}'
+                if prev_test_key in loaders:
+                    met_j, _, _ = trainer.evaluate(loaders[prev_test_key])
+                    R_matrix[f"{task_idx},{j}"] = met_j['NEG_MAE']  # Use -MAE instead of R²
+            
+            for fut_idx in range(task_idx + 1, len(tasks)):
+                fut_phase = tasks[fut_idx][1]
+                fut_test_key = f'test_{fut_phase}'
+                if fut_test_key in loaders:
+                    met_fut, _, _ = trainer.evaluate(loaders[fut_test_key])
+                    R_matrix[f"{task_idx},{fut_idx}"] = met_fut['NEG_MAE']  # Use -MAE
+                    logger.info("    (FWT-PREP) R_%d,%d = %.4f",
+                                task_idx, fut_idx, met_fut['NEG_MAE'])
+
+    # ───────────────────── Final Metric Computation (GEM Style with -MAE) ────────────────────────
+    logger.info("\n" + "="*60)
+    logger.info("[FINAL METRICS] Computing ACC, BWT, FWT according to GEM definitions using -MAE")
+    logger.info("="*60)
+
+    num_tasks = len(tasks)
+    
+    # ACC (Average Accuracy): (1/T) * Σ R_{T-1,i} for i=0 to T-1
+    acc_values = []
+    for j in range(num_tasks):
+        key = f"{num_tasks-1},{j}"  # Performance after final task on task j
+        if key in R_matrix:
+            acc_values.append(R_matrix[key])
+    ACC = np.mean(acc_values) if acc_values else 0.0
+    
+    # BWT (Backward Transfer): (1/(T-1)) * Σ (R_{T-1,i} - R_{i,i}) for i=0 to T-2
+    bwt_values = []
+    for i in range(num_tasks - 1):  # i=0 to T-2
+        final_perf_key = f"{num_tasks-1},{i}"  # R_{T-1,i}
+        initial_perf_key = f"{i},{i}"  # R_{i,i}
+        if final_perf_key in R_matrix and initial_perf_key in R_matrix:
+            bwt_delta = R_matrix[final_perf_key] - R_matrix[initial_perf_key]
+            bwt_values.append(bwt_delta)
+    BWT = np.mean(bwt_values) if bwt_values else 0.0
+    
+    # FWT (Forward Transfer): (1/(T-1)) * Σ (R_{i-1,i} - b_i) for i=1 to T-1
+    fwt_values = []
+    for i in range(1, num_tasks):  # i=1 to T-1
+        pretrain_perf_key = f"{i-1},{i}"  # R_{i-1,i}
+        baseline_key = f"test_{tasks[i][1]}"  # baseline for task i
+        if pretrain_perf_key in R_matrix and baseline_key in fwt_baseline_neg_mae:
+            fwt_delta = R_matrix[pretrain_perf_key] - fwt_baseline_neg_mae[baseline_key]
+            fwt_values.append(fwt_delta)
+    FWT = np.mean(fwt_values) if fwt_values else 0.0
+    
+    # Final evaluation on test_full
+    final_met_full, final_preds_full, final_tgts_full = trainer.evaluate(loaders['test_full'])
+    
+    # ───────── Log Final Results ─────────
+    logger.info("\n" + "-"*60)
+    logger.info("[FINAL RESULTS] (Using -MAE as primary metric)")
+    logger.info("  ACC (Average Accuracy):     %.4f", ACC)
+    logger.info("  BWT (Backward Transfer):    %.4f", BWT)
+    logger.info("  FWT (Forward Transfer):     %.4f", FWT)
+    logger.info("  Test Full -MAE:             %.4f", final_met_full['NEG_MAE'])
+    logger.info("  Test Full MAE:              %.4f", final_met_full['MAE'])
+    logger.info("  Test Full R²:               %.4f", final_met_full['R2'])
+    logger.info("  Test Full RMSE:             %.4f", final_met_full['RMSE'])
+    logger.info("-"*60)
+
+    # ───────── Save Final Results ─────────
+    final_metrics = {
+        'ACC': float(ACC),
+        'BWT': float(BWT),
+        'FWT': float(FWT),
+        'test_full_NEG_MAE': float(final_met_full['NEG_MAE']),
+        'test_full_MAE': float(final_met_full['MAE']),
+        'test_full_R2': float(final_met_full['R2']),
+        'test_full_RMSE': float(final_met_full['RMSE']),
+        'R_matrix': {k: float(v) for k, v in R_matrix.items()},
+        'baseline_NEG_MAE': {k: float(v) for k, v in fwt_baseline_neg_mae.items()},
+        'metric_type': 'NEG_MAE',  # Document which metric was used
+        'note': 'All continual learning metrics (ACC, BWT, FWT) computed using negative MAE'
+    }
+    
+    # Save final metrics
+    final_dir = base_dir / 'incremental'
+    with open(final_dir / 'final_metrics.json', 'w') as f:
+        json.dump(final_metrics, f, indent=4)
+    
+    # Save process metrics (all tasks)
+    process_df = pd.DataFrame(process_metrics)
+    process_df.to_csv(final_dir / 'process_metrics.csv', index=False)
+    
+    # Save final predictions
+    plot_predictions(final_preds_full, final_tgts_full, final_dir / 'final_predictions')
+    
+    # Save final predictions as CSV
+    final_pred_df = pd.DataFrame({
+        'actual': final_tgts_full,
+        'predicted': final_preds_full
+    })
+    final_pred_df.to_csv(final_dir / 'final_predictions.csv', index=False)
+    
+    logger.info("[INCREMENTAL] Final metrics saved → %s", final_dir / 'final_metrics.json')
     logger.info("=" * 60)
 
 
