@@ -1,0 +1,30 @@
+[INFO] Using device: cuda:0
+[INFO] Data directory: ../../01_Datenaufbereitung/Output/Calculated
+[INFO] Caching data...
+[INFO] Data cached successfully
+[INFO] Training base task (single run)…
+[INFO] Base checkpoint stored → inc_search/base_ckpt.pth
+[INFO] Starting Optuna optimization...
+
+============================================================
+=== OPTIMIZATION RESULTS ===
+Best average R² = 0.0231
+Best parameters:
+  lam0: 619.7603
+  lam1: 14.9777
+  alpha1: 1.6698
+  alpha2: 0.4039
+
+Detailed R² scores:
+  Base: -1.3040
+  Update1: 0.5271
+  Update2: -1.5938
+
+Trial statistics:
+  Completed: 25
+  Pruned: 25
+  Failed: 0
+  Total: 50
+
+Results saved to: /beegfs/home/users/z/zzhuqshun/Thesis/05_Final/3inputs/inc_search/optuna_results
+============================================================

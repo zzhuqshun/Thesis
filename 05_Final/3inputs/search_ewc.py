@@ -1,17 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Optuna 超参数搜索（以 MAE 为目标，增量 SOH‑LSTM）
---------------------------------------------------------------------
-* 仅搜索 EWC λ₀、λ₁ α₁、α₂。
-* 目标函数：三个测试集 MAE 的算术平均（越小越好）。
-* base 任务仅训练一次并缓存；后续 trial 直接加载。
-
-假设新版 `ewc.py` 中已实现：
-    Config, DataProcessor, SOHLSTM, Trainer, EWC,
-    create_dataloaders, set_seed, get_predictions
-"""
-
 from __future__ import annotations
-
 import json
 import tempfile
 from pathlib import Path
@@ -21,8 +9,8 @@ import optuna
 import torch
 from sklearn.metrics import mean_absolute_error
 
-# ---- 新框架 -------------------------------------------------------
-from ewc import (
+# 新版框架
+from model import (
     Config,
     DataProcessor,
     SOHLSTM,
@@ -30,19 +18,14 @@ from ewc import (
     EWC,
     create_dataloaders,
     set_seed,
-    get_predictions,
 )
 
-# ------------------------------------------------------------------
-# 常量 / 路径
-# ------------------------------------------------------------------
 TMP_ROOT = Path("optuna_search-no-pruner")
 TMP_ROOT.mkdir(parents=True, exist_ok=True)
-
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-# baseline 配置（除搜索超参外全部固定）
-BASE_CONFIG: dict = {
+# task0 配置：注意新版用 LWF_ALPHAS、EWC_LAMBDAS 列表
+TASK0_CONFIG = {
     "SEQUENCE_LENGTH": 720,
     "HIDDEN_SIZE": 128,
     "NUM_LAYERS": 2,
@@ -55,216 +38,161 @@ BASE_CONFIG: dict = {
     "SEED": 42,
     "SCALER": "RobustScaler",
     "RESAMPLE": "10min",
-    "LWF_ALPHA0": 0.0,
-    "LWF_ALPHA1": 0.0,  # 待搜索
-    "LWF_ALPHA2": 0.0,  # 待搜索
-    "EWC_LAMBDA0": 0.0,  # 待搜索
-    "EWC_LAMBDA1": 0.0,  # 待搜索
+    # placeholders，下面 objective 会填充
+    "LWF_ALPHAS": [0.0, 0.0, 0.0],
+    "EWC_LAMBDAS": [0.0, 0.0, 0.0],
 }
 
-# ------------------------------------------------------------------
-# 工具函数
-# ------------------------------------------------------------------
-
 def calc_mae(model: torch.nn.Module, loader, device: torch.device) -> float:
-    """在 loader 上计算 MAE"""
-    preds, tgts = get_predictions(model, loader, device)
-    return mean_absolute_error(tgts, preds)
+    model.eval()
+    ys_p, ys_t = [], []
+    with torch.no_grad():
+        for x, y in loader:
+            pred = model(x.to(device)).cpu().numpy()
+            ys_p.append(pred)
+            ys_t.append(y.numpy())
+    ys_p = np.concatenate(ys_p)
+    ys_t = np.concatenate(ys_t)
+    return mean_absolute_error(ys_t, ys_p)
 
-
-def train_base_once(cfg: Config, cached_data, ckpt_dir: Path) -> None:
-    """如果不存在，就训练并缓存 base 任务模型权重和 Fisher"""
+def train_task0_once(cfg: Config, cached_data, ckpt_dir: Path):
     ckpt_path = ckpt_dir / "task0_best.pt"
     if ckpt_path.exists():
-        print(f"[INFO] Base checkpoint already exists → {ckpt_path}")
+        print(f"[INFO] task0 exists → {ckpt_path}")
         return
 
-    print("[INFO] Training base task …")
+    print("[INFO] Training task0 …")
     loaders = create_dataloaders(cached_data, cfg.SEQUENCE_LENGTH, cfg.BATCH_SIZE)
-
     model = SOHLSTM(3, cfg.HIDDEN_SIZE, cfg.NUM_LAYERS, cfg.DROPOUT).to(DEVICE)
-    trainer = Trainer(model, DEVICE, cfg, checkpoint_dir=str(ckpt_dir))
-
-    trainer.train_task(
-        train_loader=loaders["base_train"],
-        val_loader=loaders["base_val"],
+    trainer = Trainer(model, DEVICE, cfg, checkpoint_dir=ckpt_dir)
+    # task0，不用 EWC，也不做 LWF
+    history = trainer.train_task(
+        train_loader=loaders["task0_train"],
+        val_loader=loaders["task0_val"],
         task_id=0,
         apply_ewc=False,
         alpha_lwf=0.0,
-        resume=False,
     )
+    print(f"[INFO] task0 done, best loss: {min(history['val_loss']):.4e}")
+    # consolidate（λ=1.0 仅缓存 fisher）
+    trainer.consolidate(loaders["task0_train"], task_id=0, lam=1.0)
+    print(f"[INFO] task0 done → {ckpt_path}")
 
-    # consolidate 一次，λ 固定为 1.0 只用于缓存
-    trainer.consolidate(loaders["base_train"], task_id=0, lam=1.0)
-    print(f"[INFO] Base task finished → {ckpt_path}")
+def objective(trial: optuna.Trial, task0_cfg: dict, cached_data, task0_ckpt_dir: Path):
+    # 1) 采样
+    lam0 = trial.suggest_float("lambda0", 1e1, 1e4, log=True)
+    lam1 = trial.suggest_float("lambda1", 1e1, 1e4, log=True)
+    alpha1 = trial.suggest_float("alpha1", 0.0, 2.0)
+    alpha2 = trial.suggest_float("alpha2", 0.0, 2.0)
 
+    # 2) 构造新版参数列表
+    cfg_dict = task0_cfg.copy()
+    cfg_dict["LWF_ALPHAS"] = [0.0, alpha1, alpha2]
+    cfg_dict["EWC_LAMBDAS"] = [lam0, lam1, 0.0]
+    cfg = Config(**cfg_dict)
+    set_seed(cfg.SEED + trial.number)
 
-# ------------------------------------------------------------------
-# Optuna 目标函数
-# ------------------------------------------------------------------
+    # 3) DataLoader & 模型
+    loaders = create_dataloaders(cached_data, cfg.SEQUENCE_LENGTH, cfg.BATCH_SIZE)
+    model = SOHLSTM(3, cfg.HIDDEN_SIZE, cfg.NUM_LAYERS, cfg.DROPOUT).to(DEVICE)
 
-def objective(trial: optuna.Trial, base_cfg: dict, cached_data, base_ckpt_dir: Path) -> float:
-    try:
-        # 1) 采样超参
-        lam0 = trial.suggest_float("lambda0", 1e1, 1e4, log=True)
-        lam1 = trial.suggest_float("lambda1", 1e1, 1e4, log=True)
-        alpha1 = trial.suggest_float("alpha1", 0.0, 2.0)
-        alpha2 = trial.suggest_float("alpha2", 0.0, 2.0)
+    # 4) 临时目录 checkpoint
+    with tempfile.TemporaryDirectory() as td:
+        trainer = Trainer(model, DEVICE, cfg, checkpoint_dir=td)
+        # 5) 加载 task0
+        ckpt = task0_ckpt_dir / "task0_best.pt"
+        if ckpt.exists():
+            state = torch.load(ckpt, map_location=DEVICE)
+            trainer.model.load_state_dict(state["model_state"])
+            # 重建 EWC：用保存的 params & fisher
+            trainer.ewc_tasks = []
+            for e_data in state.get("ewc_tasks", []):
+                e = EWC.__new__(EWC)
+                e.model = trainer.model
+                e.device = DEVICE
+                e.params = {n: p.to(DEVICE) for n, p in e_data["params"].items()}
+                e.fisher = {n: f.to(DEVICE) for n, f in e_data["fisher"].items()}
+                e.lam = lam0
+                trainer.ewc_tasks.append(e)
 
-        # 2) 配置 + 随机种子
-        cfg_dict = base_cfg.copy()
-        cfg_dict.update(
-            {
-                "EWC_LAMBDA0": lam0,
-                "EWC_LAMBDA1": lam1,
-                "LWF_ALPHA1": alpha1,
-                "LWF_ALPHA2": alpha2,
-            }
+        # 6) 更新 1
+        trainer.train_task(
+            train_loader=loaders["task1_train"],
+            val_loader=loaders["task1_val"],
+            task_id=1,
+            apply_ewc=True,
+            alpha_lwf=cfg.LWF_ALPHAS[1],
         )
-        cfg = Config(**cfg_dict)
-        set_seed(cfg.SEED + trial.number)
+        trainer.consolidate(loaders["task1_train"], task_id=1, lam=lam1)
 
-        # 3) 数据、模型、Trainer
-        loaders = create_dataloaders(cached_data, cfg.SEQUENCE_LENGTH, cfg.BATCH_SIZE)
-        model = SOHLSTM(3, cfg.HIDDEN_SIZE, cfg.NUM_LAYERS, cfg.DROPOUT).to(DEVICE)
+        # 7) 更新 2
+        trainer.train_task(
+            train_loader=loaders["task2_train"],
+            val_loader=loaders["task2_val"],
+            task_id=2,
+            apply_ewc=True,
+            alpha_lwf=cfg.LWF_ALPHAS[2],
+        )
 
-        # 4) 为每个 trial 用临时目录保存 checkpoint（可 debug）
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            trainer = Trainer(model, DEVICE, cfg, checkpoint_dir=tmp_dir)
+        # 8) 测 MAE
+        maes = [
+            calc_mae(trainer.model, loaders[k], DEVICE)
+            for k in ("task0_train", "task1_train", "task2_train")
+        ]
+        avg = float(np.mean(maes))
+        trial.set_user_attr("mae_values", maes)
+        trial.set_user_attr("avg_mae", avg)
+        return avg
 
-            # 5) 加载 base 任务权重 + Fisher
-            base_ckpt = base_ckpt_dir / "task0_best.pt"
-            if base_ckpt.exists():
-                state = torch.load(base_ckpt, map_location=DEVICE)
-                trainer.model.load_state_dict(state["model_state"])
-
-                # 重建 EWC 对象（沿用 consolidate 时缓存的 λ=1.0）
-                trainer.ewc_tasks = []
-                for data in state.get("ewc_tasks", []):
-                    e = EWC.__new__(EWC)
-                    e.model = trainer.model
-                    e.device = DEVICE
-                    e.params = {k: v.to(DEVICE) for k, v in data["params"].items()}
-                    e.fisher = {k: v.to(DEVICE) for k, v in data["fisher"].items()}
-                    e.lam = lam0  # 对 base 任务应用新的 λ₀
-                    trainer.ewc_tasks.append(e)
-
-            # 6) update‑1 训练
-            trainer.train_task(
-                train_loader=loaders["update1_train"],
-                val_loader=loaders["update1_val"],
-                task_id=1,
-                apply_ewc=True,
-                alpha_lwf=cfg.LWF_ALPHA1,
-                resume=False,
-            )
-
-            # consolidate（带 λ₁）
-            trainer.consolidate(loaders["update1_train"], task_id=1, lam=lam1)
-
-            # 7) update‑2 训练
-            trainer.train_task(
-                train_loader=loaders["update2_train"],
-                val_loader=loaders["update2_val"],
-                task_id=2,
-                apply_ewc=True,
-                alpha_lwf=cfg.LWF_ALPHA2,
-                resume=False,
-            )
-
-            # 8) 评估三个任务 MAE
-            maes = [
-                calc_mae(trainer.model, loaders[key], DEVICE)
-                for key in ("test_base", "test_update1", "test_update2")
-            ]
-            avg_mae = float(np.mean(maes))
-
-            # 记录到 user_attr 便于事后分析
-            trial.set_user_attr("mae_values", [float(m) for m in maes])
-            trial.set_user_attr("avg_mae", avg_mae)
-            return avg_mae  # **minimize** MAE
-
-    except Exception as err:
-        # 任何错误 → 返回正无穷，等价于“最差表现”
-        print(f"[ERROR] Trial {trial.number} failed: {err}")
-        return float("inf")
-
-
-# ------------------------------------------------------------------
-# 主程序入口
-# ------------------------------------------------------------------
-
-def main() -> None:
+def main():
     print(f"[INFO] Device: {DEVICE}")
     print(f"[INFO] Workspace: {TMP_ROOT.resolve()}")
 
-    # 1) 数据准备（一次性缓存到内存）
-    cfg = Config(**BASE_CONFIG)
-    print("[INFO] Loading & caching data …")
+    # 1) 准备数据
+    cfg0 = Config(**TASK0_CONFIG)
+    print("[INFO] Loading data …")
     dp = DataProcessor(
-        data_dir="../../01_Datenaufbereitung/Output/Calculated/",
-        resample=cfg.RESAMPLE,
-        config=cfg,
-        base_train_ids=["03", "05", "07", "27"],
-        base_val_ids=["01"],
-        update1_train_ids=["21", "23", "25"],
-        update1_val_ids=["19"],
-        update2_train_ids=["09", "11", "15", "29"],
-        update2_val_ids=["13"],
+        data_dir=cfg0.DATA_DIR,
+        resample=cfg0.RESAMPLE,
+        config=cfg0,
     )
-    cached_data = dp.prepare_data()
+    cached = dp.prepare_incremental_data(cfg0.incremental_datasets)
     print("[INFO] Data cached.")
 
-    # 2) 训练 base 任务
-    base_ckpt_dir = TMP_ROOT / "base_checkpoints"
-    base_ckpt_dir.mkdir(exist_ok=True)
-    train_base_once(cfg, cached_data, base_ckpt_dir)
+    # 2) task0
+    task0_ckpt_dir = TMP_ROOT / "task0_checkpoints"
+    task0_ckpt_dir.mkdir(exist_ok=True)
+    train_task0_once(cfg0, cached, task0_ckpt_dir)
 
-    # 3) 创建 Optuna Study（不启用剪枝）
-    study = optuna.create_study(
-        direction="minimize",
-        study_name="ewc_lambda_optimization",
-    )
-
-    # 4) 运行搜索
+    # 3) Optuna
+    study = optuna.create_study(direction="minimize", study_name="ewc_lambda_opt")
     study.optimize(
-        lambda t: objective(t, BASE_CONFIG, cached_data, base_ckpt_dir),
+        lambda t: objective(t, TASK0_CONFIG, cached, task0_ckpt_dir),
         n_trials=50,
         show_progress_bar=True,
     )
 
-    # 5) 输出 / 保存结果
-    results_dir = TMP_ROOT / "results"
-    results_dir.mkdir(exist_ok=True)
-
+    # 4) 保存结果
+    rdir = TMP_ROOT / "results"; rdir.mkdir(exist_ok=True)
     study.trials_dataframe(
-        attrs=("number", "state", "values", "params", "user_attrs")
-    ).to_csv(results_dir / "all_trials.csv", index=False)
-
+        attrs=("number","state","values","params","user_attrs")
+    ).to_csv(rdir/"all_trials.csv", index=False)
     best = study.best_trial
     summary = {
         "best_avg_mae": float(best.value),
-        "best_params": {k: float(v) for k, v in best.params.items()},
-        "mae_values": best.user_attrs.get("mae_values", []),
+        "best_params": best.params,
+        "mae_values": best.user_attrs["mae_values"],
         "trial_number": best.number,
     }
-    with open(results_dir / "best_params.json", "w") as fh:
-        json.dump(summary, fh, indent=4)
+    with open(rdir/"best_params.json","w") as f:
+        json.dump(summary, f, indent=4)
 
-    # 控制台摘要
-    print("\n" + "=" * 60)
-    print("OPTIMIZATION RESULTS")
-    print(f"Best average MAE = {best.value:.4f}")
-    for k, v in best.params.items():
-        print(f"  {k}: {v:.4f}")
-    if "mae_values" in best.user_attrs:
-        base_mae, u1_mae, u2_mae = best.user_attrs["mae_values"]
-        print("Detailed MAE:")
-        print(f"  Base    : {base_mae:.4f}")
-        print(f"  Update1 : {u1_mae:.4f}")
-        print(f"  Update2 : {u2_mae:.4f}")
-    print("=" * 60)
-
+    # 控制台输出
+    print("\n" + "="*40)
+    print(f"Best MAE = {best.value:.4f}  (trial {best.number})")
+    for k,v in best.params.items():
+        print(f"  {k} = {v:.4f}")
+    print("="*40)
 
 if __name__ == "__main__":
     main()
