@@ -1,0 +1,81 @@
+[INFO] Device: cuda:0
+[INFO] Workspace: /beegfs/home/users/z/zzhuqshun/Thesis/05_Final/3inputs/optuna_search-no-pruner
+[INFO] Loading data …
+[INFO] Data cached.
+[INFO] Training task0 …
+[INFO] task0 done, best loss: 3.9766e-04
+[INFO] task0 done → optuna_search-no-pruner/task0_checkpoints/task0_best.pt
+[I 2025-07-19 15:34:39,635] Trial 0 finished with value: 0.030285948887467384 and parameters: {'lambda0': 87.64858071686321, 'lambda1': 26.141733146306564, 'alpha1': 0.6271654017913608, 'alpha2': 1.6622208393914228}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 16:06:50,768] Trial 1 finished with value: 0.04084087535738945 and parameters: {'lambda0': 152.2968533102999, 'lambda1': 9578.526936902432, 'alpha1': 1.959836197924544, 'alpha2': 1.501070762239217}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 16:37:57,428] Trial 2 finished with value: 0.033655595034360886 and parameters: {'lambda0': 564.8771565431908, 'lambda1': 2300.2157023703153, 'alpha1': 0.4023599288738291, 'alpha2': 1.3664634045809472}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 17:10:47,260] Trial 3 finished with value: 0.038646399974823 and parameters: {'lambda0': 1309.7384233336365, 'lambda1': 12.298209787742827, 'alpha1': 0.518241726180132, 'alpha2': 0.46941345582696736}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 18:01:02,017] Trial 4 finished with value: 0.034975405782461166 and parameters: {'lambda0': 8412.049749764827, 'lambda1': 13.628271446728188, 'alpha1': 1.1019629048172919, 'alpha2': 1.8840850764898505}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 18:39:54,039] Trial 5 finished with value: 0.04083618149161339 and parameters: {'lambda0': 2425.6082901032682, 'lambda1': 8174.954525754659, 'alpha1': 0.0437430830290817, 'alpha2': 1.2368912366884377}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 19:14:25,344] Trial 6 finished with value: 0.03607076779007912 and parameters: {'lambda0': 29.242293000653724, 'lambda1': 580.9849236787242, 'alpha1': 1.7623317126752263, 'alpha2': 1.0208412883926636}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 19:50:47,528] Trial 7 finished with value: 0.03961541876196861 and parameters: {'lambda0': 204.83426904747813, 'lambda1': 232.0774252585584, 'alpha1': 1.6313632342699569, 'alpha2': 0.9170493825406871}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 20:29:39,158] Trial 8 finished with value: 0.03547948971390724 and parameters: {'lambda0': 372.72434959904894, 'lambda1': 3547.0473526493283, 'alpha1': 1.891146664147962, 'alpha2': 0.7220433133212993}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 21:00:41,273] Trial 9 finished with value: 0.06131568178534508 and parameters: {'lambda0': 3659.825067990815, 'lambda1': 4180.118124387756, 'alpha1': 0.5819360212167306, 'alpha2': 1.6696307331565516}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 21:53:42,639] Trial 10 finished with value: 0.05091359093785286 and parameters: {'lambda0': 14.032826650145616, 'lambda1': 63.61467091312413, 'alpha1': 1.104580517967254, 'alpha2': 0.032705306359621655}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 22:29:56,527] Trial 11 finished with value: 0.03808077052235603 and parameters: {'lambda0': 49.364004322947, 'lambda1': 856.1174952872996, 'alpha1': 0.4957712636443036, 'alpha2': 1.4026707287378883}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 23:03:36,718] Trial 12 finished with value: 0.04294048622250557 and parameters: {'lambda0': 590.661798183313, 'lambda1': 154.60664043096648, 'alpha1': 0.08682251735475921, 'alpha2': 1.9468981103653547}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-19 23:35:41,702] Trial 13 finished with value: 0.04468073323369026 and parameters: {'lambda0': 102.08829034242515, 'lambda1': 49.598521531710524, 'alpha1': 0.7528941925451985, 'alpha2': 1.6670867519887365}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-20 00:12:51,374] Trial 14 finished with value: 0.03930393233895302 and parameters: {'lambda0': 725.3284034386498, 'lambda1': 1031.7613970761943, 'alpha1': 0.270749604634531, 'alpha2': 1.2421108576102238}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-20 01:03:50,489] Trial 15 finished with value: 0.034501343965530396 and parameters: {'lambda0': 69.86821008361079, 'lambda1': 54.63848480697935, 'alpha1': 0.9473750236631132, 'alpha2': 1.7016598680702273}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-20 01:45:25,702] Trial 16 finished with value: 0.03174955025315285 and parameters: {'lambda0': 253.36343718911897, 'lambda1': 1102.7242980788637, 'alpha1': 1.3611715218122602, 'alpha2': 1.3416195181578237}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-20 02:16:54,088] Trial 17 finished with value: 0.04284520819783211 and parameters: {'lambda0': 23.091503703304202, 'lambda1': 414.5768339393711, 'alpha1': 1.4177365007644445, 'alpha2': 1.033512346789921}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-20 02:57:52,550] Trial 18 finished with value: 0.035214439034461975 and parameters: {'lambda0': 263.47883365391255, 'lambda1': 105.16695299955033, 'alpha1': 1.390859636483136, 'alpha2': 0.5952249206040141}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-20 03:44:22,254] Trial 19 finished with value: 0.03804503753781319 and parameters: {'lambda0': 103.7062050640682, 'lambda1': 25.50359920454513, 'alpha1': 0.8090743747838198, 'alpha2': 0.2392248488351918}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-20 04:19:52,553] Trial 20 finished with value: 0.049527693539857864 and parameters: {'lambda0': 39.90398118175808, 'lambda1': 1650.878017828813, 'alpha1': 1.3229180254827633, 'alpha2': 1.5620876843107028}. Best is trial 0 with value: 0.030285948887467384.
+[I 2025-07-20 05:06:14,741] Trial 21 finished with value: 0.028652364388108253 and parameters: {'lambda0': 555.8803969466832, 'lambda1': 1964.1799421675798, 'alpha1': 0.30787546631146706, 'alpha2': 1.261950525276332}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 05:45:43,295] Trial 22 finished with value: 0.039168115705251694 and parameters: {'lambda0': 1112.3826668268082, 'lambda1': 1426.7769550646103, 'alpha1': 0.6866428680685581, 'alpha2': 1.1753117764768648}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 06:22:19,959] Trial 23 finished with value: 0.034569066017866135 and parameters: {'lambda0': 290.8405973459907, 'lambda1': 315.29983408354536, 'alpha1': 0.2488625216896393, 'alpha2': 0.8856872791677064}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 07:08:16,314] Trial 24 finished with value: 0.034696098417043686 and parameters: {'lambda0': 169.84132393372246, 'lambda1': 750.8601540895937, 'alpha1': 0.9620460747556661, 'alpha2': 1.8267897349008373}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 07:58:48,807] Trial 25 finished with value: 0.03326954320073128 and parameters: {'lambda0': 10.042298833861905, 'lambda1': 3275.437380538629, 'alpha1': 0.3596269956640603, 'alpha2': 1.5066464949309495}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 08:39:07,840] Trial 26 finished with value: 0.033117059618234634 and parameters: {'lambda0': 94.2408122769027, 'lambda1': 27.0275980275512, 'alpha1': 1.5303572883277998, 'alpha2': 1.360290739331825}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 09:14:47,666] Trial 27 finished with value: 0.04029899835586548 and parameters: {'lambda0': 402.4486301943841, 'lambda1': 5709.4201866573085, 'alpha1': 1.2538563413599007, 'alpha2': 1.12914434465605}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 09:52:55,466] Trial 28 finished with value: 0.03859378397464752 and parameters: {'lambda0': 1226.8687385597102, 'lambda1': 1964.0993654306067, 'alpha1': 0.15846826699425662, 'alpha2': 1.7913105870695107}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 10:28:32,930] Trial 29 finished with value: 0.03514498472213745 and parameters: {'lambda0': 139.0881563038569, 'lambda1': 535.593887659186, 'alpha1': 1.1243954322502305, 'alpha2': 1.5418295966165658}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 11:07:53,258] Trial 30 finished with value: 0.034508492797613144 and parameters: {'lambda0': 59.103084484364906, 'lambda1': 211.42619321554935, 'alpha1': 0.6500470431947035, 'alpha2': 1.3781789830105895}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 11:53:05,575] Trial 31 finished with value: 0.031181158497929573 and parameters: {'lambda0': 103.05934015098305, 'lambda1': 26.399985553065832, 'alpha1': 1.474980354151512, 'alpha2': 1.3164943642094622}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 12:30:13,585] Trial 32 finished with value: 0.04045689478516579 and parameters: {'lambda0': 171.67229295971546, 'lambda1': 16.845615672688197, 'alpha1': 1.5505641499412315, 'alpha2': 1.3003617554142861}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 13:41:55,074] Trial 33 finished with value: 0.04391032084822655 and parameters: {'lambda0': 461.6333883884449, 'lambda1': 32.867094326158444, 'alpha1': 0.42394158646855884, 'alpha2': 1.4818055108457189}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 14:18:51,557] Trial 34 finished with value: 0.035815879702568054 and parameters: {'lambda0': 252.9284597052153, 'lambda1': 10.35786484650834, 'alpha1': 0.8332095088417677, 'alpha2': 1.1141703485020023}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 15:12:01,035] Trial 35 finished with value: 0.0340639166533947 and parameters: {'lambda0': 887.8350648068115, 'lambda1': 94.83104996656051, 'alpha1': 1.9996762451142014, 'alpha2': 1.4301370363237362}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 15:47:11,506] Trial 36 finished with value: 0.03718312457203865 and parameters: {'lambda0': 117.50387111895685, 'lambda1': 1281.2687272675596, 'alpha1': 1.2143739184059092, 'alpha2': 0.7800656265540824}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 16:19:46,801] Trial 37 finished with value: 0.05530274286866188 and parameters: {'lambda0': 1772.0709521138494, 'lambda1': 2786.562328645219, 'alpha1': 1.7596461252767874, 'alpha2': 1.6347574258269426}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 16:57:58,862] Trial 38 finished with value: 0.03412961587309837 and parameters: {'lambda0': 3454.6274784132243, 'lambda1': 18.39178223598608, 'alpha1': 1.4953459762505188, 'alpha2': 1.98300285709247}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 17:28:00,855] Trial 39 finished with value: 0.040396492928266525 and parameters: {'lambda0': 75.58440726586709, 'lambda1': 9779.522104900941, 'alpha1': 1.7225692607097955, 'alpha2': 1.2321188793019922}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 18:19:54,314] Trial 40 finished with value: 0.0366145558655262 and parameters: {'lambda0': 27.96442343928491, 'lambda1': 6106.491291206298, 'alpha1': 1.6252456716928958, 'alpha2': 0.9350404932816343}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 18:50:31,129] Trial 41 finished with value: 0.0645085945725441 and parameters: {'lambda0': 100.45959332557403, 'lambda1': 16.32345122554511, 'alpha1': 1.4671641317723123, 'alpha2': 1.3002596761073646}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 19:35:21,567] Trial 42 finished with value: 0.03444412723183632 and parameters: {'lambda0': 222.14974040514124, 'lambda1': 30.106991407891822, 'alpha1': 1.6531311037543877, 'alpha2': 1.3379744062258538}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 20:20:23,434] Trial 43 finished with value: 0.03534745052456856 and parameters: {'lambda0': 77.36166235089657, 'lambda1': 37.916336281572136, 'alpha1': 1.2827712312328117, 'alpha2': 1.0504705608600198}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 21:10:38,042] Trial 44 finished with value: 0.034899014979600906 and parameters: {'lambda0': 45.60014572109862, 'lambda1': 22.803795493246998, 'alpha1': 0.5288548079145073, 'alpha2': 1.771841372797153}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 21:42:36,832] Trial 45 finished with value: 0.03832796961069107 and parameters: {'lambda0': 8396.172527943036, 'lambda1': 89.53972285919434, 'alpha1': 1.8771354143952679, 'alpha2': 1.5811719518382885}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 22:26:08,243] Trial 46 finished with value: 0.032429203391075134 and parameters: {'lambda0': 458.5224442418826, 'lambda1': 45.49666647150274, 'alpha1': 1.5630593664817234, 'alpha2': 1.430335923281091}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-20 23:31:30,124] Trial 47 finished with value: 0.031438153237104416 and parameters: {'lambda0': 506.5608169012087, 'lambda1': 68.19677492130351, 'alpha1': 1.2052509237539495, 'alpha2': 1.4472080934176053}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-21 00:22:07,230] Trial 48 finished with value: 0.03667706251144409 and parameters: {'lambda0': 753.9773376247309, 'lambda1': 126.5668176982518, 'alpha1': 1.0437196036926308, 'alpha2': 1.2228947493826483}. Best is trial 21 with value: 0.028652364388108253.
+[I 2025-07-21 01:02:26,830] Trial 49 finished with value: 0.03469831496477127 and parameters: {'lambda0': 593.0562593222835, 'lambda1': 70.74657760978258, 'alpha1': 1.3725178158115072, 'alpha2': 1.4598974038590018}. Best is trial 21 with value: 0.028652364388108253.
+JobID           JobName      State  AllocTRES    ReqTRES        NodeList    Elapsed 
+------------ ---------- ---------- ---------- ---------- --------------- ---------- 
+69946        ewc-no-pr+     FAILED cpu=2,gre+ cpu=2,gre+          gpu054 1-10:31:21 
+69946.batch       batch     FAILED cpu=2,gre+                     gpu054 1-10:31:21 
+69946.extern     extern  COMPLETED cpu=2,gre+                     gpu054 1-10:31:22 
+
+NodeName=gpu054 Arch=x86_64 CoresPerSocket=8 
+   CPUAlloc=8 CPUEfctv=16 CPUTot=16 CPULoad=8.47
+   AvailableFeatures=all,gpu,tesla_v100s
+   ActiveFeatures=all,gpu,tesla_v100s
+   Gres=gpu:v100s:2
+   NodeAddr=gpu054 NodeHostName=gpu054 Version=22.05.8
+   OS=Linux 6.1.0-16-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.67-1 (2023-12-12) 
+   RealMemory=385540 AllocMem=25600 FreeMem=162809 Sockets=2 Boards=1
+   MemSpecLimit=2048
+   State=MIXED ThreadsPerCore=1 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A
+   Partitions=ex_scioi_gpu,scioi_gpu 
+   BootTime=2025-01-10T15:13:02 SlurmdStartTime=2025-03-17T15:58:45
+   LastBusyTime=2025-07-21T09:55:13
+   CfgTRES=cpu=16,mem=385540M,billing=6,gres/gpu=2
+   AllocTRES=cpu=8,mem=25G,gres/gpu=1
+   CapWatts=n/a
+   CurrentWatts=0 AveWatts=0
+   ExtSensorsJoules=n/s ExtSensorsWatts=0 ExtSensorsTemp=n/s

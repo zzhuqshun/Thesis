@@ -1,5 +1,6 @@
 from __future__ import annotations
 import json
+import os
 import time
 import random
 import copy
@@ -25,9 +26,9 @@ logger = logging.getLogger(__name__)
 # ===============================================================
 class Config:
     def __init__(self, **kwargs):
-        
-        self.MODE = "incremental"  # 'joint' or 'incremental'
-        self.BASE_DIR = Path.cwd() / "model" / "fine-tuning-ewc(no-eval)"
+        # job_id = os.getenv('JOB_ID') or os.getenv('SLURM_JOB_ID')
+        self.MODE = 'incremental'  # 'joint' or 'incremental'
+        self.BASE_DIR = Path.cwd() / "strategies" / "ewc"
         self.DATA_DIR = Path('../../01_Datenaufbereitung/Output/Calculated/')
         
         # Model parameters
@@ -45,8 +46,22 @@ class Config:
         self.RESAMPLE = '10min'
         
         self.ALPHA = 0.1  # Smoothing factor for predictions
-        self.LWF_ALPHAS = [0.0, 0.0, 0.0]  # alpha0, alpha1, alpha2
-        self.EWC_LAMBDAS = [0.0, 0.0, 0.0] # lambda0, lambda1, lambda2
+        
+        # # trial 17
+        # self.LWF_ALPHAS = [0.0, 1.5967913830605263, 0.7224937140102906]  # alpha0, alpha1, alpha2
+        # self.EWC_LAMBDAS = [215.95446197298435, 588.671303985778, 0.0] # lambda0, lambda1, lambda2
+
+
+        # trial 17
+        self.LWF_ALPHAS = [0.0, 0.0, 0.0] # alpha0, alpha1, alpha2
+        self.EWC_LAMBDAS = [215.95446197298435, 588.671303985778, 0.0] # lambda0, lambda1, lambda2
+        
+        # # trial 21
+        # self.LWF_ALPHAS = [0.0, 0.30787546631146706, 1.261950525276332]  # alpha0, alpha1, alpha2
+        # self.EWC_LAMBDAS = [555.8803969466832, 1964.1799421675798, 0.0] # lambda0, lambda1, lambda2
+        
+        # self.LWF_ALPHAS = [0.0, 0.0, 0.0]
+        # self.EWC_LAMBDAS = [0.0, 0.0, 0.0]
         
         # Dataset IDs for joint training
         self.joint_datasets = {
@@ -54,6 +69,7 @@ class Config:
             'val_ids': ['01', '19', '13'],
             'test_id': '17'
         }
+        
         
         # Dataset IDs for incremental training
         self.incremental_datasets = {
@@ -73,6 +89,7 @@ class Config:
             "smooth_alpha": self.ALPHA,
             "lwf_alphas": self.LWF_ALPHAS,
             "ewc_lambdas": self.EWC_LAMBDAS,
+            
         }
         
         for k, v in kwargs.items():
@@ -114,9 +131,9 @@ class Visualizer:
         plt.semilogy(df['epoch'], df['val_loss'], label='Val Loss')
         # Loss components
         plt.semilogy(df['epoch'], df['task_loss'], label='Task Loss', linestyle='--')
-        if 'kd_loss' in df.columns and df['kd_loss'].sum() > 0:
+        if 'kd_loss' in df.columns:
             plt.semilogy(df['epoch'], df['kd_loss'], label='KD Loss', linestyle='--')
-        if 'ewc_loss' in df.columns and df['ewc_loss'].sum() > 0:
+        if 'ewc_loss' in df.columns:
             plt.semilogy(df['epoch'], df['ewc_loss'], label='EWC Loss', linestyle='--')
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
@@ -128,62 +145,107 @@ class Visualizer:
         plt.close()
 
     @staticmethod
-    def plot_predictions(preds, tgts, metrics, out_dir):
-        """Plot prediction vs actual and residuals in a single figure with two subplots"""
+    def plot_predictions(preds, tgts, metrics, out_dir, alpha=0.1):
+        """Plot prediction vs actual and residuals as separate figures, including smooth predictions"""
         out_dir.mkdir(parents=True, exist_ok=True)
         idx = np.arange(len(tgts))
+        
+        # Calculate smooth predictions
+        preds_smooth = pd.Series(preds).ewm(alpha=alpha, adjust=False).mean().to_numpy()
 
-        _, axs = plt.subplots(2, 1, figsize=(12, 7), sharex=True, gridspec_kw={'height_ratios': [2, 1]})
-
-        # Subplot 1: Prediction vs Actual
-        axs[0].plot(idx, tgts, label='Actual', color='tab:blue', alpha=0.8)
-        axs[0].plot(idx, preds, label='Predicted', color='tab:orange', alpha=0.7)
-        axs[0].set_ylabel('SOH')
-        axs[0].set_title(f"Predictions\nRMSE: {metrics['RMSE']:.4e}, MAE: {metrics['MAE']:.4e}, R²: {metrics['R2']:.4f}")
-        axs[0].legend()
-        axs[0].grid(True)
-
-        # Subplot 2: Residuals
-        residuals = tgts - preds
-        axs[1].plot(idx, residuals, color='tab:green', alpha=0.7, label='Residuals')
-        axs[1].axhline(y=0, color='r', linestyle='--', linewidth=1)
-        axs[1].set_xlabel('Index')
-        axs[1].set_ylabel('Residuals')
-        axs[1].set_title('Residuals (Actual - Predicted)')
-        axs[1].legend()
-        axs[1].grid(True)
-
+        # Figure 1: Prediction vs Actual
+        plt.figure(figsize=(12, 6))
+        plt.plot(idx, tgts, label='Actual', color='tab:blue', alpha=0.8, linewidth=1.5)
+        plt.plot(idx, preds, label='Predicted', color='tab:orange', alpha=0.7, linewidth=1)
+        plt.plot(idx, preds_smooth, label='Predicted (Smooth)', color='tab:red', alpha=0.8, linewidth=1.2)
+        plt.xlabel('Index')
+        plt.ylabel('SOH')
+        
+        # Title with both original and smooth metrics
+        title_text = (f"Predictions\n"
+                     f"RMSE: {metrics['RMSE']:.4e}, MAE: {metrics['MAE']:.4e}, R²: {metrics['R2']:.4f}\n"
+                     f"RMSE (smooth): {metrics['RMSE_smooth']:.4e}, MAE (smooth): {metrics['MAE_smooth']:.4e}, R² (smooth): {metrics['R2_smooth']:.4f}")
+        plt.title(title_text)
+        plt.legend()
+        plt.grid(True)
         plt.tight_layout()
-        plt.savefig(out_dir / 'prediction_and_residuals.png', dpi=300, bbox_inches='tight')
+        plt.savefig(out_dir / 'predictions.png', dpi=300, bbox_inches='tight')
+        plt.close()
+
+        # Figure 2: Residuals
+        plt.figure(figsize=(12, 5))
+        residuals = tgts - preds
+        residuals_smooth = tgts - preds_smooth
+        plt.plot(idx, residuals, color='tab:green', alpha=0.7, label='Residuals', linewidth=1)
+        plt.plot(idx, residuals_smooth, color='tab:purple', alpha=0.7, label='Residuals (Smooth)', linewidth=1.2)
+        plt.axhline(y=0, color='r', linestyle='--', linewidth=1)
+        plt.xlabel('Index')
+        plt.ylabel('Residuals')
+        plt.title('Residuals (Actual - Predicted)')
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig(out_dir / 'residuals.png', dpi=300, bbox_inches='tight')
         plt.close()
 
     @staticmethod
-    def plot_prediction_scatter(preds, tgts, out_dir):
-        """Plot prediction scatter plot and error distribution as two separate figures"""
+    def plot_prediction_scatter(preds, tgts, out_dir, alpha=0.1):
+        """Plot prediction scatter plot and error distribution as two separate figures, including smooth predictions"""
         out_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Calculate smooth predictions
+        preds_smooth = pd.Series(preds).ewm(alpha=alpha, adjust=False).mean().to_numpy()
 
         # Scatter plot: Predicted vs Actual
-        plt.figure(figsize=(6, 6))
-        plt.scatter(tgts, preds, alpha=0.6)
+        plt.figure(figsize=(12, 5))
+        
+        # Original predictions scatter
+        plt.subplot(1, 2, 1)
+        plt.scatter(tgts, preds, alpha=0.6, label='Original')
         lims = [min(tgts.min(), preds.min()), max(tgts.max(), preds.max())]
         plt.plot(lims, lims, 'r--', label='Perfect Prediction')
         plt.xlabel('Actual SOH')
         plt.ylabel('Predicted SOH')
         plt.legend()
         plt.grid(True)
-        plt.title('Prediction Scatter Plot')
+        plt.title('Prediction Scatter Plot (Original)')
+        
+        # Smooth predictions scatter
+        plt.subplot(1, 2, 2)
+        plt.scatter(tgts, preds_smooth, alpha=0.6, color='red', label='Smooth')
+        lims = [min(tgts.min(), preds_smooth.min()), max(tgts.max(), preds_smooth.max())]
+        plt.plot(lims, lims, 'r--', label='Perfect Prediction')
+        plt.xlabel('Actual SOH')
+        plt.ylabel('Predicted SOH (Smooth)')
+        plt.legend()
+        plt.grid(True)
+        plt.title('Prediction Scatter Plot (Smooth)')
+        
         plt.tight_layout()
         plt.savefig(out_dir / 'prediction_scatter.png', dpi=300, bbox_inches='tight')
         plt.close()
 
         # Error distribution
-        plt.figure(figsize=(6, 4))
+        plt.figure(figsize=(12, 4))
+        
+        # Original errors
+        plt.subplot(1, 2, 1)
         errors = np.abs(tgts - preds)
         plt.hist(errors, bins=30, alpha=0.7, edgecolor='black')
         plt.xlabel('Absolute Error')
         plt.ylabel('Frequency')
         plt.grid(True)
-        plt.title('Error Distribution')
+        plt.title('Error Distribution (Original)')
+        
+        # Smooth errors
+        plt.subplot(1, 2, 2)
+        errors_smooth = np.abs(tgts - preds_smooth)
+        plt.hist(errors_smooth, bins=30, alpha=0.7, edgecolor='black', color='red')
+        plt.xlabel('Absolute Error (Smooth)')
+        plt.ylabel('Frequency')
+        plt.grid(True)
+        plt.title('Error Distribution (Smooth)')
+        
         plt.tight_layout()
         plt.savefig(out_dir / 'error_distribution.png', dpi=300, bbox_inches='tight')
         plt.close()
@@ -255,6 +317,8 @@ class DataProcessor:
         # Fit scaler on training data
         feat_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
         self.scaler.fit(df_train[feat_cols])
+        logger.info("  (Scaler) Scaler centers: %s", self.scaler.center_)
+        logger.info("  (Scaler) Scaler scales: %s", self.scaler.scale_)
 
         def scale_df(df):
             if df.empty:
@@ -315,6 +379,8 @@ class DataProcessor:
         # Fit scaler on base training data
         feat_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
         self.scaler.fit(df_0train[feat_cols])
+        logger.info("  (Scaler) Scaler centers: %s", self.scaler.center_)
+        logger.info("  (Scaler) Scaler scales: %s", self.scaler.scale_)
 
         def scale_df(df):
             if df.empty:
@@ -344,6 +410,7 @@ class SOHLSTM(nn.Module):
         super().__init__()
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers,
                            batch_first=True, dropout=dropout if num_layers > 1 else 0)
+        # self.norm = nn.LayerNorm(hidden_size)
         self.fc = nn.Sequential(
             nn.Linear(hidden_size, hidden_size // 2),
             nn.LeakyReLU(),
@@ -354,6 +421,7 @@ class SOHLSTM(nn.Module):
     def forward(self, x):
         out, _ = self.lstm(x)
         h = out[:, -1, :]
+        # h = self.norm(h)
         return self.fc(h).squeeze(-1)
 
 class EWC:
@@ -417,15 +485,15 @@ class EWC:
 # Trainer
 # ===============================================================
 class Trainer:
-    def __init__(self, model, device, config, checkpoint_dir):
+    def __init__(self, model, device, config, task_dir=None):
         self.model = model.to(device)
         self.device = device
         self.config = config
         self.ewc_tasks = []
         self.old_model = None
-        self.checkpoint_dir = Path(checkpoint_dir) if checkpoint_dir else None
-        if self.checkpoint_dir:
-            self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
+        self.task_dir = Path(task_dir) if task_dir else None
+        if self.task_dir:
+            self.task_dir.mkdir(parents=True, exist_ok=True)
 
     def train_task(self, train_loader, val_loader, task_id, apply_ewc=True, alpha_lwf=0.0):
         optimizer = torch.optim.Adam(self.model.parameters(),
@@ -439,24 +507,27 @@ class Trainer:
 
         history = {k: [] for k in ['epoch', 'train_loss', 'val_loss', 'lr', 'time', 'task_loss', 'kd_loss', 'ewc_loss']}
 
-        for epoch in tqdm.tqdm(range(self.config.EPOCHS), desc="Training"):
+        for epoch in tqdm.tqdm(range(self.config.EPOCHS), desc=f"Training Task {task_id}"):
             epoch_start = time.time()
             self.model.train()
             sum_task = sum_kd = sum_ewc = train_loss = 0.0
-
+                
             for x, y in train_loader:
                 x, y = x.to(self.device), y.to(self.device)
                 optimizer.zero_grad()
                 y_pred = self.model(x)
                 task_loss = F.mse_loss(y_pred, y)
+                #F.smooth_l1_loss(y_pred, y)
                 kd_loss = torch.zeros((), device=self.device)
                 if alpha_lwf > 0 and self.old_model is not None:
                     with torch.no_grad():
                         y_old = self.old_model(x)
                     kd_loss = F.mse_loss(y_pred, y_old)
+                    
                 ewc_loss = torch.zeros((), device=self.device)
                 if apply_ewc and self.ewc_tasks:
                     ewc_loss = sum(t.penalty(self.model) for t in self.ewc_tasks)
+                    
                 loss = task_loss + alpha_lwf * kd_loss + ewc_loss
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.model.parameters(), 1)
@@ -502,8 +573,9 @@ class Trainer:
                 best_val = val_loss
                 no_imp = 0
                 best_model_state = copy.deepcopy(self.model.state_dict())
-                if self.checkpoint_dir:
-                    torch.save({'model_state': best_model_state}, self.checkpoint_dir / f"task{task_id}_best.pt")
+                # Save to task directory if available
+                if self.task_dir:
+                    torch.save({'model_state': best_model_state}, self.task_dir / f"task{task_id}_best.pt")
             else:
                 no_imp += 1
                 if no_imp >= self.config.PATIENCE:
@@ -516,8 +588,8 @@ class Trainer:
 
     def consolidate(self, loader, task_id=None, lam=0.0):
         self.ewc_tasks.append(EWC(self.model, loader, self.device, lam))
-        if self.checkpoint_dir and task_id is not None:
-            path = self.checkpoint_dir / f"task{task_id}_best.pt"
+        if self.task_dir and task_id is not None:
+            path = self.task_dir / f"task{task_id}_best.pt"
             if path.exists():
                 state = torch.load(path, map_location=self.device)
                 state['ewc_tasks'] = [
@@ -534,7 +606,7 @@ class Trainer:
         for p in self.old_model.parameters():
             p.requires_grad_(False)
 
-    def evaluate(self, loader, alpha=0.1):
+    def evaluate(self, loader, alpha=0.1, log = True):
         self.model.eval()
         preds, tgts = [], []
         with torch.no_grad():
@@ -554,8 +626,9 @@ class Trainer:
         metrics['RMSE_smooth'] = np.sqrt(mean_squared_error(tgts, preds_smooth))
         metrics['MAE_smooth'] = mean_absolute_error(tgts, preds_smooth)
         metrics['R2_smooth'] = r2_score(tgts, preds_smooth)
-                
-        logger.info("RMSE: %.4e, MAE: %.4e, R²: %.4f", metrics['RMSE'], metrics['MAE'], metrics['R2'])
+        
+        if log:        
+            logger.info("RMSE: %.4e, MAE: %.4e, R²: %.4f", metrics['RMSE'], metrics['MAE'], metrics['R2'])
         return preds, tgts, metrics
 
 # ===============================================================
@@ -640,8 +713,8 @@ def joint_training(config):
     preds, tgts, metrics = trainer.evaluate(loader=loaders['test'], alpha=config.ALPHA)
     
     # Save visualizations
-    Visualizer.plot_predictions(preds, tgts, metrics, results_dir)
-    Visualizer.plot_prediction_scatter(preds, tgts, results_dir)
+    Visualizer.plot_predictions(preds, tgts, metrics, results_dir, alpha=config.ALPHA)
+    Visualizer.plot_prediction_scatter(preds, tgts, results_dir, alpha=config.ALPHA)
     
     # Save metrics
     pd.DataFrame([metrics]).to_csv(results_dir / 'test_metrics.csv', index=False)
@@ -676,12 +749,15 @@ def incremental_training(config):
         ('task1', True, config.EWC_LAMBDAS[1], config.LWF_ALPHAS[1]), 
         ('task2', True, config.EWC_LAMBDAS[2], config.LWF_ALPHAS[2])
     ]
-    metrics_summary = []
+    # ===============================================================
+    # Model Training
+    # ===============================================================
     for task_id, apply_ewc, lam, alpha_lwf in tasks:
         logger.info("==== Training task %s ====", task_id)
-        
+        logger.info("Applying LWF alpha: %.4f", alpha_lwf)
         task_dir = inc_dir / task_id
         task_dir.mkdir(parents=True, exist_ok=True)
+        trainer.task_dir = task_dir
         
         task_idx = int(task_id[-1])
         set_seed(config.SEED + task_idx)  # Ensure different seed for each task
@@ -695,45 +771,162 @@ def incremental_training(config):
             apply_ewc=apply_ewc,
             alpha_lwf=alpha_lwf
         )
-        pd.DataFrame(history).to_csv(task_dir / f'{task_id}_history.csv', index=False)
-        Visualizer.plot_losses(history, task_dir / 'results')
+
+        # Save task-specific visualizations
+        task_results_dir = task_dir / 'results'
+        task_results_dir.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame(history).to_csv(task_dir / f'training_history.csv', index=False)
+        Visualizer.plot_losses(history, task_results_dir)
+        
         logger.info("Consolidate lambda: %.4f", lam)
-        logger.info("Applying LWF alpha: %.4f", alpha_lwf)
+
         trainer.consolidate(train_loader, task_id=task_idx, lam=lam)
         logger.info("==== Training task %s completed ====", task_id)
         
-        # logger.info("==== Evaluating task %s ====", task_id)
-        # test_loader = loaders[f'test_{task_id}']
-        # preds, tgts, metrics = trainer.evaluate(test_loader)
-        # logger.info("Current task %s metrics: RMSE=%.4e, MAE=%.4e, R²=%.4f",
-        #             task_id, metrics['RMSE'], metrics['MAE'], metrics['R2'])
-        # # Save metrics
-        # metrics_summary.append({
-        #     "task": task_id,
-        #     "scope": "task",
-        #     **metrics,
-        # })
-        # plots_dir = task_dir / 'results'
-        # Visualizer.plot_predictions(preds, tgts, metrics, plots_dir)
-        # Visualizer.plot_prediction_scatter(preds, tgts, plots_dir)
-        
-        # test_full_loader = loaders['test_full']
-        # full_preds, full_tgts, full_metrics = trainer.evaluate(test_full_loader)
-        
-        # metrics_summary.append({
-        #     "task": task_id,
-        #     "scope": "full",
-        #     **full_metrics,
-        # })
-        # logger.info("Full test metrics: RMSE=%.4e, MAE=%.4e, R²=%.4f",
-        #             full_metrics['RMSE'], full_metrics['MAE'], full_metrics['R2'])
-        # Visualizer.plot_predictions(full_preds, full_tgts, full_metrics, plots_dir)
-        # Visualizer.plot_prediction_scatter(full_preds, full_tgts, plots_dir)
-        # logger.info("==== Evaluation for task %s completed ====", task_id)
-    
-    summary_df = pd.DataFrame(metrics_summary)
-    summary_df.to_csv(inc_dir / 'incremental_metrics_summary.csv', index=False)
     logger.info("==== Incremental Training Completed ====")
+
+    # ===============================================================
+    # Evaluation Phase - Load each stage model and evaluate
+    # ===============================================================
+    logger.info("==== Starting Comprehensive Evaluation ====")
+    
+    # Create evaluation directory
+    eval_dir = inc_dir / 'evaluation'
+    eval_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Matrix to store R values (performance metric = -MAE)
+    # R[i][j] = performance of model after learning task i on test set of task j
+    num_tasks = len(tasks)
+    R_matrix = np.zeros((num_tasks, num_tasks))
+    
+    metrics_summary = []
+    
+    for i, (trained_task_id, _, _, _) in enumerate(tasks):
+        # Load model checkpoint from this stage
+        checkpoint_path = inc_dir / f"task{i}" / f"task{i}_best.pt"
+        if not checkpoint_path.exists():
+            logger.error("Checkpoint not found: %s", checkpoint_path)
+            continue
+            
+        # Create fresh model and load weights
+        eval_model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
+        checkpoint = torch.load(checkpoint_path, map_location=device)
+        eval_model.load_state_dict(checkpoint['model_state'])
+        eval_model.eval()
+        
+        # Create temporary trainer for evaluation
+        eval_trainer = Trainer(eval_model, device, config, None)
+        
+        # Evaluate on test full
+        full_preds, full_true, full_metrics = eval_trainer.evaluate(
+            loaders['test_full'], alpha=config.ALPHA, log=False
+        )
+        Visualizer.plot_predictions(
+            full_preds, full_true, full_metrics,
+            eval_dir / f"task{i}_full"
+        )
+        
+        metrics_summary.append({
+        "trained_after_task": trained_task_id,
+        "evaluated_on_task": "full",
+        "trained_task_idx": i,
+        "eval_task_idx": -1,
+        **{k: full_metrics[k] for k in (
+            "MAE","MAE_smooth","RMSE","RMSE_smooth","R2","R2_smooth"
+        )},
+        "R_value": -full_metrics["MAE"]
+        })
+        
+        
+        # Evaluate on all task test sets
+        for j, (test_task_id, _, _, _) in enumerate(tasks):
+            test_loader = loaders[f'test_{test_task_id}']
+            # Get predictions and metrics
+            _, _, metrics = eval_trainer.evaluate(test_loader, alpha=config.ALPHA, log=False)
+            
+            # Store R value (negative MAE for maximization perspective)
+            R_matrix[i][j] = -metrics['MAE']
+            
+            # Store only essential metrics for CL calculation
+            metrics_summary.append({
+                "trained_after_task": trained_task_id,
+                "evaluated_on_task": test_task_id,
+                "trained_task_idx": i,
+                "eval_task_idx": j,
+                "MAE": metrics['MAE'],
+                "MAE_smooth": metrics['MAE_smooth'],
+                "RMSE": metrics['RMSE'],
+                "RMSE_smooth": metrics['RMSE_smooth'],
+                "R2": metrics['R2'],
+                "R2_smooth": metrics['R2_smooth'],
+                "R_value": R_matrix[i][j]
+            })
+    
+    # ===============================================================
+    # Calculate BWT, FWT, ACC according to literature
+    # ===============================================================
+    logger.info("==== Computing BWT, FWT, ACC Metrics ====")
+    
+    # Baseline performance calculation for FWT
+    logger.info("Computing random initialization baselines for FWT calculation...")
+    torch.manual_seed(config.SEED + 773)
+    baseline_model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
+    baseline_trainer = Trainer(baseline_model, device, config, None)
+    
+    baseline_performance = np.zeros(num_tasks)
+    for j in range(num_tasks):
+        test_loader = loaders[f'test_task{j}']
+        _, _, baseline_metrics = baseline_trainer.evaluate(test_loader, alpha=config.ALPHA, log=False)
+        baseline_performance[j] = -baseline_metrics['MAE']
+    
+    # Calculate BWT, FWT, ACC
+    BWT = np.mean([R_matrix[num_tasks-1, i] - R_matrix[i, i] for i in range(num_tasks-1)])
+    
+    FWT = np.mean([R_matrix[i-1, i] - baseline_performance[i] for i in range(1, num_tasks)])
+    
+    ACC = np.mean(R_matrix[num_tasks-1, :])
+    
+    # Create summary metrics
+    continual_learning_metrics = {
+        "BWT": BWT,
+        "FWT": FWT, 
+        "ACC": ACC,
+    }
+    
+    logger.info("==== Continual Learning Metrics ====")
+    logger.info("BWT: %.4f", BWT)
+    logger.info("FWT: %.4f", FWT)
+    logger.info("ACC: %.4f", ACC)
+    
+    # Print R matrix for inspection
+    logger.info("==== R Matrix (Performance Matrix) ====")
+    for i in range(num_tasks):
+        row_str = " ".join([f"{R_matrix[i,j]:7.4f}" for j in range(num_tasks)])
+        logger.info("Task %d: [%s]", i, row_str)
+    
+    # ===============================================================
+    # Save Results to evaluation directory
+    # ===============================================================
+    
+    # Save detailed metrics
+    summary_df = pd.DataFrame(metrics_summary)
+    summary_df.to_csv(eval_dir / 'detailed_evaluation_results.csv', index=False)
+    
+    # Save continual learning metrics
+    cl_metrics_df = pd.DataFrame([continual_learning_metrics])
+    cl_metrics_df.to_csv(eval_dir / 'continual_learning_metrics.csv', index=False)
+    
+    # Save R matrix
+    r_matrix_df = pd.DataFrame(R_matrix, 
+                              index=[f"after_task{i}" for i in range(num_tasks)],
+                              columns=[f"eval_task{j}" for j in range(num_tasks)])
+    r_matrix_df.to_csv(eval_dir / 'R_matrix.csv')
+    
+    logger.info("==== Incremental Training and Evaluation Completed ====")
+    logger.info("All evaluation results saved to: %s", eval_dir)
+    
+    return continual_learning_metrics, R_matrix
+
         
 # ===============================================================
 # Main Pipeline
@@ -748,6 +941,7 @@ def main():
     setup_logging(base_dir)
     config.save(base_dir / 'config.json')
     set_seed(config.SEED)
+    
     # Joint training
     if config.MODE == 'joint':
         joint_training(config)

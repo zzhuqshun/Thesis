@@ -1,0 +1,94 @@
+{
+    "MODE": "incremental",
+    "BASE_DIR": "/beegfs/home/users/z/zzhuqshun/Thesis/05_Final/3inputs/strategies/79183",
+    "DATA_DIR": "../../01_Datenaufbereitung/Output/Calculated",
+    "SEQUENCE_LENGTH": 720,
+    "HIDDEN_SIZE": 128,
+    "NUM_LAYERS": 2,
+    "DROPOUT": 0.3,
+    "BATCH_SIZE": 32,
+    "LEARNING_RATE": 0.0001,
+    "EPOCHS": 200,
+    "PATIENCE": 20,
+    "WEIGHT_DECAY": 1e-06,
+    "SCALER": "RobustScaler",
+    "SEED": 42,
+    "RESAMPLE": "10min",
+    "ALPHA": 0.1,
+    "LWF_ALPHAS": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "MAS_LAMBDAS": [
+        215.95446197298435,
+        588.671303985778,
+        0.0
+    ],
+    "joint_datasets": {
+        "train_ids": [
+            "03",
+            "05",
+            "07",
+            "09",
+            "11",
+            "15",
+            "21",
+            "23",
+            "25",
+            "27",
+            "29"
+        ],
+        "val_ids": [
+            "01",
+            "19",
+            "13"
+        ],
+        "test_id": "17"
+    },
+    "incremental_datasets": {
+        "task0_train_ids": [
+            "03",
+            "05",
+            "07",
+            "27"
+        ],
+        "task0_val_ids": [
+            "01"
+        ],
+        "task1_train_ids": [
+            "21",
+            "23",
+            "25"
+        ],
+        "task1_val_ids": [
+            "19"
+        ],
+        "task2_train_ids": [
+            "09",
+            "11",
+            "15",
+            "29"
+        ],
+        "task2_val_ids": [
+            "13"
+        ],
+        "test_id": "17"
+    },
+    "Info": {
+        "description": "Incremental learning with mas",
+        "resample": "10min",
+        "scaler": "RobustScaler - fit on base train",
+        "smooth_alpha": 0.1,
+        "lwf_alphas": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "mas_lambdas": [
+            215.95446197298435,
+            588.671303985778,
+            0.0
+        ]
+    }
+}
