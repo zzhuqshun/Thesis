@@ -1,0 +1,93 @@
+{
+    "MODE": "joint",
+    "BASE_DIR": "model/tryouts/trial15",
+    "SEQUENCE_LENGTH": 726,
+    "HIDDEN_SIZE": 32,
+    "NUM_LAYERS": 4,
+    "DROPOUT": 0.4,
+    "BATCH_SIZE": 32,
+    "LEARNING_RATE": 0.0001,
+    "EPOCHS": 200,
+    "PATIENCE": 20,
+    "WEIGHT_DECAY": 0.0001,
+    "SCALER": "RobustScaler",
+    "GROUP_BY_CELL": true,
+    "FEATURES_COLS": [
+        "Voltage[V]",
+        "Current[A]",
+        "Temperature[\u00b0C]",
+        "EFC"
+    ],
+    "SEED": 42,
+    "RESAMPLE": "10min",
+    "LWF_ALPHA": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "EWC_LAMBDA": [
+        106.55897372508032,
+        388.9925746974312,
+        1000.0
+    ],
+    "dataset_joint": {
+        "train": [
+            "03",
+            "05",
+            "07",
+            "09",
+            "11",
+            "15",
+            "21",
+            "23",
+            "25",
+            "27",
+            "29"
+        ],
+        "val": [
+            "01",
+            "19",
+            "13"
+        ],
+        "test": [
+            "17"
+        ]
+    },
+    "dataset_incl": {
+        "base": {
+            "train": [
+                "03",
+                "05",
+                "07",
+                "27"
+            ],
+            "val": [
+                "01"
+            ]
+        },
+        "update1": {
+            "train": [
+                "21",
+                "23",
+                "25"
+            ],
+            "val": [
+                "19"
+            ]
+        },
+        "update2": {
+            "train": [
+                "09",
+                "11",
+                "15",
+                "29"
+            ],
+            "val": [
+                "13"
+            ]
+        },
+        "test": [
+            "17"
+        ]
+    }
+}

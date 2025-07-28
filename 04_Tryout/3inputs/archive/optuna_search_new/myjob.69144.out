@@ -1,0 +1,30 @@
+[INFO] Using device: cuda:0
+[INFO] Search directory: optuna_search_new
+[INFO] Preparing data...
+[INFO] Data prepared successfully
+[INFO] Training base task (single run)...
+[INFO] Base task training completed -> optuna_search_new/base_checkpoints
+[INFO] Starting Optuna optimization...
+
+============================================================
+=== OPTIMIZATION RESULTS ===
+Best average R² = 0.0238
+Best parameters:
+  lambda0: 2599.2137
+  lambda1: 178.2999
+  alpha1: 1.3195
+  alpha2: 0.9808
+
+Detailed R² scores:
+  Base: 0.3064
+  Update1: -0.1010
+  Update2: -2.4270
+
+Trial statistics:
+  Completed: 26
+  Pruned: 24
+  Failed: 0
+  Total: 50
+
+Results saved to: /beegfs/home/users/z/zzhuqshun/Thesis/05_Final/3inputs/optuna_search_new/results
+============================================================
