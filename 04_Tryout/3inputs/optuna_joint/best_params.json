@@ -1,0 +1,21 @@
+{
+    "best_val_mae_smooth": 0.0071575528342856755,
+    "best_params": {
+        "optimizer": "Adam",
+        "scheduler": "ReduceLROnPlateau",
+        "lr": 0.0004001958673884788,
+        "smooth_alpha": 0.17976459146236273,
+        "factor": 0.5678794289414575
+    },
+    "stage1_best_mae": 0.0066889875530694335,
+    "stage2_best_mae": 0.0071575528342856755,
+    "total_trials": 100,
+    "note": "Two-stage optimization with pruning and shared loaders",
+    "job_id": 73455,
+    "job_name": "refine-joint",
+    "partition": "gpu",
+    "node_list": "gpu009",
+    "requested_gpus": 0,
+    "cuda_devices": 0,
+    "host": "gpu009"
+}

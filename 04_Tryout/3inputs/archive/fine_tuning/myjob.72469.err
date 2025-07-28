@@ -1,0 +1,160 @@
+2025-07-22 07:57:27,543 - Using device: cuda
+2025-07-22 07:59:14,489 - Incremental training - Task 0 Train IDs: ['03', '05', '07', '27'], size: 92079
+2025-07-22 07:59:14,492 - Incremental training - Task 0 Val IDs: ['01'], size: 28612
+2025-07-22 07:59:14,495 - Incremental training - Task 1 Train IDs: ['21', '23', '25'], size: 65674
+2025-07-22 07:59:14,499 - Incremental training - Task 1 Val IDs: ['19'], size: 23120
+2025-07-22 07:59:14,503 - Incremental training - Task 2 Train IDs: ['09', '11', '15', '29'], size: 47891
+2025-07-22 07:59:14,507 - Incremental training - Task 2 Val IDs: ['13'], size: 6445
+2025-07-22 07:59:14,511 - Incremental training - Test ID: 17, size: 22872
+2025-07-22 07:59:14,516 - Incremental training - Test Task 0 size: 11139
+2025-07-22 07:59:14,520 - Incremental training - Test Task 1 size: 6312
+2025-07-22 07:59:14,525 - Incremental training - Test Task 2 size: 5421
+2025-07-22 07:59:14,543 -   (Scaler) Scaler centers: [ 3.31975183  0.         27.55116667]
+2025-07-22 07:59:14,552 -   (Scaler) Scaler scales: [0.20016217 1.86108033 1.05333333]
+2025-07-22 07:59:14,621 - 
+==================================================
+2025-07-22 07:59:14,625 - Starting task0
+2025-07-22 07:59:14,628 - ==================================================
+2025-07-22 07:59:14,633 - Training task0
+2025-07-22 08:02:21,222 - Epoch 000 | Train Loss: 3.8182e-02 | Val Loss: 3.7162e-04 | LR: 1.00e-04
+2025-07-22 08:03:49,837 - Epoch 001 | Train Loss: 7.2867e-03 | Val Loss: 1.0398e-03 | LR: 1.00e-04
+2025-07-22 08:05:16,795 - Epoch 002 | Train Loss: 5.3097e-03 | Val Loss: 3.9763e-04 | LR: 1.00e-04
+2025-07-22 08:06:41,440 - Epoch 003 | Train Loss: 4.3294e-03 | Val Loss: 5.3001e-04 | LR: 1.00e-04
+2025-07-22 08:08:07,249 - Epoch 004 | Train Loss: 3.4420e-03 | Val Loss: 4.4389e-04 | LR: 1.00e-04
+2025-07-22 08:09:31,261 - Epoch 005 | Train Loss: 2.6740e-03 | Val Loss: 4.3592e-04 | LR: 1.00e-04
+2025-07-22 08:10:55,210 - Epoch 006 | Train Loss: 2.0609e-03 | Val Loss: 4.5443e-04 | LR: 5.00e-05
+2025-07-22 08:12:19,051 - Epoch 007 | Train Loss: 1.6517e-03 | Val Loss: 4.0441e-04 | LR: 5.00e-05
+2025-07-22 08:13:44,414 - Epoch 008 | Train Loss: 1.4034e-03 | Val Loss: 4.0720e-04 | LR: 5.00e-05
+2025-07-22 08:15:11,541 - Epoch 009 | Train Loss: 1.1964e-03 | Val Loss: 5.0908e-04 | LR: 5.00e-05
+2025-07-22 08:16:37,280 - Epoch 010 | Train Loss: 1.0292e-03 | Val Loss: 4.2328e-04 | LR: 5.00e-05
+2025-07-22 08:18:06,479 - Epoch 011 | Train Loss: 8.7673e-04 | Val Loss: 4.3260e-04 | LR: 5.00e-05
+2025-07-22 08:20:07,208 - Epoch 012 | Train Loss: 7.6261e-04 | Val Loss: 4.6050e-04 | LR: 2.50e-05
+2025-07-22 08:22:19,056 - Epoch 013 | Train Loss: 6.8891e-04 | Val Loss: 4.3581e-04 | LR: 2.50e-05
+2025-07-22 08:25:14,323 - Epoch 014 | Train Loss: 6.5224e-04 | Val Loss: 4.0288e-04 | LR: 2.50e-05
+2025-07-22 08:27:23,390 - Epoch 015 | Train Loss: 6.1891e-04 | Val Loss: 4.0849e-04 | LR: 2.50e-05
+2025-07-22 08:29:43,384 - Epoch 016 | Train Loss: 5.8846e-04 | Val Loss: 4.4307e-04 | LR: 2.50e-05
+2025-07-22 08:32:44,181 - Epoch 017 | Train Loss: 5.6076e-04 | Val Loss: 4.2150e-04 | LR: 2.50e-05
+2025-07-22 08:35:10,167 - Epoch 018 | Train Loss: 5.3125e-04 | Val Loss: 4.3309e-04 | LR: 1.25e-05
+2025-07-22 08:37:14,223 - Epoch 019 | Train Loss: 5.0491e-04 | Val Loss: 3.9249e-04 | LR: 1.25e-05
+2025-07-22 08:39:15,372 - Epoch 020 | Train Loss: 4.9213e-04 | Val Loss: 3.9523e-04 | LR: 1.25e-05
+2025-07-22 08:39:15,383 - Early stopping at epoch 20
+2025-07-22 08:39:15,455 - task0 training completed
+2025-07-22 08:39:15,465 - 
+==================================================
+2025-07-22 08:39:15,474 - Starting task1
+2025-07-22 08:39:15,481 - ==================================================
+2025-07-22 08:39:15,489 - Training task1
+2025-07-22 08:40:47,599 - Epoch 000 | Train Loss: 8.4852e-03 | Val Loss: 2.1496e-03 | LR: 1.00e-04
+2025-07-22 08:42:34,936 - Epoch 001 | Train Loss: 6.9124e-03 | Val Loss: 1.8327e-03 | LR: 1.00e-04
+2025-07-22 08:44:42,467 - Epoch 002 | Train Loss: 6.0893e-03 | Val Loss: 1.5412e-03 | LR: 1.00e-04
+2025-07-22 08:46:46,990 - Epoch 003 | Train Loss: 5.4151e-03 | Val Loss: 1.4876e-03 | LR: 1.00e-04
+2025-07-22 08:48:55,689 - Epoch 004 | Train Loss: 4.8753e-03 | Val Loss: 1.8363e-03 | LR: 1.00e-04
+2025-07-22 08:51:05,158 - Epoch 005 | Train Loss: 4.3533e-03 | Val Loss: 2.9043e-03 | LR: 1.00e-04
+2025-07-22 08:52:45,829 - Epoch 006 | Train Loss: 4.6040e-03 | Val Loss: 1.2769e-03 | LR: 1.00e-04
+2025-07-22 08:54:33,397 - Epoch 007 | Train Loss: 3.3771e-03 | Val Loss: 1.7112e-03 | LR: 1.00e-04
+2025-07-22 08:56:40,750 - Epoch 008 | Train Loss: 2.8738e-03 | Val Loss: 2.0431e-03 | LR: 1.00e-04
+2025-07-22 08:58:47,863 - Epoch 009 | Train Loss: 2.5349e-03 | Val Loss: 1.8183e-03 | LR: 1.00e-04
+2025-07-22 09:00:56,329 - Epoch 010 | Train Loss: 1.8485e-03 | Val Loss: 1.7718e-03 | LR: 1.00e-04
+2025-07-22 09:03:02,446 - Epoch 011 | Train Loss: 1.4090e-03 | Val Loss: 1.8024e-03 | LR: 1.00e-04
+2025-07-22 09:05:09,249 - Epoch 012 | Train Loss: 1.3493e-03 | Val Loss: 1.8766e-03 | LR: 5.00e-05
+2025-07-22 09:07:14,590 - Epoch 013 | Train Loss: 8.9004e-04 | Val Loss: 2.1217e-03 | LR: 5.00e-05
+2025-07-22 09:09:22,034 - Epoch 014 | Train Loss: 7.4712e-04 | Val Loss: 2.7690e-03 | LR: 5.00e-05
+2025-07-22 09:11:29,183 - Epoch 015 | Train Loss: 6.8009e-04 | Val Loss: 2.5631e-03 | LR: 5.00e-05
+2025-07-22 09:13:33,174 - Epoch 016 | Train Loss: 5.9716e-04 | Val Loss: 4.7911e-03 | LR: 5.00e-05
+2025-07-22 09:15:39,514 - Epoch 017 | Train Loss: 5.2868e-04 | Val Loss: 3.8594e-03 | LR: 5.00e-05
+2025-07-22 09:17:46,507 - Epoch 018 | Train Loss: 4.7422e-04 | Val Loss: 4.5072e-03 | LR: 2.50e-05
+2025-07-22 09:19:52,035 - Epoch 019 | Train Loss: 4.2132e-04 | Val Loss: 4.2004e-03 | LR: 2.50e-05
+2025-07-22 09:21:54,839 - Epoch 020 | Train Loss: 4.0614e-04 | Val Loss: 4.5811e-03 | LR: 2.50e-05
+2025-07-22 09:24:03,321 - Epoch 021 | Train Loss: 3.8176e-04 | Val Loss: 4.4215e-03 | LR: 2.50e-05
+2025-07-22 09:26:25,584 - Epoch 022 | Train Loss: 3.6795e-04 | Val Loss: 4.7532e-03 | LR: 2.50e-05
+2025-07-22 09:28:36,212 - Epoch 023 | Train Loss: 3.6895e-04 | Val Loss: 4.6806e-03 | LR: 2.50e-05
+2025-07-22 09:30:39,249 - Epoch 024 | Train Loss: 3.4269e-04 | Val Loss: 4.4249e-03 | LR: 1.25e-05
+2025-07-22 09:32:37,832 - Epoch 025 | Train Loss: 3.2650e-04 | Val Loss: 5.1039e-03 | LR: 1.25e-05
+2025-07-22 09:33:49,885 - Epoch 026 | Train Loss: 3.2172e-04 | Val Loss: 5.0874e-03 | LR: 1.25e-05
+2025-07-22 09:33:49,886 - Early stopping at epoch 26
+2025-07-22 09:33:49,917 - task1 training completed
+2025-07-22 09:33:49,918 - 
+==================================================
+2025-07-22 09:33:49,919 - Starting task2
+2025-07-22 09:33:49,921 - ==================================================
+2025-07-22 09:33:49,924 - Training task2
+2025-07-22 09:34:34,623 - Epoch 000 | Train Loss: 6.6238e-03 | Val Loss: 8.9261e-03 | LR: 1.00e-04
+2025-07-22 09:35:18,881 - Epoch 001 | Train Loss: 4.5128e-03 | Val Loss: 2.4267e-03 | LR: 1.00e-04
+2025-07-22 09:36:02,753 - Epoch 002 | Train Loss: 3.0847e-03 | Val Loss: 1.6135e-03 | LR: 1.00e-04
+2025-07-22 09:36:46,949 - Epoch 003 | Train Loss: 2.3170e-03 | Val Loss: 1.0802e-03 | LR: 1.00e-04
+2025-07-22 09:37:31,191 - Epoch 004 | Train Loss: 1.8032e-03 | Val Loss: 1.2794e-03 | LR: 1.00e-04
+2025-07-22 09:38:18,733 - Epoch 005 | Train Loss: 1.5198e-03 | Val Loss: 8.8075e-04 | LR: 1.00e-04
+2025-07-22 09:39:06,431 - Epoch 006 | Train Loss: 1.3144e-03 | Val Loss: 1.3266e-03 | LR: 1.00e-04
+2025-07-22 09:39:54,506 - Epoch 007 | Train Loss: 1.1309e-03 | Val Loss: 1.2147e-03 | LR: 1.00e-04
+2025-07-22 09:40:41,367 - Epoch 008 | Train Loss: 1.0438e-03 | Val Loss: 1.5400e-03 | LR: 1.00e-04
+2025-07-22 09:41:27,226 - Epoch 009 | Train Loss: 8.7193e-04 | Val Loss: 7.3422e-04 | LR: 1.00e-04
+2025-07-22 09:42:12,189 - Epoch 010 | Train Loss: 8.0920e-04 | Val Loss: 8.4184e-04 | LR: 1.00e-04
+2025-07-22 09:42:56,608 - Epoch 011 | Train Loss: 7.1032e-04 | Val Loss: 1.2023e-03 | LR: 1.00e-04
+2025-07-22 09:43:40,961 - Epoch 012 | Train Loss: 6.2151e-04 | Val Loss: 1.5803e-03 | LR: 1.00e-04
+2025-07-22 09:44:26,147 - Epoch 013 | Train Loss: 5.9436e-04 | Val Loss: 1.6277e-03 | LR: 1.00e-04
+2025-07-22 09:45:12,405 - Epoch 014 | Train Loss: 5.7669e-04 | Val Loss: 1.0583e-03 | LR: 1.00e-04
+2025-07-22 09:45:58,597 - Epoch 015 | Train Loss: 5.0866e-04 | Val Loss: 6.0227e-04 | LR: 1.00e-04
+2025-07-22 09:46:44,825 - Epoch 016 | Train Loss: 4.8888e-04 | Val Loss: 5.5334e-04 | LR: 1.00e-04
+2025-07-22 09:47:31,073 - Epoch 017 | Train Loss: 4.6320e-04 | Val Loss: 1.1233e-03 | LR: 1.00e-04
+2025-07-22 09:48:17,171 - Epoch 018 | Train Loss: 4.4754e-04 | Val Loss: 9.6051e-04 | LR: 1.00e-04
+2025-07-22 09:49:09,268 - Epoch 019 | Train Loss: 4.4230e-04 | Val Loss: 3.9801e-04 | LR: 1.00e-04
+2025-07-22 09:49:55,707 - Epoch 020 | Train Loss: 4.1482e-04 | Val Loss: 1.2363e-03 | LR: 1.00e-04
+2025-07-22 09:50:41,961 - Epoch 021 | Train Loss: 4.0967e-04 | Val Loss: 5.7209e-04 | LR: 1.00e-04
+2025-07-22 09:51:28,240 - Epoch 022 | Train Loss: 3.8244e-04 | Val Loss: 4.8812e-04 | LR: 1.00e-04
+2025-07-22 09:52:14,746 - Epoch 023 | Train Loss: 3.6495e-04 | Val Loss: 3.5326e-04 | LR: 1.00e-04
+2025-07-22 09:53:01,476 - Epoch 024 | Train Loss: 3.5468e-04 | Val Loss: 3.6766e-04 | LR: 1.00e-04
+2025-07-22 09:53:47,901 - Epoch 025 | Train Loss: 3.3551e-04 | Val Loss: 2.9623e-04 | LR: 1.00e-04
+2025-07-22 09:54:34,445 - Epoch 026 | Train Loss: 3.3722e-04 | Val Loss: 3.9432e-04 | LR: 1.00e-04
+2025-07-22 09:55:20,950 - Epoch 027 | Train Loss: 3.2193e-04 | Val Loss: 5.1195e-04 | LR: 1.00e-04
+2025-07-22 09:56:07,489 - Epoch 028 | Train Loss: 3.1463e-04 | Val Loss: 3.9035e-04 | LR: 1.00e-04
+2025-07-22 09:56:54,050 - Epoch 029 | Train Loss: 3.0810e-04 | Val Loss: 3.0386e-04 | LR: 1.00e-04
+2025-07-22 09:57:40,737 - Epoch 030 | Train Loss: 3.0882e-04 | Val Loss: 2.9678e-04 | LR: 1.00e-04
+2025-07-22 09:58:27,332 - Epoch 031 | Train Loss: 2.9201e-04 | Val Loss: 2.3998e-04 | LR: 1.00e-04
+2025-07-22 09:59:14,259 - Epoch 032 | Train Loss: 2.8704e-04 | Val Loss: 2.9934e-04 | LR: 1.00e-04
+2025-07-22 10:00:00,809 - Epoch 033 | Train Loss: 2.7915e-04 | Val Loss: 3.1987e-04 | LR: 1.00e-04
+2025-07-22 10:00:47,517 - Epoch 034 | Train Loss: 2.6850e-04 | Val Loss: 4.3491e-04 | LR: 1.00e-04
+2025-07-22 10:01:34,214 - Epoch 035 | Train Loss: 2.7156e-04 | Val Loss: 3.2946e-04 | LR: 1.00e-04
+2025-07-22 10:02:23,364 - Epoch 036 | Train Loss: 2.7916e-04 | Val Loss: 6.4560e-04 | LR: 1.00e-04
+2025-07-22 10:03:12,188 - Epoch 037 | Train Loss: 2.5936e-04 | Val Loss: 5.8501e-04 | LR: 5.00e-05
+2025-07-22 10:03:58,900 - Epoch 038 | Train Loss: 2.3367e-04 | Val Loss: 5.8006e-04 | LR: 5.00e-05
+2025-07-22 10:04:45,409 - Epoch 039 | Train Loss: 2.2718e-04 | Val Loss: 4.0525e-04 | LR: 5.00e-05
+2025-07-22 10:05:31,961 - Epoch 040 | Train Loss: 2.2157e-04 | Val Loss: 4.4483e-04 | LR: 5.00e-05
+2025-07-22 10:06:18,407 - Epoch 041 | Train Loss: 2.2217e-04 | Val Loss: 5.6739e-04 | LR: 5.00e-05
+2025-07-22 10:07:03,627 - Epoch 042 | Train Loss: 2.1315e-04 | Val Loss: 5.5188e-04 | LR: 5.00e-05
+2025-07-22 10:07:48,176 - Epoch 043 | Train Loss: 2.1296e-04 | Val Loss: 6.6473e-04 | LR: 2.50e-05
+2025-07-22 10:08:32,206 - Epoch 044 | Train Loss: 1.9721e-04 | Val Loss: 5.2319e-04 | LR: 2.50e-05
+2025-07-22 10:09:16,502 - Epoch 045 | Train Loss: 1.9205e-04 | Val Loss: 5.3138e-04 | LR: 2.50e-05
+2025-07-22 10:10:00,606 - Epoch 046 | Train Loss: 1.9030e-04 | Val Loss: 5.9026e-04 | LR: 2.50e-05
+2025-07-22 10:10:45,310 - Epoch 047 | Train Loss: 1.8511e-04 | Val Loss: 5.9120e-04 | LR: 2.50e-05
+2025-07-22 10:11:30,204 - Epoch 048 | Train Loss: 1.8639e-04 | Val Loss: 6.4174e-04 | LR: 2.50e-05
+2025-07-22 10:12:13,755 - Epoch 049 | Train Loss: 1.8685e-04 | Val Loss: 5.5026e-04 | LR: 1.25e-05
+2025-07-22 10:12:57,116 - Epoch 050 | Train Loss: 1.7234e-04 | Val Loss: 6.1004e-04 | LR: 1.25e-05
+2025-07-22 10:13:40,764 - Epoch 051 | Train Loss: 1.7524e-04 | Val Loss: 6.8644e-04 | LR: 1.25e-05
+2025-07-22 10:13:40,769 - Early stopping at epoch 51
+2025-07-22 10:13:40,811 - task2 training completed
+2025-07-22 10:13:40,814 - 
+All tasks completed!
+JobID           JobName      State        NodeList  AllocTRES 
+------------ ---------- ---------- --------------- ---------- 
+72469        fine-tuni+  COMPLETED          gpu002 billing=5+ 
+72469.batch       batch  COMPLETED          gpu002 cpu=2,gre+ 
+72469.extern     extern  COMPLETED          gpu002 billing=5+ 
+
+NodeName=gpu002 Arch=x86_64 CoresPerSocket=10 
+   CPUAlloc=2 CPUEfctv=40 CPUTot=40 CPULoad=0.94
+   AvailableFeatures=all,gpu,tesla_p100,ssd_tmp
+   ActiveFeatures=all,gpu,tesla_p100,ssd_tmp
+   Gres=gpu:tesla:2
+   NodeAddr=gpu002 NodeHostName=gpu002 Version=22.05.8
+   OS=Linux 6.1.0-16-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.67-1 (2023-12-12) 
+   RealMemory=515000 AllocMem=51200 FreeMem=340748 Sockets=2 Boards=1
+   MemSpecLimit=2048
+   State=MIXED ThreadsPerCore=2 TmpDisk=893200 Weight=100 Owner=N/A MCS_label=N/A
+   Partitions=gpu_short 
+   BootTime=2025-01-06T11:07:26 SlurmdStartTime=2025-03-17T15:58:44
+   LastBusyTime=2025-07-22T14:44:35
+   CfgTRES=cpu=40,mem=515000M,billing=19,gres/gpu=2
+   AllocTRES=cpu=2,mem=50G,gres/gpu=2
+   CapWatts=n/a
+   CurrentWatts=0 AveWatts=0
+   ExtSensorsJoules=n/s ExtSensorsWatts=0 ExtSensorsTemp=n/s

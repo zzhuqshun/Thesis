@@ -1,0 +1,13 @@
+{
+    "task": "task1",
+    "current_task_NEG_MAE": -0.053367722779512405,
+    "current_task_MAE": 0.053367722779512405,
+    "current_task_R2": -4.445163249969482,
+    "current_task_RMSE": 0.059349410235881805,
+    "test_full_NEG_MAE": -0.05328454449772835,
+    "test_full_MAE": 0.05328454449772835,
+    "test_full_R2": 0.33675235509872437,
+    "test_full_RMSE": 0.06852221488952637,
+    "EWC_lambda": 0.0,
+    "LWF_alpha": 0.0
+}
