@@ -28,10 +28,10 @@ class Config:
     """Configuration class for continual learning experiments"""
     def __init__(self, **kwargs):
         # Training mode: 'joint' for baseline, 'incremental' for continual learning
-        self.MODE = 'incremental'  
+        self.MODE = 'joint'  
         
         # Directory structure
-        self.BASE_DIR = Path.cwd() / "strategies" / "fine-tuning0"
+        self.BASE_DIR = Path.cwd() / "strategies" / "joint-tryout"
         self.DATA_DIR = Path('../../01_Datenaufbereitung/Output/Calculated/')
         
         # Model hyperparameters
@@ -42,7 +42,7 @@ class Config:
         
         # Training hyperparameters
         self.BATCH_SIZE = 32
-        self.LEARNING_RATE = 1e-4
+        self.LEARNING_RATE = 4e-4
         self.EPOCHS = 200
         self.PATIENCE = 20          # Early stopping patience
         self.WEIGHT_DECAY = 1e-6
@@ -50,13 +50,12 @@ class Config:
         # Data preprocessing
         self.SCALER = "RobustScaler"
         self.RESAMPLE = '10min'     # Time series resampling frequency
-        self.ALPHA = 0.1            # Smoothing factor for predictions
+        self.ALPHA = 0.18            # Smoothing factor for predictions
         
         # Continual Learning parameters
         self.NUM_TASKS = 3          # Number of incremental tasks
         self.LWF_ALPHAS = [0.0, 0.0, 0.0]    # Learning without Forgetting weights
-        self.SI_LAMBDAS = [0.0, 0.0, 0.0]    # Synaptic Intelligence regularization weights
-        self.SI_EPSILON = 0.1
+        self.EWC_LAMBDAS = [0.0, 0.0, 0.0]     # EWC regularization weights
         
         # Random seed for reproducibility
         self.SEED = 42
@@ -85,12 +84,12 @@ class Config:
         
         # Experiment metadata
         self.Info = {
-            "method": "SI",  # Synaptic Intelligence
+            "method": "EWC",  # Elastic Weight Consolidation
             "resample": self.RESAMPLE,
             "scaler": "RobustScaler - fit on base train",
             "smooth_alpha": self.ALPHA,
             "lwf_alphas": self.LWF_ALPHAS,
-            "si_lambdas": self.SI_LAMBDAS,
+            "ewc_lambdas": self.EWC_LAMBDAS,
             "num_tasks": self.NUM_TASKS
         }
         
@@ -139,8 +138,8 @@ class Visualizer:
         
         if 'kd_loss' in df.columns:
             plt.semilogy(df['epoch'], df['kd_loss'], label='KD Loss', linestyle='--')
-        if 'si_loss' in df.columns:
-            plt.semilogy(df['epoch'], df['si_loss'], label='SI Loss', linestyle='--')
+        if 'ewc_loss' in df.columns:
+            plt.semilogy(df['epoch'], df['ewc_loss'], label='EWC Loss', linestyle='--')
             
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
@@ -351,7 +350,7 @@ class DataProcessor:
         }
 
 # ===============================================================
-# Model & SI Regularization
+# Model & EWC Regularization
 # ===============================================================
 class SOHLSTM(nn.Module):
     """LSTM model for State of Health (SOH) prediction"""
@@ -373,98 +372,96 @@ class SOHLSTM(nn.Module):
         # Use only the last time step output
         return self.fc(out[:, -1, :]).squeeze(-1)
 
-class SI:
+class EWC:
     """
-    Synaptic Intelligence (SI) for continual learning.
-
-    SI estimates parameter importance by accumulating 
-    -∂θL * Δθ over each optimizer step, then at end of task:
-        Ω_i += w_i / (Δθ_i_total^2 + ε)
-
-    Reference: Zenke et al. "Continual Learning Through Synaptic Intelligence" (2017)
+    Elastic Weight Consolidation (EWC) for continual learning.
+    
+    EWC estimates parameter importance using the Fisher Information Matrix
+    and applies regularization to prevent important parameters from changing
+    too much in subsequent tasks.
+    
+    Reference: Kirkpatrick et al. "Overcoming catastrophic forgetting in neural networks" (2017)
     """
-
-    def __init__(self, model, si_lambda=1.0, epsilon=0.1):
+    
+    def __init__(self, model, dataloader, device, ewc_lambda=1.0):
         self.model = model
-        self.si_lambda = si_lambda
-        self.epsilon = epsilon
-
-        # Ω: accumulated importance across tasks
-        self.omega = {
-            n: torch.zeros_like(p.data)
-            for n, p in model.named_parameters() if p.requires_grad
-        }
-
-        # placeholders for task‐specific accumulators
-        self._reset_task_buffers()
-
-    def _reset_task_buffers(self):
-        # w: path‐integral accumulator for this task
-        self.w = {
-            n: torch.zeros_like(p.data)
-            for n, p in self.model.named_parameters() if p.requires_grad
-        }
-        # θ_old: parameter values at last update (or start of task)
-        self.theta_old = {
-            n: p.data.clone().detach()
-            for n, p in self.model.named_parameters() if p.requires_grad
-        }
-        # θ_start: snapshot at beginning of task
-        self.theta_start = {
-            n: p.data.clone().detach()
-            for n, p in self.model.named_parameters() if p.requires_grad
-        }
-
-    def begin_task(self):
-        """Call once before training on a new task."""
-        self._reset_task_buffers()
-
-    def update_contributions(self):
+        self.device = device
+        self.dataloader = dataloader
+        self.ewc_lambda = ewc_lambda
+        
+        # Store parameters from previous task
+        self.params = {n: p.clone().detach() 
+                      for n, p in model.named_parameters() if p.requires_grad}
+        
+        # Compute Fisher Information Matrix for this task
+        self.fisher = self._compute_fisher()
+    
+    def _compute_fisher(self):
         """
-        Call AFTER each optimizer.step().
-        Accumulate w_i += -grad_i * Δθ_i, where Δθ_i = θ_i_new - θ_i_old.
+        Compute Fisher Information Matrix.
+        The Fisher matrix approximates the second derivative of the loss
+        with respect to parameters, indicating parameter importance.
         """
-        for name, param in self.model.named_parameters():
-            if not param.requires_grad or param.grad is None:
-                continue
+        # Create a copy of the model for Fisher computation
+        model_copy = copy.deepcopy(self.model).to(self.device)
+        model_copy.train()
 
-            # change this step
-            delta = param.data - self.theta_old[name]
-            # accumulate contribution
-            self.w[name] += -param.grad.data * delta
-            # update theta_old for next step
-            self.theta_old[name] = param.data.clone().detach()
+        # Disable dropout for Fisher computation to get consistent gradients
+        for m in model_copy.modules():
+            if isinstance(m, torch.nn.Dropout):
+                m.p = 0.0
+            if isinstance(m, nn.LSTM):
+                m.dropout = 0.0
 
-    def end_task(self):
+        # Initialize Fisher matrix
+        fisher = {n: torch.zeros_like(p, device=self.device)
+                 for n, p in model_copy.named_parameters() if p.requires_grad}
+
+        n_processed = 0
+
+        # Accumulate Fisher information across the dataset
+        for x, y in self.dataloader:
+            x, y = x.to(self.device), y.to(self.device)
+
+            model_copy.zero_grad(set_to_none=True)
+            output = model_copy(x)
+            loss = F.mse_loss(output, y)
+            loss.backward()
+
+            bs = x.size(0)
+            n_processed += bs
+
+            # Accumulate squared gradients (Fisher approximation)
+            with torch.no_grad():
+                for n, p in model_copy.named_parameters():
+                    if p.requires_grad and p.grad is not None:
+                        fisher[n] += p.grad.pow(2) * bs
+
+        # Normalize by total number of samples
+        for n in fisher:
+            fisher[n] /= float(n_processed)
+
+        # Clean up
+        del model_copy
+        torch.cuda.empty_cache()
+
+        return fisher
+    
+    def penalty(self, model):
         """
-        Call once after finishing a task.
-        Compute Ω_i += w_i / ( (θ_i_end - θ_i_start)^2 + ε ).
+        Compute EWC regularization penalty.
+        Penalizes changes to important parameters from previous tasks.
         """
-        for name, param in self.model.named_parameters():
-            if not param.requires_grad:
-                continue
-
-            # total change over the task
-            delta_total = param.data - self.theta_start[name]
-            # update importance
-            self.omega[name] += self.w[name] / (delta_total.pow(2) + self.epsilon)
-
-    def penalty(self):
-        """
-        Compute SI regularization:
-           loss_reg = λ * Σ_i Ω_i * (θ_i - θ_i_start)^2
-        """
-        loss_reg = 0.0
-        for name, param in self.model.named_parameters():
-            if not param.requires_grad:
-                continue
-
-            # deviation from task‐start
-            delta = param.data - self.theta_start[name]
-            loss_reg += (self.omega[name] * delta.pow(2)).sum()
-
-        return self.si_lambda * loss_reg
-
+        loss = 0.0
+        for n, p in model.named_parameters():
+            if n in self.fisher and p.requires_grad:
+                # Calculate parameter change from previous task
+                delta = p - self.params[n]
+                
+                # Add Fisher-weighted penalty: λ * F * (θ - θ_prev)^2
+                loss += self.ewc_lambda * (self.fisher[n] * delta**2).sum()
+        
+        return loss
 
 # ===============================================================
 # Trainer
@@ -476,7 +473,7 @@ class Trainer:
         self.model = model.to(device)
         self.device = device
         self.config = config
-        self.si = None          # Synaptic Intelligence regularizer
+        self.ewc_tasks = []     # List of EWC regularizers from previous tasks
         self.old_model = None   # Previous model for knowledge distillation
         self.task_dir = Path(task_dir) if task_dir else None
         if self.task_dir: 
@@ -505,7 +502,7 @@ class Trainer:
         
         # Training history tracking
         history = {k: [] for k in ['epoch', 'train_loss', 'val_loss', 'lr', 'time', 
-                                  'task_loss', 'kd_loss', 'si_loss']}
+                                  'task_loss', 'kd_loss', 'ewc_loss']}
         
         # Training loop
         for epoch in tqdm.tqdm(range(self.config.EPOCHS), desc=f"Task{task_id}"):
@@ -514,7 +511,7 @@ class Trainer:
             
             # Loss components tracking
             tot_loss = 0
-            sum_task = sum_kd = sum_si = 0
+            sum_task = sum_kd = sum_ewc = 0
             
             for x, y in train_loader:
                 x, y = x.to(self.device), y.to(self.device)
@@ -533,29 +530,24 @@ class Trainer:
                         old_output = self.old_model(x)
                     kd_loss = F.mse_loss(yp, old_output)
                 
-                # Synaptic Intelligence regularization loss
-                si_loss = self.si.penalty() if self.si is not None else torch.zeros((), device=self.device)
+                # EWC regularization loss
+                ewc_loss = torch.zeros((), device=self.device)
+                if self.ewc_tasks:
+                    ewc_loss = sum(ewc_reg.penalty(self.model) for ewc_reg in self.ewc_tasks)
                 
                 # Total loss combination
-                loss = task_loss + alpha_lwf * kd_loss + si_loss
+                loss = task_loss + alpha_lwf * kd_loss + ewc_loss
                 
-                # Backward pass
+                # Backward pass and parameter update
                 loss.backward()
-                
-                # Gradient clipping for stability
                 nn.utils.clip_grad_norm_(self.model.parameters(), 1)
-                
-                # Parameter update
                 opt.step()
-                
-                if self.si is not None: 
-                    self.si.update_contributions()
                 
                 # Track loss components
                 bs = x.size(0)
                 sum_task += task_loss.item() * bs
                 sum_kd += kd_loss.item() * bs
-                sum_si += si_loss.item() * bs
+                sum_ewc += ewc_loss.item() * bs
                 tot_loss += loss.item() * bs
             
             # Calculate epoch averages
@@ -567,7 +559,7 @@ class Trainer:
             history['train_loss'].append(train_loss)
             history['task_loss'].append(sum_task / n)
             history['kd_loss'].append(sum_kd / n)
-            history['si_loss'].append(sum_si / n)
+            history['ewc_loss'].append(sum_ewc / n)
             
             lr_cur = opt.param_groups[0]['lr']
             history['lr'].append(lr_cur)
@@ -588,8 +580,8 @@ class Trainer:
             sched.step(val_loss)
             
             # Logging
-            logger.info("Epoch %d task=%.4e kd=%.4e si=%.4e val=%.4e lr=%.2e time=%.2fs",
-                       epoch, sum_task/n, sum_kd/n, sum_si/n, val_loss, lr_cur, history['time'][-1])
+            logger.info("Epoch %d task=%.4e kd=%.4e ewc=%.4e val=%.4e lr=%.2e time=%.2fs",
+                       epoch, sum_task/n, sum_kd/n, sum_ewc/n, val_loss, lr_cur, history['time'][-1])
             
             # Early stopping check
             if val_loss < best_val:
@@ -612,6 +604,27 @@ class Trainer:
             self.model.load_state_dict(best_state)
         
         return history
+    
+    def consolidate(self, loader, task_id=None, ewc_lambda=0.0):
+        """
+        Consolidate knowledge after task completion using EWC.
+        
+        Args:
+            loader: Data loader for Fisher computation
+            task_id: Task identifier
+            ewc_lambda: EWC regularization strength
+        """
+        # Create EWC regularizer for this task
+        ewc_reg = EWC(self.model, loader, self.device, ewc_lambda)
+        self.ewc_tasks.append(ewc_reg)
+        
+        # Save model for knowledge distillation
+        self.old_model = copy.deepcopy(self.model).to(self.device)
+        self.old_model.eval()
+        for p in self.old_model.parameters():
+            p.requires_grad_(False)
+        
+        logger.info("Task %s consolidated with EWC lambda=%.4f", task_id, ewc_lambda)
     
     def evaluate(self, loader, alpha=0.1, log=True):
         """
@@ -706,7 +719,7 @@ def joint_training(config):
     logger.info("==== Joint Training (Baseline) ====")
     
     # Setup directories
-    joint_dir = config.BASE_DIR / 'joint'
+    joint_dir = config.BASE_DIR
     ckpt = joint_dir / 'checkpoints'
     res = joint_dir / 'results'
     ckpt.mkdir(parents=True, exist_ok=True)
@@ -741,13 +754,13 @@ def joint_training(config):
 
 def incremental_training(config):
     """
-    Incremental training with Synaptic Intelligence.
+    Incremental training with Elastic Weight Consolidation (EWC).
     Train on tasks sequentially while preventing catastrophic forgetting.
     """
-    logger.info("==== Incremental Training with SI ====")
+    logger.info("==== Incremental Training with EWC ====")
     
     # Setup directories
-    inc_dir = config.BASE_DIR / 'incremental'
+    inc_dir = config.BASE_DIR
     inc_dir.mkdir(parents=True, exist_ok=True)
     
     # Get number of tasks from config
@@ -764,21 +777,14 @@ def incremental_training(config):
     model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
     trainer = Trainer(model, device, config, inc_dir)
     
-    # Initialize Synaptic Intelligence with first task's lambda
-    trainer.si = SI(model, si_lambda=config.SI_LAMBDAS[0])
-    trainer.si.begin_task()
-    
     # Sequential task training
     for task_idx in range(num_tasks):
-        current_lambda = config.SI_LAMBDAS[task_idx]
+        current_lambda = config.EWC_LAMBDAS[task_idx]
         current_alpha = config.LWF_ALPHAS[task_idx]
         task_name = f"task{task_idx}"
         
-        logger.info("--- %s (LWF α=%.4f, SI λ=%.4f) ---", 
+        logger.info("--- %s (LWF α=%.4f, EWC λ=%.4f) ---", 
                    task_name, current_alpha, current_lambda)
-        
-        # Update SI regularization strength for current task
-        trainer.si.si_lambda = current_lambda
         
         # Setup task directory
         task_dir = inc_dir / task_name
@@ -800,21 +806,10 @@ def incremental_training(config):
         pd.DataFrame(history).to_csv(task_dir / 'training_history.csv', index=False)
         Visualizer.plot_losses(history, task_dir)
         
-        # End current task: update importance weights
-        trainer.si.end_task()
-        logger.info("Task %d completed. SI importance weights updated.", task_idx)
-        
-        # Prepare for next task (if not the last task)
-        if task_idx < num_tasks - 1:
-            # Save current model for knowledge distillation
-            trainer.old_model = copy.deepcopy(trainer.model).to(device)
-            trainer.old_model.eval()
-            for p in trainer.old_model.parameters():
-                p.requires_grad_(False)
-            
-            # Reset SI state for next task
-            trainer.si.begin_task()
-            logger.info("Prepared for next task. Old model saved for knowledge distillation.")
+        # Consolidate: compute Fisher matrix and save model for next task
+        logger.info("Consolidating task %d with EWC lambda: %.4f", task_idx, current_lambda)
+        trainer.consolidate(loaders[f"{task_name}_train"], task_id=task_idx, ewc_lambda=current_lambda)
+        logger.info("Task %d completed and consolidated.", task_idx)
     
     logger.info("==== Incremental Training Complete ====")
     
@@ -1043,7 +1038,7 @@ def main():
     logger.info("==== Experiment Setup ====")
     logger.info("Mode: %s", config.MODE)
     logger.info("Number of tasks: %d", config.NUM_TASKS)
-    logger.info("SI lambdas: %s", config.SI_LAMBDAS)
+    logger.info("EWC lambdas: %s", config.EWC_LAMBDAS)
     logger.info("LWF alphas: %s", config.LWF_ALPHAS)
     logger.info("Base directory: %s", config.BASE_DIR)
     

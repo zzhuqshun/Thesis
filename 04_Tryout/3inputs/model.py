@@ -27,8 +27,8 @@ logger = logging.getLogger(__name__)
 class Config:
     def __init__(self, **kwargs):
         # job_id = os.getenv('JOB_ID') or os.getenv('SLURM_JOB_ID')
-        self.MODE = 'incremental'  # 'joint' or 'incremental'
-        self.BASE_DIR = Path.cwd() / "strategies" / "trial17-smaller-lr"
+        self.MODE = 'joint'  # 'joint' or 'incremental'
+        self.BASE_DIR = Path.cwd() / "strategies" / "joint-optuna-tryout"
         self.DATA_DIR = Path('../../01_Datenaufbereitung/Output/Calculated/')
         
         # Model parameters
@@ -37,7 +37,7 @@ class Config:
         self.NUM_LAYERS = 2
         self.DROPOUT = 0.3
         self.BATCH_SIZE = 32
-        self.LEARNING_RATE = 5e-5
+        self.LEARNING_RATE = 4e-4
         self.EPOCHS = 200
         self.PATIENCE = 20
         self.WEIGHT_DECAY = 1e-6
@@ -45,7 +45,7 @@ class Config:
         self.SEED = 42
         self.RESAMPLE = '10min'
         
-        self.ALPHA = 0.1  # Smoothing factor for predictions
+        self.ALPHA = 0.18  # Smoothing factor for predictions
         
         # trial 17
         self.LWF_ALPHAS = [0.0, 1.5967913830605263, 0.7224937140102906]  # alpha0, alpha1, alpha2
@@ -709,7 +709,7 @@ def joint_training(config):
         train_loader=loaders['train'],
         val_loader=loaders['val'],
         task_id=0,
-        apply_ewc=False
+        alpha_lwf=0.0
     )
     
     # Save training history and plots

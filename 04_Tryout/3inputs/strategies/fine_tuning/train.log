@@ -202,4 +202,21 @@
 2025-07-20 23:26:45,918 - Task 2: [-0.0674 -0.0666 -0.1054]
 2025-07-20 23:26:45,954 - ==== Incremental Training and Evaluation Completed ====
 2025-07-20 23:26:45,955 - All evaluation results saved to: /beegfs/home/users/z/zzhuqshun/Thesis/05_Final/3inputs/model/fine_tuning/incremental/evaluation
-70496
+NodeName=gpu002 Arch=x86_64 CoresPerSocket=10 
+   CPUAlloc=14 CPUEfctv=40 CPUTot=40 CPULoad=12.59
+   AvailableFeatures=all,gpu,tesla_p100,ssd_tmp
+   ActiveFeatures=all,gpu,tesla_p100,ssd_tmp
+   Gres=gpu:tesla:2
+   NodeAddr=gpu002 NodeHostName=gpu002 Version=22.05.8
+   OS=Linux 6.1.0-16-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.67-1 (2023-12-12) 
+   RealMemory=515000 AllocMem=41984 FreeMem=198059 Sockets=2 Boards=1
+   MemSpecLimit=2048
+   State=MIXED ThreadsPerCore=2 TmpDisk=893200 Weight=100 Owner=N/A MCS_label=N/A
+   Partitions=gpu_short 
+   BootTime=2025-01-06T11:07:26 SlurmdStartTime=2025-03-17T15:58:44
+   LastBusyTime=2025-07-28T10:22:25
+   CfgTRES=cpu=40,mem=515000M,billing=19,gres/gpu=2
+   AllocTRES=cpu=14,mem=41G,gres/gpu=2
+   CapWatts=n/a
+   CurrentWatts=0 AveWatts=0
+   ExtSensorsJoules=n/s ExtSensorsWatts=0 ExtSensorsTemp=n/s

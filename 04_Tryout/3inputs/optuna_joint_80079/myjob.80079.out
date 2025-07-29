@@ -1,0 +1,67 @@
+=== Job Start: Sun Jul 27 15:01:29 CEST 2025 ===
+Job ID:           80079
+Job Name:         refine-joint
+Partition:        gpu
+Node List:        gpu006
+Requested GPUs:   1
+CUDA Devices:     0
+Running on host:  gpu006
+
+=== GPU Details via nvidia-smi ===
+0, Tesla P100-PCIE-16GB, 16384 MiB, 0 %, 36
+===================================
+ ============================================================
+Stage 2: Fine-tuning learning rate and smoothing
+============================================================
+[I 2025-07-27 20:36:59,272] Trial 0 finished with value: 0.01316226554710054 and parameters: {'lr': 4.489327827583164e-05, 'alpha': 0.11429935168009783}. Best is trial 0 with value: 0.01316226554710054.
+[I 2025-07-28 00:24:58,198] Trial 1 finished with value: 0.012818219465803833 and parameters: {'lr': 8.33037835942416e-05, 'alpha': 0.07909138463858069}. Best is trial 1 with value: 0.012818219465803833.
+[I 2025-07-28 03:48:45,210] Trial 2 finished with value: 0.009049205253868783 and parameters: {'lr': 4.170681385943251e-05, 'alpha': 0.11876566652251452}. Best is trial 2 with value: 0.009049205253868783.
+[I 2025-07-28 06:04:53,913] Trial 3 finished with value: 0.012954984324994333 and parameters: {'lr': 7.678893687367407e-05, 'alpha': 0.14081333153333458}. Best is trial 2 with value: 0.009049205253868783.
+[I 2025-07-28 10:48:29,012] Trial 4 finished with value: 0.016598744285525997 and parameters: {'lr': 2.237837706800792e-05, 'alpha': 0.09028212152035721}. Best is trial 2 with value: 0.009049205253868783.
+[I 2025-07-28 10:51:55,390] Trial 5 pruned. 
+[I 2025-07-28 10:55:21,249] Trial 6 pruned. 
+[I 2025-07-28 10:59:03,824] Trial 7 pruned. 
+[I 2025-07-28 11:03:43,014] Trial 8 pruned. 
+[I 2025-07-28 11:07:49,718] Trial 9 pruned. 
+[I 2025-07-28 11:11:42,598] Trial 10 pruned. 
+[I 2025-07-28 11:15:29,013] Trial 11 pruned. 
+[I 2025-07-28 11:18:48,104] Trial 12 pruned. 
+[I 2025-07-28 11:32:04,664] Trial 13 pruned. 
+[I 2025-07-28 11:38:49,586] Trial 14 pruned. 
+[I 2025-07-28 12:42:55,467] Trial 15 pruned. 
+[I 2025-07-28 12:49:45,410] Trial 16 pruned. 
+[I 2025-07-28 12:56:19,465] Trial 17 pruned. 
+[I 2025-07-28 13:03:07,681] Trial 18 pruned. 
+[I 2025-07-28 14:05:10,642] Trial 19 pruned. 
+[I 2025-07-28 14:08:32,420] Trial 20 pruned. 
+[I 2025-07-28 14:11:51,717] Trial 21 pruned. 
+[I 2025-07-28 14:15:11,637] Trial 22 pruned. 
+[I 2025-07-28 14:54:42,127] Trial 23 pruned. 
+[I 2025-07-28 14:58:28,631] Trial 24 pruned. 
+[I 2025-07-28 15:10:24,807] Trial 25 pruned. 
+[I 2025-07-28 15:15:43,272] Trial 26 pruned. 
+[I 2025-07-28 15:29:53,531] Trial 27 pruned. 
+[I 2025-07-28 15:33:59,010] Trial 28 pruned. 
+[I 2025-07-28 15:46:30,109] Trial 29 pruned. 
+[I 2025-07-28 15:49:38,784] Trial 30 pruned. 
+[I 2025-07-28 15:52:47,792] Trial 31 pruned. 
+[I 2025-07-28 15:55:56,449] Trial 32 pruned. 
+[I 2025-07-28 16:05:24,393] Trial 33 pruned. 
+[I 2025-07-28 16:08:30,743] Trial 34 pruned. 
+[I 2025-07-28 16:11:38,226] Trial 35 pruned. 
+[I 2025-07-28 16:21:05,509] Trial 36 pruned. 
+[I 2025-07-28 16:24:13,627] Trial 37 pruned. 
+[I 2025-07-28 18:44:54,665] Trial 38 finished with value: 0.012108510554857987 and parameters: {'lr': 5.884825604147938e-05, 'alpha': 0.100171945432792}. Best is trial 2 with value: 0.009049205253868783.
+[I 2025-07-28 19:41:14,092] Trial 39 pruned. 
+[I 2025-07-28 19:45:05,200] Trial 40 pruned. 
+[I 2025-07-28 19:56:33,059] Trial 41 pruned. 
+[I 2025-07-28 20:00:18,690] Trial 42 pruned. 
+[I 2025-07-28 20:04:02,124] Trial 43 pruned. 
+[I 2025-07-28 20:07:55,013] Trial 44 pruned. 
+[I 2025-07-28 20:12:10,487] Trial 45 pruned. 
+[I 2025-07-28 20:16:49,615] Trial 46 pruned. 
+[I 2025-07-28 20:30:51,978] Trial 47 pruned. 
+[I 2025-07-28 20:43:49,867] Trial 48 pruned. 
+[I 2025-07-28 22:57:55,388] Trial 49 finished with value: 0.012845683342493914 and parameters: {'lr': 7.63773118325052e-05, 'alpha': 0.012158524744488197}. Best is trial 2 with value: 0.009049205253868783.
+Stage2 Complete: lr=4.170681e-05, alpha=0.1188, MAE_smooth=0.009049
+Refined parameters saved to optuna_joint_80079/best_params_refined.json

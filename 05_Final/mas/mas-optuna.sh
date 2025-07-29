@@ -1,14 +1,14 @@
 #!/bin/bash
 
-#SBATCH -o ./../Results/myjob.%j.out
-#SBATCH -e ./../Results/myjob.%j.err
+#SBATCH -o ./../hpc/myjob.%j.out
+#SBATCH -e ./../hpc/myjob.%j.err
 #SBATCH -D .
-#SBATCH -J ewc
+#SBATCH -J mas_optuna
 #SBATCH --cpus-per-task=2
 #SBATCH --gres=gpu:tesla:1
 #SBATCH --mem=32G
-#SBATCH --time=24:00:00
-#SBATCH --partition=gpu_short
+#SBATCH --time=7-00:00:00
+#SBATCH --partition=gpu
 
 # Job status via email:
 #SBATCH --mail-type=ALL
@@ -37,6 +37,6 @@ source ~/miniconda3/bin/activate
 conda activate myenv
 
 # Run the Python script, passing the folder path as an argument
-python model.py
+python mas-optuna.py
 
 

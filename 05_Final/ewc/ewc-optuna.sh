@@ -3,7 +3,7 @@
 #SBATCH -o ./../hpc/myjob.%j.out
 #SBATCH -e ./../hpc/myjob.%j.err
 #SBATCH -D .
-#SBATCH -J si_optuna
+#SBATCH -J ewc_optuna
 #SBATCH --cpus-per-task=2
 #SBATCH --gres=gpu:tesla:1
 #SBATCH --mem=32G
@@ -37,6 +37,6 @@ source ~/miniconda3/bin/activate
 conda activate myenv
 
 # Run the Python script, passing the folder path as an argument
-python optuna.py
+python ewc-optuna.py
 
 
