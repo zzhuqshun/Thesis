@@ -1,7 +1,7 @@
 {
     "MODE": "incremental",
-    "BASE_DIR": "/beegfs/home/users/z/zzhuqshun/Thesis/05_Final/si/strategies/fine-tuning0",
-    "DATA_DIR": "../../01_Datenaufbereitung/Output/Calculated",
+    "BASE_DIR": "/beegfs/home/users/z/zzhuqshun/Thesis/05_Final/si/strategies/fine-tuning",
+    "DATA_DIR": "../01_Datenaufbereitung/Output/Calculated",
     "SEQUENCE_LENGTH": 720,
     "HIDDEN_SIZE": 128,
     "NUM_LAYERS": 2,
@@ -25,7 +25,7 @@
         0.0,
         0.0
     ],
-    "SI_EPSILON": 0.1,
+    "SI_EPSILON": 0.000831,
     "SEED": 42,
     "joint_datasets": {
         "train_ids": [

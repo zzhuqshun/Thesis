@@ -19,6 +19,10 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
+from ewc.ewc import (Visualizer, DataProcessor, SOHLSTM, 
+                    set_seed, create_dataloaders, setup_logging, 
+                    joint_training, evaluate_incremental_learning)
+
 logger = logging.getLogger(__name__)
 
 # ===============================================================
@@ -31,8 +35,8 @@ class Config:
         self.MODE = 'incremental'  
         
         # Directory structure
-        self.BASE_DIR = Path.cwd() / "strategies" / "fine-tuning"
-        self.DATA_DIR = Path('../../01_Datenaufbereitung/Output/Calculated/')
+        self.BASE_DIR = Path.cwd() /"mas" / "strategies" / "fine-tuning"
+        self.DATA_DIR = Path('../01_Datenaufbereitung/Output/Calculated/')
         
         # Model hyperparameters
         self.SEQUENCE_LENGTH = 720  # Input sequence length for LSTM
@@ -68,10 +72,13 @@ class Config:
         }
         
         # Dataset splits for incremental learning
-        # Each task focuses on different SOH ranges:
-        # Task 0: SOH >= 0.9 (early degradation)
-        # Task 1: 0.8 <= SOH < 0.9 (medium degradation) 
-        # Task 2: SOH < 0.8 (severe degradation)
+        # Each task focuses on different degradation types
+        # Each validation will be split into val/test(7:3 ratio)
+        # Task 0: '03', '05', '07', '27'; '01'
+        # Task 1: '21', '23', '25'; '19'
+        # Task 2: '09', '11', '15', '29'; '13'
+        # Test set: '17' (common for all tasks)
+
         self.incremental_datasets = {
             'task0_train_ids': ['03', '05', '07', '27'],
             'task0_val_ids': ['01'],
@@ -118,259 +125,6 @@ class Config:
         with open(path) as f:
             data = json.load(f)
         return cls(**data)
-
-# ===============================================================
-# Visualization Functions
-# ===============================================================
-class Visualizer:
-    """Utility class for creating training and evaluation plots"""
-    
-    @staticmethod
-    def plot_losses(history, out_dir):
-        """Plot training/validation losses and loss components"""
-        df = pd.DataFrame(history)
-        out_dir.mkdir(parents=True, exist_ok=True)
-        
-        plt.figure(figsize=(10, 6))
-        plt.semilogy(df['epoch'], df['train_loss'], label='Train Loss')
-        plt.semilogy(df['epoch'], df['val_loss'], label='Val Loss')
-        plt.semilogy(df['epoch'], df['task_loss'], label='Task Loss', linestyle='--')
-        
-        if 'kd_loss' in df.columns:
-            plt.semilogy(df['epoch'], df['kd_loss'], label='KD Loss', linestyle='--')
-        if 'mas_loss' in df.columns:
-            plt.semilogy(df['epoch'], df['mas_loss'], label='MAS Loss', linestyle='--')
-            
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss')
-        plt.legend()
-        plt.grid(True)
-        plt.title('Training/Validation Loss and Components')
-        plt.tight_layout()
-        plt.savefig(out_dir / 'loss_curves.png', dpi=300, bbox_inches='tight')
-        plt.close()
-    
-    @staticmethod
-    def plot_predictions(preds, tgts, metrics, out_dir, alpha=0.1):
-        """Plot predictions vs actual values with metrics"""
-        out_dir.mkdir(parents=True, exist_ok=True)
-        idx = np.arange(len(tgts))
-        
-        # Apply exponential smoothing to predictions
-        preds_smooth = pd.Series(preds).ewm(alpha=alpha, adjust=False).mean().to_numpy()
-        
-        plt.figure(figsize=(12, 6))
-        plt.plot(idx, tgts, label='Actual')
-        plt.plot(idx, preds, label='Predicted')
-        plt.plot(idx, preds_smooth, label='Predicted (Smooth)')
-        plt.xlabel('Index')
-        plt.ylabel('SOH')
-        
-        title = (f"RMSE: {metrics['RMSE']:.4e}, MAE: {metrics['MAE']:.4e}, R2: {metrics['R2']:.4f}\n"
-                 f"RMSE(s): {metrics['RMSE_smooth']:.4e}, MAE(s): {metrics['MAE_smooth']:.4e}, R2(s): {metrics['R2_smooth']:.4f}")
-        plt.title('Predictions vs Actuals\n' + title)
-        plt.legend()
-        plt.grid(True)
-        plt.tight_layout()
-        plt.savefig(out_dir / 'predictions.png', dpi=300, bbox_inches='tight')
-        plt.close()
-    
-    @staticmethod
-    def plot_prediction_scatter(preds, tgts, out_dir, alpha=0.1):
-        """Create scatter plots of predictions vs actuals"""
-        out_dir.mkdir(parents=True, exist_ok=True)
-        preds_smooth = pd.Series(preds).ewm(alpha=alpha, adjust=False).mean().to_numpy()
-        
-        plt.figure(figsize=(12, 5))
-        
-        # Original predictions scatter
-        plt.subplot(1, 2, 1)
-        plt.scatter(tgts, preds, alpha=0.6)
-        lims = [min(tgts.min(), preds.min()), max(tgts.max(), preds.max())]
-        plt.plot(lims, lims, 'r--')
-        plt.xlabel('Actual')
-        plt.ylabel('Predicted')
-        plt.title('Scatter Original')
-        plt.grid(True)
-        
-        # Smoothed predictions scatter
-        plt.subplot(1, 2, 2)
-        plt.scatter(tgts, preds_smooth, alpha=0.6)
-        lims = [min(tgts.min(), preds_smooth.min()), max(tgts.max(), preds_smooth.max())]
-        plt.plot(lims, lims, 'r--')
-        plt.xlabel('Actual')
-        plt.ylabel('Predicted(Smooth)')
-        plt.title('Scatter Smooth')
-        plt.grid(True)
-        
-        plt.tight_layout()
-        plt.savefig(out_dir / 'prediction_scatter.png', dpi=300, bbox_inches='tight')
-        plt.close()
-
-# ===============================================================
-# Dataset & DataProcessor
-# ===============================================================
-class BatteryDataset(Dataset):
-    """PyTorch Dataset for battery time series data"""
-    
-    def __init__(self, df, seq_len):
-        # Extract features: Voltage, Current, Temperature
-        feats = df[['Voltage[V]', 'Current[A]', 'Temperature[°C]']].values
-        self.X = torch.tensor(feats, dtype=torch.float32)
-        # Target: State of Health (SOH)
-        self.y = torch.tensor(df['SOH_ZHU'].values, dtype=torch.float32)
-        self.seq_len = seq_len
-    
-    def __len__(self):
-        return len(self.X) - self.seq_len
-    
-    def __getitem__(self, idx):
-        # Return sequence of length seq_len and next SOH value
-        return (self.X[idx:idx+self.seq_len], self.y[idx+self.seq_len])
-
-class DataProcessor:
-    """Handles data loading, preprocessing, and scaling"""
-    
-    def __init__(self, data_dir, resample='10min', config=None):
-        self.data_dir = Path(data_dir)
-        self.resample = resample
-        self.scaler = RobustScaler()  # Robust to outliers
-        self.config = config
-    
-    def load_cell_data(self):
-        """Load all battery cell data files"""
-        files = sorted(self.data_dir.glob('*.parquet'), key=lambda x: int(x.stem.split('_')[-1]))
-        return {fp.stem.split('_')[-1]: fp for fp in files}
-    
-    def process_file(self, fp):
-        """Process single battery cell file"""
-        # Load relevant columns
-        df = pd.read_parquet(fp)[['Testtime[s]', 'Voltage[V]', 'Current[A]', 'Temperature[°C]', 'SOH_ZHU']]
-        df = df.dropna().reset_index(drop=True)
-        
-        # Round timestamps and create datetime index
-        df['Testtime[s]'] = df['Testtime[s]'].round().astype(int)
-        df['Datetime'] = pd.date_range('2023-02-02', periods=len(df), freq='s')
-        
-        # Resample to reduce data size and smooth noise
-        df = df.set_index('Datetime').resample(self.resample).mean().reset_index()
-        df['cell_id'] = fp.stem.split('_')[-1]
-        
-        return df
-    
-    def prepare_joint_data(self, cfg):
-        """Prepare data for joint training (baseline)"""
-        info = self.load_cell_data()
-        
-        def build(ids): 
-            return pd.concat([self.process_file(info[c]) for c in ids], ignore_index=True) if ids else pd.DataFrame()
-        
-        df_train = build(cfg['train_ids'])
-        df_val = build(cfg['val_ids'])
-        df_test = self.process_file(info[cfg['test_id']])
-        
-        logger.info("Joint training - Train IDs: %s, size: %d", 
-                   cfg['train_ids'], len(df_train))
-        logger.info("Joint training - Val IDs: %s, size: %d", 
-                   cfg['val_ids'], len(df_val))
-        logger.info("Joint training - Test ID: %s, size: %d", 
-                   cfg['test_id'], len(df_test))
-        
-        # Fit scaler on training data only
-        feat_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
-        self.scaler.fit(df_train[feat_cols])
-        logger.info("  (Scaler) Scaler centers: %s", self.scaler.center_)
-        logger.info("  (Scaler) Scaler scales: %s", self.scaler.scale_)
-
-        
-        def scale(df):
-            df2 = df.copy()
-            if not df2.empty:
-                df2[feat_cols] = self.scaler.transform(df2[feat_cols])
-            return df2
-        
-        return {'train': scale(df_train), 'val': scale(df_val), 'test': scale(df_test)}
-    
-    def prepare_incremental_data(self, cfg):
-        """Prepare data for incremental learning"""
-        info = self.load_cell_data()
-        
-        def build(ids): 
-            return pd.concat([self.process_file(info[c]) for c in ids], ignore_index=True) if ids else pd.DataFrame()
-        
-        # Build datasets for each task
-        df0t = build(cfg['task0_train_ids']); df0v = build(cfg['task0_val_ids'])
-        df1t = build(cfg['task1_train_ids']); df1v = build(cfg['task1_val_ids'])
-        df2t = build(cfg['task2_train_ids']); df2v = build(cfg['task2_val_ids'])
-        df_test = self.process_file(info[cfg['test_id']])
-        
-        # Split test data by SOH ranges to evaluate task-specific performance
-        df_test_0 = df_test[df_test['SOH_ZHU'] >= 0.9].reset_index(drop=True)  # Task 0: early degradation
-        df_test_1 = df_test[(df_test['SOH_ZHU'] < 0.9) & (df_test['SOH_ZHU'] >= 0.8)].reset_index(drop=True)  # Task 1: medium degradation
-        df_test_2 = df_test[df_test['SOH_ZHU'] < 0.8].reset_index(drop=True)  # Task 2: severe degradation
-
-        logger.info("Incremental training - Task 0 Train IDs: %s, size: %d", 
-                    cfg['task0_train_ids'], len(df0t))
-        logger.info("Incremental training - Task 0 Val IDs: %s, size: %d", 
-                    cfg['task0_val_ids'], len(df0v))
-        logger.info("Incremental training - Task 1 Train IDs: %s, size: %d", 
-                    cfg['task1_train_ids'], len(df1t))
-        logger.info("Incremental training - Task 1 Val IDs: %s, size: %d", 
-                    cfg['task1_val_ids'], len(df1v))
-        logger.info("Incremental training - Task 2 Train IDs: %s, size: %d", 
-                    cfg['task2_train_ids'], len(df2t))
-        logger.info("Incremental training - Task 2 Val IDs: %s, size: %d", 
-                    cfg['task2_val_ids'], len(df2v))
-        logger.info("Incremental training - Test ID: %s, size: %d", 
-                    cfg['test_id'], len(df_test))
-        logger.info("Incremental training - Test Task 0 size: %d", len(df_test_0))
-        logger.info("Incremental training - Test Task 1 size: %d", len(df_test_1))
-        logger.info("Incremental training - Test Task 2 size: %d", len(df_test_2))
-        
-        
-        # Fit scaler on first task training data only
-        feat_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
-        self.scaler.fit(df0t[feat_cols])
-        logger.info("  (Scaler) Scaler centers: %s", self.scaler.center_)
-        logger.info("  (Scaler) Scaler scales: %s", self.scaler.scale_)
-
-        
-        def scale(df):
-            df2 = df.copy()
-            if not df2.empty:
-                df2[feat_cols] = self.scaler.transform(df2[feat_cols])
-            return df2
-        
-        return {
-            'task0_train': scale(df0t), 'task0_val': scale(df0v),
-            'task1_train': scale(df1t), 'task1_val': scale(df1v),
-            'task2_train': scale(df2t), 'task2_val': scale(df2v),
-            'test_full': scale(df_test),
-            'test_task0': scale(df_test_0), 'test_task1': scale(df_test_1), 'test_task2': scale(df_test_2)
-        }
-
-# ===============================================================
-# Model & MAS Regularization
-# ===============================================================
-class SOHLSTM(nn.Module):
-    """LSTM model for State of Health (SOH) prediction"""
-    
-    def __init__(self, input_size, hidden_size, num_layers, dropout=0.2):
-        super().__init__()
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers,
-                            batch_first=True, dropout=dropout if num_layers > 1 else 0)
-        self.fc = nn.Sequential(
-            nn.Linear(hidden_size, hidden_size // 2), 
-            nn.LeakyReLU(), 
-            nn.Dropout(dropout),
-            nn.Linear(hidden_size // 2, 1)
-        )
-    
-    def forward(self, x):
-        # LSTM forward pass
-        out, _ = self.lstm(x)
-        # Use only the last time step output
-        return self.fc(out[:, -1, :]).squeeze(-1)
 
 class MAS:
     """
@@ -551,6 +305,10 @@ class Trainer:
             n = len(train_loader.dataset)
             train_loss = tot_loss / n
             
+            if sum_task > 0:
+                reg_ratio = sum_mas / sum_task * 100
+                logger.info("Epoch %d: MAS loss is %.2f%% of task loss", epoch, reg_ratio)
+
             # Record training history
             history['epoch'].append(epoch)
             history['train_loss'].append(train_loss)
@@ -613,6 +371,14 @@ class Trainer:
         """
         # Create MAS regularizer for this task
         mas_reg = MAS(self.model, loader, self.device, mas_lambda)
+        
+        # 归一化
+        all_imp = torch.cat([v.flatten() for v in mas_reg.importance.values()])
+        scale = all_imp.mean().clamp(min=1e-12)   
+        for name in mas_reg.importance:
+            mas_reg.importance[name] /= scale
+        
+        logger.info("MAS importance normalized with scale %.4f", scale.item())
         self.mas_tasks.append(mas_reg)
         
         # Save model for knowledge distillation
@@ -667,88 +433,8 @@ class Trainer:
         return preds, tgts, metrics
 
 # ===============================================================
-# Utilities
-# ===============================================================
-def set_seed(seed):
-    """Set random seeds for reproducibility"""
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available(): 
-        torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-    torch.backends.cuda.matmul.allow_tf32 = False
-    torch.backends.cudnn.allow_tf32  = False
-    
-def create_dataloaders(datasets, seq_len, batch_size):
-    """Create PyTorch DataLoaders from processed datasets"""
-    loaders = {}
-    for k, df in datasets.items():
-        if not df.empty and any(x in k for x in ['train', 'val', 'test']):
-            ds = BatteryDataset(df, seq_len)
-            loaders[k] = DataLoader(ds, batch_size=batch_size, shuffle=('train' in k))
-    return loaders
-
-def setup_logging(log_dir):
-    """Setup logging configuration"""
-    log_dir.mkdir(parents=True, exist_ok=True)
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    
-    log_path = log_dir / 'train.log'
-    if not any(isinstance(h, logging.FileHandler) and h.baseFilename == str(log_path) 
-              for h in logger.handlers):
-        fh = logging.FileHandler(log_path, encoding='utf-8')
-        fh.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
-        logger.addHandler(fh)
-    
-    return logger
-
-# ===============================================================
 # Training Pipelines
 # ===============================================================
-def joint_training(config):
-    """
-    Joint training baseline: train on all tasks simultaneously.
-    This provides an upper bound for continual learning performance.
-    """
-    logger.info("==== Joint Training (Baseline) ====")
-    
-    # Setup directories
-    joint_dir = config.BASE_DIR / 'joint'
-    ckpt = joint_dir / 'checkpoints'
-    res = joint_dir / 'results'
-    ckpt.mkdir(parents=True, exist_ok=True)
-    res.mkdir(parents=True, exist_ok=True)
-    
-    # Prepare data
-    dp = DataProcessor(config.DATA_DIR, config.RESAMPLE, config)
-    data = dp.prepare_joint_data(config.joint_datasets)
-    loaders = create_dataloaders(data, config.SEQUENCE_LENGTH, config.BATCH_SIZE)
-    
-    # Initialize model and trainer
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
-    trainer = Trainer(model, device, config, ckpt)
-    
-    # Train model (no continual learning - just standard training)
-    history = trainer.train_task(loaders['train'], loaders['val'], 0, alpha_lwf=0.0)
-    
-    # Save training history and create visualizations
-    pd.DataFrame(history).to_csv(ckpt / 'training_history.csv', index=False)
-    Visualizer.plot_losses(history, res)
-    
-    # Evaluate on test set
-    preds, tgts, metrics = trainer.evaluate(loaders['test'], alpha=config.ALPHA)
-    Visualizer.plot_predictions(preds, tgts, metrics, res, alpha=config.ALPHA)
-    Visualizer.plot_prediction_scatter(preds, tgts, res, alpha=config.ALPHA)
-    
-    # Save test metrics
-    pd.DataFrame([metrics]).to_csv(res / 'test_metrics.csv', index=False)
-    
-    logger.info("==== Joint Training Complete ====")
-
 def incremental_training(config):
     """
     Incremental training with Memory Aware Synapses (MAS).
@@ -757,7 +443,7 @@ def incremental_training(config):
     logger.info("==== Incremental Training with MAS ====")
     
     # Setup directories
-    inc_dir = config.BASE_DIR / 'incremental'
+    inc_dir = config.BASE_DIR
     inc_dir.mkdir(parents=True, exist_ok=True)
     
     # Get number of tasks from config
@@ -813,205 +499,6 @@ def incremental_training(config):
     # Comprehensive evaluation phase
     return evaluate_incremental_learning(config, inc_dir, num_tasks, loaders, device)
 
-def evaluate_incremental_learning(config, inc_dir, num_tasks, loaders, device):
-    """
-    Comprehensive evaluation of incremental learning performance.
-    
-    Computes continual learning metrics:
-    - BWT (Backward Transfer): How much performance on old tasks degrades
-    - FWT (Forward Transfer): How much new tasks benefit from previous learning  
-    - ACC (Average Accuracy): Overall performance across all tasks
-    """
-    logger.info("==== Starting Comprehensive Evaluation ====")
-    
-    # Create evaluation directory
-    eval_dir = inc_dir / 'metrics'
-    eval_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Performance matrix R[i][j] = performance of model after task i on test set of task j
-    # Using negative MAE as performance metric (higher is better)
-    R_matrix = np.zeros((num_tasks, num_tasks))
-    metrics_summary = []
-    
-    # Evaluate each trained model on all test sets
-    for trained_task_idx in range(num_tasks):
-        logger.info("Evaluating model trained after task %d...", trained_task_idx)
-        
-        # Load model checkpoint from this training stage
-        checkpoint_path = inc_dir / f"task{trained_task_idx}" / f"task{trained_task_idx}_best.pt"
-        if not checkpoint_path.exists():
-            logger.error("Checkpoint not found: %s", checkpoint_path)
-            continue
-        
-        # Create fresh model and load trained weights
-        eval_model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
-        checkpoint = torch.load(checkpoint_path, map_location=device)
-        eval_model.load_state_dict(checkpoint['model_state'])
-        eval_model.eval()
-        
-        # Create temporary trainer for evaluation
-        eval_trainer = Trainer(eval_model, device, config, None)
-        
-        # Evaluate on full test set (complete battery degradation curve)
-        full_preds, full_targets, full_metrics = eval_trainer.evaluate(
-            loaders['test_full'], alpha=config.ALPHA, log=False
-        )
-        
-        # Save full test set predictions plot
-        Visualizer.plot_predictions(
-            full_preds, full_targets, full_metrics,
-            inc_dir / f"task{trained_task_idx}", alpha=config.ALPHA
-        )
-        
-        # Record full test performance
-        metrics_summary.append({
-            "trained_after_task": f"task{trained_task_idx}",
-            "evaluated_on_task": "full_test",
-            "trained_task_idx": trained_task_idx,
-            "eval_task_idx": -1,  # -1 indicates full test set
-            "MAE": full_metrics['MAE'],
-            "MAE_smooth": full_metrics['MAE_smooth'],
-            "RMSE": full_metrics['RMSE'],
-            "RMSE_smooth": full_metrics['RMSE_smooth'],
-            "R2": full_metrics['R2'],
-            "R2_smooth": full_metrics['R2_smooth'],
-            "R_value": -full_metrics['MAE']  # Negative MAE for maximization
-        })
-        
-        # Evaluate on each task-specific test set
-        for eval_task_idx in range(num_tasks):
-            test_loader_key = f'test_task{eval_task_idx}'
-            test_loader = loaders[test_loader_key]
-            
-            # Get predictions and metrics for this task
-            _, _, task_metrics = eval_trainer.evaluate(test_loader, alpha=config.ALPHA, log=False)
-            
-            # Store performance in R matrix
-            R_matrix[trained_task_idx][eval_task_idx] = -task_metrics['MAE']
-            
-            # Record detailed metrics
-            metrics_summary.append({
-                "trained_after_task": f"task{trained_task_idx}",
-                "evaluated_on_task": f"test_task{eval_task_idx}",
-                "trained_task_idx": trained_task_idx,
-                "eval_task_idx": eval_task_idx,
-                "MAE": task_metrics['MAE'],
-                "MAE_smooth": task_metrics['MAE_smooth'],
-                "RMSE": task_metrics['RMSE'],
-                "RMSE_smooth": task_metrics['RMSE_smooth'],
-                "R2": task_metrics['R2'],
-                "R2_smooth": task_metrics['R2_smooth'],
-                "R_value": R_matrix[trained_task_idx][eval_task_idx]
-            })
-            
-            logger.info("  Task %d -> Test Task %d: MAE=%.4e, R=%.4f", 
-                       trained_task_idx, eval_task_idx, 
-                       task_metrics['MAE'], R_matrix[trained_task_idx][eval_task_idx])
-    
-    # ===============================================================
-    # Calculate Continual Learning Metrics
-    # ===============================================================
-    logger.info("==== Computing Continual Learning Metrics ====")
-    
-    # Compute baseline performance for Forward Transfer calculation
-    logger.info("Computing random initialization baselines...")
-    torch.manual_seed(config.SEED + 999)  # Different seed for baseline
-    baseline_model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
-    baseline_trainer = Trainer(baseline_model, device, config, None)
-    
-    baseline_performance = np.zeros(num_tasks)
-    for j in range(num_tasks):
-        test_loader = loaders[f'test_task{j}']
-        _, _, baseline_metrics = baseline_trainer.evaluate(test_loader, alpha=config.ALPHA, log=False)
-        baseline_performance[j] = -baseline_metrics['MAE']
-        logger.info("  Baseline Task %d: R=%.4f", j, baseline_performance[j])
-    
-    # Calculate BWT (Backward Transfer)
-    # BWT measures how much old task performance degrades after learning new tasks
-    # BWT = average of (final_performance - when_learned_performance) for tasks 0 to T-2
-    if num_tasks > 1:
-        bwt_scores = []
-        for i in range(num_tasks - 1):  # Tasks 0 to T-2
-            final_perf = R_matrix[num_tasks - 1, i]  # Performance after all tasks
-            when_learned_perf = R_matrix[i, i]       # Performance when task was learned
-            bwt_scores.append(final_perf - when_learned_perf)
-        BWT = np.mean(bwt_scores)
-    else:
-        BWT = 0.0
-    
-    # Calculate FWT (Forward Transfer)  
-    # FWT measures how much learning previous tasks helps with new tasks
-    # FWT = average of (when_learned_performance - baseline_performance) for tasks 1 to T-1
-    if num_tasks > 1:
-        fwt_scores = []
-        for i in range(1, num_tasks):  # Tasks 1 to T-1
-            when_learned_perf = R_matrix[i - 1, i]  # Performance on task i after learning task i-1
-            baseline_perf = baseline_performance[i]  # Random initialization performance
-            fwt_scores.append(when_learned_perf - baseline_perf)
-        FWT = np.mean(fwt_scores)
-    else:
-        FWT = 0.0
-    
-    # Calculate ACC (Average Accuracy)
-    # ACC measures overall performance: average final performance across all tasks
-    ACC = np.mean(R_matrix[num_tasks - 1, :])
-    
-    # Compile continual learning metrics
-    continual_learning_metrics = {
-        "BWT": BWT,  # Backward Transfer (negative = forgetting)
-        "FWT": FWT,  # Forward Transfer (positive = beneficial transfer)
-        "ACC": ACC,  # Average final accuracy
-        "num_tasks": num_tasks
-    }
-    
-    # Log results
-    logger.info("==== Continual Learning Results ====")
-    logger.info("BWT (Backward Transfer): %.4f %s", BWT, 
-               "(less negative = less forgetting)" if BWT < 0 else "(positive = backward gain)")
-    logger.info("FWT (Forward Transfer): %.4f %s", FWT,
-               "(positive = beneficial transfer)" if FWT > 0 else "(negative = interference)")
-    logger.info("ACC (Average Accuracy): %.4f", ACC)
-    
-    # Print R matrix for detailed inspection
-    logger.info("==== Performance Matrix R[i][j] ====")
-    logger.info("Rows: trained after task i, Columns: evaluated on task j")
-    header = "       " + " ".join([f"Task{j:2d}" for j in range(num_tasks)])
-    logger.info(header)
-    for i in range(num_tasks):
-        row_values = " ".join([f"{R_matrix[i,j]:7.4f}" for j in range(num_tasks)])
-        logger.info("Task%2d: %s", i, row_values)
-    
-    # ===============================================================
-    # Save All Results
-    # ===============================================================
-    
-    # Save detailed evaluation metrics
-    summary_df = pd.DataFrame(metrics_summary)
-    summary_df.to_csv(eval_dir / 'detailed_evaluation_results.csv', index=False)
-    
-    # Save continual learning metrics summary
-    cl_metrics_df = pd.DataFrame([continual_learning_metrics])
-    cl_metrics_df.to_csv(eval_dir / 'continual_learning_metrics.csv', index=False)
-    
-    # Save performance matrix
-    r_matrix_df = pd.DataFrame(
-        R_matrix, 
-        index=[f"after_task{i}" for i in range(num_tasks)],
-        columns=[f"eval_task{j}" for j in range(num_tasks)]
-    )
-    r_matrix_df.to_csv(eval_dir / 'R_matrix.csv')
-    
-    # Save baseline performance for reference
-    baseline_df = pd.DataFrame({
-        'task': [f'task{i}' for i in range(num_tasks)],
-        'baseline_performance': baseline_performance
-    })
-    baseline_df.to_csv(eval_dir / 'baseline_performance.csv', index=False)
-    
-    logger.info("==== Evaluation Complete ====")
-    logger.info("All results saved to: %s", eval_dir)
-    
-    return continual_learning_metrics, R_matrix
 
 # ===============================================================
 # Main Pipeline

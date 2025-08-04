@@ -1,0 +1,12 @@
+=== Job Start: Mon Aug  4 16:08:14 CEST 2025 ===
+Job ID:           93399
+Job Name:         adapter
+Partition:        gpu_short
+Node List:        gpu003
+Requested GPUs:   0
+CUDA Devices:     0
+Running on host:  gpu003
+
+=== GPU Details via nvidia-smi ===
+0, Tesla P100-PCIE-16GB, 16384 MiB, 0 %, 32
+===================================

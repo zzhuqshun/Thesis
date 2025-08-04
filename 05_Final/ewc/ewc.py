@@ -28,11 +28,11 @@ class Config:
     """Configuration class for continual learning experiments"""
     def __init__(self, **kwargs):
         # Training mode: 'joint' for baseline, 'incremental' for continual learning
-        self.MODE = 'joint'  
+        self.MODE = 'incremental'  
         
         # Directory structure
-        self.BASE_DIR = Path.cwd() / "strategies" / "joint-tryout"
-        self.DATA_DIR = Path('../../01_Datenaufbereitung/Output/Calculated/')
+        self.BASE_DIR = Path.cwd() /"ewc" /"strategies" / "fine-tuning_lr"
+        self.DATA_DIR = Path('../01_Datenaufbereitung/Output/Calculated/')
         
         # Model hyperparameters
         self.SEQUENCE_LENGTH = 720  # Input sequence length for LSTM
@@ -42,7 +42,7 @@ class Config:
         
         # Training hyperparameters
         self.BATCH_SIZE = 32
-        self.LEARNING_RATE = 4e-4
+        self.LEARNING_RATE = 5e-5
         self.EPOCHS = 200
         self.PATIENCE = 20          # Early stopping patience
         self.WEIGHT_DECAY = 1e-6
@@ -50,13 +50,13 @@ class Config:
         # Data preprocessing
         self.SCALER = "RobustScaler"
         self.RESAMPLE = '10min'     # Time series resampling frequency
-        self.ALPHA = 0.18            # Smoothing factor for predictions
+        self.ALPHA = 0.1            # Smoothing factor for predictions
         
         # Continual Learning parameters
         self.NUM_TASKS = 3          # Number of incremental tasks
         self.LWF_ALPHAS = [0.0, 0.0, 0.0]    # Learning without Forgetting weights
         self.EWC_LAMBDAS = [0.0, 0.0, 0.0]     # EWC regularization weights
-        
+
         # Random seed for reproducibility
         self.SEED = 42
         
@@ -68,10 +68,13 @@ class Config:
         }
         
         # Dataset splits for incremental learning
-        # Each task focuses on different SOH ranges:
-        # Task 0: SOH >= 0.9 (early degradation)
-        # Task 1: 0.8 <= SOH < 0.9 (medium degradation) 
-        # Task 2: SOH < 0.8 (severe degradation)
+        # Each task focuses on different degradation types
+        # Each validation will be split into val/test(7:3 ratio)
+        # Task 0: '03', '05', '07', '27'; '01'
+        # Task 1: '21', '23', '25'; '19'
+        # Task 2: '09', '11', '15', '29'; '13'
+        # Test set: '17' (common for all tasks)
+        
         self.incremental_datasets = {
             'task0_train_ids': ['03', '05', '07', '27'],
             'task0_val_ids': ['01'],
@@ -140,6 +143,10 @@ class Visualizer:
             plt.semilogy(df['epoch'], df['kd_loss'], label='KD Loss', linestyle='--')
         if 'ewc_loss' in df.columns:
             plt.semilogy(df['epoch'], df['ewc_loss'], label='EWC Loss', linestyle='--')
+        if 'si_loss' in df.columns:
+            plt.semilogy(df['epoch'], df['si_loss'], label='SI Loss', linestyle='--')
+        if 'mas_loss' in df.columns:
+            plt.semilogy(df['epoch'], df['mas_loss'], label='MAS Loss', linestyle='--')
             
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
@@ -299,38 +306,45 @@ class DataProcessor:
             return pd.concat([self.process_file(info[c]) for c in ids], ignore_index=True) if ids else pd.DataFrame()
         
         # Build datasets for each task
-        df0t = build(cfg['task0_train_ids']); df0v = build(cfg['task0_val_ids'])
-        df1t = build(cfg['task1_train_ids']); df1v = build(cfg['task1_val_ids'])
-        df2t = build(cfg['task2_train_ids']); df2v = build(cfg['task2_val_ids'])
+        df0t = build(cfg['task0_train_ids']); df0v_full = build(cfg['task0_val_ids'])
+        df1t = build(cfg['task1_train_ids']); df1v_full = build(cfg['task1_val_ids'])
+        df2t = build(cfg['task2_train_ids']); df2v_full = build(cfg['task2_val_ids'])
         df_test = self.process_file(info[cfg['test_id']])
-        
-        # Split test data by SOH ranges to evaluate task-specific performance
-        df_test_0 = df_test[df_test['SOH_ZHU'] >= 0.9].reset_index(drop=True)  # Task 0: early degradation
-        df_test_1 = df_test[(df_test['SOH_ZHU'] < 0.9) & (df_test['SOH_ZHU'] >= 0.8)].reset_index(drop=True)  # Task 1: medium degradation
-        df_test_2 = df_test[df_test['SOH_ZHU'] < 0.8].reset_index(drop=True)  # Task 2: severe degradation
 
-        logger.info("Incremental training - Task 0 Train IDs: %s, size: %d", 
-                    cfg['task0_train_ids'], len(df0t))
-        logger.info("Incremental training - Task 0 Val IDs: %s, size: %d", 
-                    cfg['task0_val_ids'], len(df0v))
-        logger.info("Incremental training - Task 1 Train IDs: %s, size: %d", 
-                    cfg['task1_train_ids'], len(df1t))
-        logger.info("Incremental training - Task 1 Val IDs: %s, size: %d", 
-                    cfg['task1_val_ids'], len(df1v))
-        logger.info("Incremental training - Task 2 Train IDs: %s, size: %d", 
-                    cfg['task2_train_ids'], len(df2t))
-        logger.info("Incremental training - Task 2 Val IDs: %s, size: %d", 
-                    cfg['task2_val_ids'], len(df2v))
-        logger.info("Incremental training - Test ID: %s, size: %d", 
-                    cfg['test_id'], len(df_test))
-        logger.info("Incremental training - Test Task 0 size: %d", len(df_test_0))
-        logger.info("Incremental training - Test Task 1 size: %d", len(df_test_1))
-        logger.info("Incremental training - Test Task 2 size: %d", len(df_test_2))
+        def split_val_test(df_full, split_ratio=0.7):
+            n = len(df_full)
+            split_idx = int(n * split_ratio)
+            df_val  = df_full.iloc[:split_idx].reset_index(drop=True)
+            df_test = df_full.iloc[split_idx:].reset_index(drop=True)
+            return df_val, df_test
+        
+        # Split validation data into train/val for each task
+        df0v, df0test = split_val_test(df0v_full)
+        df1v, df1test = split_val_test(df1v_full)
+        df2v, df2test = split_val_test(df2v_full)
+        
+        dfs_train = [df0t, df1t, df2t]
+        dfs_val   = [df0v, df1v, df2v]
+        dfs_test  = [df0test, df1test, df2test]
+
+        for i in range(3):
+            logger.info(
+                "Incremental training - Task %d Train IDs: %s, size: %d",
+                i, cfg[f'task{i}_train_ids'], len(dfs_train[i])
+            )
+            logger.info(
+                "Incremental training - Task %d Val IDs: %s, size: %d",
+                i, cfg[f'task{i}_val_ids'],   len(dfs_val[i])
+            )
+            logger.info(
+                "Incremental training - Test Task %d size: %d",
+                i, len(dfs_test[i])
+            )
         
         
         # Fit scaler on first task training data only
         feat_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
-        self.scaler.fit(df0t[feat_cols])
+        self.scaler.fit(dfs_train[0][feat_cols])
         logger.info("  (Scaler) Scaler centers: %s", self.scaler.center_)
         logger.info("  (Scaler) Scaler scales: %s", self.scaler.scale_)
 
@@ -346,7 +360,7 @@ class DataProcessor:
             'task1_train': scale(df1t), 'task1_val': scale(df1v),
             'task2_train': scale(df2t), 'task2_val': scale(df2v),
             'test_full': scale(df_test),
-            'test_task0': scale(df_test_0), 'test_task1': scale(df_test_1), 'test_task2': scale(df_test_2)
+            'test_task0': scale(df0test), 'test_task1': scale(df1test), 'test_task2': scale(df2test)
         }
 
 # ===============================================================
@@ -554,6 +568,10 @@ class Trainer:
             n = len(train_loader.dataset)
             train_loss = tot_loss / n
             
+            if sum_task > 0:
+                reg_ratio = sum_ewc / sum_task * 100
+                logger.info("Epoch %d: EWC loss is %.2f%% of task loss", epoch, reg_ratio)
+
             # Record training history
             history['epoch'].append(epoch)
             history['train_loss'].append(train_loss)
@@ -616,8 +634,15 @@ class Trainer:
         """
         # Create EWC regularizer for this task
         ewc_reg = EWC(self.model, loader, self.device, ewc_lambda)
-        self.ewc_tasks.append(ewc_reg)
         
+        all_fishers = torch.cat([v.flatten() for v in ewc_reg.fisher.values()])
+        scale = all_fishers.mean().clamp(min=1e-12)
+        for n in ewc_reg.fisher:
+            ewc_reg.fisher[n] /= scale
+        self.ewc_tasks.append(ewc_reg)
+
+        logger.info("EWC fisher normalized with scale %.4f", scale.item())
+                    
         # Save model for knowledge distillation
         self.old_model = copy.deepcopy(self.model).to(self.device)
         self.old_model.eval()
@@ -907,9 +932,9 @@ def evaluate_incremental_learning(config, inc_dir, num_tasks, loaders, device):
                 "R_value": R_matrix[trained_task_idx][eval_task_idx]
             })
             
-            logger.info("  Task %d -> Test Task %d: MAE=%.4e, R=%.4f", 
+            logger.info("  Task %d -> Test Task %d: MAE=%.4e", 
                        trained_task_idx, eval_task_idx, 
-                       task_metrics['MAE'], R_matrix[trained_task_idx][eval_task_idx])
+                       task_metrics['MAE'])
     
     # ===============================================================
     # Calculate Continual Learning Metrics

@@ -1,0 +1,163 @@
+2025-08-03 21:41:02,432 - ==== Experiment Setup ====
+2025-08-03 21:41:02,449 - Mode: incremental
+2025-08-03 21:41:02,451 - Method: Adapter Fine-tuning
+2025-08-03 21:41:02,452 - Number of tasks: 3
+2025-08-03 21:41:02,455 - Random seed: 42
+2025-08-03 21:41:02,458 - Adapter size: 64
+2025-08-03 21:41:02,460 - Freeze backbone: True
+2025-08-03 21:41:02,463 - Base directory: /beegfs/home/users/z/zzhuqshun/Thesis/06_adapter/cnn_adapter
+2025-08-03 21:41:02,466 - ==== Incremental Training (Adapter Fine-tuning) ====
+2025-08-03 21:41:02,556 - Number of tasks: 3
+2025-08-03 21:42:30,107 - Incremental training - Task 0 Train IDs: ['03', '27', '05', '21', '11'], size: 107395
+2025-08-03 21:42:30,109 - Incremental training - Task 0 Val IDs: ['01'], size: 20028
+2025-08-03 21:42:30,110 - Incremental training - Test Task 0 size: 8584
+2025-08-03 21:42:30,111 - Incremental training - Task 1 Train IDs: ['09', '29', '25'], size: 41175
+2025-08-03 21:42:30,114 - Incremental training - Task 1 Val IDs: ['19'], size: 16183
+2025-08-03 21:42:30,117 - Incremental training - Test Task 1 size: 6937
+2025-08-03 21:42:30,120 - Incremental training - Task 2 Train IDs: ['15', '07', '23'], size: 57074
+2025-08-03 21:42:30,122 - Incremental training - Task 2 Val IDs: ['13'], size: 4511
+2025-08-03 21:42:30,125 - Incremental training - Test Task 2 size: 1934
+2025-08-03 21:42:30,141 -   (Scaler) Scaler centers: [ 3.3374245   0.101279   27.50083333]
+2025-08-03 21:42:30,147 -   (Scaler) Scaler scales: [0.18253608 1.77971742 1.05683333]
+2025-08-03 21:42:30,762 - Initialized base LSTM model
+2025-08-03 21:42:30,763 - --- task0 ---
+2025-08-03 21:42:30,887 - Loading pre-trained Task 0 model from: task0_best.pt
+2025-08-03 21:42:30,942 - Successfully loaded Task 0 model, skipping Task 0 training
+2025-08-03 21:42:30,948 - --- task1 ---
+2025-08-03 21:42:31,074 - Converting to adapter mode after Task 0...
+2025-08-03 21:42:31,076 - Backbone LSTM frozen
+2025-08-03 21:42:31,079 - Adapter initialized with size 64
+2025-08-03 21:42:31,082 - Converted to adapter with size 64, backbone frozen: True
+2025-08-03 21:42:31,090 - Training adapter with 49344 parameters
+2025-08-03 21:44:36,523 - Epoch 0 train=3.9543e-03 val=1.0823e-03 lr=1.00e-04 time=25.67s
+2025-08-03 21:45:04,252 - Epoch 1 train=3.2231e-03 val=1.1438e-03 lr=1.00e-04 time=22.79s
+2025-08-03 21:45:31,362 - Epoch 2 train=3.0809e-03 val=6.9063e-04 lr=1.00e-04 time=22.26s
+2025-08-03 21:45:58,588 - Epoch 3 train=3.0374e-03 val=6.0256e-04 lr=1.00e-04 time=22.35s
+2025-08-03 21:46:25,919 - Epoch 4 train=3.0042e-03 val=5.0460e-04 lr=1.00e-04 time=22.45s
+2025-08-03 21:46:53,205 - Epoch 5 train=2.9530e-03 val=6.8443e-04 lr=1.00e-04 time=22.40s
+2025-08-03 21:47:20,370 - Epoch 6 train=2.9391e-03 val=5.0089e-04 lr=1.00e-04 time=22.31s
+2025-08-03 21:47:47,570 - Epoch 7 train=2.9246e-03 val=4.8088e-04 lr=1.00e-04 time=22.31s
+2025-08-03 21:48:14,927 - Epoch 8 train=2.8959e-03 val=6.3991e-04 lr=1.00e-04 time=22.47s
+2025-08-03 21:48:42,367 - Epoch 9 train=2.9007e-03 val=5.1059e-04 lr=1.00e-04 time=22.59s
+2025-08-03 21:49:09,556 - Epoch 10 train=2.8968e-03 val=4.5585e-04 lr=1.00e-04 time=22.35s
+2025-08-03 21:49:36,951 - Epoch 11 train=2.8756e-03 val=5.1205e-04 lr=1.00e-04 time=22.29s
+2025-08-03 21:50:04,065 - Epoch 12 train=2.8807e-03 val=5.7915e-04 lr=1.00e-04 time=22.24s
+2025-08-03 21:50:31,170 - Epoch 13 train=2.8759e-03 val=3.8990e-04 lr=1.00e-04 time=22.26s
+2025-08-03 21:50:58,330 - Epoch 14 train=2.8598e-03 val=4.2625e-04 lr=1.00e-04 time=22.29s
+2025-08-03 21:51:25,319 - Epoch 15 train=2.8692e-03 val=4.5614e-04 lr=1.00e-04 time=22.14s
+2025-08-03 21:51:52,677 - Epoch 16 train=2.8622e-03 val=4.7007e-04 lr=1.00e-04 time=22.51s
+2025-08-03 21:52:19,848 - Epoch 17 train=2.8479e-03 val=4.5956e-04 lr=1.00e-04 time=22.32s
+2025-08-03 21:52:47,055 - Epoch 18 train=2.8500e-03 val=5.3174e-04 lr=1.00e-04 time=22.35s
+2025-08-03 21:53:14,914 - Epoch 19 train=2.8386e-03 val=4.9183e-04 lr=1.00e-04 time=23.01s
+2025-08-03 21:53:42,217 - Epoch 20 train=2.8230e-03 val=4.7446e-04 lr=5.00e-05 time=22.45s
+2025-08-03 21:54:09,353 - Epoch 21 train=2.8227e-03 val=4.8173e-04 lr=5.00e-05 time=22.29s
+2025-08-03 21:54:36,539 - Epoch 22 train=2.8247e-03 val=4.6864e-04 lr=5.00e-05 time=22.34s
+2025-08-03 21:55:03,810 - Epoch 23 train=2.8171e-03 val=4.3193e-04 lr=5.00e-05 time=22.38s
+2025-08-03 21:55:31,132 - Epoch 24 train=2.8112e-03 val=4.9737e-04 lr=5.00e-05 time=22.48s
+2025-08-03 21:55:58,029 - Epoch 25 train=2.8256e-03 val=4.7958e-04 lr=5.00e-05 time=22.05s
+2025-08-03 21:56:25,202 - Epoch 26 train=2.8165e-03 val=5.8403e-04 lr=2.50e-05 time=22.32s
+2025-08-03 21:56:52,359 - Epoch 27 train=2.7853e-03 val=4.7663e-04 lr=2.50e-05 time=22.31s
+2025-08-03 21:57:19,576 - Epoch 28 train=2.8027e-03 val=4.9854e-04 lr=2.50e-05 time=22.36s
+2025-08-03 21:57:46,962 - Epoch 29 train=2.7924e-03 val=5.4075e-04 lr=2.50e-05 time=22.52s
+2025-08-03 21:58:14,424 - Epoch 30 train=2.7843e-03 val=4.4151e-04 lr=2.50e-05 time=22.61s
+2025-08-03 21:58:45,171 - Epoch 31 train=2.7986e-03 val=5.4035e-04 lr=2.50e-05 time=25.90s
+2025-08-03 21:59:17,856 - Epoch 32 train=2.7936e-03 val=4.9650e-04 lr=1.25e-05 time=27.82s
+2025-08-03 21:59:45,297 - Epoch 33 train=2.7828e-03 val=4.9628e-04 lr=1.25e-05 time=22.57s
+2025-08-03 21:59:45,301 - Early stopping at epoch 33
+2025-08-03 21:59:49,446 - Task 1 completed.
+2025-08-03 21:59:49,450 - --- task2 ---
+2025-08-03 21:59:49,683 - Training adapter with 49344 parameters
+2025-08-03 22:00:22,141 - Epoch 0 train=2.7701e-03 val=4.6083e-03 lr=1.00e-04 time=31.25s
+2025-08-03 22:00:54,805 - Epoch 1 train=2.4637e-03 val=4.5106e-03 lr=1.00e-04 time=31.38s
+2025-08-03 22:01:27,113 - Epoch 2 train=2.3635e-03 val=3.8506e-03 lr=1.00e-04 time=31.07s
+2025-08-03 22:02:01,703 - Epoch 3 train=2.3163e-03 val=4.1855e-03 lr=1.00e-04 time=33.35s
+2025-08-03 22:02:34,603 - Epoch 4 train=2.2803e-03 val=3.3913e-03 lr=1.00e-04 time=31.69s
+2025-08-03 22:03:06,929 - Epoch 5 train=2.2409e-03 val=4.2286e-03 lr=1.00e-04 time=31.10s
+2025-08-03 22:03:39,279 - Epoch 6 train=2.2526e-03 val=3.6179e-03 lr=1.00e-04 time=31.14s
+2025-08-03 22:04:11,746 - Epoch 7 train=2.1921e-03 val=3.2532e-03 lr=1.00e-04 time=31.24s
+2025-08-03 22:04:44,143 - Epoch 8 train=2.2077e-03 val=3.9153e-03 lr=1.00e-04 time=31.14s
+2025-08-03 22:05:17,047 - Epoch 9 train=2.1681e-03 val=4.2927e-03 lr=1.00e-04 time=31.70s
+2025-08-03 22:05:49,438 - Epoch 10 train=2.1464e-03 val=3.5055e-03 lr=1.00e-04 time=31.18s
+2025-08-03 22:06:21,620 - Epoch 11 train=2.1262e-03 val=3.4915e-03 lr=1.00e-04 time=30.96s
+2025-08-03 22:06:51,814 - Epoch 12 train=2.1107e-03 val=3.0113e-03 lr=1.00e-04 time=28.99s
+2025-08-03 22:07:21,986 - Epoch 13 train=2.0851e-03 val=3.7835e-03 lr=1.00e-04 time=28.93s
+2025-08-03 22:07:52,639 - Epoch 14 train=2.0840e-03 val=3.1548e-03 lr=1.00e-04 time=29.45s
+2025-08-03 22:08:23,412 - Epoch 15 train=2.0666e-03 val=3.7691e-03 lr=1.00e-04 time=29.56s
+2025-08-03 22:08:53,937 - Epoch 16 train=2.0505e-03 val=3.3022e-03 lr=1.00e-04 time=29.32s
+2025-08-03 22:09:25,500 - Epoch 17 train=2.0624e-03 val=3.5425e-03 lr=1.00e-04 time=30.34s
+2025-08-03 22:10:00,989 - Epoch 18 train=2.0565e-03 val=3.1642e-03 lr=1.00e-04 time=34.28s
+2025-08-03 22:10:32,342 - Epoch 19 train=1.9998e-03 val=3.3613e-03 lr=5.00e-05 time=30.13s
+2025-08-03 22:11:02,579 - Epoch 20 train=1.9944e-03 val=3.2301e-03 lr=5.00e-05 time=29.00s
+2025-08-03 22:11:33,505 - Epoch 21 train=2.0105e-03 val=3.2906e-03 lr=5.00e-05 time=29.71s
+2025-08-03 22:12:07,373 - Epoch 22 train=1.9905e-03 val=3.4410e-03 lr=5.00e-05 time=32.66s
+2025-08-03 22:12:46,239 - Epoch 23 train=1.9845e-03 val=3.2892e-03 lr=5.00e-05 time=37.65s
+2025-08-03 22:13:28,370 - Epoch 24 train=1.9900e-03 val=3.0392e-03 lr=5.00e-05 time=40.89s
+2025-08-03 22:14:16,089 - Epoch 25 train=1.9860e-03 val=3.0728e-03 lr=2.50e-05 time=46.49s
+2025-08-03 22:14:58,706 - Epoch 26 train=1.9734e-03 val=3.2321e-03 lr=2.50e-05 time=41.40s
+2025-08-03 22:15:42,296 - Epoch 27 train=1.9615e-03 val=3.0918e-03 lr=2.50e-05 time=42.37s
+2025-08-03 22:16:24,772 - Epoch 28 train=1.9606e-03 val=3.3591e-03 lr=2.50e-05 time=41.26s
+2025-08-03 22:17:06,467 - Epoch 29 train=1.9593e-03 val=2.9928e-03 lr=2.50e-05 time=40.49s
+2025-08-03 22:17:48,051 - Epoch 30 train=1.9857e-03 val=3.1032e-03 lr=2.50e-05 time=40.32s
+2025-08-03 22:18:24,152 - Epoch 31 train=1.9617e-03 val=3.3104e-03 lr=2.50e-05 time=34.88s
+2025-08-03 22:18:57,504 - Epoch 32 train=1.9625e-03 val=3.1763e-03 lr=2.50e-05 time=32.12s
+2025-08-03 22:19:28,753 - Epoch 33 train=1.9660e-03 val=3.1624e-03 lr=2.50e-05 time=30.03s
+2025-08-03 22:20:00,918 - Epoch 34 train=1.9426e-03 val=3.3368e-03 lr=2.50e-05 time=30.96s
+2025-08-03 22:20:34,238 - Epoch 35 train=1.9599e-03 val=3.4223e-03 lr=2.50e-05 time=32.09s
+2025-08-03 22:21:08,383 - Epoch 36 train=1.9582e-03 val=3.2693e-03 lr=1.25e-05 time=32.94s
+2025-08-03 22:21:50,648 - Epoch 37 train=1.9410e-03 val=3.2246e-03 lr=1.25e-05 time=41.05s
+2025-08-03 22:22:32,274 - Epoch 38 train=1.9666e-03 val=3.2557e-03 lr=1.25e-05 time=40.42s
+2025-08-03 22:23:09,297 - Epoch 39 train=1.9330e-03 val=3.2282e-03 lr=1.25e-05 time=35.79s
+2025-08-03 22:23:44,054 - Epoch 40 train=1.9526e-03 val=3.2648e-03 lr=1.25e-05 time=33.55s
+2025-08-03 22:24:17,399 - Epoch 41 train=1.9660e-03 val=3.2224e-03 lr=1.25e-05 time=32.12s
+2025-08-03 22:24:51,901 - Epoch 42 train=1.9411e-03 val=3.0739e-03 lr=6.25e-06 time=33.29s
+2025-08-03 22:25:24,132 - Epoch 43 train=1.9656e-03 val=3.0326e-03 lr=6.25e-06 time=31.02s
+2025-08-03 22:25:55,789 - Epoch 44 train=1.9443e-03 val=3.0867e-03 lr=6.25e-06 time=30.44s
+2025-08-03 22:26:26,321 - Epoch 45 train=1.9457e-03 val=3.1593e-03 lr=6.25e-06 time=29.33s
+2025-08-03 22:26:56,402 - Epoch 46 train=1.9496e-03 val=3.1691e-03 lr=6.25e-06 time=28.88s
+2025-08-03 22:27:26,620 - Epoch 47 train=1.9415e-03 val=3.1597e-03 lr=6.25e-06 time=29.00s
+2025-08-03 22:27:56,806 - Epoch 48 train=1.9272e-03 val=3.1483e-03 lr=3.13e-06 time=28.98s
+2025-08-03 22:28:26,740 - Epoch 49 train=1.9485e-03 val=3.1456e-03 lr=3.13e-06 time=28.73s
+2025-08-03 22:28:26,741 - Early stopping at epoch 49
+2025-08-03 22:28:28,860 - Task 2 completed.
+2025-08-03 22:28:28,862 - ==== Incremental Training Complete ====
+2025-08-03 22:28:28,863 - ==== Starting Comprehensive Evaluation ====
+2025-08-03 22:28:28,933 - Evaluating model trained after task 0...
+2025-08-03 22:28:41,079 -   Task 0 -> Test Task 0: MAE=2.7923e-02, R2=-29.2707
+2025-08-03 22:28:42,864 -   Task 0 -> Test Task 1: MAE=3.5453e-02, R2=-2.1284
+2025-08-03 22:28:43,219 -   Task 0 -> Test Task 2: MAE=7.2164e-01, R2=-980.0900
+2025-08-03 22:28:43,220 - Evaluating model trained after task 1...
+2025-08-03 22:28:43,229 - Backbone LSTM frozen
+2025-08-03 22:28:43,231 - Adapter initialized with size 64
+2025-08-03 22:28:56,160 -   Task 1 -> Test Task 0: MAE=2.0166e-02, R2=-15.3288
+2025-08-03 22:28:58,103 -   Task 1 -> Test Task 1: MAE=4.1016e-02, R2=-3.4976
+2025-08-03 22:28:58,488 -   Task 1 -> Test Task 2: MAE=4.8559e-02, R2=-3.0149
+2025-08-03 22:28:58,489 - Evaluating model trained after task 2...
+2025-08-03 22:28:58,499 - Backbone LSTM frozen
+2025-08-03 22:28:58,501 - Adapter initialized with size 64
+2025-08-03 22:29:11,461 -   Task 2 -> Test Task 0: MAE=5.8251e-03, R2=-0.9651
+2025-08-03 22:29:13,434 -   Task 2 -> Test Task 1: MAE=2.3284e-02, R2=-0.6600
+2025-08-03 22:29:13,826 -   Task 2 -> Test Task 2: MAE=1.1660e-01, R2=-20.0852
+2025-08-03 22:29:13,827 - ==== Computing Continual Learning Metrics ====
+2025-08-03 22:29:13,828 - Computing random initialization baselines...
+2025-08-03 22:29:16,080 -   Baseline Task 0: R=-0.9732
+2025-08-03 22:29:17,847 -   Baseline Task 1: R=-0.9253
+2025-08-03 22:29:18,196 -   Baseline Task 2: R=-0.6923
+2025-08-03 22:29:18,198 - ==== Continual Learning Results ====
+2025-08-03 22:29:18,199 - BWT (Backward Transfer): 0.0199 (positive = backward gain)
+2025-08-03 22:29:18,200 - FWT (Forward Transfer): 0.7668 (positive = beneficial transfer)
+2025-08-03 22:29:18,201 - ACC (Average Accuracy): -0.0486
+2025-08-03 22:29:18,203 - ==== Performance Matrix R[i][j] ====
+2025-08-03 22:29:18,204 - Rows: trained after task i, Columns: evaluated on task j
+2025-08-03 22:29:18,205 -        Task 0 Task 1 Task 2
+2025-08-03 22:29:18,206 - Task 0: -0.0279 -0.0355 -0.7216
+2025-08-03 22:29:18,207 - Task 1: -0.0202 -0.0410 -0.0486
+2025-08-03 22:29:18,208 - Task 2: -0.0058 -0.0233 -0.1166
+2025-08-03 22:29:18,380 - ==== Evaluation Complete ====
+2025-08-03 22:29:18,381 - All results saved to: /beegfs/home/users/z/zzhuqshun/Thesis/06_adapter/cnn_adapter/incremental_training/metrics
+2025-08-03 22:29:18,386 - ==== Final Summary ====
+2025-08-03 22:29:18,388 - Continual Learning Metrics:
+2025-08-03 22:29:18,389 -   BWT: 0.0199
+2025-08-03 22:29:18,390 -   FWT: 0.7668
+2025-08-03 22:29:18,391 -   ACC: -0.0486
+2025-08-03 22:29:18,392 -   num_tasks: 3.0000
+2025-08-03 22:29:18,393 - ==== Experiment Complete ====

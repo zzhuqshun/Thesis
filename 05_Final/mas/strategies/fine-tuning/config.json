@@ -1,7 +1,7 @@
 {
     "MODE": "incremental",
     "BASE_DIR": "/beegfs/home/users/z/zzhuqshun/Thesis/05_Final/mas/strategies/fine-tuning",
-    "DATA_DIR": "../../01_Datenaufbereitung/Output/Calculated",
+    "DATA_DIR": "../01_Datenaufbereitung/Output/Calculated",
     "SEQUENCE_LENGTH": 720,
     "HIDDEN_SIZE": 128,
     "NUM_LAYERS": 2,

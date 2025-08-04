@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH -o ./../Results/myjob.%j.out
-#SBATCH -e ./../Results/myjob.%j.err
-#SBATCH -D .
+#SBATCH -o ./Results/myjob.%j.out
+#SBATCH -e ./Results/myjob.%j.err
+#SBATCH -D ../
 #SBATCH -J mas
 #SBATCH --cpus-per-task=2
 #SBATCH --gres=gpu:tesla:1
@@ -37,6 +37,6 @@ source ~/miniconda3/bin/activate
 conda activate myenv
 
 # Run the Python script, passing the folder path as an argument
-python mas.py
+python -m mas.mas
 
 
