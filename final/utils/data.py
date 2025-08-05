@@ -61,159 +61,129 @@ def create_dataloaders(datasets: dict,
     return loaders
 
 class DataProcessor:
-    """
-    Handles loading, preprocessing, and scaling of battery cell data.
+    """Handles data loading, preprocessing, and scaling"""
     
-    Workflow:
-      1. Read parquet files for each cell.
-      2. Drop NaNs and round timestamps.
-      3. Create a datetime index and resample to reduce noise.
-      4. Fit a RobustScaler on the training data.
-      5. Transform all splits (train/val/test or per-task splits).
-    """
-    def __init__(self, data_dir, resample='10min'):
+    def __init__(self, data_dir, resample='10min', config=None):
         self.data_dir = Path(data_dir)
         self.resample = resample
-        self.scaler = RobustScaler()
-
-    def load_cell_data(self) -> dict[str, Path]:
-        """
-        Scan the directory and map each cell ID to its parquet file path.
-        """
-        files = sorted(
-            self.data_dir.glob('*.parquet'),
-            key=lambda x: int(x.stem.split('_')[-1])
-        )
+        self.scaler = RobustScaler()  # Robust to outliers
+        self.config = config
+    
+    def load_cell_data(self):
+        """Load all battery cell data files"""
+        files = sorted(self.data_dir.glob('*.parquet'), key=lambda x: int(x.stem.split('_')[-1]))
         return {fp.stem.split('_')[-1]: fp for fp in files}
-
-    def process_file(self, fp: Path) -> pd.DataFrame:
-        """
-        Process one cell file:
-          - Read and select relevant columns.
-          - Drop missing values.
-          - Round 'Testtime[s]' and generate a datetime index.
-          - Resample to `self.resample` frequency.
-          - Add a 'cell_id' column.
-        """
-        df = (
-            pd.read_parquet(fp)[
-                ['Testtime[s]', 'Voltage[V]', 'Current[A]', 'Temperature[°C]', 'SOH_ZHU']
-            ]
-            .dropna()
-            .reset_index(drop=True)
-        )
+    
+    def process_file(self, fp):
+        """Process single battery cell file"""
+        # Load relevant columns
+        df = pd.read_parquet(fp)[['Testtime[s]', 'Voltage[V]', 'Current[A]', 'Temperature[°C]', 'SOH_ZHU']]
+        df = df.dropna().reset_index(drop=True)
+        
+        # Round timestamps and create datetime index
         df['Testtime[s]'] = df['Testtime[s]'].round().astype(int)
         df['Datetime'] = pd.date_range('2023-02-02', periods=len(df), freq='s')
-
-        df = (
-            df.set_index('Datetime')
-              .resample(self.resample)
-              .mean()
-              .reset_index()
-        )
+        
+        # Resample to reduce data size and smooth noise
+        df = df.set_index('Datetime').resample(self.resample).mean().reset_index()
         df['cell_id'] = fp.stem.split('_')[-1]
+        
         return df
-
-    def prepare_joint_data(self, splits: dict) -> dict[str, pd.DataFrame]:
-        """
-        Prepare data for joint training (baseline):
-          - Concatenate train & val across multiple cells.
-          - Process the single test cell.
-          - Fit scaler on train features and transform all splits.
+    
+    def prepare_joint_data(self, cfg):
+        """Prepare data for joint training (baseline)"""
+        info = self.load_cell_data()
         
-        Returns:
-            dict with keys 'train', 'val', 'test' mapping to DataFrames.
-        """
-        logger.info("Preparing joint data...")
-        cells = self.load_cell_data()
-        def build(ids):
-            return pd.concat(
-                [self.process_file(cells[i]) for i in ids],
-                ignore_index=True
-            )
+        def build(ids): 
+            return pd.concat([self.process_file(info[c]) for c in ids], ignore_index=True) if ids else pd.DataFrame()
         
-        df_train = build(splits['train_ids'])
-        df_val   = build(splits['val_ids'])
-        df_test  = self.process_file(cells[splits['test_id']])
-        logger.info("Train IDs: %s, shape: %s", splits['train_ids'], df_train.shape)
-        logger.info("Val IDs: %s, shape: %s", splits['val_ids'], df_val.shape)
-        logger.info("Test ID: %s, shape: %s", splits['test_id'], df_test.shape)
+        df_train = build(cfg['train_ids'])
+        df_val = build(cfg['val_ids'])
+        df_test = self.process_file(info[cfg['test_id']])
         
+        logger.info("Joint training - Train IDs: %s, size: %d", 
+                   cfg['train_ids'], len(df_train))
+        logger.info("Joint training - Val IDs: %s, size: %d", 
+                   cfg['val_ids'], len(df_val))
+        logger.info("Joint training - Test ID: %s, size: %d", 
+                   cfg['test_id'], len(df_test))
+        
+        # Fit scaler on training data only
         feat_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
         self.scaler.fit(df_train[feat_cols])
-        logger.info("Scaler centers: %s,", self.scaler.center_)
-        logger.info("Scaler scales: %s", self.scaler.scale_)
+        logger.info("  (Scaler) Scaler centers: %s", self.scaler.center_)
+        logger.info("  (Scaler) Scaler scales: %s", self.scaler.scale_)
+
         
-        for df in (df_train, df_val, df_test):
-            df[feat_cols] = self.scaler.transform(df[feat_cols])
-
-        return {'train': df_train, 'val': df_val, 'test': df_test}
-
-    def prepare_incremental_data(self, splits: dict) -> dict[str, pd.DataFrame]:
-        """
-        Prepare data for incremental learning:
-          1. Build train & full-val for each task.
-          2. Split each full-val into val/test (e.g. 70/30 split).
-          3. Fit scaler on Task 0 train features.
-          4. Transform all task-specific splits and the overall test set.
-        
-        Returns:
-            dict containing:
-              - 'task0_train', 'task0_val', 'task1_train', 'task1_val', ...
-              - 'test_full', 'test_task0', 'test_task1', ...
-        """
-        cells = self.load_cell_data()
-        def build(ids):
-            return pd.concat(
-                [self.process_file(cells[i]) for i in ids],
-                ignore_index=True
-            )
-
-        # Task datasets
-        df0t, df0v_full = build(splits['task0_train_ids']), build(splits['task0_val_ids'])
-        df1t, df1v_full = build(splits['task1_train_ids']), build(splits['task1_val_ids'])
-        df2t, df2v_full = build(splits['task2_train_ids']), build(splits['task2_val_ids'])
-        df_test_full    = self.process_file(cells[splits['test_id']])
-        # Split full-val into val/test
-        def split_val_test(df_full, ratio=0.7):
-            n = len(df_full)
-            idx = int(n * ratio)
-            return (
-                df_full.iloc[:idx].reset_index(drop=True),
-                df_full.iloc[idx:].reset_index(drop=True)
-            )
-
-        df0v, df0tst = split_val_test(df0v_full)
-        df1v, df1tst = split_val_test(df1v_full)
-        df2v, df2tst = split_val_test(df2v_full)
-
-        logger.info("Task 0 Train IDs: %s, shape: %s", splits['task0_train_ids'], df0t.shape)
-        logger.info("Task 0 Val IDs: %s, shape: %s", splits['task0_val_ids'], df0v_full.shape)
-        logger.info("Task 0 Test IDs: %s, shape: %s", splits['test_id'], df0tst.shape)
-        logger.info("Task 1 Train IDs: %s, shape: %s", splits['task1_train_ids'], df1t.shape)
-        logger.info("Task 1 Val IDs: %s, shape: %s", splits['task1_val_ids'], df1v_full.shape)
-        logger.info("Task 1 Test IDs: %s, shape: %s", splits['test_id'], df1tst.shape)
-        logger.info("Task 2 Train IDs: %s, shape: %s", splits['task2_train_ids'], df2t.shape)
-        logger.info("Task 2 Val IDs: %s, shape: %s", splits['task2_val_ids'], df2v_full.shape)
-        logger.info("Task 2 Test IDs: %s, shape: %s", splits['test_id'], df2tst.shape)
-        logger.info("Full Test ID: %s, shape: %s", splits['test_id'], df_test_full.shape)
-
-
-        # Fit scaler on Task 0 train
-        feat_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
-        self.scaler.fit(df0t[feat_cols])
-        logger.info("Scaler centers: %s,", self.scaler.center_)
-        logger.info("Scaler scales: %s", self.scaler.scale_)
-
-        def scale(df: pd.DataFrame) -> pd.DataFrame:
+        def scale(df):
             df2 = df.copy()
-            df2[feat_cols] = self.scaler.transform(df2[feat_cols])
+            if not df2.empty:
+                df2[feat_cols] = self.scaler.transform(df2[feat_cols])
             return df2
+        
+        return {'train': scale(df_train), 'val': scale(df_val), 'test': scale(df_test)}
+    
+    def prepare_incremental_data(self, cfg):
+        """Prepare data for incremental learning"""
+        info = self.load_cell_data()
+        
+        def build(ids): 
+            return pd.concat([self.process_file(info[c]) for c in ids], ignore_index=True) if ids else pd.DataFrame()
+        
+        # Build datasets for each task
+        df0t = build(cfg['task0_train_ids']); df0v_full = build(cfg['task0_val_ids'])
+        df1t = build(cfg['task1_train_ids']); df1v_full = build(cfg['task1_val_ids'])
+        df2t = build(cfg['task2_train_ids']); df2v_full = build(cfg['task2_val_ids'])
+        df_test = self.process_file(info[cfg['test_id']])
 
+        def split_val_test(df_full, split_ratio=0.7):
+            n = len(df_full)
+            split_idx = int(n * split_ratio)
+            df_val  = df_full.iloc[:split_idx].reset_index(drop=True)
+            df_test = df_full.iloc[split_idx:].reset_index(drop=True)
+            return df_val, df_test
+        
+        # Split validation data into train/val for each task
+        df0v, df0test = split_val_test(df0v_full)
+        df1v, df1test = split_val_test(df1v_full)
+        df2v, df2test = split_val_test(df2v_full)
+        
+        dfs_train = [df0t, df1t, df2t]
+        dfs_val   = [df0v, df1v, df2v]
+        dfs_test  = [df0test, df1test, df2test]
+
+        for i in range(3):
+            logger.info(
+                "Incremental training - Task %d Train IDs: %s, size: %d",
+                i, cfg[f'task{i}_train_ids'], len(dfs_train[i])
+            )
+            logger.info(
+                "Incremental training - Task %d Val IDs: %s, size: %d",
+                i, cfg[f'task{i}_val_ids'],   len(dfs_val[i])
+            )
+            logger.info(
+                "Incremental training - Test Task %d size: %d",
+                i, len(dfs_test[i])
+            )
+        
+        
+        # Fit scaler on first task training data only
+        feat_cols = ['Voltage[V]', 'Current[A]', 'Temperature[°C]']
+        self.scaler.fit(dfs_train[0][feat_cols])
+        logger.info("  (Scaler) Scaler centers: %s", self.scaler.center_)
+        logger.info("  (Scaler) Scaler scales: %s", self.scaler.scale_)
+
+        
+        def scale(df):
+            df2 = df.copy()
+            if not df2.empty:
+                df2[feat_cols] = self.scaler.transform(df2[feat_cols])
+            return df2
+        
         return {
-            'task0_train': scale(df0t), 'task0_val':  scale(df0v),
-            'task1_train': scale(df1t), 'task1_val':  scale(df1v),
-            'task2_train': scale(df2t), 'task2_val':  scale(df2v),
-            'test_full':    scale(df_test_full),
-            'test_task0':   scale(df0tst), 'test_task1': scale(df1tst), 'test_task2': scale(df2tst)
+            'task0_train': scale(df0t), 'task0_val': scale(df0v),
+            'task1_train': scale(df1t), 'task1_val': scale(df1v),
+            'task2_train': scale(df2t), 'task2_val': scale(df2v),
+            'test_full': scale(df_test),
+            'test_task0': scale(df0test), 'test_task1': scale(df1test), 'test_task2': scale(df2test)
         }

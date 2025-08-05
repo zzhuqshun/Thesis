@@ -8,7 +8,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
 # Assuming SOHLSTM is defined in model.py
-from base import SOHLSTM
+from utils.base import SOHLSTM
 
 logger = logging.getLogger(__name__)
 
@@ -152,82 +152,193 @@ def plot_prediction_scatter(preds: np.ndarray,
     plt.savefig(out_dir / 'prediction_scatter.png', dpi=300, bbox_inches='tight')
     plt.close()
 
-
-def evaluate_incremental_learning(config,
-                                  inc_dir: Path,
-                                  num_tasks: int,
-                                  loaders: dict):
+def evaluate_incremental_learning(config, inc_dir, loaders, device):
     """
     Comprehensive evaluation of incremental learning performance.
-
-    Args:
-        config: experiment configuration
-        inc_dir: base directory for incremental outputs
-        num_tasks: number of incremental tasks
-        loaders: dict of DataLoaders, keys include 'test_full', 'test_task{i}'
-
-    Returns:
-        continual_learning_metrics: dict with BWT, FWT, ACC
-        R_matrix: numpy array of performance values
     """
     logger.info("==== Starting Comprehensive Evaluation ====")
+    
+    # Create evaluation directory
     eval_dir = inc_dir / 'metrics'
     eval_dir.mkdir(parents=True, exist_ok=True)
-
-    # Initialize R matrix and summary list
+    num_tasks = config.NUM_TASKS
+    
+    # Performance matrix R[i][j] = performance of model after task i on test set of task j
     R_matrix = np.zeros((num_tasks, num_tasks))
-    summary = []
-
-    for i in range(num_tasks):
-        # Load checkpoint
-        ckpt = inc_dir / f"task{i}" / f"task{i}_best.pt"
-        if not ckpt.exists():
-            logger.error("Checkpoint not found: %s", ckpt)
+    metrics_summary = []
+    
+    # Evaluate each trained model on all test sets
+    for trained_task_idx in range(num_tasks):
+        logger.info("Evaluating model trained after task %d...", trained_task_idx)
+        
+        # Load model checkpoint from this training stage
+        checkpoint_path = inc_dir / f"task{trained_task_idx}" / f"task{trained_task_idx}_best.pt"
+        if not checkpoint_path.exists():
+            logger.error("Checkpoint not found: %s", checkpoint_path)
             continue
+        
+        # Create fresh model and load trained weights
+        eval_model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
+        checkpoint = torch.load(checkpoint_path, map_location=device)
+        eval_model.load_state_dict(checkpoint['model_state'])
+        eval_model.eval()
 
-        # Rebuild model and load weights
-        model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT)
-        model.load_state_dict(torch.load(ckpt, map_location='cpu')['model_state'])
-        preds_full, tgts_full, metrics_full = evaluate(model, loaders['test_full'], alpha=config.ALPHA, log=False)
-        logger.info("Full Test after Task %d -> MAE: %.4e, R2: %.4f", i, metrics_full['MAE'], metrics_full['R2'])
-        plot_predictions(preds_full, tgts_full, metrics_full, inc_dir / f"task{i}", alpha=config.ALPHA)
-        summary.append({
-            'trained': i, 'eval': 'full', **metrics_full, 'R_value': -metrics_full['MAE']
+        # Evaluate on full test set (complete battery degradation curve)
+        full_preds, full_targets, full_metrics = evaluate(eval_model,
+            loaders['test_full'], alpha=config.ALPHA, log=False
+        )
+        logger.info("Full test set evaluation: MAE=%.4e, R2=%.4f", 
+                    full_metrics['MAE'], full_metrics['R2'])
+        
+        # Save full test set predictions plot
+        plot_predictions(
+            full_preds, full_targets, full_metrics,
+            inc_dir / f"task{trained_task_idx}", alpha=config.ALPHA
+        )
+        
+        # Record full test performance
+        metrics_summary.append({
+            "trained_after_task": f"task{trained_task_idx}",
+            "evaluated_on_task": "full_test",
+            "trained_task_idx": trained_task_idx,
+            "eval_task_idx": -1,  # -1 indicates full test set
+            "MAE": full_metrics['MAE'],
+            "MAE_smooth": full_metrics['MAE_smooth'],
+            "RMSE": full_metrics['RMSE'],
+            "RMSE_smooth": full_metrics['RMSE_smooth'],
+            "R2": full_metrics['R2'],
+            "R2_smooth": full_metrics['R2_smooth'],
+            "R_value": -full_metrics['MAE']  # Negative MAE for maximization
         })
-
-        for j in range(num_tasks):
-            key = f'test_task{j}'
-            preds_j, tgts_j, metrics_j = evaluate(model, loaders[key], alpha=config.ALPHA, log=False)
-            R_matrix[i, j] = -metrics_j['MAE']
-            summary.append({
-                'trained': i, 'eval': j, **metrics_j, 'R_value': R_matrix[i, j]
+        
+        # Evaluate on each task-specific test set
+        for eval_task_idx in range(num_tasks):
+            test_loader_key = f'test_task{eval_task_idx}'
+            test_loader = loaders[test_loader_key]
+            
+            # Get predictions and metrics for this task
+            _, _, task_metrics = evaluate(eval_model, test_loader, alpha=config.ALPHA, log=False)
+            
+            # Store performance in R matrix
+            R_matrix[trained_task_idx][eval_task_idx] = -task_metrics['MAE']
+            
+            # Record detailed metrics
+            metrics_summary.append({
+                "trained_after_task": f"task{trained_task_idx}",
+                "evaluated_on_task": f"test_task{eval_task_idx}",
+                "trained_task_idx": trained_task_idx,
+                "eval_task_idx": eval_task_idx,
+                "MAE": task_metrics['MAE'],
+                "MAE_smooth": task_metrics['MAE_smooth'],
+                "RMSE": task_metrics['RMSE'],
+                "RMSE_smooth": task_metrics['RMSE_smooth'],
+                "R2": task_metrics['R2'],
+                "R2_smooth": task_metrics['R2_smooth'],
+                "R_value": R_matrix[trained_task_idx][eval_task_idx]
             })
-            logger.info("Task %d->Task %d: MAE=%.4e, R2=%.4f", i, j, metrics_j['MAE'], metrics_j['R2'])
+            
+            logger.info("  Task %d -> Test Task %d: MAE=%.4e, R2=%.4f", 
+                       trained_task_idx, eval_task_idx, 
+                       task_metrics['MAE'], task_metrics['R2'])
+    
+    # ===============================================================
+    # Calculate Continual Learning Metrics
+    # ===============================================================
+    logger.info("==== Computing Continual Learning Metrics ====")
+    
+    # Compute baseline performance for Forward Transfer calculation
+    logger.info("Computing random initialization baselines...")
+    torch.manual_seed(config.SEED + 999)  # Different seed for baseline
+    baseline_model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
 
-    # Baseline performance
-    baseline_R = []
-    torch.manual_seed(config.SEED + 999)
+    baseline_performance = np.zeros(num_tasks)
     for j in range(num_tasks):
-        model0 = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT)
-        _, _, m0 = evaluate(model0, loaders[f'test_task{j}'], alpha=config.ALPHA, log=False)
-        baseline_R.append(-m0['MAE'])
-        logger.info("Baseline Task %d R: %.4f", j, baseline_R[-1])
-
-    # Compute CL metrics
-    # BWT
+        test_loader = loaders[f'test_task{j}']
+        _, _, baseline_metrics = evaluate(baseline_model, test_loader, alpha=config.ALPHA, log=False)
+        baseline_performance[j] = -baseline_metrics['MAE']
+        logger.info("  Baseline Task %d: R=%.4f", j, baseline_performance[j])
+    
+    # Calculate BWT (Backward Transfer)
+    # BWT measures how much old task performance degrades after learning new tasks
     if num_tasks > 1:
-        bwt = np.mean([R_matrix[-1, k] - R_matrix[k, k] for k in range(num_tasks-1)])
-        fwt = np.mean([R_matrix[k-1, k] - baseline_R[k] for k in range(1, num_tasks)])
+        bwt_scores = []
+        for i in range(num_tasks - 1):  # Tasks 0 to T-2
+            final_perf = R_matrix[num_tasks - 1, i]  # Performance after all tasks
+            when_learned_perf = R_matrix[i, i]       # Performance when task was learned
+            bwt_scores.append(final_perf - when_learned_perf)
+        BWT = np.mean(bwt_scores)
     else:
-        bwt = fwt = 0.0
-    acc = np.mean(R_matrix[-1])
-    cl_metrics = {'BWT': bwt, 'FWT': fwt, 'ACC': acc}
-
-    # Save results
-    pd.DataFrame(summary).to_csv(eval_dir / 'detailed_results.csv', index=False)
-    pd.DataFrame([cl_metrics]).to_csv(eval_dir / 'cl_metrics.csv', index=False)
-    pd.DataFrame(R_matrix, columns=[f"t{j}" for j in range(num_tasks)]).to_csv(eval_dir / 'R_matrix.csv', index=False)
-    pd.DataFrame({'baseline': baseline_R}).to_csv(eval_dir / 'baseline.csv', index=False)
-
-    logger.info("CL Metrics: %s", cl_metrics)
-    return cl_metrics, R_matrix
+        BWT = 0.0
+    
+    # Calculate FWT (Forward Transfer)  
+    # FWT measures how much learning previous tasks helps with new tasks
+    if num_tasks > 1:
+        fwt_scores = []
+        for i in range(1, num_tasks):  # Tasks 1 to T-1
+            when_learned_perf = R_matrix[i - 1, i]  # Performance on task i after learning task i-1
+            baseline_perf = baseline_performance[i]  # Random initialization performance
+            fwt_scores.append(when_learned_perf - baseline_perf)
+        FWT = np.mean(fwt_scores)
+    else:
+        FWT = 0.0
+    
+    # Calculate ACC (Average Accuracy)
+    # ACC measures overall performance: average final performance across all tasks
+    ACC = np.mean(R_matrix[num_tasks - 1, :])
+    
+    # Compile continual learning metrics
+    continual_learning_metrics = {
+        "BWT": BWT,  # Backward Transfer (negative = forgetting)
+        "FWT": FWT,  # Forward Transfer (positive = beneficial transfer)
+        "ACC": ACC,  # Average final accuracy
+        "num_tasks": num_tasks
+    }
+    
+    # Log results
+    logger.info("==== Continual Learning Results ====")
+    logger.info("BWT (Backward Transfer): %.4f %s", BWT, 
+               "(less negative = less forgetting)" if BWT < 0 else "(positive = backward gain)")
+    logger.info("FWT (Forward Transfer): %.4f %s", FWT,
+               "(positive = beneficial transfer)" if FWT > 0 else "(negative = interference)")
+    logger.info("ACC (Average Accuracy): %.4f", ACC)
+    
+    # Print R matrix for detailed inspection
+    logger.info("==== Performance Matrix R[i][j] ====")
+    logger.info("Rows: trained after task i, Columns: evaluated on task j")
+    header = "       " + " ".join([f"Task{j:2d}" for j in range(num_tasks)])
+    logger.info(header)
+    for i in range(num_tasks):
+        row_values = " ".join([f"{R_matrix[i,j]:7.4f}" for j in range(num_tasks)])
+        logger.info("Task%2d: %s", i, row_values)
+    
+    # ===============================================================
+    # Save All Results
+    # ===============================================================
+    
+    # Save detailed evaluation metrics
+    summary_df = pd.DataFrame(metrics_summary)
+    summary_df.to_csv(eval_dir / 'detailed_evaluation_results.csv', index=False)
+    
+    # Save continual learning metrics summary
+    cl_metrics_df = pd.DataFrame([continual_learning_metrics])
+    cl_metrics_df.to_csv(eval_dir / 'continual_learning_metrics.csv', index=False)
+    
+    # Save performance matrix
+    r_matrix_df = pd.DataFrame(
+        R_matrix, 
+        index=[f"after_task{i}" for i in range(num_tasks)],
+        columns=[f"eval_task{j}" for j in range(num_tasks)]
+    )
+    r_matrix_df.to_csv(eval_dir / 'R_matrix.csv')
+    
+    # Save baseline performance for reference
+    baseline_df = pd.DataFrame({
+        'task': [f'task{i}' for i in range(num_tasks)],
+        'baseline_performance': baseline_performance
+    })
+    baseline_df.to_csv(eval_dir / 'baseline_performance.csv', index=False)
+    
+    logger.info("==== Evaluation Complete ====")
+    logger.info("All results saved to: %s", eval_dir)
+    
+    return continual_learning_metrics, R_matrix

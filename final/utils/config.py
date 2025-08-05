@@ -9,7 +9,7 @@ class Config:
         
         # Paths
         self.BASE_DIR = Path()
-        self.DATA_DIR = Path(__file__).resolve().parent.parent / '01_Datenaufbereitung' / 'Output' / 'Calculated'
+        self.DATA_DIR = Path(__file__).resolve().parent.parent.parent / '01_Datenaufbereitung' / 'Output' / 'Calculated'
 
         # Model & training hyperparams
         self.SEQUENCE_LENGTH = 720
