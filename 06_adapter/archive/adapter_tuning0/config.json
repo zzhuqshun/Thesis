@@ -16,8 +16,9 @@
     "ALPHA": 0.1,
     "NUM_TASKS": 3,
     "USE_ADAPTER": true,
-    "ADAPTER_SIZE": 32,
+    "ADAPTER_SIZE": 64,
     "FREEZE_BACKBONE": true,
+    "ACTIVATION": "GELU",
     "SEED": 42,
     "joint_datasets": {
         "train_ids": [
@@ -71,7 +72,7 @@
     },
     "Info": {
         "method": "Adapter Fine-tuning",
-        "adapter_size": 32,
+        "adapter_size": 64,
         "freeze_backbone": true,
         "resample": "10min",
         "scaler": "RobustScaler - fit on base train",

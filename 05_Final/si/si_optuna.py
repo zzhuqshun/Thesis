@@ -67,6 +67,7 @@ def objective(trial):
     cfg_dict["SI_LAMBDAS"] = [lam0, lam1, lam2]
     cfg_dict["SI_EPSILON"] = epsilon
     cfg = Config(**cfg_dict)
+    print("Inncremental_datasets: ", cfg.incremental_datasets)
     set_seed(cfg.SEED + trial.number)
     
     # 加载数据（只在第一次加载）
@@ -165,9 +166,9 @@ def optimize_si(n_trials=50):
 
 if __name__ == "__main__":
     # 运行优化（SI不需要预训练的Task0模型）
-    results_dir = Path.cwd() / "si" / "optuna_results"
+    results_dir = Path.cwd() / "si" / "optuna_new_split"
     results_dir.mkdir(exist_ok=True)
-    study, best_trial = optimize_si(n_trials=50)
+    study, best_trial = optimize_si(n_trials=30)
     
     df_all = study.trials_dataframe(attrs=("number", "values", "params", "user_attrs"))
     df_all.to_csv(results_dir / "all_trials.csv", index=False)

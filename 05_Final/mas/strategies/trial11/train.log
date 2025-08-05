@@ -1,0 +1,285 @@
+2025-08-05 14:23:16,556 - ==== Experiment Setup ====
+2025-08-05 14:23:16,574 - Mode: incremental
+2025-08-05 14:23:16,575 - Number of tasks: 3
+2025-08-05 14:23:16,578 - MAS lambdas: [0.0032734083240035885, 0.0032734083240035885, 0.0032734083240035885]
+2025-08-05 14:23:16,580 - LWF alphas: [0.0, 0.0, 0.0]
+2025-08-05 14:23:16,583 - Base directory: /beegfs/home/users/z/zzhuqshun/Thesis/05_Final/mas/strategies/trial11
+2025-08-05 14:23:16,586 - ==== Incremental Training with MAS ====
+2025-08-05 14:23:16,608 - Number of tasks: 3
+2025-08-05 14:24:49,141 - Incremental training - Task 0 Train IDs: ['03', '27', '05', '21', '11'], size: 107395
+2025-08-05 14:24:49,159 - Incremental training - Task 0 Val IDs: ['01'], size: 20028
+2025-08-05 14:24:49,164 - Incremental training - Test Task 0 size: 8584
+2025-08-05 14:24:49,168 - Incremental training - Task 1 Train IDs: ['23', '25', '07'], size: 66660
+2025-08-05 14:24:49,173 - Incremental training - Task 1 Val IDs: ['19'], size: 16183
+2025-08-05 14:24:49,178 - Incremental training - Test Task 1 size: 6937
+2025-08-05 14:24:49,182 - Incremental training - Task 2 Train IDs: ['09', '15', '29'], size: 31589
+2025-08-05 14:24:49,186 - Incremental training - Task 2 Val IDs: ['13'], size: 4511
+2025-08-05 14:24:49,191 - Incremental training - Test Task 2 size: 1934
+2025-08-05 14:24:49,213 -   (Scaler) Scaler centers: [ 3.3374245   0.101279   27.50083333]
+2025-08-05 14:24:49,233 -   (Scaler) Scaler scales: [0.18253608 1.77971742 1.05683333]
+2025-08-05 14:24:50,128 - --- task0 (LWF α=0.0000, MAS λ=0.0033) ---
+2025-08-05 14:31:08,881 - Epoch 0: MAS loss is 0.00% of task loss
+2025-08-05 14:31:14,520 - Epoch 0 task=3.4183e-02 kd=0.0000e+00 mas=0.0000e+00 val=1.8106e-03 lr=1.00e-04 time=127.78s
+2025-08-05 14:33:21,652 - Epoch 1: MAS loss is 0.00% of task loss
+2025-08-05 14:33:27,281 - Epoch 1 task=7.4524e-03 kd=0.0000e+00 mas=0.0000e+00 val=9.6827e-04 lr=1.00e-04 time=127.02s
+2025-08-05 14:35:38,333 - Epoch 2: MAS loss is 0.00% of task loss
+2025-08-05 14:35:43,914 - Epoch 2 task=5.6415e-03 kd=0.0000e+00 mas=0.0000e+00 val=1.1449e-03 lr=1.00e-04 time=131.00s
+2025-08-05 14:37:44,756 - Epoch 3: MAS loss is 0.00% of task loss
+2025-08-05 14:37:50,336 - Epoch 3 task=4.6389e-03 kd=0.0000e+00 mas=0.0000e+00 val=5.0094e-04 lr=1.00e-04 time=120.86s
+2025-08-05 14:39:49,699 - Epoch 4: MAS loss is 0.00% of task loss
+2025-08-05 14:39:55,271 - Epoch 4 task=3.7085e-03 kd=0.0000e+00 mas=0.0000e+00 val=1.0208e-03 lr=1.00e-04 time=119.32s
+2025-08-05 14:41:56,003 - Epoch 5: MAS loss is 0.00% of task loss
+2025-08-05 14:42:01,578 - Epoch 5 task=2.8454e-03 kd=0.0000e+00 mas=0.0000e+00 val=3.8385e-04 lr=1.00e-04 time=120.75s
+2025-08-05 14:43:59,646 - Epoch 6: MAS loss is 0.00% of task loss
+2025-08-05 14:44:05,224 - Epoch 6 task=1.9421e-03 kd=0.0000e+00 mas=0.0000e+00 val=3.4660e-04 lr=1.00e-04 time=118.03s
+2025-08-05 14:46:06,143 - Epoch 7: MAS loss is 0.00% of task loss
+2025-08-05 14:46:11,710 - Epoch 7 task=1.3745e-03 kd=0.0000e+00 mas=0.0000e+00 val=2.3536e-04 lr=1.00e-04 time=120.87s
+2025-08-05 14:48:14,892 - Epoch 8: MAS loss is 0.00% of task loss
+2025-08-05 14:48:20,457 - Epoch 8 task=1.1364e-03 kd=0.0000e+00 mas=0.0000e+00 val=2.8731e-04 lr=1.00e-04 time=123.13s
+2025-08-05 14:50:20,912 - Epoch 9: MAS loss is 0.00% of task loss
+2025-08-05 14:50:26,480 - Epoch 9 task=8.5875e-04 kd=0.0000e+00 mas=0.0000e+00 val=9.2570e-04 lr=1.00e-04 time=120.45s
+2025-08-05 14:52:23,589 - Epoch 10: MAS loss is 0.00% of task loss
+2025-08-05 14:52:29,165 - Epoch 10 task=6.4584e-04 kd=0.0000e+00 mas=0.0000e+00 val=9.1032e-04 lr=1.00e-04 time=117.12s
+2025-08-05 14:54:26,805 - Epoch 11: MAS loss is 0.00% of task loss
+2025-08-05 14:54:32,400 - Epoch 11 task=5.3215e-04 kd=0.0000e+00 mas=0.0000e+00 val=1.2565e-03 lr=1.00e-04 time=117.65s
+2025-08-05 14:56:29,895 - Epoch 12: MAS loss is 0.00% of task loss
+2025-08-05 14:56:35,485 - Epoch 12 task=4.7213e-04 kd=0.0000e+00 mas=0.0000e+00 val=8.5282e-03 lr=1.00e-04 time=117.51s
+2025-08-05 14:58:32,198 - Epoch 13: MAS loss is 0.00% of task loss
+2025-08-05 14:58:37,758 - Epoch 13 task=4.5206e-04 kd=0.0000e+00 mas=0.0000e+00 val=2.6870e-03 lr=1.00e-04 time=116.70s
+2025-08-05 15:00:37,545 - Epoch 14: MAS loss is 0.00% of task loss
+2025-08-05 15:00:43,138 - Epoch 14 task=3.1625e-04 kd=0.0000e+00 mas=0.0000e+00 val=1.1495e-02 lr=5.00e-05 time=119.79s
+2025-08-05 15:02:41,609 - Epoch 15: MAS loss is 0.00% of task loss
+2025-08-05 15:02:47,207 - Epoch 15 task=2.0442e-04 kd=0.0000e+00 mas=0.0000e+00 val=1.1450e-02 lr=5.00e-05 time=118.48s
+2025-08-05 15:04:43,761 - Epoch 16: MAS loss is 0.00% of task loss
+2025-08-05 15:04:49,367 - Epoch 16 task=2.8454e-04 kd=0.0000e+00 mas=0.0000e+00 val=5.0561e-03 lr=5.00e-05 time=116.56s
+2025-08-05 15:06:45,308 - Epoch 17: MAS loss is 0.00% of task loss
+2025-08-05 15:06:50,906 - Epoch 17 task=4.2232e-04 kd=0.0000e+00 mas=0.0000e+00 val=7.1749e-03 lr=5.00e-05 time=115.94s
+2025-08-05 15:08:41,991 - Epoch 18: MAS loss is 0.00% of task loss
+2025-08-05 15:08:47,583 - Epoch 18 task=2.4178e-04 kd=0.0000e+00 mas=0.0000e+00 val=7.7412e-03 lr=5.00e-05 time=111.09s
+2025-08-05 15:10:39,992 - Epoch 19: MAS loss is 0.00% of task loss
+2025-08-05 15:10:45,596 - Epoch 19 task=1.7374e-04 kd=0.0000e+00 mas=0.0000e+00 val=8.2510e-03 lr=5.00e-05 time=112.42s
+2025-08-05 15:12:41,440 - Epoch 20: MAS loss is 0.00% of task loss
+2025-08-05 15:12:47,055 - Epoch 20 task=1.1908e-04 kd=0.0000e+00 mas=0.0000e+00 val=7.0348e-03 lr=2.50e-05 time=115.87s
+2025-08-05 15:14:50,419 - Epoch 21: MAS loss is 0.00% of task loss
+2025-08-05 15:14:56,019 - Epoch 21 task=1.0881e-04 kd=0.0000e+00 mas=0.0000e+00 val=4.9684e-03 lr=2.50e-05 time=123.36s
+2025-08-05 15:16:54,854 - Epoch 22: MAS loss is 0.00% of task loss
+2025-08-05 15:17:00,459 - Epoch 22 task=9.9826e-05 kd=0.0000e+00 mas=0.0000e+00 val=5.4105e-03 lr=2.50e-05 time=118.83s
+2025-08-05 15:18:55,424 - Epoch 23: MAS loss is 0.00% of task loss
+2025-08-05 15:19:01,020 - Epoch 23 task=9.6723e-05 kd=0.0000e+00 mas=0.0000e+00 val=4.8673e-03 lr=2.50e-05 time=113.69s
+2025-08-05 15:20:49,727 - Epoch 24: MAS loss is 0.00% of task loss
+2025-08-05 15:20:55,324 - Epoch 24 task=9.0518e-05 kd=0.0000e+00 mas=0.0000e+00 val=4.2275e-03 lr=2.50e-05 time=108.71s
+2025-08-05 15:22:48,792 - Epoch 25: MAS loss is 0.00% of task loss
+2025-08-05 15:22:54,412 - Epoch 25 task=8.6469e-05 kd=0.0000e+00 mas=0.0000e+00 val=8.7125e-03 lr=2.50e-05 time=113.48s
+2025-08-05 15:24:49,024 - Epoch 26: MAS loss is 0.00% of task loss
+2025-08-05 15:24:54,630 - Epoch 26 task=8.0020e-05 kd=0.0000e+00 mas=0.0000e+00 val=4.1118e-03 lr=1.25e-05 time=114.63s
+2025-08-05 15:26:48,467 - Epoch 27: MAS loss is 0.00% of task loss
+2025-08-05 15:26:54,068 - Epoch 27 task=7.8008e-05 kd=0.0000e+00 mas=0.0000e+00 val=4.4624e-03 lr=1.25e-05 time=113.83s
+2025-08-05 15:26:54,075 - Early stopping at epoch 27
+2025-08-05 15:27:01,242 - Consolidating task 0 with MAS lambda: 0.0033
+2025-08-05 15:28:16,589 - MAS importance normalized with scale 0.0275
+2025-08-05 15:28:16,618 - Task 0 consolidated with MAS lambda=0.0033
+2025-08-05 15:28:16,623 - Task 0 completed and consolidated.
+2025-08-05 15:28:16,630 - --- task1 (LWF α=0.0000, MAS λ=0.0033) ---
+2025-08-05 15:29:29,265 - Epoch 0: MAS loss is 10.60% of task loss
+2025-08-05 15:29:33,740 - Epoch 0 task=1.7113e-03 kd=0.0000e+00 mas=1.8138e-04 val=2.0290e-03 lr=1.00e-04 time=72.47s
+2025-08-05 15:30:48,523 - Epoch 1: MAS loss is 13.01% of task loss
+2025-08-05 15:30:53,011 - Epoch 1 task=1.7189e-03 kd=0.0000e+00 mas=2.2356e-04 val=1.5296e-03 lr=1.00e-04 time=74.74s
+2025-08-05 15:32:05,398 - Epoch 2: MAS loss is 12.46% of task loss
+2025-08-05 15:32:09,875 - Epoch 2 task=1.7099e-03 kd=0.0000e+00 mas=2.1313e-04 val=2.0021e-03 lr=1.00e-04 time=72.34s
+2025-08-05 15:33:24,124 - Epoch 3: MAS loss is 10.55% of task loss
+2025-08-05 15:33:28,608 - Epoch 3 task=1.6580e-03 kd=0.0000e+00 mas=1.7490e-04 val=1.7728e-03 lr=1.00e-04 time=74.25s
+2025-08-05 15:34:40,317 - Epoch 4: MAS loss is 12.38% of task loss
+2025-08-05 15:34:44,791 - Epoch 4 task=1.5216e-03 kd=0.0000e+00 mas=1.8844e-04 val=8.8069e-04 lr=1.00e-04 time=71.71s
+2025-08-05 15:35:57,532 - Epoch 5: MAS loss is 14.38% of task loss
+2025-08-05 15:36:02,015 - Epoch 5 task=1.4278e-03 kd=0.0000e+00 mas=2.0534e-04 val=2.1135e-03 lr=1.00e-04 time=72.70s
+2025-08-05 15:37:14,067 - Epoch 6: MAS loss is 19.11% of task loss
+2025-08-05 15:37:18,559 - Epoch 6 task=1.3870e-03 kd=0.0000e+00 mas=2.6499e-04 val=2.2689e-03 lr=1.00e-04 time=72.07s
+2025-08-05 15:38:30,606 - Epoch 7: MAS loss is 16.15% of task loss
+2025-08-05 15:38:35,077 - Epoch 7 task=1.3919e-03 kd=0.0000e+00 mas=2.2480e-04 val=2.7343e-03 lr=1.00e-04 time=72.05s
+2025-08-05 15:39:47,115 - Epoch 8: MAS loss is 15.44% of task loss
+2025-08-05 15:39:51,588 - Epoch 8 task=1.2392e-03 kd=0.0000e+00 mas=1.9133e-04 val=2.7575e-03 lr=1.00e-04 time=72.03s
+2025-08-05 15:41:03,981 - Epoch 9: MAS loss is 15.24% of task loss
+2025-08-05 15:41:08,454 - Epoch 9 task=1.2219e-03 kd=0.0000e+00 mas=1.8618e-04 val=2.8862e-03 lr=1.00e-04 time=72.39s
+2025-08-05 15:42:21,120 - Epoch 10: MAS loss is 15.15% of task loss
+2025-08-05 15:42:25,596 - Epoch 10 task=1.2529e-03 kd=0.0000e+00 mas=1.8978e-04 val=8.9194e-04 lr=1.00e-04 time=72.66s
+2025-08-05 15:43:37,880 - Epoch 11: MAS loss is 14.92% of task loss
+2025-08-05 15:43:42,369 - Epoch 11 task=1.1477e-03 kd=0.0000e+00 mas=1.7125e-04 val=1.0511e-03 lr=5.00e-05 time=72.29s
+2025-08-05 15:44:54,995 - Epoch 12: MAS loss is 15.39% of task loss
+2025-08-05 15:44:59,478 - Epoch 12 task=1.1560e-03 kd=0.0000e+00 mas=1.7785e-04 val=6.4344e-04 lr=5.00e-05 time=72.63s
+2025-08-05 15:46:12,045 - Epoch 13: MAS loss is 15.05% of task loss
+2025-08-05 15:46:16,525 - Epoch 13 task=1.1296e-03 kd=0.0000e+00 mas=1.6997e-04 val=5.3804e-04 lr=5.00e-05 time=72.50s
+2025-08-05 15:47:28,163 - Epoch 14: MAS loss is 15.44% of task loss
+2025-08-05 15:47:32,655 - Epoch 14 task=1.1244e-03 kd=0.0000e+00 mas=1.7360e-04 val=5.6080e-04 lr=5.00e-05 time=71.60s
+2025-08-05 15:48:44,818 - Epoch 15: MAS loss is 15.42% of task loss
+2025-08-05 15:48:49,302 - Epoch 15 task=1.1057e-03 kd=0.0000e+00 mas=1.7053e-04 val=7.0003e-04 lr=5.00e-05 time=72.17s
+2025-08-05 15:50:00,958 - Epoch 16: MAS loss is 14.70% of task loss
+2025-08-05 15:50:05,443 - Epoch 16 task=1.1150e-03 kd=0.0000e+00 mas=1.6386e-04 val=4.9009e-04 lr=5.00e-05 time=71.67s
+2025-08-05 15:51:16,473 - Epoch 17: MAS loss is 15.66% of task loss
+2025-08-05 15:51:20,946 - Epoch 17 task=1.1166e-03 kd=0.0000e+00 mas=1.7486e-04 val=9.6072e-04 lr=5.00e-05 time=70.98s
+2025-08-05 15:52:33,163 - Epoch 18: MAS loss is 15.27% of task loss
+2025-08-05 15:52:37,630 - Epoch 18 task=1.1396e-03 kd=0.0000e+00 mas=1.7395e-04 val=6.7222e-04 lr=5.00e-05 time=72.21s
+2025-08-05 15:53:49,902 - Epoch 19: MAS loss is 15.36% of task loss
+2025-08-05 15:53:54,380 - Epoch 19 task=1.1226e-03 kd=0.0000e+00 mas=1.7242e-04 val=5.9648e-04 lr=5.00e-05 time=72.28s
+2025-08-05 15:55:05,731 - Epoch 20: MAS loss is 15.09% of task loss
+2025-08-05 15:55:10,215 - Epoch 20 task=1.1467e-03 kd=0.0000e+00 mas=1.7302e-04 val=8.7225e-04 lr=5.00e-05 time=71.36s
+2025-08-05 15:56:21,987 - Epoch 21: MAS loss is 15.13% of task loss
+2025-08-05 15:56:26,472 - Epoch 21 task=1.1385e-03 kd=0.0000e+00 mas=1.7224e-04 val=4.4887e-04 lr=5.00e-05 time=71.78s
+2025-08-05 15:57:38,699 - Epoch 22: MAS loss is 15.31% of task loss
+2025-08-05 15:57:43,182 - Epoch 22 task=1.1343e-03 kd=0.0000e+00 mas=1.7372e-04 val=6.2285e-04 lr=5.00e-05 time=72.19s
+2025-08-05 15:58:59,608 - Epoch 23: MAS loss is 15.31% of task loss
+2025-08-05 15:59:04,090 - Epoch 23 task=1.1250e-03 kd=0.0000e+00 mas=1.7226e-04 val=5.8739e-04 lr=5.00e-05 time=76.44s
+2025-08-05 16:00:21,587 - Epoch 24: MAS loss is 15.40% of task loss
+2025-08-05 16:00:26,063 - Epoch 24 task=1.1201e-03 kd=0.0000e+00 mas=1.7248e-04 val=1.0763e-03 lr=5.00e-05 time=77.51s
+2025-08-05 16:01:43,055 - Epoch 25: MAS loss is 15.87% of task loss
+2025-08-05 16:01:47,527 - Epoch 25 task=1.1012e-03 kd=0.0000e+00 mas=1.7472e-04 val=7.5513e-04 lr=5.00e-05 time=77.00s
+2025-08-05 16:03:00,512 - Epoch 26: MAS loss is 15.86% of task loss
+2025-08-05 16:03:04,994 - Epoch 26 task=1.0733e-03 kd=0.0000e+00 mas=1.7026e-04 val=6.8424e-04 lr=5.00e-05 time=73.00s
+2025-08-05 16:04:14,723 - Epoch 27: MAS loss is 15.91% of task loss
+2025-08-05 16:04:19,193 - Epoch 27 task=1.0860e-03 kd=0.0000e+00 mas=1.7282e-04 val=7.0158e-04 lr=5.00e-05 time=69.73s
+2025-08-05 16:05:38,326 - Epoch 28: MAS loss is 16.38% of task loss
+2025-08-05 16:05:42,815 - Epoch 28 task=1.0450e-03 kd=0.0000e+00 mas=1.7120e-04 val=7.0987e-04 lr=2.50e-05 time=79.15s
+2025-08-05 16:07:02,890 - Epoch 29: MAS loss is 16.60% of task loss
+2025-08-05 16:07:07,376 - Epoch 29 task=1.0176e-03 kd=0.0000e+00 mas=1.6896e-04 val=9.0410e-04 lr=2.50e-05 time=80.08s
+2025-08-05 16:08:26,038 - Epoch 30: MAS loss is 16.39% of task loss
+2025-08-05 16:08:30,531 - Epoch 30 task=1.0414e-03 kd=0.0000e+00 mas=1.7071e-04 val=8.6475e-04 lr=2.50e-05 time=78.67s
+2025-08-05 16:09:49,923 - Epoch 31: MAS loss is 17.00% of task loss
+2025-08-05 16:09:54,415 - Epoch 31 task=1.0382e-03 kd=0.0000e+00 mas=1.7655e-04 val=7.1456e-04 lr=2.50e-05 time=79.40s
+2025-08-05 16:11:15,738 - Epoch 32: MAS loss is 19.36% of task loss
+2025-08-05 16:11:20,222 - Epoch 32 task=9.9095e-04 kd=0.0000e+00 mas=1.9180e-04 val=7.8307e-04 lr=2.50e-05 time=81.32s
+2025-08-05 16:12:44,569 - Epoch 33: MAS loss is 21.26% of task loss
+2025-08-05 16:12:49,069 - Epoch 33 task=9.4103e-04 kd=0.0000e+00 mas=2.0005e-04 val=5.6965e-04 lr=2.50e-05 time=84.37s
+2025-08-05 16:14:11,840 - Epoch 34: MAS loss is 20.89% of task loss
+2025-08-05 16:14:16,334 - Epoch 34 task=9.2058e-04 kd=0.0000e+00 mas=1.9232e-04 val=5.7367e-04 lr=1.25e-05 time=82.78s
+2025-08-05 16:15:38,338 - Epoch 35: MAS loss is 20.82% of task loss
+2025-08-05 16:15:42,822 - Epoch 35 task=9.2769e-04 kd=0.0000e+00 mas=1.9311e-04 val=6.2046e-04 lr=1.25e-05 time=82.00s
+2025-08-05 16:17:04,200 - Epoch 36: MAS loss is 21.12% of task loss
+2025-08-05 16:17:08,688 - Epoch 36 task=9.1183e-04 kd=0.0000e+00 mas=1.9258e-04 val=5.6770e-04 lr=1.25e-05 time=81.38s
+2025-08-05 16:18:29,974 - Epoch 37: MAS loss is 20.73% of task loss
+2025-08-05 16:18:34,462 - Epoch 37 task=9.2361e-04 kd=0.0000e+00 mas=1.9146e-04 val=6.0047e-04 lr=1.25e-05 time=81.29s
+2025-08-05 16:19:57,518 - Epoch 38: MAS loss is 20.96% of task loss
+2025-08-05 16:20:02,014 - Epoch 38 task=9.1390e-04 kd=0.0000e+00 mas=1.9156e-04 val=5.9939e-04 lr=1.25e-05 time=83.07s
+2025-08-05 16:21:25,317 - Epoch 39: MAS loss is 20.99% of task loss
+2025-08-05 16:21:29,801 - Epoch 39 task=9.1534e-04 kd=0.0000e+00 mas=1.9215e-04 val=5.9779e-04 lr=1.25e-05 time=83.30s
+2025-08-05 16:22:54,889 - Epoch 40: MAS loss is 21.37% of task loss
+2025-08-05 16:22:59,385 - Epoch 40 task=8.9000e-04 kd=0.0000e+00 mas=1.9019e-04 val=6.1520e-04 lr=6.25e-06 time=85.10s
+2025-08-05 16:24:35,690 - Epoch 41: MAS loss is 21.40% of task loss
+2025-08-05 16:24:40,177 - Epoch 41 task=8.9314e-04 kd=0.0000e+00 mas=1.9109e-04 val=6.1008e-04 lr=6.25e-06 time=93.79s
+2025-08-05 16:24:40,186 - Early stopping at epoch 41
+2025-08-05 16:24:42,970 - Consolidating task 1 with MAS lambda: 0.0033
+2025-08-05 16:25:29,519 - MAS importance normalized with scale 0.0699
+2025-08-05 16:25:29,550 - Task 1 consolidated with MAS lambda=0.0033
+2025-08-05 16:25:29,560 - Task 1 completed and consolidated.
+2025-08-05 16:25:29,567 - --- task2 (LWF α=0.0000, MAS λ=0.0033) ---
+2025-08-05 16:26:10,764 - Epoch 0: MAS loss is 27.52% of task loss
+2025-08-05 16:26:11,914 - Epoch 0 task=3.7190e-03 kd=0.0000e+00 mas=1.0235e-03 val=1.0359e-03 lr=1.00e-04 time=41.00s
+2025-08-05 16:26:52,745 - Epoch 1: MAS loss is 26.67% of task loss
+2025-08-05 16:26:53,860 - Epoch 1 task=2.6810e-03 kd=0.0000e+00 mas=7.1512e-04 val=9.4946e-04 lr=1.00e-04 time=40.69s
+2025-08-05 16:27:35,184 - Epoch 2: MAS loss is 26.28% of task loss
+2025-08-05 16:27:36,300 - Epoch 2 task=2.7460e-03 kd=0.0000e+00 mas=7.2178e-04 val=1.0857e-03 lr=1.00e-04 time=41.23s
+2025-08-05 16:28:16,029 - Epoch 3: MAS loss is 24.84% of task loss
+2025-08-05 16:28:17,143 - Epoch 3 task=2.6216e-03 kd=0.0000e+00 mas=6.5128e-04 val=1.5792e-03 lr=1.00e-04 time=39.72s
+2025-08-05 16:28:56,880 - Epoch 4: MAS loss is 25.06% of task loss
+2025-08-05 16:28:57,996 - Epoch 4 task=2.8693e-03 kd=0.0000e+00 mas=7.1893e-04 val=1.2982e-03 lr=1.00e-04 time=39.73s
+2025-08-05 16:29:37,371 - Epoch 5: MAS loss is 24.90% of task loss
+2025-08-05 16:29:38,485 - Epoch 5 task=2.5752e-03 kd=0.0000e+00 mas=6.4124e-04 val=1.4476e-03 lr=1.00e-04 time=39.36s
+2025-08-05 16:30:17,875 - Epoch 6: MAS loss is 25.32% of task loss
+2025-08-05 16:30:18,985 - Epoch 6 task=2.5331e-03 kd=0.0000e+00 mas=6.4125e-04 val=1.0653e-03 lr=1.00e-04 time=39.38s
+2025-08-05 16:30:58,015 - Epoch 7: MAS loss is 26.30% of task loss
+2025-08-05 16:30:59,128 - Epoch 7 task=2.6134e-03 kd=0.0000e+00 mas=6.8728e-04 val=1.0729e-03 lr=1.00e-04 time=39.02s
+2025-08-05 16:31:38,989 - Epoch 8: MAS loss is 26.80% of task loss
+2025-08-05 16:31:40,104 - Epoch 8 task=2.2620e-03 kd=0.0000e+00 mas=6.0627e-04 val=1.0576e-03 lr=5.00e-05 time=39.86s
+2025-08-05 16:32:19,693 - Epoch 9: MAS loss is 27.17% of task loss
+2025-08-05 16:32:20,809 - Epoch 9 task=2.2752e-03 kd=0.0000e+00 mas=6.1827e-04 val=1.0653e-03 lr=5.00e-05 time=39.58s
+2025-08-05 16:33:00,880 - Epoch 10: MAS loss is 32.01% of task loss
+2025-08-05 16:33:01,997 - Epoch 10 task=2.0593e-03 kd=0.0000e+00 mas=6.5926e-04 val=1.0286e-03 lr=5.00e-05 time=40.06s
+2025-08-05 16:33:41,286 - Epoch 11: MAS loss is 32.44% of task loss
+2025-08-05 16:33:42,400 - Epoch 11 task=1.9498e-03 kd=0.0000e+00 mas=6.3248e-04 val=1.1983e-03 lr=5.00e-05 time=39.28s
+2025-08-05 16:34:22,038 - Epoch 12: MAS loss is 32.50% of task loss
+2025-08-05 16:34:23,155 - Epoch 12 task=1.9184e-03 kd=0.0000e+00 mas=6.2341e-04 val=9.6448e-04 lr=5.00e-05 time=39.63s
+2025-08-05 16:35:02,393 - Epoch 13: MAS loss is 31.78% of task loss
+2025-08-05 16:35:03,509 - Epoch 13 task=1.9806e-03 kd=0.0000e+00 mas=6.2943e-04 val=1.2515e-03 lr=5.00e-05 time=39.23s
+2025-08-05 16:35:42,934 - Epoch 14: MAS loss is 34.51% of task loss
+2025-08-05 16:35:44,047 - Epoch 14 task=1.7615e-03 kd=0.0000e+00 mas=6.0783e-04 val=9.2151e-04 lr=2.50e-05 time=39.40s
+2025-08-05 16:36:23,505 - Epoch 15: MAS loss is 35.05% of task loss
+2025-08-05 16:36:24,638 - Epoch 15 task=1.7283e-03 kd=0.0000e+00 mas=6.0568e-04 val=9.2980e-04 lr=2.50e-05 time=39.39s
+2025-08-05 16:37:04,535 - Epoch 16: MAS loss is 34.07% of task loss
+2025-08-05 16:37:05,651 - Epoch 16 task=1.7375e-03 kd=0.0000e+00 mas=5.9198e-04 val=1.0322e-03 lr=2.50e-05 time=39.89s
+2025-08-05 16:37:45,453 - Epoch 17: MAS loss is 34.15% of task loss
+2025-08-05 16:37:46,566 - Epoch 17 task=1.7324e-03 kd=0.0000e+00 mas=5.9156e-04 val=1.0557e-03 lr=2.50e-05 time=39.79s
+2025-08-05 16:38:26,369 - Epoch 18: MAS loss is 32.71% of task loss
+2025-08-05 16:38:27,482 - Epoch 18 task=1.7976e-03 kd=0.0000e+00 mas=5.8801e-04 val=1.0297e-03 lr=2.50e-05 time=39.79s
+2025-08-05 16:39:07,091 - Epoch 19: MAS loss is 33.56% of task loss
+2025-08-05 16:39:08,217 - Epoch 19 task=1.7569e-03 kd=0.0000e+00 mas=5.8965e-04 val=9.3248e-04 lr=2.50e-05 time=39.61s
+2025-08-05 16:39:48,040 - Epoch 20: MAS loss is 33.77% of task loss
+2025-08-05 16:39:49,156 - Epoch 20 task=1.7371e-03 kd=0.0000e+00 mas=5.8661e-04 val=1.0680e-03 lr=2.50e-05 time=39.82s
+2025-08-05 16:40:27,674 - Epoch 21: MAS loss is 35.07% of task loss
+2025-08-05 16:40:28,802 - Epoch 21 task=1.6539e-03 kd=0.0000e+00 mas=5.7998e-04 val=9.4038e-04 lr=1.25e-05 time=38.52s
+2025-08-05 16:41:07,817 - Epoch 22: MAS loss is 34.99% of task loss
+2025-08-05 16:41:08,946 - Epoch 22 task=1.6627e-03 kd=0.0000e+00 mas=5.8179e-04 val=1.1799e-03 lr=1.25e-05 time=39.02s
+2025-08-05 16:41:48,715 - Epoch 23: MAS loss is 35.79% of task loss
+2025-08-05 16:41:49,831 - Epoch 23 task=1.6446e-03 kd=0.0000e+00 mas=5.8864e-04 val=1.0684e-03 lr=1.25e-05 time=39.76s
+2025-08-05 16:42:29,574 - Epoch 24: MAS loss is 35.92% of task loss
+2025-08-05 16:42:30,689 - Epoch 24 task=1.6260e-03 kd=0.0000e+00 mas=5.8410e-04 val=1.0616e-03 lr=1.25e-05 time=39.73s
+2025-08-05 16:43:10,427 - Epoch 25: MAS loss is 35.89% of task loss
+2025-08-05 16:43:11,541 - Epoch 25 task=1.6355e-03 kd=0.0000e+00 mas=5.8698e-04 val=1.0625e-03 lr=1.25e-05 time=39.73s
+2025-08-05 16:43:51,239 - Epoch 26: MAS loss is 36.43% of task loss
+2025-08-05 16:43:52,353 - Epoch 26 task=1.6101e-03 kd=0.0000e+00 mas=5.8654e-04 val=9.3575e-04 lr=1.25e-05 time=39.69s
+2025-08-05 16:44:31,429 - Epoch 27: MAS loss is 37.27% of task loss
+2025-08-05 16:44:32,542 - Epoch 27 task=1.5730e-03 kd=0.0000e+00 mas=5.8626e-04 val=9.7982e-04 lr=6.25e-06 time=39.07s
+2025-08-05 16:45:11,168 - Epoch 28: MAS loss is 37.67% of task loss
+2025-08-05 16:45:12,282 - Epoch 28 task=1.5626e-03 kd=0.0000e+00 mas=5.8870e-04 val=1.2764e-03 lr=6.25e-06 time=38.62s
+2025-08-05 16:45:49,496 - Epoch 29: MAS loss is 37.07% of task loss
+2025-08-05 16:45:50,602 - Epoch 29 task=1.5772e-03 kd=0.0000e+00 mas=5.8469e-04 val=1.0967e-03 lr=6.25e-06 time=37.20s
+2025-08-05 16:46:27,653 - Epoch 30: MAS loss is 36.61% of task loss
+2025-08-05 16:46:28,758 - Epoch 30 task=1.5922e-03 kd=0.0000e+00 mas=5.8297e-04 val=1.0381e-03 lr=6.25e-06 time=37.05s
+2025-08-05 16:47:06,707 - Epoch 31: MAS loss is 37.20% of task loss
+2025-08-05 16:47:07,840 - Epoch 31 task=1.5725e-03 kd=0.0000e+00 mas=5.8500e-04 val=1.0161e-03 lr=6.25e-06 time=37.96s
+2025-08-05 16:47:46,271 - Epoch 32: MAS loss is 37.13% of task loss
+2025-08-05 16:47:47,443 - Epoch 32 task=1.5696e-03 kd=0.0000e+00 mas=5.8273e-04 val=1.0030e-03 lr=6.25e-06 time=38.46s
+2025-08-05 16:48:33,506 - Epoch 33: MAS loss is 36.52% of task loss
+2025-08-05 16:48:34,633 - Epoch 33 task=1.5793e-03 kd=0.0000e+00 mas=5.7682e-04 val=1.0947e-03 lr=3.13e-06 time=46.06s
+2025-08-05 16:49:18,977 - Epoch 34: MAS loss is 36.81% of task loss
+2025-08-05 16:49:20,152 - Epoch 34 task=1.5674e-03 kd=0.0000e+00 mas=5.7690e-04 val=1.3760e-03 lr=3.13e-06 time=44.36s
+2025-08-05 16:49:20,157 - Early stopping at epoch 34
+2025-08-05 16:49:23,015 - Consolidating task 2 with MAS lambda: 0.0033
+2025-08-05 16:49:45,128 - MAS importance normalized with scale 0.0979
+2025-08-05 16:49:45,136 - Task 2 consolidated with MAS lambda=0.0033
+2025-08-05 16:49:45,139 - Task 2 completed and consolidated.
+2025-08-05 16:49:45,143 - ==== Incremental Training Complete ====
+2025-08-05 16:49:45,146 - ==== Starting Comprehensive Evaluation ====
+2025-08-05 16:49:45,264 - Evaluating model trained after task 0...
+2025-08-05 16:49:57,833 -   Task 0 -> Test Task 0: MAE=2.7923e-02
+2025-08-05 16:49:59,726 -   Task 0 -> Test Task 1: MAE=3.5453e-02
+2025-08-05 16:50:00,104 -   Task 0 -> Test Task 2: MAE=7.2164e-01
+2025-08-05 16:50:00,112 - Evaluating model trained after task 1...
+2025-08-05 16:50:12,502 -   Task 1 -> Test Task 0: MAE=1.7694e-02
+2025-08-05 16:50:14,354 -   Task 1 -> Test Task 1: MAE=4.6526e-02
+2025-08-05 16:50:14,709 -   Task 1 -> Test Task 2: MAE=5.7368e-02
+2025-08-05 16:50:14,714 - Evaluating model trained after task 2...
+2025-08-05 16:50:27,452 -   Task 2 -> Test Task 0: MAE=3.8326e-02
+2025-08-05 16:50:29,256 -   Task 2 -> Test Task 1: MAE=8.9557e-02
+2025-08-05 16:50:29,616 -   Task 2 -> Test Task 2: MAE=8.1886e-02
+2025-08-05 16:50:29,622 - ==== Computing Continual Learning Metrics ====
+2025-08-05 16:50:29,628 - Computing random initialization baselines...
+2025-08-05 16:50:32,266 -   Baseline Task 0: R=-0.9732
+2025-08-05 16:50:34,042 -   Baseline Task 1: R=-0.9253
+2025-08-05 16:50:34,416 -   Baseline Task 2: R=-0.6923
+2025-08-05 16:50:34,417 - ==== Continual Learning Results ====
+2025-08-05 16:50:34,420 - BWT (Backward Transfer): -0.0267 (less negative = less forgetting)
+2025-08-05 16:50:34,422 - FWT (Forward Transfer): 0.7623 (positive = beneficial transfer)
+2025-08-05 16:50:34,424 - ACC (Average Accuracy): -0.0699
+2025-08-05 16:50:34,426 - ==== Performance Matrix R[i][j] ====
+2025-08-05 16:50:34,429 - Rows: trained after task i, Columns: evaluated on task j
+2025-08-05 16:50:34,432 -        Task 0 Task 1 Task 2
+2025-08-05 16:50:34,434 - Task 0: -0.0279 -0.0355 -0.7216
+2025-08-05 16:50:34,436 - Task 1: -0.0177 -0.0465 -0.0574
+2025-08-05 16:50:34,438 - Task 2: -0.0383 -0.0896 -0.0819
+2025-08-05 16:50:34,740 - ==== Evaluation Complete ====
+2025-08-05 16:50:34,747 - All results saved to: /beegfs/home/users/z/zzhuqshun/Thesis/05_Final/mas/strategies/trial11/metrics
+2025-08-05 16:50:34,758 - ==== Final Summary ====
+2025-08-05 16:50:34,767 - Continual Learning Metrics:
+2025-08-05 16:50:34,774 -   BWT: -0.0267
+2025-08-05 16:50:34,824 -   FWT: 0.7623
+2025-08-05 16:50:34,833 -   ACC: -0.0699
+2025-08-05 16:50:34,841 -   num_tasks: 3.0000
+2025-08-05 16:50:34,846 - ==== Experiment Complete ====

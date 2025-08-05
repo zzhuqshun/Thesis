@@ -1,0 +1,12 @@
+2025-08-04 19:38:52,270 - ==== Experiment Setup ====
+2025-08-04 19:38:52,282 - Mode: joint
+2025-08-04 19:38:52,291 - Number of tasks: 3
+2025-08-04 19:38:52,303 - Random seed: 42
+2025-08-04 19:38:52,313 - Base directory: /beegfs/home/users/z/zzhuqshun/Thesis/06_adapter/joint_gate
+2025-08-04 19:38:52,322 - ==== Joint Training (Baseline) ====
+2025-08-04 19:40:24,808 - Joint training - Train IDs: ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29'], size: 205644
+2025-08-04 19:40:24,813 - Joint training - Val IDs: ['01', '19', '13'], size: 58177
+2025-08-04 19:40:24,816 - Joint training - Test ID: 17, size: 22872
+2025-08-04 19:40:24,837 -   (Scaler) Scaler centers: [ 3.342422    0.17992967 27.75      ]
+2025-08-04 19:40:24,842 -   (Scaler) Scaler scales: [0.18428363 1.77955483 1.81783333]
+2025-08-04 20:09:37,872 - Epoch 0 train=2.2725e-02 val=1.6608e-03 lr=1.00e-04 time=1481.17s

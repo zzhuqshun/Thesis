@@ -31,7 +31,7 @@ class Config:
         self.MODE = 'incremental'  
         
         # Directory structure
-        self.BASE_DIR = Path.cwd() / "cnn_adapter"
+        self.BASE_DIR = Path.cwd() / "cnn_adapter—3block"
         self.DATA_DIR = Path('../01_Datenaufbereitung/Output/Calculated/')
         
         # Model hyperparameters
@@ -42,7 +42,7 @@ class Config:
         
         # Training hyperparameters
         self.BATCH_SIZE = 32
-        self.LEARNING_RATE = 1e-4
+        self.LEARNING_RATE = 5e-4
         self.EPOCHS = 200
         self.PATIENCE = 20          # Early stopping patience
         self.WEIGHT_DECAY = 1e-6
@@ -57,9 +57,9 @@ class Config:
         
         # Adapter parameters
         self.USE_ADAPTER = True     # Whether to use adapter
-        self.ADAPTER_SIZE = 32    # Adapter bottleneck size
+        self.ADAPTER_SIZE = 16   # Adapter bottleneck size
         self.FREEZE_BACKBONE = True # Whether to freeze LSTM backbone
-        self.ACTIVATION = 'GELU'  # Activation function for adapter
+        self.ACTIVATION = 'LeakyReLU'  # Activation function for adapter
 
         # Random seed for reproducibility
         self.SEED = 42
@@ -408,76 +408,130 @@ class DataProcessor:
 # ===============================================================
 # Model & Adapter
 # ===============================================================
-class AdapterModule(nn.Module):
-    """Simple adapter module with bottleneck architecture"""
-    
-    def __init__(self, hidden_size, bottleneck_size, kernel_size, dropout=0.3):
-        super().__init__()
-        padding = kernel_size // 2
-        self.pre_norm  = nn.LayerNorm(hidden_size)          # Pre-Norm
-        self.down_project = nn.Conv1d(hidden_size, bottleneck_size, kernel_size=kernel_size, 
-                                      padding=padding, bias=False)
-        self.up_project = nn.Conv1d(bottleneck_size, hidden_size, kernel_size=kernel_size, 
-                                    padding=padding, bias=False)
-        self.activation = nn.GELU()
-        self.dropout = nn.Dropout(dropout)
-        self.post_norm = nn.LayerNorm(hidden_size)          # Post-Norm
-        
-    def forward(self, x):
-        h = self.pre_norm(x).permute(0, 2, 1)  
-        
-        h = self.down_project(h)
-        h = self.activation(h)
-        h = self.up_project(h)
-        
-        h = self.dropout(h).permute(0, 2, 1)
-        y = x + h  # Residual connection
-        
-        return self.post_norm(y)  # Apply post-norm
-
 class LSTMAdapter(nn.Module):
-    """LSTM model with adapter for incremental learning"""
-    
-    def __init__(self, base_model, adapter_size=32, n_blocks=2, kernel_size=3,
-                 dropout=0.1,freeze_backbone=True):
+    """
+    Combined LSTM and Adapter module for incremental learning.
+    Freezes the LSTM backbone and adds lightweight bottleneck adapters.
+    """
+    def __init__(
+        self,
+        base_model,
+        adapter_size: int = 16,
+        n_blocks: int = 3,
+        kernel_size_1: int = 5,  
+        kernel_size_2: int = 3,   
+        dropout: float = 0.1,
+        freeze_backbone: bool = True
+    ):
         super().__init__()
         
-        # Store base model components
+        # Extract LSTM and FC from base model
         self.lstm = base_model.lstm
         self.fc = base_model.fc
-        
-        # Freeze backbone if specified
+        self.dropout_rate = dropout
+
+        # Optionally freeze LSTM backbone
         if freeze_backbone:
-            """Freeze LSTM and original FC layers"""
             for param in self.lstm.parameters():
                 param.requires_grad = False
             logger.info("Backbone LSTM frozen")
-            
-        # Add adapter after LSTM
-        hidden_size = self.lstm.hidden_size
-        self.blocks = nn.ModuleList([
-            AdapterModule(
-                hidden_size=hidden_size,
-                bottleneck_size=adapter_size,
-                kernel_size=kernel_size,
-                dropout=dropout,
-            )
-            for _ in range(n_blocks)
-        ])
-    
-    def get_trainable_parameters(self):
-        """Get only trainable parameters (adapter)"""
-        return list(self.blocks.parameters()) + list(self.fc.parameters())
-    
-    def forward(self, x):
-        # LSTM forward pass
-        h, _ = self.lstm(x)
-        
-        for blk in self.blocks:
-            h = blk(h)   
 
-        # Prediction using original FC
-        return self.fc(h[:, -1, :]).squeeze(-1)
+        # Determine LSTM output dimension
+        hidden_size = self.lstm.hidden_size
+
+        # Adapter blocks
+        self.blocks = nn.ModuleList()
+        for _ in range(n_blocks):
+            block = AdapterBlock(
+                hidden_size=hidden_size,
+                adapter_size=adapter_size,
+                kernel_size_1=kernel_size_1,
+                kernel_size_2=kernel_size_2,
+                dropout=dropout
+            )
+            self.blocks.append(block)
+
+    def get_trainable_parameters(self):
+        """Return parameters of adapters and FC for optimization."""
+        params = []
+        for block in self.blocks:
+            params.extend(block.parameters())
+        params.extend(self.fc.parameters())
+        return params
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (batch, seq_len, feature)
+        h, _ = self.lstm(x)
+        # h: (batch, seq_len, hidden_size)
+
+        # Apply adapter blocks
+        for block in self.blocks:
+            h = block(h)
+
+        # Use last time step for prediction
+        out = self.fc(h[:, -1, :])
+        if out.dim() > 1 and out.size(-1) == 1:
+            out = out.squeeze(-1)
+        return out
+
+
+class AdapterBlock(nn.Module):
+    """
+    Lightweight adapter block using 1D convolutions to capture temporal patterns.
+    This block can be stacked multiple times for deeper adapters.
+    It uses a bottleneck structure to reduce dimensionality and capture multi-scale features.
+    """
+    def __init__(
+        self,
+        hidden_size: int,
+        adapter_size: int,
+        kernel_size_1: int = 5,  
+        kernel_size_2: int = 3,  
+        dropout: float = 0.3
+    ):
+        super().__init__()
+        
+        self.layer_norm = nn.LayerNorm(hidden_size)
+        self.alpha = nn.Parameter(torch.zeros(1))
+        
+        # 瓶颈适配器：使用不同尺度的卷积核捕获多层次时间模式
+        self.down = nn.Sequential(
+            nn.Conv1d(hidden_size, 2 * adapter_size, kernel_size=kernel_size_1,
+                      padding=kernel_size_1 // 2, bias=False),
+            nn.LeakyReLU(),
+            nn.Dropout(dropout),
+            nn.Conv1d(2 * adapter_size, adapter_size, kernel_size=kernel_size_2,
+                      padding=kernel_size_2 // 2, bias=False),
+            nn.LeakyReLU()
+        )
+        
+        self.up = nn.Sequential(
+            nn.Conv1d(adapter_size, 2 * adapter_size, kernel_size=kernel_size_2,
+                      padding=kernel_size_2 // 2, bias=False),
+            nn.LeakyReLU(),
+            nn.Dropout(dropout),
+            nn.Conv1d(2 * adapter_size, hidden_size, kernel_size=kernel_size_1,
+                      padding=kernel_size_1 // 2, bias=False)
+        )
+        
+        # 初始化alpha为小值，确保训练初期适配器影响较小
+        nn.init.constant_(self.alpha, 1.0)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (batch, seq_len, hidden_size)
+        residual = x
+        # Pre-norm
+        x_norm = self.layer_norm(x)
+        x_conv = x_norm.permute(0, 2, 1)    # (batch, hidden_size, seq_len)
+        
+        adapter_out = self.down(x_conv)
+        adapter_out = self.up(adapter_out)
+        
+        adapter_out = adapter_out.permute(0, 2, 1)#(batch, seq_len, hidden_size)
+        
+        # 残差连接with learnable scaling
+        return residual + self.alpha * adapter_out
+
     
 class SOHLSTM(nn.Module):
     """LSTM model for State of Health (SOH) prediction"""
@@ -663,6 +717,34 @@ class Trainer:
                        metrics['RMSE'], metrics['MAE'], metrics['R2'])
         
         return preds, tgts, metrics
+    
+    def print_model_summary(model, model_name="Model"):
+        """打印模型摘要信息"""
+        logger.info("\n" + "="*50)
+        logger.info("%s SUMMARY", model_name.upper())
+        logger.info("="*50)
+        
+        # 基本信息
+        logger.info("Model class: %s", type(model).__name__)
+        
+        # 参数统计
+        total_params = sum(p.numel() for p in model.parameters())
+        trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        
+        logger.info("Total parameters: %s", f"{total_params:,}")
+        logger.info("Trainable parameters: %s", f"{trainable_params:,}")
+        logger.info("Frozen parameters: %s", f"{total_params - trainable_params:,}")
+        
+        # 详细的层信息
+        logger.info("\nModel architecture:")
+        for name, module in model.named_modules():
+            if len(list(module.children())) == 0:  # 只打印叶子节点
+                param_count = sum(p.numel() for p in module.parameters())
+                trainable = "✓" if any(p.requires_grad for p in module.parameters()) else "✗"
+                logger.info("  %s: %s [%s params, trainable: %s]", 
+                        name, type(module).__name__, f"{param_count:,}", trainable)
+        
+        logger.info("="*50 + "\n")
 
 # ===============================================================
 # Utilities
@@ -807,6 +889,7 @@ def incremental_training(config):
                 adapter_size=config.ADAPTER_SIZE,
                 freeze_backbone=config.FREEZE_BACKBONE
             ).to(device)
+            Trainer.print_model_summary(model, model_name=f"LSTM Adapter")
             logger.info("Converted to adapter with size %d, backbone frozen: %s", 
                        config.ADAPTER_SIZE, config.FREEZE_BACKBONE)
 

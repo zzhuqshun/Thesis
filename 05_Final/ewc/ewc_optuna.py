@@ -63,6 +63,7 @@ def objective(trial):
     cfg_dict = TASK0_CONFIG.copy()
     cfg_dict["EWC_LAMBDAS"] = [lam0, lam1, lam2]
     cfg = Config(**cfg_dict)
+    print("Inncremental_datasets: ", cfg.incremental_datasets)
     set_seed(cfg.SEED + trial.number)
     
     # 加载数据（只在第一次加载）
@@ -70,6 +71,7 @@ def objective(trial):
         print("Loading data and creating dataloaders...")
         dp = DataProcessor(cfg.DATA_DIR, cfg.RESAMPLE, cfg)
         data = dp.prepare_incremental_data(cfg.incremental_datasets)
+
         cached_loaders = create_dataloaders(data, cfg.SEQUENCE_LENGTH, cfg.BATCH_SIZE)
         print("Data loaded!")
     
@@ -138,7 +140,6 @@ def optimize_ewc(n_trials=50):
     """执行EWC参数优化"""
     print(f"Starting EWC optimization with {n_trials} trials")
     print(f"Device: {DEVICE}")
-
     # 创建study
     study = optuna.create_study(
         direction='minimize',
@@ -165,10 +166,10 @@ def optimize_ewc(n_trials=50):
     return study, best_trial
 
 if __name__ == "__main__":   
-    results_dir = Path.cwd() / "ewc" /"optuna_results1"
+    results_dir = Path.cwd() / "ewc" /"optuna_newsplit"
     results_dir.mkdir(exist_ok=True)
     # 运行优化
-    study, best_trial = optimize_ewc(n_trials=50)
+    study, best_trial = optimize_ewc(n_trials=30)
     
     df_all = study.trials_dataframe(attrs=("number", "values", "params", "user_attrs"))
     df_all.to_csv(results_dir / "all_trials.csv", index=False)

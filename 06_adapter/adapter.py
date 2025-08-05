@@ -31,7 +31,7 @@ class Config:
         self.MODE = 'joint'  
         
         # Directory structure
-        self.BASE_DIR = Path.cwd() / "joint_mish"
+        self.BASE_DIR = Path.cwd() / "joint_silu"
         self.DATA_DIR = Path('../01_Datenaufbereitung/Output/Calculated/')
         
         # Model hyperparameters
@@ -446,7 +446,7 @@ class SOHLSTM(nn.Module):
                             batch_first=True, dropout=dropout if num_layers > 1 else 0)
         self.fc = nn.Sequential(
             nn.Linear(hidden_size, hidden_size // 2), 
-            nn.Mish(), 
+            nn.SiLU(), 
             nn.Dropout(dropout),
             nn.Linear(hidden_size // 2, 1)
         )

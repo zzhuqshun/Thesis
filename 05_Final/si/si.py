@@ -36,7 +36,7 @@ class Config:
         self.MODE = 'incremental'  
         
         # Directory structure
-        self.BASE_DIR = Path.cwd()/ "si" / "strategies" / "fine-tuning"
+        self.BASE_DIR = Path.cwd()/ "si" / "strategies" / "trial23"
         self.DATA_DIR = Path('../01_Datenaufbereitung/Output/Calculated/')
         
         # Model hyperparameters
@@ -60,8 +60,8 @@ class Config:
         # Continual Learning parameters
         self.NUM_TASKS = 3          # Number of incremental tasks
         self.LWF_ALPHAS = [0.0, 0.0, 0.0]    # Learning without Forgetting weights
-        self.SI_LAMBDAS = [0.0, 0.0, 0.0]    # Synaptic Intelligence regularization weights
-        self.SI_EPSILON = 0.000831
+        self.SI_LAMBDAS = [0.3329947688800971, 0.3329947688800971, 0.3329947688800971]    # Synaptic Intelligence regularization weights
+        self.SI_EPSILON = 0.0016100930675442698
         
         # Random seed for reproducibility
         self.SEED = 42
@@ -81,15 +81,7 @@ class Config:
         # Task 2: '09', '11', '15', '29'; '13'
         # Test set: '17' (common for all tasks)
         
-        self.incremental_datasets = {
-            'task0_train_ids': ['03', '05', '07', '27'],
-            'task0_val_ids': ['01'],
-            'task1_train_ids': ['21', '23', '25'],
-            'task1_val_ids': ['19'],
-            'task2_train_ids': ['09', '11', '15', '29'],
-            'task2_val_ids': ['13'],
-            'test_id': '17'
-        }
+        self.incremental_datasets = self._create_incremental_splits()
         
         # Experiment metadata
         self.Info = {
@@ -112,7 +104,61 @@ class Config:
         # Override with any provided arguments
         for k, v in kwargs.items():
             setattr(self, k, v)
-    
+            
+    def _create_incremental_splits(self):
+        """
+        Create incremental learning splits with mixed Task0 and random Task1&2
+        
+        Cell categorization by degradation speed:
+        - Normal: ['03', '05', '07', '27'] 
+        - Fast: ['21', '23', '25']
+        - Faster: ['09', '11', '15', '29']
+        - Test: '17' (Fast category)
+        - Val: ['01', '19', '13'] (keep unchanged)
+        """
+        # Set seed for reproducible random sampling
+        random.seed(self.SEED)
+        
+        # Define cell categories
+        normal_cells = ['03', '05', '07', '27']
+        fast_cells = ['21', '23', '25']  # '17' reserved for testing
+        faster_cells = ['09', '11', '15', '29']
+        
+        # Task 0: Mixed types (3 normal + 1 fast + 1 faster)
+        task0_normal = random.sample(normal_cells, 3)  # 3 normal cells
+        task0_fast = random.sample(fast_cells, 1)      # 1 fast cell  
+        task0_faster = random.sample(faster_cells, 1)  # 1 faster cell
+        
+        task0_train_ids = task0_normal + task0_fast + task0_faster
+
+        
+        # Task 1: Random 3 cells
+        task1_train_ids = ([c for c in fast_cells if c not in task0_fast] +
+                            [c for c in normal_cells if c not in task0_normal])
+        
+        # Task 2: Next random 3 cells  
+        task2_train_ids = [c for c in faster_cells if c not in task0_faster]
+        
+        logger.info("=== Data Split Strategy ===")
+        logger.info("Task 0 (Mixed): %s", task0_train_ids)
+        logger.info("  - Normal: %s", task0_normal)
+        logger.info("  - Fast: %s", task0_fast) 
+        logger.info("  - Faster: %s", task0_faster)
+        logger.info("Task 1 (Random): %s", task1_train_ids)
+        logger.info("Task 2 (Random): %s", task2_train_ids)
+        logger.info("Validation IDs: ['01', '19', '13'] (unchanged)")
+        logger.info("Test ID: '17' (Fast category)")
+        
+        return {
+            'task0_train_ids': task0_train_ids,
+            'task0_val_ids': ['01'],
+            'task1_train_ids': task1_train_ids, 
+            'task1_val_ids': ['19'],
+            'task2_train_ids': task2_train_ids,
+            'task2_val_ids': ['13'],
+            'test_id': '17'
+        }
+        
     def save(self, path):
         """Save configuration to JSON file"""
         path = Path(path)
