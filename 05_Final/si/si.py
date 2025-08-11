@@ -36,7 +36,7 @@ class Config:
         self.MODE = 'incremental'  
         
         # Directory structure
-        self.BASE_DIR = Path.cwd()/ "si" / "strategies" / "trial23"
+        self.BASE_DIR = Path.cwd()/ "si" / "strategies" / "trial14"
         self.DATA_DIR = Path('../01_Datenaufbereitung/Output/Calculated/')
         
         # Model hyperparameters
@@ -60,8 +60,8 @@ class Config:
         # Continual Learning parameters
         self.NUM_TASKS = 3          # Number of incremental tasks
         self.LWF_ALPHAS = [0.0, 0.0, 0.0]    # Learning without Forgetting weights
-        self.SI_LAMBDAS = [0.3329947688800971, 0.3329947688800971, 0.3329947688800971]    # Synaptic Intelligence regularization weights
-        self.SI_EPSILON = 0.0016100930675442698
+        self.SI_LAMBDAS = [1.7139, 1.7139, 1.7139]    # Synaptic Intelligence regularization weights
+        self.SI_EPSILON = 0.005744
         
         # Random seed for reproducibility
         self.SEED = 42
@@ -130,14 +130,22 @@ class Config:
         task0_faster = random.sample(faster_cells, 1)  # 1 faster cell
         
         task0_train_ids = task0_normal + task0_fast + task0_faster
-
+        
+        # Remaining cells for Task1 & Task2
+        remaining_cells = (
+            [c for c in normal_cells if c not in task0_normal] +
+            [c for c in fast_cells if c not in task0_fast] +
+            [c for c in faster_cells if c not in task0_faster]
+        )
+        
+        # Shuffle remaining cells for random assignment
+        random.shuffle(remaining_cells)
         
         # Task 1: Random 3 cells
-        task1_train_ids = ([c for c in fast_cells if c not in task0_fast] +
-                            [c for c in normal_cells if c not in task0_normal])
+        task1_train_ids = remaining_cells[:3]
         
         # Task 2: Next random 3 cells  
-        task2_train_ids = [c for c in faster_cells if c not in task0_faster]
+        task2_train_ids = remaining_cells[3:6]
         
         logger.info("=== Data Split Strategy ===")
         logger.info("Task 0 (Mixed): %s", task0_train_ids)
@@ -174,102 +182,112 @@ class Config:
             data = json.load(f)
         return cls(**data)
 
+
 class SI:
     """
-    Synaptic Intelligence (SI) for continual learning.
-
-    SI estimates parameter importance by accumulating 
-    -∂θL * Δθ over each optimizer step, then at end of task:
-        Ω_i += w_i / (Δθ_i_total^2 + ε)
-
-    Reference: Zenke et al. "Continual Learning Through Synaptic Intelligence" (2017)
+    基于论文证据的正确SI实现
+    
+    关键改进：添加论文要求的归一化处理
     """
-
-    def __init__(self, model, si_lambda=1.0, epsilon=0.1):
+    
+    def __init__(self, model, si_lambda=1.0, epsilon=0.01):
         self.model = model
         self.si_lambda = si_lambda
         self.epsilon = epsilon
-
-        # Ω: accumulated importance across tasks
+        
+        # 累积重要性权重(跨任务)
         self.omega = {
-            n: torch.zeros_like(p.data)
-            for n, p in model.named_parameters() if p.requires_grad
+            name: torch.zeros_like(param.data)
+            for name, param in model.named_parameters() if param.requires_grad
         }
-
-        # placeholders for task‐specific accumulators
+        
         self._reset_task_buffers()
-
+    
     def _reset_task_buffers(self):
-        # w: path‐integral accumulator for this task
+        # 路径积分累积
         self.w = {
-            n: torch.zeros_like(p.data)
-            for n, p in self.model.named_parameters() if p.requires_grad
+            name: torch.zeros_like(param.data)
+            for name, param in self.model.named_parameters() if param.requires_grad
         }
-        # θ_old: parameter values at last update (or start of task)
-        self.theta_old = {
-            n: p.data.clone().detach()
-            for n, p in self.model.named_parameters() if p.requires_grad
+        # 上次更新的参数值
+        self.theta_prev = {
+            name: param.data.clone().detach()
+            for name, param in self.model.named_parameters() if param.requires_grad
         }
-        # θ_start: snapshot at beginning of task
+        # 任务开始时的参数值
         self.theta_start = {
-            n: p.data.clone().detach()
-            for n, p in self.model.named_parameters() if p.requires_grad
+            name: param.data.clone().detach()
+            for name, param in self.model.named_parameters() if param.requires_grad
         }
-
+    
     def begin_task(self):
-        """Call once before training on a new task."""
+        """开始新任务"""
         self._reset_task_buffers()
-
+    
     def update_contributions(self):
-        """
-        Call AFTER each optimizer.step().
-        Accumulate w_i += -grad_i * Δθ_i, where Δθ_i = θ_i_new - θ_i_old.
-        """
+        """路径积分更新"""
         for name, param in self.model.named_parameters():
             if not param.requires_grad or param.grad is None:
                 continue
-
-            # change this step
-            delta = param.data - self.theta_old[name]
-            # accumulate contribution
-            self.w[name] += -param.grad.data * delta
-            # update theta_old for next step
-            self.theta_old[name] = param.data.clone().detach()
-
+            
+            # 路径积分: w_i += -∂L/∂θ_i * Δθ_i
+            param_change = param.data - self.theta_prev[name]
+            self.w[name] += -param.grad.data * param_change
+            self.theta_prev[name] = param.data.clone().detach()
+    
     def end_task(self):
         """
-        Call once after finishing a task.
-        Compute Ω_i += w_i / ( (θ_i_end - θ_i_start)^2 + ε ).
-        """
-        for name, param in self.model.named_parameters():
-            if not param.requires_grad:
-                continue
-
-            # total change over the task
-            delta_total = param.data - self.theta_start[name]
-            # update importance
-            self.omega[name] += self.w[name] / (delta_total.pow(2) + self.epsilon)
+        任务结束：计算重要性 + 论文要求的归一化
         
-        all_omega = torch.cat([v.flatten() for v in self.omega.values()])
-        scale = all_omega.mean().clamp(min=1e-12)
-        for name in self.omega:
-            self.omega[name] /= scale
-        logger.info("SI importance normalized with scale %.4f", scale.item())
-
-    def penalty(self):
+        关键：论文明确要求处理scale factor并进行归一化
         """
-        Compute SI regularization:
-           loss_reg = λ * Σ_i Ω_i * (θ_i - θ_i_start)^2
-        """
-        loss_reg = 0.0
+        logger.info("SI: Computing importance with paper-required normalization...")
+        
+        # 步骤1: 计算原始重要性更新
+        raw_updates = {}
         for name, param in self.model.named_parameters():
             if not param.requires_grad:
                 continue
-
-            # deviation from task‐start
-            delta = param.data - self.theta_start[name]
-            loss_reg += (self.omega[name] * delta.pow(2)).sum()
-
+            
+            total_change = param.data - self.theta_start[name]
+            denominator = total_change.pow(2) + self.epsilon
+            raw_updates[name] = self.w[name] / denominator
+        
+        # 步骤2: 论文要求的归一化 - 移除scale factor
+        all_updates = torch.cat([v.flatten() for v in raw_updates.values()])
+        
+        if all_updates.numel() > 0:
+            # 计算scale factor (对应论文中的σ²)
+            scale_factor = all_updates.abs().mean().clamp(min=1e-12)
+            
+            # 应用归一化 (移除scale factor)
+            for name in raw_updates:
+                normalized_update = raw_updates[name] / scale_factor
+                self.omega[name] += normalized_update
+            
+            logger.info(f"SI: Applied paper-required normalization, scale factor: {scale_factor:.6f}")
+        
+        # 统计信息
+        all_omega = torch.cat([v.flatten() for v in self.omega.values()])
+        logger.info(f"SI: Final omega stats - mean: {all_omega.mean():.4e}, "
+                   f"max: {all_omega.max():.4e}, std: {all_omega.std():.4e}")
+    
+    def penalty(self):
+        """计算正则化损失"""
+        loss_reg = 0.0
+        
+        for name, param in self.model.named_parameters():
+            if not param.requires_grad:
+                continue
+            
+            deviation = param.data - self.theta_start[name]
+            loss_reg += (self.omega[name] * deviation.pow(2)).sum()
+        
+        # 数值安全检查
+        if torch.isnan(loss_reg) or torch.isinf(loss_reg):
+            logger.warning("SI penalty is NaN/Inf, returning zero")
+            return torch.tensor(0.0, device=loss_reg.device)
+        
         return self.si_lambda * loss_reg
 
 

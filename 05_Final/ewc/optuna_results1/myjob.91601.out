@@ -1,0 +1,278 @@
+=== Job Start: Sun Aug  3 02:43:53 AM CEST 2025 ===
+Job ID:           91601
+Job Name:         ewc_optuna
+Partition:        gpu
+Node List:        gpu009
+Requested GPUs:   1
+CUDA Devices:     0
+Running on host:  gpu009
+
+=== GPU Details via nvidia-smi ===
+0, Tesla P100-PCIE-16GB, 16384 MiB, 0 %, 33
+===================================
+Starting EWC optimization with 50 trials
+Device: cuda:0
+Loading data and creating dataloaders...
+Data loaded!
+[Trial 0] Task0  ratio = 0.00%  (λ=0.201)
+[Trial 0] Task1  ratio = 2.98%  (λ=0.201)
+[Trial 0] Task2  ratio = 9.35%  (λ=0.201)
+Trial  0: λ0=0.2006, λ1=0.2006 → MAEs=[0.0138, 0.1912, 0.0129], Avg=0.0727
+[I 2025-08-03 05:02:25,632] Trial 0 finished with value: 0.0726514533162117 and parameters: {'lambda0': 0.20059560245279648}. Best is trial 0 with value: 0.0726514533162117.
+[Trial 1] Task0  ratio = 0.00%  (λ=20.2)
+[Trial 1] Task1  ratio = 3.59%  (λ=20.2)
+[Trial 1] Task2  ratio = 20.56%  (λ=20.2)
+Trial  1: λ0=20.2185, λ1=20.2185 → MAEs=[0.0444, 0.0332, 0.1068], Avg=0.0615
+[I 2025-08-03 07:14:41,764] Trial 1 finished with value: 0.06148691102862358 and parameters: {'lambda0': 20.218499516556736}. Best is trial 1 with value: 0.06148691102862358.
+[Trial 2] Task0  ratio = 0.00%  (λ=3.51)
+[Trial 2] Task1  ratio = 4.18%  (λ=3.51)
+[Trial 2] Task2  ratio = 15.34%  (λ=3.51)
+Trial  2: λ0=3.5094, λ1=3.5094 → MAEs=[0.0170, 0.0425, 0.0204], Avg=0.0266
+[I 2025-08-03 09:08:56,218] Trial 2 finished with value: 0.026620149612426758 and parameters: {'lambda0': 3.5093904781414595}. Best is trial 2 with value: 0.026620149612426758.
+[Trial 3] Task0  ratio = 0.00%  (λ=1.21)
+[Trial 3] Task1  ratio = 5.94%  (λ=1.21)
+[Trial 3] Task2  ratio = 20.78%  (λ=1.21)
+Trial  3: λ0=1.2067, λ1=1.2067 → MAEs=[0.0266, 0.1844, 0.0181], Avg=0.0764
+[I 2025-08-03 11:30:05,638] Trial 3 finished with value: 0.07636565715074539 and parameters: {'lambda0': 1.2067245262919604}. Best is trial 2 with value: 0.026620149612426758.
+[Trial 4] Task0  ratio = 0.00%  (λ=0.0349)
+[Trial 4] Task1  ratio = 8.53%  (λ=0.0349)
+[Trial 4] Task2  ratio = 17.26%  (λ=0.0349)
+Trial  4: λ0=0.0349, λ1=0.0349 → MAEs=[0.0811, 0.0842, 0.0188], Avg=0.0614
+[I 2025-08-03 13:45:33,849] Trial 4 finished with value: 0.0613524354994297 and parameters: {'lambda0': 0.034873515599526915}. Best is trial 2 with value: 0.026620149612426758.
+[Trial 5] Task0  ratio = 0.00%  (λ=0.0349)
+[Trial 5] Task1  ratio = 23.58%  (λ=0.0349)
+[Trial 5] Task2  ratio = 41.73%  (λ=0.0349)
+Trial  5: λ0=0.0349, λ1=0.0349 → MAEs=[0.2320, 0.0225, 0.0236], Avg=0.0927
+[I 2025-08-03 16:03:35,538] Trial 5 finished with value: 0.09270484000444412 and parameters: {'lambda0': 0.034866781670451236}. Best is trial 2 with value: 0.026620149612426758.
+[Trial 6] Task0  ratio = 0.00%  (λ=0.0159)
+[Trial 6] Task1  ratio = 23.94%  (λ=0.0159)
+[Trial 6] Task2  ratio = 46.20%  (λ=0.0159)
+Trial  6: λ0=0.0159, λ1=0.0159 → MAEs=[0.0146, 0.0440, 0.0184], Avg=0.0257
+[I 2025-08-03 18:30:03,608] Trial 6 finished with value: 0.025652186945080757 and parameters: {'lambda0': 0.015920758785234034}. Best is trial 6 with value: 0.025652186945080757.
+[Trial 7] Task0  ratio = 0.00%  (λ=10.3)
+[Trial 7] Task1  ratio = 4.49%  (λ=10.3)
+[Trial 7] Task2  ratio = 42.79%  (λ=10.3)
+Trial  7: λ0=10.2754, λ1=10.2754 → MAEs=[0.0173, 0.0219, 0.0182], Avg=0.0192
+[I 2025-08-03 20:01:45,714] Trial 7 finished with value: 0.019153499975800514 and parameters: {'lambda0': 10.275417738969418}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 8] Task0  ratio = 0.00%  (λ=1.23)
+[Trial 8] Task1  ratio = 4.59%  (λ=1.23)
+[Trial 8] Task2  ratio = 16.36%  (λ=1.23)
+Trial  8: λ0=1.2307, λ1=1.2307 → MAEs=[0.0167, 0.0565, 0.0246], Avg=0.0326
+[I 2025-08-03 22:11:15,594] Trial 8 finished with value: 0.03257710859179497 and parameters: {'lambda0': 1.2306931514988035}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 9] Task0  ratio = 0.00%  (λ=2.9)
+[Trial 9] Task1  ratio = 3.56%  (λ=2.9)
+[Trial 9] Task2  ratio = 16.81%  (λ=2.9)
+Trial  9: λ0=2.8977, λ1=2.8977 → MAEs=[0.0273, 0.0203, 0.0265], Avg=0.0247
+[I 2025-08-04 00:19:46,514] Trial 9 finished with value: 0.02471822500228882 and parameters: {'lambda0': 2.897705266717829}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 10] Task0  ratio = 0.00%  (λ=25.3)
+[Trial 10] Task1  ratio = 2.50%  (λ=25.3)
+[Trial 10] Task2  ratio = 12.31%  (λ=25.3)
+Trial 10: λ0=25.3258, λ1=25.3258 → MAEs=[0.0878, 0.1082, 0.0508], Avg=0.0823
+[I 2025-08-04 01:53:15,323] Trial 10 finished with value: 0.08228210359811783 and parameters: {'lambda0': 25.32579575628509}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 11] Task0  ratio = 0.00%  (λ=4.69)
+[Trial 11] Task1  ratio = 8.75%  (λ=4.69)
+[Trial 11] Task2  ratio = 28.69%  (λ=4.69)
+Trial 11: λ0=4.6918, λ1=4.6918 → MAEs=[0.1710, 0.0212, 0.0194], Avg=0.0706
+[I 2025-08-04 04:19:28,784] Trial 11 finished with value: 0.07055415958166122 and parameters: {'lambda0': 4.691818251984435}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 12] Task0  ratio = 0.00%  (λ=5)
+[Trial 12] Task1  ratio = 4.88%  (λ=5)
+[Trial 12] Task2  ratio = 28.27%  (λ=5)
+Trial 12: λ0=5.0030, λ1=5.0030 → MAEs=[0.0197, 0.0256, 0.0216], Avg=0.0223
+[I 2025-08-04 06:16:18,873] Trial 12 finished with value: 0.022269146516919136 and parameters: {'lambda0': 5.002962484325992}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 13] Task0  ratio = 0.00%  (λ=9.6)
+[Trial 13] Task1  ratio = 24.34%  (λ=9.6)
+[Trial 13] Task2  ratio = 36.76%  (λ=9.6)
+Trial 13: λ0=9.5950, λ1=9.5950 → MAEs=[0.0281, 0.1760, 0.0226], Avg=0.0756
+[I 2025-08-04 08:38:54,441] Trial 13 finished with value: 0.07556852698326111 and parameters: {'lambda0': 9.59504550020039}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 14] Task0  ratio = 0.00%  (λ=0.241)
+[Trial 14] Task1  ratio = 3.06%  (λ=0.241)
+[Trial 14] Task2  ratio = 11.09%  (λ=0.241)
+Trial 14: λ0=0.2405, λ1=0.2405 → MAEs=[0.0570, 0.0218, 0.0281], Avg=0.0356
+[I 2025-08-04 10:25:16,762] Trial 14 finished with value: 0.03563091158866882 and parameters: {'lambda0': 0.24051608277968897}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 15] Task0  ratio = 0.00%  (λ=9.78)
+[Trial 15] Task1  ratio = 3.79%  (λ=9.78)
+[Trial 15] Task2  ratio = 21.81%  (λ=9.78)
+Trial 15: λ0=9.7765, λ1=9.7765 → MAEs=[0.0159, 0.0311, 0.0328], Avg=0.0266
+[I 2025-08-04 12:25:10,236] Trial 15 finished with value: 0.026599237695336342 and parameters: {'lambda0': 9.776469629982259}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 16] Task0  ratio = 0.00%  (λ=0.8)
+[Trial 16] Task1  ratio = 5.09%  (λ=0.8)
+[Trial 16] Task2  ratio = 10.00%  (λ=0.8)
+Trial 16: λ0=0.7997, λ1=0.7997 → MAEs=[0.0473, 0.0366, 0.0158], Avg=0.0332
+[I 2025-08-04 15:11:28,559] Trial 16 finished with value: 0.03324985131621361 and parameters: {'lambda0': 0.7996806871209444}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 17] Task0  ratio = 0.00%  (λ=6.67)
+[Trial 17] Task1  ratio = 38.13%  (λ=6.67)
+[Trial 17] Task2  ratio = 32.16%  (λ=6.67)
+Trial 17: λ0=6.6744, λ1=6.6744 → MAEs=[0.0259, 0.0512, 0.0312], Avg=0.0361
+[I 2025-08-04 18:11:15,715] Trial 17 finished with value: 0.0361010916531086 and parameters: {'lambda0': 6.67443158391697}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 18] Task0  ratio = 0.00%  (λ=0.314)
+[Trial 18] Task1  ratio = 32.12%  (λ=0.314)
+[Trial 18] Task2  ratio = 51.10%  (λ=0.314)
+Trial 18: λ0=0.3145, λ1=0.3145 → MAEs=[0.1176, 0.0177, 0.0234], Avg=0.0529
+[I 2025-08-04 20:29:50,212] Trial 18 finished with value: 0.052894044667482376 and parameters: {'lambda0': 0.3144542058528971}. Best is trial 7 with value: 0.019153499975800514.
+[Trial 19] Task0  ratio = 0.00%  (λ=1.73)
+[Trial 19] Task1  ratio = 5.17%  (λ=1.73)
+[Trial 19] Task2  ratio = 22.30%  (λ=1.73)
+Trial 19: λ0=1.7309, λ1=1.7309 → MAEs=[0.0134, 0.0228, 0.0197], Avg=0.0186
+[I 2025-08-04 22:27:34,808] Trial 19 finished with value: 0.018640918657183647 and parameters: {'lambda0': 1.7308811107049262}. Best is trial 19 with value: 0.018640918657183647.
+[Trial 20] Task0  ratio = 0.00%  (λ=2.23)
+[Trial 20] Task1  ratio = 61.77%  (λ=2.23)
+[Trial 20] Task2  ratio = 32.94%  (λ=2.23)
+Trial 20: λ0=2.2302, λ1=2.2302 → MAEs=[0.0154, 0.0127, 0.0302], Avg=0.0194
+[I 2025-08-05 01:14:29,600] Trial 20 finished with value: 0.019415313377976418 and parameters: {'lambda0': 2.230207325345345}. Best is trial 19 with value: 0.018640918657183647.
+[Trial 21] Task0  ratio = 0.00%  (λ=2.08)
+[Trial 21] Task1  ratio = 3.84%  (λ=2.08)
+[Trial 21] Task2  ratio = 18.46%  (λ=2.08)
+Trial 21: λ0=2.0817, λ1=2.0817 → MAEs=[0.1157, 0.0168, 0.0602], Avg=0.0642
+[I 2025-08-05 03:09:29,069] Trial 21 finished with value: 0.06424878537654877 and parameters: {'lambda0': 2.081668955859349}. Best is trial 19 with value: 0.018640918657183647.
+[Trial 22] Task0  ratio = 0.00%  (λ=0.5)
+[Trial 22] Task1  ratio = 4.02%  (λ=0.5)
+[Trial 22] Task2  ratio = 24.83%  (λ=0.5)
+Trial 22: λ0=0.4999, λ1=0.4999 → MAEs=[0.0257, 0.0590, 0.0227], Avg=0.0358
+[I 2025-08-05 05:05:54,089] Trial 22 finished with value: 0.03579280897974968 and parameters: {'lambda0': 0.4998927685941614}. Best is trial 19 with value: 0.018640918657183647.
+[Trial 23] Task0  ratio = 0.00%  (λ=1.82)
+[Trial 23] Task1  ratio = 4.94%  (λ=1.82)
+[Trial 23] Task2  ratio = 20.43%  (λ=1.82)
+Trial 23: λ0=1.8168, λ1=1.8168 → MAEs=[0.0412, 0.0287, 0.0238], Avg=0.0312
+[I 2025-08-05 07:29:25,365] Trial 23 finished with value: 0.03123747743666172 and parameters: {'lambda0': 1.8167988502024341}. Best is trial 19 with value: 0.018640918657183647.
+[Trial 24] Task0  ratio = 0.00%  (λ=12.9)
+[Trial 24] Task1  ratio = 48.82%  (λ=12.9)
+[Trial 24] Task2  ratio = 8.58%  (λ=12.9)
+Trial 24: λ0=12.8596, λ1=12.8596 → MAEs=[0.0139, 0.0197, 0.0315], Avg=0.0217
+[I 2025-08-05 10:01:28,537] Trial 24 finished with value: 0.021713340654969215 and parameters: {'lambda0': 12.859625223113143}. Best is trial 19 with value: 0.018640918657183647.
+[Trial 25] Task0  ratio = 0.00%  (λ=0.128)
+[Trial 25] Task1  ratio = 31.26%  (λ=0.128)
+[Trial 25] Task2  ratio = 44.34%  (λ=0.128)
+Trial 25: λ0=0.1279, λ1=0.1279 → MAEs=[0.0175, 0.0232, 0.0277], Avg=0.0228
+[I 2025-08-05 13:27:47,882] Trial 25 finished with value: 0.022824935615062714 and parameters: {'lambda0': 0.12785563849920573}. Best is trial 19 with value: 0.018640918657183647.
+[Trial 26] Task0  ratio = 0.00%  (λ=15.3)
+[Trial 26] Task1  ratio = 26.04%  (λ=15.3)
+[Trial 26] Task2  ratio = 49.93%  (λ=15.3)
+Trial 26: λ0=15.2642, λ1=15.2642 → MAEs=[0.0207, 0.0171, 0.0213], Avg=0.0197
+[I 2025-08-05 16:15:56,175] Trial 26 finished with value: 0.019686462357640266 and parameters: {'lambda0': 15.264170466395823}. Best is trial 19 with value: 0.018640918657183647.
+[Trial 27] Task0  ratio = 0.00%  (λ=0.577)
+[Trial 27] Task1  ratio = 9.16%  (λ=0.577)
+[Trial 27] Task2  ratio = 17.77%  (λ=0.577)
+Trial 27: λ0=0.5769, λ1=0.5769 → MAEs=[0.0322, 0.0433, 0.0209], Avg=0.0321
+[I 2025-08-05 18:39:00,203] Trial 27 finished with value: 0.032136037945747375 and parameters: {'lambda0': 0.5769332978430267}. Best is trial 19 with value: 0.018640918657183647.
+[Trial 28] Task0  ratio = 0.00%  (λ=1.77)
+[Trial 28] Task1  ratio = 8.89%  (λ=1.77)
+[Trial 28] Task2  ratio = 20.87%  (λ=1.77)
+Trial 28: λ0=1.7667, λ1=1.7667 → MAEs=[0.0122, 0.0195, 0.0222], Avg=0.0180
+[I 2025-08-05 21:03:14,289] Trial 28 finished with value: 0.0179648008197546 and parameters: {'lambda0': 1.7667388057786266}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 29] Task0  ratio = 0.00%  (λ=0.091)
+[Trial 29] Task1  ratio = 5.01%  (λ=0.091)
+[Trial 29] Task2  ratio = 17.60%  (λ=0.091)
+Trial 29: λ0=0.0910, λ1=0.0910 → MAEs=[0.3002, 0.0208, 0.0178], Avg=0.1129
+[I 2025-08-05 23:39:08,519] Trial 29 finished with value: 0.1129407212138176 and parameters: {'lambda0': 0.09096383899379061}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 30] Task0  ratio = 0.00%  (λ=1.07)
+[Trial 30] Task1  ratio = 5.26%  (λ=1.07)
+[Trial 30] Task2  ratio = 11.86%  (λ=1.07)
+Trial 30: λ0=1.0732, λ1=1.0732 → MAEs=[0.0463, 0.0192, 0.0200], Avg=0.0285
+[I 2025-08-06 01:43:47,504] Trial 30 finished with value: 0.028479134663939476 and parameters: {'lambda0': 1.073174849360204}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 31] Task0  ratio = 0.00%  (λ=2.48)
+[Trial 31] Task1  ratio = 15.92%  (λ=2.48)
+[Trial 31] Task2  ratio = 21.86%  (λ=2.48)
+Trial 31: λ0=2.4769, λ1=2.4769 → MAEs=[0.0129, 0.0190, 0.0278], Avg=0.0199
+[I 2025-08-06 03:37:55,673] Trial 31 finished with value: 0.019902771338820457 and parameters: {'lambda0': 2.476861855910677}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 32] Task0  ratio = 0.00%  (λ=7.66)
+[Trial 32] Task1  ratio = 6.50%  (λ=7.66)
+[Trial 32] Task2  ratio = 19.63%  (λ=7.66)
+Trial 32: λ0=7.6641, λ1=7.6641 → MAEs=[0.0351, 0.0256, 0.0467], Avg=0.0358
+[I 2025-08-06 06:01:19,351] Trial 32 finished with value: 0.035778697580099106 and parameters: {'lambda0': 7.6640623786915345}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 33] Task0  ratio = 0.00%  (λ=3.65)
+[Trial 33] Task1  ratio = 30.75%  (λ=3.65)
+[Trial 33] Task2  ratio = 11.46%  (λ=3.65)
+Trial 33: λ0=3.6458, λ1=3.6458 → MAEs=[0.0326, 0.0157, 0.0749], Avg=0.0411
+[I 2025-08-06 08:15:15,933] Trial 33 finished with value: 0.04109863564372063 and parameters: {'lambda0': 3.6457681426614843}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 34] Task0  ratio = 0.00%  (λ=1.52)
+[Trial 34] Task1  ratio = 29.87%  (λ=1.52)
+[Trial 34] Task2  ratio = 41.28%  (λ=1.52)
+Trial 34: λ0=1.5219, λ1=1.5219 → MAEs=[0.0130, 0.0227, 0.0242], Avg=0.0200
+[I 2025-08-06 10:27:46,663] Trial 34 finished with value: 0.019995437934994698 and parameters: {'lambda0': 1.5219157984921674}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 35] Task0  ratio = 0.00%  (λ=0.685)
+[Trial 35] Task1  ratio = 30.16%  (λ=0.685)
+[Trial 35] Task2  ratio = 141.75%  (λ=0.685)
+Trial 35: λ0=0.6851, λ1=0.6851 → MAEs=[0.0163, 0.0347, 0.0151], Avg=0.0220
+[I 2025-08-06 13:28:50,234] Trial 35 finished with value: 0.022042924538254738 and parameters: {'lambda0': 0.685148238543335}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 36] Task0  ratio = 0.00%  (λ=0.39)
+[Trial 36] Task1  ratio = 30.39%  (λ=0.39)
+[Trial 36] Task2  ratio = 34.50%  (λ=0.39)
+Trial 36: λ0=0.3904, λ1=0.3904 → MAEs=[0.0195, 0.0193, 0.0191], Avg=0.0193
+[I 2025-08-06 15:48:55,592] Trial 36 finished with value: 0.01927964575588703 and parameters: {'lambda0': 0.3904143360954384}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 37] Task0  ratio = 0.00%  (λ=0.377)
+[Trial 37] Task1  ratio = 31.22%  (λ=0.377)
+[Trial 37] Task2  ratio = 45.05%  (λ=0.377)
+Trial 37: λ0=0.3769, λ1=0.3769 → MAEs=[0.0151, 0.1937, 0.0308], Avg=0.0799
+[I 2025-08-06 18:35:40,871] Trial 37 finished with value: 0.0799010619521141 and parameters: {'lambda0': 0.37690364905657}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 38] Task0  ratio = 0.00%  (λ=0.151)
+[Trial 38] Task1  ratio = 3.90%  (λ=0.151)
+[Trial 38] Task2  ratio = 13.13%  (λ=0.151)
+Trial 38: λ0=0.1510, λ1=0.1510 → MAEs=[0.0461, 0.0166, 0.0230], Avg=0.0286
+[I 2025-08-06 20:17:01,043] Trial 38 finished with value: 0.028594426810741425 and parameters: {'lambda0': 0.15096669443459404}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 39] Task0  ratio = 0.00%  (λ=0.87)
+[Trial 39] Task1  ratio = 2.92%  (λ=0.87)
+[Trial 39] Task2  ratio = 16.91%  (λ=0.87)
+Trial 39: λ0=0.8695, λ1=0.8695 → MAEs=[0.0396, 0.0192, 0.0279], Avg=0.0289
+[I 2025-08-06 21:58:30,367] Trial 39 finished with value: 0.028868474066257477 and parameters: {'lambda0': 0.8695357435912042}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 40] Task0  ratio = 0.00%  (λ=29.8)
+[Trial 40] Task1  ratio = 34.65%  (λ=29.8)
+[Trial 40] Task2  ratio = 10.03%  (λ=29.8)
+Trial 40: λ0=29.8473, λ1=29.8473 → MAEs=[0.0149, 0.0133, 0.0442], Avg=0.0241
+[I 2025-08-06 23:43:29,581] Trial 40 finished with value: 0.02413923479616642 and parameters: {'lambda0': 29.847253664885404}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 41] Task0  ratio = 0.00%  (λ=3.34)
+[Trial 41] Task1  ratio = 4.09%  (λ=3.34)
+[Trial 41] Task2  ratio = 21.47%  (λ=3.34)
+Trial 41: λ0=3.3426, λ1=3.3426 → MAEs=[0.0288, 0.0439, 0.0208], Avg=0.0312
+[I 2025-08-07 01:18:01,023] Trial 41 finished with value: 0.031166816130280495 and parameters: {'lambda0': 3.3425880289113903}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 42] Task0  ratio = 0.00%  (λ=1.42)
+[Trial 42] Task1  ratio = 6.48%  (λ=1.42)
+[Trial 42] Task2  ratio = 22.38%  (λ=1.42)
+Trial 42: λ0=1.4221, λ1=1.4221 → MAEs=[0.0173, 0.0202, 0.0228], Avg=0.0201
+[I 2025-08-07 03:24:03,551] Trial 42 finished with value: 0.020104428753256798 and parameters: {'lambda0': 1.422072659244633}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 43] Task0  ratio = 0.00%  (λ=0.0692)
+[Trial 43] Task1  ratio = 16.18%  (λ=0.0692)
+[Trial 43] Task2  ratio = 35.74%  (λ=0.0692)
+Trial 43: λ0=0.0692, λ1=0.0692 → MAEs=[0.0248, 0.1454, 0.0196], Avg=0.0633
+[I 2025-08-07 05:52:22,798] Trial 43 finished with value: 0.06326489895582199 and parameters: {'lambda0': 0.06916968400458183}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 44] Task0  ratio = 0.00%  (λ=4.39)
+[Trial 44] Task1  ratio = 4.26%  (λ=4.39)
+[Trial 44] Task2  ratio = 26.78%  (λ=4.39)
+Trial 44: λ0=4.3864, λ1=4.3864 → MAEs=[0.0703, 0.0616, 0.0260], Avg=0.0526
+[I 2025-08-07 07:55:47,284] Trial 44 finished with value: 0.05262208357453346 and parameters: {'lambda0': 4.386438442106829}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 45] Task0  ratio = 0.00%  (λ=0.409)
+[Trial 45] Task1  ratio = 2.27%  (λ=0.409)
+[Trial 45] Task2  ratio = 10.28%  (λ=0.409)
+Trial 45: λ0=0.4089, λ1=0.4089 → MAEs=[0.0164, 0.0345, 0.0155], Avg=0.0221
+[I 2025-08-07 09:33:26,969] Trial 45 finished with value: 0.022120989859104156 and parameters: {'lambda0': 0.4089328442979022}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 46] Task0  ratio = 0.00%  (λ=5.97)
+[Trial 46] Task1  ratio = 7.62%  (λ=5.97)
+[Trial 46] Task2  ratio = 25.92%  (λ=5.97)
+Trial 46: λ0=5.9680, λ1=5.9680 → MAEs=[0.0223, 0.0248, 0.0859], Avg=0.0443
+[I 2025-08-07 11:31:57,450] Trial 46 finished with value: 0.04432247579097748 and parameters: {'lambda0': 5.967975514196635}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 47] Task0  ratio = 0.00%  (λ=1.11)
+[Trial 47] Task1  ratio = 8.92%  (λ=1.11)
+[Trial 47] Task2  ratio = 19.87%  (λ=1.11)
+Trial 47: λ0=1.1142, λ1=1.1142 → MAEs=[0.0128, 0.0179, 0.0258], Avg=0.0188
+[I 2025-08-07 13:24:42,852] Trial 47 finished with value: 0.01882304437458515 and parameters: {'lambda0': 1.1142206057934334}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 48] Task0  ratio = 0.00%  (λ=0.992)
+[Trial 48] Task1  ratio = 37.34%  (λ=0.992)
+[Trial 48] Task2  ratio = 28.99%  (λ=0.992)
+Trial 48: λ0=0.9923, λ1=0.9923 → MAEs=[0.0366, 0.0189, 0.0168], Avg=0.0241
+[I 2025-08-07 15:48:03,675] Trial 48 finished with value: 0.024109400808811188 and parameters: {'lambda0': 0.9922503954468102}. Best is trial 28 with value: 0.0179648008197546.
+[Trial 49] Task0  ratio = 0.00%  (λ=0.268)
+[Trial 49] Task1  ratio = 3.15%  (λ=0.268)
+[Trial 49] Task2  ratio = 9.33%  (λ=0.268)
+Trial 49: λ0=0.2685, λ1=0.2685 → MAEs=[0.0514, 0.0238, 0.0224], Avg=0.0325
+[I 2025-08-07 17:34:50,028] Trial 49 finished with value: 0.03254194185137749 and parameters: {'lambda0': 0.2684667019874754}. Best is trial 28 with value: 0.0179648008197546.
+
+==================================================
+EWC OPTIMIZATION COMPLETED!
+==================================================
+Best Validation MAE: 0.017965
+Best Parameters:
+  lambda0: 1.766739
+Completed trials: 50
+==================================================
+
+Final Best MAE: 0.017965
+  lambda0: 1.766739

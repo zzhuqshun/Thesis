@@ -1,0 +1,75 @@
+2025-08-05 23:21:43,272 - INFO - ==== Starting Joint Training ====
+2025-08-05 23:23:16,517 - INFO - Joint training - Train IDs: ['03', '05', '07', '09', '11', '15', '21', '23', '25', '27', '29'], size: 205644
+2025-08-05 23:23:16,521 - INFO - Joint training - Val IDs: ['01', '19', '13'], size: 58177
+2025-08-05 23:23:16,525 - INFO - Joint training - Test ID: 17, size: 22872
+2025-08-05 23:23:16,566 - INFO -   (Scaler) Scaler centers: [ 3.342422    0.17992967 27.75      ]
+2025-08-05 23:23:16,590 - INFO -   (Scaler) Scaler scales: [0.18428363 1.77955483 1.81783333]
+2025-08-05 23:23:17,951 - INFO - ========== Model Structure ==========
+2025-08-05 23:23:17,954 - INFO - 
+SOHLSTM(
+  (lstm1): LSTM(3, 128, batch_first=True)
+  (dropout_between): Dropout(p=0.3, inplace=False)
+  (lstm2): LSTM(128, 128, batch_first=True)
+  (fc): Sequential(
+    (0): Linear(in_features=128, out_features=64, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+    (2): Dropout(p=0.3, inplace=False)
+    (3): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+2025-08-05 23:23:17,956 - INFO - =====================================
+2025-08-05 23:23:17,957 - INFO - ====== Model Parameters Details ======
+2025-08-05 23:23:17,959 - INFO - lstm1.weight_ih_l0                                 | trainable |     1536 params
+2025-08-05 23:23:17,960 - INFO - lstm1.weight_hh_l0                                 | trainable |    65536 params
+2025-08-05 23:23:17,962 - INFO - lstm1.bias_ih_l0                                   | trainable |      512 params
+2025-08-05 23:23:17,963 - INFO - lstm1.bias_hh_l0                                   | trainable |      512 params
+2025-08-05 23:23:17,964 - INFO - lstm2.weight_ih_l0                                 | trainable |    65536 params
+2025-08-05 23:23:17,966 - INFO - lstm2.weight_hh_l0                                 | trainable |    65536 params
+2025-08-05 23:23:17,967 - INFO - lstm2.bias_ih_l0                                   | trainable |      512 params
+2025-08-05 23:23:17,968 - INFO - lstm2.bias_hh_l0                                   | trainable |      512 params
+2025-08-05 23:23:17,970 - INFO - fc.0.weight                                        | trainable |     8192 params
+2025-08-05 23:23:17,973 - INFO - fc.0.bias                                          | trainable |       64 params
+2025-08-05 23:23:17,982 - INFO - fc.3.weight                                        | trainable |       64 params
+2025-08-05 23:23:17,985 - INFO - fc.3.bias                                          | trainable |        1 params
+2025-08-05 23:23:17,988 - INFO - --------------------------------------------------------------------------------
+2025-08-05 23:23:17,991 - INFO - Total params:                                          208513 params (only trainable)
+2025-08-05 23:23:17,991 - INFO - =====================================
+2025-08-05 23:30:31,470 - INFO - Epoch 0 train=2.2466e-02 val=1.9418e-03 lr=1.00e-04 time=222.33s
+2025-08-05 23:34:08,795 - INFO - Epoch 1 train=6.4175e-03 val=1.0488e-03 lr=1.00e-04 time=217.26s
+2025-08-05 23:38:02,314 - INFO - Epoch 2 train=3.6534e-03 val=6.3971e-04 lr=1.00e-04 time=233.47s
+2025-08-05 23:41:42,770 - INFO - Epoch 3 train=2.2732e-03 val=5.3978e-04 lr=1.00e-04 time=220.41s
+2025-08-05 23:45:21,329 - INFO - Epoch 4 train=1.3027e-03 val=5.2451e-04 lr=1.00e-04 time=218.52s
+2025-08-05 23:48:53,741 - INFO - Epoch 5 train=7.4184e-04 val=3.8913e-04 lr=1.00e-04 time=212.38s
+2025-08-05 23:52:35,988 - INFO - Epoch 6 train=4.8191e-04 val=5.7416e-04 lr=1.00e-04 time=222.21s
+2025-08-05 23:56:20,921 - INFO - Epoch 7 train=3.7497e-04 val=6.7863e-04 lr=1.00e-04 time=224.92s
+2025-08-06 00:00:11,463 - INFO - Epoch 8 train=2.5959e-04 val=4.2715e-04 lr=1.00e-04 time=230.53s
+2025-08-06 00:03:55,343 - INFO - Epoch 9 train=2.1544e-04 val=4.2211e-04 lr=1.00e-04 time=223.86s
+2025-08-06 00:07:39,504 - INFO - Epoch 10 train=1.8370e-04 val=1.9745e-04 lr=1.00e-04 time=224.15s
+2025-08-06 00:11:13,888 - INFO - Epoch 11 train=1.7152e-04 val=1.8053e-04 lr=1.00e-04 time=214.36s
+2025-08-06 00:14:59,234 - INFO - Epoch 12 train=1.5461e-04 val=1.7348e-04 lr=1.00e-04 time=225.32s
+2025-08-06 00:18:51,032 - INFO - Epoch 13 train=1.4576e-04 val=2.7693e-04 lr=1.00e-04 time=231.75s
+2025-08-06 00:22:31,128 - INFO - Epoch 14 train=1.4850e-04 val=1.7072e-04 lr=1.00e-04 time=220.09s
+2025-08-06 00:26:11,718 - INFO - Epoch 15 train=1.3142e-04 val=1.9954e-04 lr=1.00e-04 time=220.53s
+2025-08-06 00:29:51,834 - INFO - Epoch 16 train=1.2570e-04 val=2.2457e-04 lr=1.00e-04 time=220.11s
+2025-08-06 00:33:31,225 - INFO - Epoch 17 train=1.2369e-04 val=2.7988e-04 lr=1.00e-04 time=219.36s
+2025-08-06 00:37:13,730 - INFO - Epoch 18 train=1.5383e-04 val=4.7855e-04 lr=1.00e-04 time=222.34s
+2025-08-06 00:40:55,936 - INFO - Epoch 19 train=1.3474e-04 val=2.4332e-04 lr=1.00e-04 time=222.19s
+2025-08-06 00:44:36,521 - INFO - Epoch 20 train=1.1796e-04 val=2.1475e-04 lr=1.00e-04 time=220.57s
+2025-08-06 00:48:03,899 - INFO - Epoch 21 train=1.0243e-04 val=2.8480e-04 lr=5.00e-05 time=207.37s
+2025-08-06 00:51:34,178 - INFO - Epoch 22 train=1.0513e-04 val=1.9591e-04 lr=5.00e-05 time=210.28s
+2025-08-06 00:55:16,391 - INFO - Epoch 23 train=9.9966e-05 val=3.1595e-04 lr=5.00e-05 time=222.21s
+2025-08-06 00:59:00,351 - INFO - Epoch 24 train=9.9757e-05 val=3.3416e-04 lr=5.00e-05 time=223.96s
+2025-08-06 01:02:43,453 - INFO - Epoch 25 train=1.0051e-04 val=2.8770e-04 lr=5.00e-05 time=223.10s
+2025-08-06 01:06:09,572 - INFO - Epoch 26 train=9.7436e-05 val=2.4547e-04 lr=5.00e-05 time=206.11s
+2025-08-06 01:10:03,694 - INFO - Epoch 27 train=8.9153e-05 val=2.3094e-04 lr=2.50e-05 time=234.12s
+2025-08-06 01:14:01,618 - INFO - Epoch 28 train=8.9906e-05 val=2.6308e-04 lr=2.50e-05 time=237.92s
+2025-08-06 01:18:04,878 - INFO - Epoch 29 train=8.8092e-05 val=2.9319e-04 lr=2.50e-05 time=243.25s
+2025-08-06 01:22:12,041 - INFO - Epoch 30 train=8.9073e-05 val=2.7923e-04 lr=2.50e-05 time=247.15s
+2025-08-06 01:25:54,511 - INFO - Epoch 31 train=8.7801e-05 val=3.2061e-04 lr=2.50e-05 time=222.46s
+2025-08-06 01:29:08,581 - INFO - Epoch 32 train=8.7621e-05 val=3.1339e-04 lr=2.50e-05 time=194.07s
+2025-08-06 01:32:21,626 - INFO - Epoch 33 train=8.2982e-05 val=3.0089e-04 lr=1.25e-05 time=193.04s
+2025-08-06 01:35:34,026 - INFO - Epoch 34 train=8.1877e-05 val=3.0538e-04 lr=1.25e-05 time=192.40s
+2025-08-06 01:35:34,028 - INFO - Early stopping at epoch 34
+2025-08-06 01:35:44,499 - INFO - Eval -> RMSE: 1.1249e-02, MAE: 9.6342e-03, R2: 0.9821
+2025-08-06 01:35:44,501 - INFO - Test metrics -> RMSE: 1.1249e-02, MAE: 9.6342e-03, R2: 0.9821
+2025-08-06 01:35:51,237 - INFO - ==== Joint Training Complete ====

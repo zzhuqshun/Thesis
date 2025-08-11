@@ -1,0 +1,237 @@
+2025-08-10 00:41:03,437 - ==== Experiment Setup ====
+2025-08-10 00:41:03,438 - Mode: incremental
+2025-08-10 00:41:03,440 - Number of tasks: 3
+2025-08-10 00:41:03,441 - EWC lambdas: [0.034866781670451236, 0.034866781670451236, 0.034866781670451236]
+2025-08-10 00:41:03,442 - LWF alphas: [0.0, 0.0, 0.0]
+2025-08-10 00:41:03,443 - Base directory: /beegfs/home/users/z/zzhuqshun/Thesis/05_Final/ewc/strategies/trial5
+2025-08-10 00:41:03,447 - ==== Incremental Training with EWC ====
+2025-08-10 00:41:03,454 - Number of tasks: 3
+2025-08-10 00:42:47,997 - Incremental training - Task 0 Train IDs: ['03', '27', '05', '21', '11'], size: 107395
+2025-08-10 00:42:48,000 - Incremental training - Task 0 Val IDs: ['01'], size: 20028
+2025-08-10 00:42:48,002 - Incremental training - Test Task 0 size: 8584
+2025-08-10 00:42:48,005 - Incremental training - Task 1 Train IDs: ['09', '29', '25'], size: 41175
+2025-08-10 00:42:48,007 - Incremental training - Task 1 Val IDs: ['19'], size: 16183
+2025-08-10 00:42:48,010 - Incremental training - Test Task 1 size: 6937
+2025-08-10 00:42:48,013 - Incremental training - Task 2 Train IDs: ['15', '07', '23'], size: 57074
+2025-08-10 00:42:48,015 - Incremental training - Task 2 Val IDs: ['13'], size: 4511
+2025-08-10 00:42:48,018 - Incremental training - Test Task 2 size: 1934
+2025-08-10 00:42:48,030 -   (Scaler) Scaler centers: [ 3.3374245   0.101279   27.50083333]
+2025-08-10 00:42:48,033 -   (Scaler) Scaler scales: [0.18253608 1.77971742 1.05683333]
+2025-08-10 00:42:49,129 - --- task0 (LWF α=0.0000, EWC λ=0.0349) ---
+2025-08-10 00:46:26,405 - Epoch 0: EWC loss is 0.00% of task loss
+2025-08-10 00:46:31,984 - Epoch 0 task=5.2254e-02 kd=0.0000e+00 ewc=0.0000e+00 val=1.6397e-03 lr=5.00e-05 time=95.64s
+2025-08-10 00:48:04,068 - Epoch 1: EWC loss is 0.00% of task loss
+2025-08-10 00:48:09,634 - Epoch 1 task=9.7881e-03 kd=0.0000e+00 ewc=0.0000e+00 val=5.4201e-04 lr=5.00e-05 time=92.08s
+2025-08-10 00:49:39,698 - Epoch 2: EWC loss is 0.00% of task loss
+2025-08-10 00:49:45,239 - Epoch 2 task=6.9406e-03 kd=0.0000e+00 ewc=0.0000e+00 val=3.7465e-04 lr=5.00e-05 time=90.04s
+2025-08-10 00:51:14,738 - Epoch 3: EWC loss is 0.00% of task loss
+2025-08-10 00:51:20,222 - Epoch 3 task=6.0860e-03 kd=0.0000e+00 ewc=0.0000e+00 val=7.1794e-04 lr=5.00e-05 time=89.41s
+2025-08-10 00:52:50,109 - Epoch 4: EWC loss is 0.00% of task loss
+2025-08-10 00:52:55,598 - Epoch 4 task=5.3302e-03 kd=0.0000e+00 ewc=0.0000e+00 val=1.0879e-03 lr=5.00e-05 time=89.89s
+2025-08-10 00:54:25,595 - Epoch 5: EWC loss is 0.00% of task loss
+2025-08-10 00:54:31,076 - Epoch 5 task=4.7500e-03 kd=0.0000e+00 ewc=0.0000e+00 val=2.4038e-04 lr=5.00e-05 time=89.98s
+2025-08-10 00:56:00,889 - Epoch 6: EWC loss is 0.00% of task loss
+2025-08-10 00:56:06,370 - Epoch 6 task=3.9479e-03 kd=0.0000e+00 ewc=0.0000e+00 val=2.7289e-04 lr=5.00e-05 time=89.78s
+2025-08-10 00:57:36,340 - Epoch 7: EWC loss is 0.00% of task loss
+2025-08-10 00:57:41,844 - Epoch 7 task=3.3024e-03 kd=0.0000e+00 ewc=0.0000e+00 val=2.8707e-04 lr=5.00e-05 time=89.99s
+2025-08-10 00:59:12,024 - Epoch 8: EWC loss is 0.00% of task loss
+2025-08-10 00:59:17,511 - Epoch 8 task=2.8989e-03 kd=0.0000e+00 ewc=0.0000e+00 val=3.8603e-04 lr=5.00e-05 time=90.16s
+2025-08-10 01:00:47,170 - Epoch 9: EWC loss is 0.00% of task loss
+2025-08-10 01:00:52,659 - Epoch 9 task=2.4792e-03 kd=0.0000e+00 ewc=0.0000e+00 val=4.7059e-04 lr=5.00e-05 time=89.66s
+2025-08-10 01:02:22,044 - Epoch 10: EWC loss is 0.00% of task loss
+2025-08-10 01:02:27,528 - Epoch 10 task=2.1016e-03 kd=0.0000e+00 ewc=0.0000e+00 val=3.2091e-04 lr=5.00e-05 time=89.38s
+2025-08-10 01:03:56,590 - Epoch 11: EWC loss is 0.00% of task loss
+2025-08-10 01:04:02,070 - Epoch 11 task=1.7586e-03 kd=0.0000e+00 ewc=0.0000e+00 val=5.7318e-04 lr=5.00e-05 time=89.06s
+2025-08-10 01:05:31,190 - Epoch 12: EWC loss is 0.00% of task loss
+2025-08-10 01:05:36,682 - Epoch 12 task=1.4904e-03 kd=0.0000e+00 ewc=0.0000e+00 val=4.3886e-04 lr=2.50e-05 time=89.13s
+2025-08-10 01:07:06,100 - Epoch 13: EWC loss is 0.00% of task loss
+2025-08-10 01:07:11,589 - Epoch 13 task=1.3589e-03 kd=0.0000e+00 ewc=0.0000e+00 val=3.9898e-04 lr=2.50e-05 time=89.40s
+2025-08-10 01:08:41,441 - Epoch 14: EWC loss is 0.00% of task loss
+2025-08-10 01:08:46,922 - Epoch 14 task=1.2419e-03 kd=0.0000e+00 ewc=0.0000e+00 val=3.1853e-04 lr=2.50e-05 time=89.85s
+2025-08-10 01:10:17,309 - Epoch 15: EWC loss is 0.00% of task loss
+2025-08-10 01:10:22,816 - Epoch 15 task=1.1449e-03 kd=0.0000e+00 ewc=0.0000e+00 val=6.5294e-04 lr=2.50e-05 time=90.41s
+2025-08-10 01:11:50,837 - Epoch 16: EWC loss is 0.00% of task loss
+2025-08-10 01:11:56,317 - Epoch 16 task=1.0387e-03 kd=0.0000e+00 ewc=0.0000e+00 val=4.7285e-04 lr=2.50e-05 time=88.01s
+2025-08-10 01:13:23,716 - Epoch 17: EWC loss is 0.00% of task loss
+2025-08-10 01:13:29,198 - Epoch 17 task=9.6082e-04 kd=0.0000e+00 ewc=0.0000e+00 val=7.2000e-04 lr=2.50e-05 time=87.40s
+2025-08-10 01:14:55,805 - Epoch 18: EWC loss is 0.00% of task loss
+2025-08-10 01:15:01,289 - Epoch 18 task=8.8064e-04 kd=0.0000e+00 ewc=0.0000e+00 val=1.3992e-03 lr=1.25e-05 time=86.61s
+2025-08-10 01:16:27,517 - Epoch 19: EWC loss is 0.00% of task loss
+2025-08-10 01:16:32,999 - Epoch 19 task=8.4158e-04 kd=0.0000e+00 ewc=0.0000e+00 val=1.7387e-03 lr=1.25e-05 time=86.23s
+2025-08-10 01:18:28,644 - Epoch 20: EWC loss is 0.00% of task loss
+2025-08-10 01:18:34,142 - Epoch 20 task=8.1698e-04 kd=0.0000e+00 ewc=0.0000e+00 val=3.4222e-04 lr=1.25e-05 time=115.65s
+2025-08-10 01:20:57,082 - Epoch 21: EWC loss is 0.00% of task loss
+2025-08-10 01:21:02,570 - Epoch 21 task=7.7204e-04 kd=0.0000e+00 ewc=0.0000e+00 val=2.7500e-03 lr=1.25e-05 time=142.92s
+2025-08-10 01:23:37,092 - Epoch 22: EWC loss is 0.00% of task loss
+2025-08-10 01:23:42,577 - Epoch 22 task=7.4549e-04 kd=0.0000e+00 ewc=0.0000e+00 val=1.6092e-03 lr=1.25e-05 time=154.51s
+2025-08-10 01:26:02,477 - Epoch 23: EWC loss is 0.00% of task loss
+2025-08-10 01:26:07,964 - Epoch 23 task=7.2313e-04 kd=0.0000e+00 ewc=0.0000e+00 val=1.6191e-03 lr=1.25e-05 time=139.88s
+2025-08-10 01:27:56,996 - Epoch 24: EWC loss is 0.00% of task loss
+2025-08-10 01:28:02,482 - Epoch 24 task=6.9636e-04 kd=0.0000e+00 ewc=0.0000e+00 val=1.6526e-03 lr=6.25e-06 time=109.03s
+2025-08-10 01:30:11,696 - Epoch 25: EWC loss is 0.00% of task loss
+2025-08-10 01:30:17,183 - Epoch 25 task=6.9114e-04 kd=0.0000e+00 ewc=0.0000e+00 val=1.6169e-03 lr=6.25e-06 time=129.21s
+2025-08-10 01:30:17,188 - Early stopping at epoch 25
+2025-08-10 01:30:27,817 - Consolidating task 0 with EWC lambda: 0.0349
+2025-08-10 01:31:45,672 - EWC fisher normalized with scale 0.0000
+2025-08-10 01:31:45,683 - Task 0 consolidated with EWC lambda=0.0349
+2025-08-10 01:31:45,689 - Task 0 completed and consolidated.
+2025-08-10 01:31:45,696 - --- task1 (LWF α=0.0000, EWC λ=0.0349) ---
+2025-08-10 01:32:23,669 - Epoch 0: EWC loss is 2.97% of task loss
+2025-08-10 01:32:28,076 - Epoch 0 task=5.0015e-03 kd=0.0000e+00 ewc=1.4835e-04 val=5.1117e-04 lr=5.00e-05 time=37.58s
+2025-08-10 01:33:01,550 - Epoch 1: EWC loss is 2.63% of task loss
+2025-08-10 01:33:05,982 - Epoch 1 task=4.8353e-03 kd=0.0000e+00 ewc=1.2710e-04 val=7.1956e-04 lr=5.00e-05 time=33.39s
+2025-08-10 01:33:39,890 - Epoch 2: EWC loss is 2.95% of task loss
+2025-08-10 01:33:44,335 - Epoch 2 task=4.5644e-03 kd=0.0000e+00 ewc=1.3449e-04 val=7.4850e-04 lr=5.00e-05 time=33.91s
+2025-08-10 01:34:16,607 - Epoch 3: EWC loss is 3.14% of task loss
+2025-08-10 01:34:21,048 - Epoch 3 task=4.6445e-03 kd=0.0000e+00 ewc=1.4580e-04 val=7.6221e-04 lr=5.00e-05 time=32.27s
+2025-08-10 01:34:52,684 - Epoch 4: EWC loss is 3.07% of task loss
+2025-08-10 01:34:57,127 - Epoch 4 task=4.4496e-03 kd=0.0000e+00 ewc=1.3655e-04 val=8.3236e-04 lr=5.00e-05 time=31.63s
+2025-08-10 01:35:28,406 - Epoch 5: EWC loss is 3.01% of task loss
+2025-08-10 01:35:32,844 - Epoch 5 task=4.4120e-03 kd=0.0000e+00 ewc=1.3266e-04 val=1.0985e-03 lr=5.00e-05 time=31.28s
+2025-08-10 01:36:04,087 - Epoch 6: EWC loss is 3.07% of task loss
+2025-08-10 01:36:08,524 - Epoch 6 task=4.4274e-03 kd=0.0000e+00 ewc=1.3596e-04 val=6.3757e-04 lr=5.00e-05 time=31.24s
+2025-08-10 01:36:39,729 - Epoch 7: EWC loss is 2.92% of task loss
+2025-08-10 01:36:44,170 - Epoch 7 task=4.2208e-03 kd=0.0000e+00 ewc=1.2305e-04 val=8.2946e-04 lr=2.50e-05 time=31.20s
+2025-08-10 01:37:15,402 - Epoch 8: EWC loss is 2.91% of task loss
+2025-08-10 01:37:19,844 - Epoch 8 task=4.1622e-03 kd=0.0000e+00 ewc=1.2127e-04 val=8.6112e-04 lr=2.50e-05 time=31.23s
+2025-08-10 01:37:51,074 - Epoch 9: EWC loss is 2.89% of task loss
+2025-08-10 01:37:55,517 - Epoch 9 task=4.2604e-03 kd=0.0000e+00 ewc=1.2307e-04 val=9.6394e-04 lr=2.50e-05 time=31.23s
+2025-08-10 01:38:27,225 - Epoch 10: EWC loss is 2.90% of task loss
+2025-08-10 01:38:31,661 - Epoch 10 task=4.1851e-03 kd=0.0000e+00 ewc=1.2139e-04 val=8.6063e-04 lr=2.50e-05 time=31.71s
+2025-08-10 01:39:04,711 - Epoch 11: EWC loss is 3.01% of task loss
+2025-08-10 01:39:09,154 - Epoch 11 task=4.2425e-03 kd=0.0000e+00 ewc=1.2778e-04 val=1.2480e-03 lr=2.50e-05 time=33.05s
+2025-08-10 01:39:41,912 - Epoch 12: EWC loss is 2.98% of task loss
+2025-08-10 01:39:46,351 - Epoch 12 task=4.2154e-03 kd=0.0000e+00 ewc=1.2563e-04 val=9.5824e-04 lr=2.50e-05 time=32.76s
+2025-08-10 01:40:21,263 - Epoch 13: EWC loss is 2.91% of task loss
+2025-08-10 01:40:25,711 - Epoch 13 task=4.1366e-03 kd=0.0000e+00 ewc=1.2029e-04 val=1.1366e-03 lr=1.25e-05 time=34.91s
+2025-08-10 01:41:10,402 - Epoch 14: EWC loss is 2.98% of task loss
+2025-08-10 01:41:14,844 - Epoch 14 task=4.1292e-03 kd=0.0000e+00 ewc=1.2288e-04 val=1.1623e-03 lr=1.25e-05 time=44.69s
+2025-08-10 01:42:05,559 - Epoch 15: EWC loss is 3.14% of task loss
+2025-08-10 01:42:10,001 - Epoch 15 task=4.0755e-03 kd=0.0000e+00 ewc=1.2803e-04 val=1.1416e-03 lr=1.25e-05 time=50.71s
+2025-08-10 01:42:56,190 - Epoch 16: EWC loss is 3.29% of task loss
+2025-08-10 01:43:00,634 - Epoch 16 task=4.0253e-03 kd=0.0000e+00 ewc=1.3237e-04 val=7.4726e-04 lr=1.25e-05 time=46.18s
+2025-08-10 01:43:50,779 - Epoch 17: EWC loss is 3.34% of task loss
+2025-08-10 01:43:55,221 - Epoch 17 task=4.0247e-03 kd=0.0000e+00 ewc=1.3461e-04 val=6.7150e-04 lr=1.25e-05 time=50.14s
+2025-08-10 01:44:46,406 - Epoch 18: EWC loss is 3.28% of task loss
+2025-08-10 01:44:50,852 - Epoch 18 task=3.9920e-03 kd=0.0000e+00 ewc=1.3098e-04 val=7.1665e-04 lr=1.25e-05 time=51.17s
+2025-08-10 01:45:45,640 - Epoch 19: EWC loss is 3.26% of task loss
+2025-08-10 01:45:50,086 - Epoch 19 task=3.9068e-03 kd=0.0000e+00 ewc=1.2741e-04 val=6.8384e-04 lr=6.25e-06 time=54.78s
+2025-08-10 01:46:46,089 - Epoch 20: EWC loss is 3.23% of task loss
+2025-08-10 01:46:50,539 - Epoch 20 task=3.9112e-03 kd=0.0000e+00 ewc=1.2647e-04 val=8.7142e-04 lr=6.25e-06 time=55.99s
+2025-08-10 01:46:50,550 - Early stopping at epoch 20
+2025-08-10 01:46:53,464 - Consolidating task 1 with EWC lambda: 0.0349
+2025-08-10 01:47:21,717 - EWC fisher normalized with scale 0.0000
+2025-08-10 01:47:21,730 - Task 1 consolidated with EWC lambda=0.0349
+2025-08-10 01:47:21,737 - Task 1 completed and consolidated.
+2025-08-10 01:47:21,744 - --- task2 (LWF α=0.0000, EWC λ=0.0349) ---
+2025-08-10 01:48:44,883 - Epoch 0: EWC loss is 4.89% of task loss
+2025-08-10 01:48:45,988 - Epoch 0 task=5.1550e-03 kd=0.0000e+00 ewc=2.5195e-04 val=6.0596e-03 lr=5.00e-05 time=82.95s
+2025-08-10 01:50:05,546 - Epoch 1: EWC loss is 5.51% of task loss
+2025-08-10 01:50:06,676 - Epoch 1 task=4.5984e-03 kd=0.0000e+00 ewc=2.5347e-04 val=1.4046e-03 lr=5.00e-05 time=79.52s
+2025-08-10 01:51:30,448 - Epoch 2: EWC loss is 5.50% of task loss
+2025-08-10 01:51:31,560 - Epoch 2 task=4.2716e-03 kd=0.0000e+00 ewc=2.3514e-04 val=1.4208e-03 lr=5.00e-05 time=83.69s
+2025-08-10 01:52:57,143 - Epoch 3: EWC loss is 5.22% of task loss
+2025-08-10 01:52:58,253 - Epoch 3 task=4.2269e-03 kd=0.0000e+00 ewc=2.2066e-04 val=1.4329e-03 lr=5.00e-05 time=85.58s
+2025-08-10 01:54:23,818 - Epoch 4: EWC loss is 5.32% of task loss
+2025-08-10 01:54:24,931 - Epoch 4 task=4.1890e-03 kd=0.0000e+00 ewc=2.2276e-04 val=1.3656e-03 lr=5.00e-05 time=85.55s
+2025-08-10 01:55:50,196 - Epoch 5: EWC loss is 5.37% of task loss
+2025-08-10 01:55:51,308 - Epoch 5 task=4.1481e-03 kd=0.0000e+00 ewc=2.2276e-04 val=1.8661e-03 lr=5.00e-05 time=85.18s
+2025-08-10 01:57:18,846 - Epoch 6: EWC loss is 5.84% of task loss
+2025-08-10 01:57:19,956 - Epoch 6 task=4.1228e-03 kd=0.0000e+00 ewc=2.4087e-04 val=1.3939e-03 lr=5.00e-05 time=87.53s
+2025-08-10 01:58:48,193 - Epoch 7: EWC loss is 5.66% of task loss
+2025-08-10 01:58:49,302 - Epoch 7 task=4.0366e-03 kd=0.0000e+00 ewc=2.2848e-04 val=1.4242e-03 lr=5.00e-05 time=88.22s
+2025-08-10 02:00:15,146 - Epoch 8: EWC loss is 5.84% of task loss
+2025-08-10 02:00:16,258 - Epoch 8 task=4.0016e-03 kd=0.0000e+00 ewc=2.3376e-04 val=1.1032e-03 lr=5.00e-05 time=85.84s
+2025-08-10 02:01:41,113 - Epoch 9: EWC loss is 5.87% of task loss
+2025-08-10 02:01:42,222 - Epoch 9 task=3.9731e-03 kd=0.0000e+00 ewc=2.3316e-04 val=2.1181e-03 lr=5.00e-05 time=84.76s
+2025-08-10 02:03:09,714 - Epoch 10: EWC loss is 5.72% of task loss
+2025-08-10 02:03:10,827 - Epoch 10 task=3.9126e-03 kd=0.0000e+00 ewc=2.2370e-04 val=1.0258e-03 lr=5.00e-05 time=87.49s
+2025-08-10 02:04:37,554 - Epoch 11: EWC loss is 5.81% of task loss
+2025-08-10 02:04:38,670 - Epoch 11 task=3.8433e-03 kd=0.0000e+00 ewc=2.2335e-04 val=1.1627e-03 lr=5.00e-05 time=86.63s
+2025-08-10 02:06:07,460 - Epoch 12: EWC loss is 5.83% of task loss
+2025-08-10 02:06:08,575 - Epoch 12 task=3.8495e-03 kd=0.0000e+00 ewc=2.2450e-04 val=1.1937e-03 lr=5.00e-05 time=88.78s
+2025-08-10 02:07:35,429 - Epoch 13: EWC loss is 5.77% of task loss
+2025-08-10 02:07:36,542 - Epoch 13 task=3.8053e-03 kd=0.0000e+00 ewc=2.1966e-04 val=8.7153e-04 lr=5.00e-05 time=86.84s
+2025-08-10 02:09:03,878 - Epoch 14: EWC loss is 6.07% of task loss
+2025-08-10 02:09:04,985 - Epoch 14 task=3.8347e-03 kd=0.0000e+00 ewc=2.3292e-04 val=9.3741e-04 lr=5.00e-05 time=87.23s
+2025-08-10 02:10:33,522 - Epoch 15: EWC loss is 6.40% of task loss
+2025-08-10 02:10:34,635 - Epoch 15 task=3.9181e-03 kd=0.0000e+00 ewc=2.5080e-04 val=9.9786e-04 lr=5.00e-05 time=88.53s
+2025-08-10 02:12:00,918 - Epoch 16: EWC loss is 6.05% of task loss
+2025-08-10 02:12:02,025 - Epoch 16 task=3.7900e-03 kd=0.0000e+00 ewc=2.2937e-04 val=9.9963e-04 lr=5.00e-05 time=86.26s
+2025-08-10 02:13:10,770 - Epoch 17: EWC loss is 6.15% of task loss
+2025-08-10 02:13:11,878 - Epoch 17 task=3.7015e-03 kd=0.0000e+00 ewc=2.2755e-04 val=1.4697e-03 lr=5.00e-05 time=68.74s
+2025-08-10 02:14:34,486 - Epoch 18: EWC loss is 6.10% of task loss
+2025-08-10 02:14:35,596 - Epoch 18 task=3.6434e-03 kd=0.0000e+00 ewc=2.2231e-04 val=1.2642e-03 lr=5.00e-05 time=82.61s
+2025-08-10 02:15:56,794 - Epoch 19: EWC loss is 6.28% of task loss
+2025-08-10 02:15:57,906 - Epoch 19 task=3.6312e-03 kd=0.0000e+00 ewc=2.2812e-04 val=1.2508e-03 lr=5.00e-05 time=81.19s
+2025-08-10 02:17:22,092 - Epoch 20: EWC loss is 5.67% of task loss
+2025-08-10 02:17:23,205 - Epoch 20 task=3.5425e-03 kd=0.0000e+00 ewc=2.0082e-04 val=9.5473e-04 lr=2.50e-05 time=84.17s
+2025-08-10 02:18:57,431 - Epoch 21: EWC loss is 5.81% of task loss
+2025-08-10 02:18:58,543 - Epoch 21 task=3.4899e-03 kd=0.0000e+00 ewc=2.0274e-04 val=1.6636e-03 lr=2.50e-05 time=94.21s
+2025-08-10 02:20:32,813 - Epoch 22: EWC loss is 5.69% of task loss
+2025-08-10 02:20:33,925 - Epoch 22 task=3.5061e-03 kd=0.0000e+00 ewc=1.9943e-04 val=1.4382e-03 lr=2.50e-05 time=94.25s
+2025-08-10 02:22:09,337 - Epoch 23: EWC loss is 5.65% of task loss
+2025-08-10 02:22:10,449 - Epoch 23 task=3.4954e-03 kd=0.0000e+00 ewc=1.9758e-04 val=1.6168e-03 lr=2.50e-05 time=95.40s
+2025-08-10 02:23:45,601 - Epoch 24: EWC loss is 5.72% of task loss
+2025-08-10 02:23:46,712 - Epoch 24 task=3.4455e-03 kd=0.0000e+00 ewc=1.9705e-04 val=1.3790e-03 lr=2.50e-05 time=95.14s
+2025-08-10 02:25:19,873 - Epoch 25: EWC loss is 5.50% of task loss
+2025-08-10 02:25:20,989 - Epoch 25 task=3.5039e-03 kd=0.0000e+00 ewc=1.9286e-04 val=1.8252e-03 lr=2.50e-05 time=93.15s
+2025-08-10 02:26:57,333 - Epoch 26: EWC loss is 5.38% of task loss
+2025-08-10 02:26:58,444 - Epoch 26 task=3.4033e-03 kd=0.0000e+00 ewc=1.8325e-04 val=1.3499e-03 lr=1.25e-05 time=96.34s
+2025-08-10 02:28:32,945 - Epoch 27: EWC loss is 5.34% of task loss
+2025-08-10 02:28:34,064 - Epoch 27 task=3.4298e-03 kd=0.0000e+00 ewc=1.8322e-04 val=1.5663e-03 lr=1.25e-05 time=94.49s
+2025-08-10 02:30:08,490 - Epoch 28: EWC loss is 5.34% of task loss
+2025-08-10 02:30:09,607 - Epoch 28 task=3.4146e-03 kd=0.0000e+00 ewc=1.8222e-04 val=1.5610e-03 lr=1.25e-05 time=94.42s
+2025-08-10 02:31:43,786 - Epoch 29: EWC loss is 5.28% of task loss
+2025-08-10 02:31:44,896 - Epoch 29 task=3.4385e-03 kd=0.0000e+00 ewc=1.8162e-04 val=1.5931e-03 lr=1.25e-05 time=94.16s
+2025-08-10 02:33:02,277 - Epoch 30: EWC loss is 5.29% of task loss
+2025-08-10 02:33:03,387 - Epoch 30 task=3.4125e-03 kd=0.0000e+00 ewc=1.8053e-04 val=1.3070e-03 lr=1.25e-05 time=77.34s
+2025-08-10 02:34:15,615 - Epoch 31: EWC loss is 5.25% of task loss
+2025-08-10 02:34:16,725 - Epoch 31 task=3.4155e-03 kd=0.0000e+00 ewc=1.7935e-04 val=1.2680e-03 lr=1.25e-05 time=72.23s
+2025-08-10 02:35:28,869 - Epoch 32: EWC loss is 5.19% of task loss
+2025-08-10 02:35:29,980 - Epoch 32 task=3.3814e-03 kd=0.0000e+00 ewc=1.7549e-04 val=1.2714e-03 lr=6.25e-06 time=72.14s
+2025-08-10 02:36:54,916 - Epoch 33: EWC loss is 5.17% of task loss
+2025-08-10 02:36:56,031 - Epoch 33 task=3.3912e-03 kd=0.0000e+00 ewc=1.7542e-04 val=1.4691e-03 lr=6.25e-06 time=84.94s
+2025-08-10 02:36:56,041 - Early stopping at epoch 33
+2025-08-10 02:36:58,656 - Consolidating task 2 with EWC lambda: 0.0349
+2025-08-10 02:37:37,792 - EWC fisher normalized with scale 0.0000
+2025-08-10 02:37:37,810 - Task 2 consolidated with EWC lambda=0.0349
+2025-08-10 02:37:37,831 - Task 2 completed and consolidated.
+2025-08-10 02:37:37,849 - ==== Incremental Training Complete ====
+2025-08-10 02:37:37,869 - ==== Starting Comprehensive Evaluation ====
+2025-08-10 02:37:37,960 - Evaluating model trained after task 0...
+2025-08-10 02:37:49,654 -   Task 0 -> Test Task 0: MAE=2.9096e-02
+2025-08-10 02:37:51,445 -   Task 0 -> Test Task 1: MAE=7.7732e-02
+2025-08-10 02:37:51,800 -   Task 0 -> Test Task 2: MAE=2.6696e-01
+2025-08-10 02:37:51,820 - Evaluating model trained after task 1...
+2025-08-10 02:38:03,317 -   Task 1 -> Test Task 0: MAE=1.4795e-01
+2025-08-10 02:38:05,096 -   Task 1 -> Test Task 1: MAE=4.3971e-02
+2025-08-10 02:38:05,451 -   Task 1 -> Test Task 2: MAE=4.2798e-02
+2025-08-10 02:38:05,459 - Evaluating model trained after task 2...
+2025-08-10 02:38:17,211 -   Task 2 -> Test Task 0: MAE=1.6519e-02
+2025-08-10 02:38:19,002 -   Task 2 -> Test Task 1: MAE=6.5871e-02
+2025-08-10 02:38:19,365 -   Task 2 -> Test Task 2: MAE=6.0574e-02
+2025-08-10 02:38:19,387 - ==== Computing Continual Learning Metrics ====
+2025-08-10 02:38:19,405 - Computing random initialization baselines...
+2025-08-10 02:38:21,811 -   Baseline Task 0: R=-0.9732
+2025-08-10 02:38:23,571 -   Baseline Task 1: R=-0.9253
+2025-08-10 02:38:23,928 -   Baseline Task 2: R=-0.6923
+2025-08-10 02:38:23,943 - ==== Continual Learning Results ====
+2025-08-10 02:38:23,965 - BWT (Backward Transfer): -0.0047 (less negative = less forgetting)
+2025-08-10 02:38:23,982 - FWT (Forward Transfer): 0.7485 (positive = beneficial transfer)
+2025-08-10 02:38:24,001 - ACC (Average Accuracy): -0.0477
+2025-08-10 02:38:24,020 - ==== Performance Matrix R[i][j] ====
+2025-08-10 02:38:24,040 - Rows: trained after task i, Columns: evaluated on task j
+2025-08-10 02:38:24,054 -        Task 0 Task 1 Task 2
+2025-08-10 02:38:24,076 - Task 0: -0.0291 -0.0777 -0.2670
+2025-08-10 02:38:24,091 - Task 1: -0.1479 -0.0440 -0.0428
+2025-08-10 02:38:24,104 - Task 2: -0.0165 -0.0659 -0.0606
+2025-08-10 02:38:24,490 - ==== Evaluation Complete ====
+2025-08-10 02:38:24,511 - All results saved to: /beegfs/home/users/z/zzhuqshun/Thesis/05_Final/ewc/strategies/trial5/metrics
+2025-08-10 02:38:24,533 - ==== Final Summary ====
+2025-08-10 02:38:24,543 - Continual Learning Metrics:
+2025-08-10 02:38:24,563 -   BWT: -0.0047
+2025-08-10 02:38:24,573 -   FWT: 0.7485
+2025-08-10 02:38:24,591 -   ACC: -0.0477
+2025-08-10 02:38:24,605 -   num_tasks: 3.0000
+2025-08-10 02:38:24,617 - ==== Experiment Complete ====

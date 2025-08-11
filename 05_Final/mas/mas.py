@@ -35,7 +35,7 @@ class Config:
         self.MODE = 'incremental'  
         
         # Directory structure
-        self.BASE_DIR = Path.cwd() /"mas" / "strategies" / "trial11"
+        self.BASE_DIR = Path.cwd() /"mas" / "strategies" / "trial22"
         self.DATA_DIR = Path('../01_Datenaufbereitung/Output/Calculated/')
         
         # Model hyperparameters
@@ -59,7 +59,7 @@ class Config:
         # Continual Learning parameters
         self.NUM_TASKS = 3          # Number of incremental tasks
         self.LWF_ALPHAS = [0.0, 0.0, 0.0]    # Learning without Forgetting weights
-        self.MAS_LAMBDAS = [0.0032734083240035885, 0.0032734083240035885, 0.0032734083240035885]    # MAS regularization weights
+        self.MAS_LAMBDAS = [0.009309510059838462, 0.009309510059838462, 0.009309510059838462]    # MAS regularization weights
         
         # Random seed for reproducibility
         self.SEED = 42
@@ -129,14 +129,22 @@ class Config:
         task0_faster = random.sample(faster_cells, 1)  # 1 faster cell
         
         task0_train_ids = task0_normal + task0_fast + task0_faster
-
+        
+        # Remaining cells for Task1 & Task2
+        remaining_cells = (
+            [c for c in normal_cells if c not in task0_normal] +
+            [c for c in fast_cells if c not in task0_fast] +
+            [c for c in faster_cells if c not in task0_faster]
+        )
+        
+        # Shuffle remaining cells for random assignment
+        random.shuffle(remaining_cells)
         
         # Task 1: Random 3 cells
-        task1_train_ids = ([c for c in fast_cells if c not in task0_fast] +
-                            [c for c in normal_cells if c not in task0_normal])
+        task1_train_ids = remaining_cells[:3]
         
         # Task 2: Next random 3 cells  
-        task2_train_ids = [c for c in faster_cells if c not in task0_faster]
+        task2_train_ids = remaining_cells[3:6]
         
         logger.info("=== Data Split Strategy ===")
         logger.info("Task 0 (Mixed): %s", task0_train_ids)

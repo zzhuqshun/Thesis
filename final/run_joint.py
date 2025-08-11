@@ -54,13 +54,14 @@ def main():
     # Initialize configuration
     config = Config()
     config.MODE = "joint" 
+    config.SEED = 2025
     set_seed(config.SEED)
     
-    config.BASE_DIR = Path.cwd() / 'joint_training'
+    config.BASE_DIR = Path.cwd() / 'joint_training_seed2025'
     config.BASE_DIR.mkdir(parents=True, exist_ok=True)
     setup_logging(config.BASE_DIR)
 
-    config.save(config.BASE_DIR / 'config.json')
+    config.save(config.BASE_DIR / 'config.yaml')
     
     # Start joint training
     joint(config)

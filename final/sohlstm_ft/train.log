@@ -1,0 +1,296 @@
+2025-08-10 02:36:47,508 - INFO - ==== Incremental Training (Pure Fine-tuning via SITrainer) ====
+2025-08-10 02:36:47,562 - INFO - Number of tasks: 3
+2025-08-10 02:38:34,322 - INFO - Incremental training - Task 0 Train IDs: ['03', '27', '05', '21', '11'], size: 107395
+2025-08-10 02:38:34,341 - INFO - Incremental training - Task 0 Val IDs: ['01'], size: 20028
+2025-08-10 02:38:34,360 - INFO - Incremental training - Test Task 0 size: 8584
+2025-08-10 02:38:34,371 - INFO - Incremental training - Task 1 Train IDs: ['09', '29', '25'], size: 41175
+2025-08-10 02:38:34,388 - INFO - Incremental training - Task 1 Val IDs: ['19'], size: 16183
+2025-08-10 02:38:34,403 - INFO - Incremental training - Test Task 1 size: 6937
+2025-08-10 02:38:34,419 - INFO - Incremental training - Task 2 Train IDs: ['15', '07', '23'], size: 57074
+2025-08-10 02:38:34,435 - INFO - Incremental training - Task 2 Val IDs: ['13'], size: 4511
+2025-08-10 02:38:34,454 - INFO - Incremental training - Test Task 2 size: 1934
+2025-08-10 02:38:34,488 - INFO -   (Scaler) Scaler centers: [ 3.3374245   0.101279   27.50083333]
+2025-08-10 02:38:34,508 - INFO -   (Scaler) Scaler scales: [0.18253608 1.77971742 1.05683333]
+2025-08-10 02:38:36,288 - INFO - ========== Model Structure ==========
+2025-08-10 02:38:36,306 - INFO - 
+SOHLSTM(
+  (lstm): LSTM(3, 128, num_layers=2, batch_first=True, dropout=0.3)
+  (fc): Sequential(
+    (0): Linear(in_features=128, out_features=64, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+    (2): Dropout(p=0.3, inplace=False)
+    (3): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+2025-08-10 02:38:36,322 - INFO - =====================================
+2025-08-10 02:38:36,342 - INFO - ====== Model Parameters Details ======
+2025-08-10 02:38:36,357 - INFO - lstm.weight_ih_l0                                  | trainable |     1536 params
+2025-08-10 02:38:36,372 - INFO - lstm.weight_hh_l0                                  | trainable |    65536 params
+2025-08-10 02:38:36,392 - INFO - lstm.bias_ih_l0                                    | trainable |      512 params
+2025-08-10 02:38:36,405 - INFO - lstm.bias_hh_l0                                    | trainable |      512 params
+2025-08-10 02:38:36,424 - INFO - lstm.weight_ih_l1                                  | trainable |    65536 params
+2025-08-10 02:38:36,442 - INFO - lstm.weight_hh_l1                                  | trainable |    65536 params
+2025-08-10 02:38:36,460 - INFO - lstm.bias_ih_l1                                    | trainable |      512 params
+2025-08-10 02:38:36,478 - INFO - lstm.bias_hh_l1                                    | trainable |      512 params
+2025-08-10 02:38:36,492 - INFO - fc.0.weight                                        | trainable |     8192 params
+2025-08-10 02:38:36,508 - INFO - fc.0.bias                                          | trainable |       64 params
+2025-08-10 02:38:36,530 - INFO - fc.3.weight                                        | trainable |       64 params
+2025-08-10 02:38:36,547 - INFO - fc.3.bias                                          | trainable |        1 params
+2025-08-10 02:38:36,564 - INFO - --------------------------------------------------------------------------------
+2025-08-10 02:38:36,580 - INFO - Total params:                                          208513 params (only trainable)
+2025-08-10 02:38:36,599 - INFO - =====================================
+2025-08-10 02:38:36,610 - INFO - --- task0 ---
+2025-08-10 02:51:41,020 - INFO - Epoch 0: SI penalty is 0.00% of task loss
+2025-08-10 02:51:46,840 - INFO - Epoch 0 task=3.4183e-02 kd=0.0000e+00 si=0.0000e+00 val=1.8106e-03 lr=1.00e-04 time=169.69s
+2025-08-10 02:54:27,454 - INFO - Epoch 1: SI penalty is 0.00% of task loss
+2025-08-10 02:54:33,042 - INFO - Epoch 1 task=7.4524e-03 kd=0.0000e+00 si=0.0000e+00 val=9.6827e-04 lr=1.00e-04 time=160.47s
+2025-08-10 02:56:58,347 - INFO - Epoch 2: SI penalty is 0.00% of task loss
+2025-08-10 02:57:03,885 - INFO - Epoch 2 task=5.6415e-03 kd=0.0000e+00 si=0.0000e+00 val=1.1449e-03 lr=1.00e-04 time=145.17s
+2025-08-10 02:59:30,443 - INFO - Epoch 3: SI penalty is 0.00% of task loss
+2025-08-10 02:59:35,983 - INFO - Epoch 3 task=4.6389e-03 kd=0.0000e+00 si=0.0000e+00 val=5.0094e-04 lr=1.00e-04 time=146.56s
+2025-08-10 03:02:03,754 - INFO - Epoch 4: SI penalty is 0.00% of task loss
+2025-08-10 03:02:09,296 - INFO - Epoch 4 task=3.7085e-03 kd=0.0000e+00 si=0.0000e+00 val=1.0208e-03 lr=1.00e-04 time=147.66s
+2025-08-10 03:04:33,059 - INFO - Epoch 5: SI penalty is 0.00% of task loss
+2025-08-10 03:04:38,597 - INFO - Epoch 5 task=2.8454e-03 kd=0.0000e+00 si=0.0000e+00 val=3.8385e-04 lr=1.00e-04 time=143.76s
+2025-08-10 03:07:05,492 - INFO - Epoch 6: SI penalty is 0.00% of task loss
+2025-08-10 03:07:11,033 - INFO - Epoch 6 task=1.9421e-03 kd=0.0000e+00 si=0.0000e+00 val=3.4660e-04 lr=1.00e-04 time=146.80s
+2025-08-10 03:09:23,152 - INFO - Epoch 7: SI penalty is 0.00% of task loss
+2025-08-10 03:09:28,691 - INFO - Epoch 7 task=1.3745e-03 kd=0.0000e+00 si=0.0000e+00 val=2.3536e-04 lr=1.00e-04 time=132.02s
+2025-08-10 03:11:53,866 - INFO - Epoch 8: SI penalty is 0.00% of task loss
+2025-08-10 03:11:59,403 - INFO - Epoch 8 task=1.1364e-03 kd=0.0000e+00 si=0.0000e+00 val=2.8731e-04 lr=1.00e-04 time=145.08s
+2025-08-10 03:14:26,320 - INFO - Epoch 9: SI penalty is 0.00% of task loss
+2025-08-10 03:14:31,864 - INFO - Epoch 9 task=8.5875e-04 kd=0.0000e+00 si=0.0000e+00 val=9.2570e-04 lr=1.00e-04 time=146.92s
+2025-08-10 03:16:15,860 - INFO - Epoch 10: SI penalty is 0.00% of task loss
+2025-08-10 03:16:21,398 - INFO - Epoch 10 task=6.4584e-04 kd=0.0000e+00 si=0.0000e+00 val=9.1032e-04 lr=1.00e-04 time=103.99s
+2025-08-10 03:17:52,954 - INFO - Epoch 11: SI penalty is 0.00% of task loss
+2025-08-10 03:17:58,515 - INFO - Epoch 11 task=5.3215e-04 kd=0.0000e+00 si=0.0000e+00 val=1.2565e-03 lr=1.00e-04 time=91.56s
+2025-08-10 03:19:30,012 - INFO - Epoch 12: SI penalty is 0.00% of task loss
+2025-08-10 03:19:35,561 - INFO - Epoch 12 task=4.7213e-04 kd=0.0000e+00 si=0.0000e+00 val=8.5282e-03 lr=1.00e-04 time=91.50s
+2025-08-10 03:21:06,639 - INFO - Epoch 13: SI penalty is 0.00% of task loss
+2025-08-10 03:21:12,167 - INFO - Epoch 13 task=4.5206e-04 kd=0.0000e+00 si=0.0000e+00 val=2.6870e-03 lr=1.00e-04 time=91.08s
+2025-08-10 03:22:42,585 - INFO - Epoch 14: SI penalty is 0.00% of task loss
+2025-08-10 03:22:48,139 - INFO - Epoch 14 task=3.1625e-04 kd=0.0000e+00 si=0.0000e+00 val=1.1495e-02 lr=5.00e-05 time=90.42s
+2025-08-10 03:24:18,856 - INFO - Epoch 15: SI penalty is 0.00% of task loss
+2025-08-10 03:24:24,408 - INFO - Epoch 15 task=2.0442e-04 kd=0.0000e+00 si=0.0000e+00 val=1.1450e-02 lr=5.00e-05 time=90.72s
+2025-08-10 03:25:55,450 - INFO - Epoch 16: SI penalty is 0.00% of task loss
+2025-08-10 03:26:01,015 - INFO - Epoch 16 task=2.8454e-04 kd=0.0000e+00 si=0.0000e+00 val=5.0561e-03 lr=5.00e-05 time=91.04s
+2025-08-10 03:27:32,478 - INFO - Epoch 17: SI penalty is 0.00% of task loss
+2025-08-10 03:27:38,044 - INFO - Epoch 17 task=4.2232e-04 kd=0.0000e+00 si=0.0000e+00 val=7.1749e-03 lr=5.00e-05 time=91.46s
+2025-08-10 03:29:08,763 - INFO - Epoch 18: SI penalty is 0.00% of task loss
+2025-08-10 03:29:14,317 - INFO - Epoch 18 task=2.4178e-04 kd=0.0000e+00 si=0.0000e+00 val=7.7412e-03 lr=5.00e-05 time=90.72s
+2025-08-10 03:30:45,524 - INFO - Epoch 19: SI penalty is 0.00% of task loss
+2025-08-10 03:30:51,080 - INFO - Epoch 19 task=1.7374e-04 kd=0.0000e+00 si=0.0000e+00 val=8.2510e-03 lr=5.00e-05 time=91.21s
+2025-08-10 03:32:21,987 - INFO - Epoch 20: SI penalty is 0.00% of task loss
+2025-08-10 03:32:27,550 - INFO - Epoch 20 task=1.1908e-04 kd=0.0000e+00 si=0.0000e+00 val=7.0348e-03 lr=2.50e-05 time=90.90s
+2025-08-10 03:33:58,642 - INFO - Epoch 21: SI penalty is 0.00% of task loss
+2025-08-10 03:34:04,202 - INFO - Epoch 21 task=1.0881e-04 kd=0.0000e+00 si=0.0000e+00 val=4.9684e-03 lr=2.50e-05 time=91.09s
+2025-08-10 03:35:36,242 - INFO - Epoch 22: SI penalty is 0.00% of task loss
+2025-08-10 03:35:41,803 - INFO - Epoch 22 task=9.9826e-05 kd=0.0000e+00 si=0.0000e+00 val=5.4105e-03 lr=2.50e-05 time=92.04s
+2025-08-10 03:37:13,296 - INFO - Epoch 23: SI penalty is 0.00% of task loss
+2025-08-10 03:37:18,857 - INFO - Epoch 23 task=9.6723e-05 kd=0.0000e+00 si=0.0000e+00 val=4.8673e-03 lr=2.50e-05 time=91.49s
+2025-08-10 03:38:50,777 - INFO - Epoch 24: SI penalty is 0.00% of task loss
+2025-08-10 03:38:56,340 - INFO - Epoch 24 task=9.0518e-05 kd=0.0000e+00 si=0.0000e+00 val=4.2275e-03 lr=2.50e-05 time=91.92s
+2025-08-10 03:40:28,108 - INFO - Epoch 25: SI penalty is 0.00% of task loss
+2025-08-10 03:40:33,677 - INFO - Epoch 25 task=8.6469e-05 kd=0.0000e+00 si=0.0000e+00 val=8.7125e-03 lr=2.50e-05 time=91.77s
+2025-08-10 03:42:05,400 - INFO - Epoch 26: SI penalty is 0.00% of task loss
+2025-08-10 03:42:10,959 - INFO - Epoch 26 task=8.0020e-05 kd=0.0000e+00 si=0.0000e+00 val=4.1118e-03 lr=1.25e-05 time=91.72s
+2025-08-10 03:43:42,210 - INFO - Epoch 27: SI penalty is 0.00% of task loss
+2025-08-10 03:43:47,770 - INFO - Epoch 27 task=7.8008e-05 kd=0.0000e+00 si=0.0000e+00 val=4.4624e-03 lr=1.25e-05 time=91.25s
+2025-08-10 03:43:47,772 - INFO - Early stopping at epoch 27
+2025-08-10 03:44:11,333 - INFO - Task 0 completed.
+2025-08-10 03:44:11,335 - INFO - --- task1 ---
+2025-08-10 03:44:46,136 - INFO - Epoch 0: SI penalty is 0.00% of task loss
+2025-08-10 03:44:50,591 - INFO - Epoch 0 task=2.0958e-03 kd=0.0000e+00 si=0.0000e+00 val=8.7926e-04 lr=1.00e-04 time=34.65s
+2025-08-10 03:45:25,241 - INFO - Epoch 1: SI penalty is 0.00% of task loss
+2025-08-10 03:45:29,701 - INFO - Epoch 1 task=1.6442e-03 kd=0.0000e+00 si=0.0000e+00 val=7.1954e-04 lr=1.00e-04 time=34.63s
+2025-08-10 03:46:04,457 - INFO - Epoch 2: SI penalty is 0.00% of task loss
+2025-08-10 03:46:08,897 - INFO - Epoch 2 task=1.5009e-03 kd=0.0000e+00 si=0.0000e+00 val=4.7417e-04 lr=1.00e-04 time=34.74s
+2025-08-10 03:46:43,776 - INFO - Epoch 3: SI penalty is 0.00% of task loss
+2025-08-10 03:46:48,214 - INFO - Epoch 3 task=1.2994e-03 kd=0.0000e+00 si=0.0000e+00 val=3.7329e-04 lr=1.00e-04 time=34.85s
+2025-08-10 03:47:23,327 - INFO - Epoch 4: SI penalty is 0.00% of task loss
+2025-08-10 03:47:28,824 - INFO - Epoch 4 task=1.0590e-03 kd=0.0000e+00 si=0.0000e+00 val=4.7772e-04 lr=1.00e-04 time=36.15s
+2025-08-10 03:48:03,538 - INFO - Epoch 5: SI penalty is 0.00% of task loss
+2025-08-10 03:48:07,984 - INFO - Epoch 5 task=8.4249e-04 kd=0.0000e+00 si=0.0000e+00 val=4.0576e-04 lr=1.00e-04 time=34.71s
+2025-08-10 03:48:43,849 - INFO - Epoch 6: SI penalty is 0.00% of task loss
+2025-08-10 03:48:48,291 - INFO - Epoch 6 task=7.0588e-04 kd=0.0000e+00 si=0.0000e+00 val=6.2500e-04 lr=1.00e-04 time=35.86s
+2025-08-10 03:49:24,915 - INFO - Epoch 7: SI penalty is 0.00% of task loss
+2025-08-10 03:49:29,355 - INFO - Epoch 7 task=6.8628e-04 kd=0.0000e+00 si=0.0000e+00 val=2.4323e-04 lr=1.00e-04 time=36.62s
+2025-08-10 03:50:05,865 - INFO - Epoch 8: SI penalty is 0.00% of task loss
+2025-08-10 03:50:10,306 - INFO - Epoch 8 task=5.5688e-04 kd=0.0000e+00 si=0.0000e+00 val=2.4353e-04 lr=1.00e-04 time=36.49s
+2025-08-10 03:50:48,451 - INFO - Epoch 9: SI penalty is 0.00% of task loss
+2025-08-10 03:50:52,893 - INFO - Epoch 9 task=4.9624e-04 kd=0.0000e+00 si=0.0000e+00 val=3.0656e-04 lr=1.00e-04 time=35.70s
+2025-08-10 03:51:27,776 - INFO - Epoch 10: SI penalty is 0.00% of task loss
+2025-08-10 03:51:32,219 - INFO - Epoch 10 task=4.6589e-04 kd=0.0000e+00 si=0.0000e+00 val=5.8967e-04 lr=1.00e-04 time=34.88s
+2025-08-10 03:52:06,665 - INFO - Epoch 11: SI penalty is 0.00% of task loss
+2025-08-10 03:52:11,106 - INFO - Epoch 11 task=4.2230e-04 kd=0.0000e+00 si=0.0000e+00 val=2.0482e-04 lr=1.00e-04 time=34.45s
+2025-08-10 03:52:45,720 - INFO - Epoch 12: SI penalty is 0.00% of task loss
+2025-08-10 03:52:50,163 - INFO - Epoch 12 task=3.9808e-04 kd=0.0000e+00 si=0.0000e+00 val=1.7507e-04 lr=1.00e-04 time=34.59s
+2025-08-10 03:53:24,561 - INFO - Epoch 13: SI penalty is 0.00% of task loss
+2025-08-10 03:53:29,002 - INFO - Epoch 13 task=3.8329e-04 kd=0.0000e+00 si=0.0000e+00 val=2.4895e-04 lr=1.00e-04 time=34.38s
+2025-08-10 03:54:03,383 - INFO - Epoch 14: SI penalty is 0.00% of task loss
+2025-08-10 03:54:07,826 - INFO - Epoch 14 task=3.7674e-04 kd=0.0000e+00 si=0.0000e+00 val=3.1296e-04 lr=1.00e-04 time=34.38s
+2025-08-10 03:54:42,199 - INFO - Epoch 15: SI penalty is 0.00% of task loss
+2025-08-10 03:54:46,639 - INFO - Epoch 15 task=4.4213e-04 kd=0.0000e+00 si=0.0000e+00 val=7.2634e-04 lr=1.00e-04 time=34.37s
+2025-08-10 03:55:20,981 - INFO - Epoch 16: SI penalty is 0.00% of task loss
+2025-08-10 03:55:25,423 - INFO - Epoch 16 task=3.4531e-04 kd=0.0000e+00 si=0.0000e+00 val=8.6469e-05 lr=1.00e-04 time=34.34s
+2025-08-10 03:55:59,788 - INFO - Epoch 17: SI penalty is 0.00% of task loss
+2025-08-10 03:56:04,231 - INFO - Epoch 17 task=3.3336e-04 kd=0.0000e+00 si=0.0000e+00 val=3.3549e-04 lr=1.00e-04 time=34.34s
+2025-08-10 03:56:38,593 - INFO - Epoch 18: SI penalty is 0.00% of task loss
+2025-08-10 03:56:43,037 - INFO - Epoch 18 task=3.2019e-04 kd=0.0000e+00 si=0.0000e+00 val=3.6287e-04 lr=1.00e-04 time=34.36s
+2025-08-10 03:57:17,408 - INFO - Epoch 19: SI penalty is 0.00% of task loss
+2025-08-10 03:57:21,851 - INFO - Epoch 19 task=3.1644e-04 kd=0.0000e+00 si=0.0000e+00 val=3.8994e-04 lr=1.00e-04 time=34.37s
+2025-08-10 03:57:56,212 - INFO - Epoch 20: SI penalty is 0.00% of task loss
+2025-08-10 03:58:00,657 - INFO - Epoch 20 task=3.0246e-04 kd=0.0000e+00 si=0.0000e+00 val=5.7178e-04 lr=1.00e-04 time=34.36s
+2025-08-10 03:58:34,669 - INFO - Epoch 21: SI penalty is 0.00% of task loss
+2025-08-10 03:58:39,115 - INFO - Epoch 21 task=2.9928e-04 kd=0.0000e+00 si=0.0000e+00 val=4.4575e-04 lr=1.00e-04 time=34.01s
+2025-08-10 03:59:12,072 - INFO - Epoch 22: SI penalty is 0.00% of task loss
+2025-08-10 03:59:16,524 - INFO - Epoch 22 task=2.9358e-04 kd=0.0000e+00 si=0.0000e+00 val=8.4612e-04 lr=1.00e-04 time=32.96s
+2025-08-10 03:59:50,950 - INFO - Epoch 23: SI penalty is 0.00% of task loss
+2025-08-10 03:59:55,394 - INFO - Epoch 23 task=2.6107e-04 kd=0.0000e+00 si=0.0000e+00 val=5.8152e-04 lr=5.00e-05 time=34.42s
+2025-08-10 04:00:28,236 - INFO - Epoch 24: SI penalty is 0.00% of task loss
+2025-08-10 04:00:32,682 - INFO - Epoch 24 task=2.5857e-04 kd=0.0000e+00 si=0.0000e+00 val=8.9328e-04 lr=5.00e-05 time=32.84s
+2025-08-10 04:01:06,039 - INFO - Epoch 25: SI penalty is 0.00% of task loss
+2025-08-10 04:01:10,489 - INFO - Epoch 25 task=2.5899e-04 kd=0.0000e+00 si=0.0000e+00 val=1.0855e-03 lr=5.00e-05 time=33.36s
+2025-08-10 04:01:43,574 - INFO - Epoch 26: SI penalty is 0.00% of task loss
+2025-08-10 04:01:48,020 - INFO - Epoch 26 task=3.8520e-04 kd=0.0000e+00 si=0.0000e+00 val=6.4272e-04 lr=5.00e-05 time=33.09s
+2025-08-10 04:02:22,328 - INFO - Epoch 27: SI penalty is 0.00% of task loss
+2025-08-10 04:02:26,773 - INFO - Epoch 27 task=2.9010e-04 kd=0.0000e+00 si=0.0000e+00 val=3.6897e-04 lr=5.00e-05 time=34.31s
+2025-08-10 04:03:01,120 - INFO - Epoch 28: SI penalty is 0.00% of task loss
+2025-08-10 04:03:05,567 - INFO - Epoch 28 task=2.5311e-04 kd=0.0000e+00 si=0.0000e+00 val=3.5261e-04 lr=5.00e-05 time=34.35s
+2025-08-10 04:03:39,982 - INFO - Epoch 29: SI penalty is 0.00% of task loss
+2025-08-10 04:03:44,428 - INFO - Epoch 29 task=2.3926e-04 kd=0.0000e+00 si=0.0000e+00 val=5.7172e-04 lr=2.50e-05 time=34.42s
+2025-08-10 04:04:18,882 - INFO - Epoch 30: SI penalty is 0.00% of task loss
+2025-08-10 04:04:23,329 - INFO - Epoch 30 task=2.3323e-04 kd=0.0000e+00 si=0.0000e+00 val=5.6165e-04 lr=2.50e-05 time=34.45s
+2025-08-10 04:04:57,839 - INFO - Epoch 31: SI penalty is 0.00% of task loss
+2025-08-10 04:05:02,288 - INFO - Epoch 31 task=2.2948e-04 kd=0.0000e+00 si=0.0000e+00 val=4.9250e-04 lr=2.50e-05 time=34.51s
+2025-08-10 04:05:36,752 - INFO - Epoch 32: SI penalty is 0.00% of task loss
+2025-08-10 04:05:41,204 - INFO - Epoch 32 task=2.2485e-04 kd=0.0000e+00 si=0.0000e+00 val=8.6014e-04 lr=2.50e-05 time=34.46s
+2025-08-10 04:06:15,798 - INFO - Epoch 33: SI penalty is 0.00% of task loss
+2025-08-10 04:06:20,250 - INFO - Epoch 33 task=2.2526e-04 kd=0.0000e+00 si=0.0000e+00 val=1.0945e-03 lr=2.50e-05 time=34.60s
+2025-08-10 04:06:54,833 - INFO - Epoch 34: SI penalty is 0.00% of task loss
+2025-08-10 04:06:59,282 - INFO - Epoch 34 task=2.2881e-04 kd=0.0000e+00 si=0.0000e+00 val=6.6243e-04 lr=2.50e-05 time=34.58s
+2025-08-10 04:07:33,914 - INFO - Epoch 35: SI penalty is 0.00% of task loss
+2025-08-10 04:07:38,367 - INFO - Epoch 35 task=2.1315e-04 kd=0.0000e+00 si=0.0000e+00 val=1.0783e-03 lr=1.25e-05 time=34.63s
+2025-08-10 04:08:12,927 - INFO - Epoch 36: SI penalty is 0.00% of task loss
+2025-08-10 04:08:17,379 - INFO - Epoch 36 task=2.0796e-04 kd=0.0000e+00 si=0.0000e+00 val=1.1810e-03 lr=1.25e-05 time=34.56s
+2025-08-10 04:08:17,380 - INFO - Early stopping at epoch 36
+2025-08-10 04:08:19,041 - INFO - Task 1 completed.
+2025-08-10 04:08:19,042 - INFO - --- task2 ---
+2025-08-10 04:09:07,051 - INFO - Epoch 0: SI penalty is 0.00% of task loss
+2025-08-10 04:09:08,157 - INFO - Epoch 0 task=3.7836e-04 kd=0.0000e+00 si=0.0000e+00 val=1.6968e-03 lr=1.00e-04 time=47.96s
+2025-08-10 04:09:56,015 - INFO - Epoch 1: SI penalty is 0.00% of task loss
+2025-08-10 04:09:57,118 - INFO - Epoch 1 task=3.0410e-04 kd=0.0000e+00 si=0.0000e+00 val=7.8972e-04 lr=1.00e-04 time=47.84s
+2025-08-10 04:10:43,571 - INFO - Epoch 2: SI penalty is 0.00% of task loss
+2025-08-10 04:10:44,675 - INFO - Epoch 2 task=2.6267e-04 kd=0.0000e+00 si=0.0000e+00 val=1.6394e-03 lr=1.00e-04 time=46.43s
+2025-08-10 04:11:31,304 - INFO - Epoch 3: SI penalty is 0.00% of task loss
+2025-08-10 04:11:32,408 - INFO - Epoch 3 task=2.3238e-04 kd=0.0000e+00 si=0.0000e+00 val=3.4116e-04 lr=1.00e-04 time=46.63s
+2025-08-10 04:12:20,027 - INFO - Epoch 4: SI penalty is 0.00% of task loss
+2025-08-10 04:12:21,131 - INFO - Epoch 4 task=2.1140e-04 kd=0.0000e+00 si=0.0000e+00 val=3.7550e-04 lr=1.00e-04 time=47.59s
+2025-08-10 04:13:08,779 - INFO - Epoch 5: SI penalty is 0.00% of task loss
+2025-08-10 04:13:09,884 - INFO - Epoch 5 task=1.8838e-04 kd=0.0000e+00 si=0.0000e+00 val=5.0924e-04 lr=1.00e-04 time=47.65s
+2025-08-10 04:13:57,528 - INFO - Epoch 6: SI penalty is 0.00% of task loss
+2025-08-10 04:13:58,632 - INFO - Epoch 6 task=1.7947e-04 kd=0.0000e+00 si=0.0000e+00 val=1.2892e-04 lr=1.00e-04 time=47.64s
+2025-08-10 04:14:46,168 - INFO - Epoch 7: SI penalty is 0.00% of task loss
+2025-08-10 04:14:47,272 - INFO - Epoch 7 task=1.5900e-04 kd=0.0000e+00 si=0.0000e+00 val=1.5003e-04 lr=1.00e-04 time=47.51s
+2025-08-10 04:15:34,812 - INFO - Epoch 8: SI penalty is 0.00% of task loss
+2025-08-10 04:15:35,915 - INFO - Epoch 8 task=1.5231e-04 kd=0.0000e+00 si=0.0000e+00 val=1.3080e-04 lr=1.00e-04 time=47.54s
+2025-08-10 04:16:23,464 - INFO - Epoch 9: SI penalty is 0.00% of task loss
+2025-08-10 04:16:24,568 - INFO - Epoch 9 task=1.5190e-04 kd=0.0000e+00 si=0.0000e+00 val=1.3191e-04 lr=1.00e-04 time=47.55s
+2025-08-10 04:17:12,362 - INFO - Epoch 10: SI penalty is 0.00% of task loss
+2025-08-10 04:17:13,466 - INFO - Epoch 10 task=1.4212e-04 kd=0.0000e+00 si=0.0000e+00 val=7.4036e-05 lr=1.00e-04 time=47.79s
+2025-08-10 04:18:01,222 - INFO - Epoch 11: SI penalty is 0.00% of task loss
+2025-08-10 04:18:02,325 - INFO - Epoch 11 task=1.3523e-04 kd=0.0000e+00 si=0.0000e+00 val=7.5248e-05 lr=1.00e-04 time=47.74s
+2025-08-10 04:18:50,022 - INFO - Epoch 12: SI penalty is 0.00% of task loss
+2025-08-10 04:18:51,127 - INFO - Epoch 12 task=1.3811e-04 kd=0.0000e+00 si=0.0000e+00 val=1.3510e-04 lr=1.00e-04 time=47.70s
+2025-08-10 04:19:38,728 - INFO - Epoch 13: SI penalty is 0.00% of task loss
+2025-08-10 04:19:39,832 - INFO - Epoch 13 task=1.3514e-04 kd=0.0000e+00 si=0.0000e+00 val=9.4746e-05 lr=1.00e-04 time=47.60s
+2025-08-10 04:20:27,351 - INFO - Epoch 14: SI penalty is 0.00% of task loss
+2025-08-10 04:20:28,455 - INFO - Epoch 14 task=1.2569e-04 kd=0.0000e+00 si=0.0000e+00 val=8.3051e-05 lr=1.00e-04 time=47.52s
+2025-08-10 04:21:15,879 - INFO - Epoch 15: SI penalty is 0.00% of task loss
+2025-08-10 04:21:16,983 - INFO - Epoch 15 task=1.2005e-04 kd=0.0000e+00 si=0.0000e+00 val=9.9063e-05 lr=1.00e-04 time=47.42s
+2025-08-10 04:22:04,431 - INFO - Epoch 16: SI penalty is 0.00% of task loss
+2025-08-10 04:22:05,536 - INFO - Epoch 16 task=1.1912e-04 kd=0.0000e+00 si=0.0000e+00 val=1.0385e-04 lr=1.00e-04 time=47.45s
+2025-08-10 04:22:52,047 - INFO - Epoch 17: SI penalty is 0.00% of task loss
+2025-08-10 04:22:53,151 - INFO - Epoch 17 task=9.7428e-05 kd=0.0000e+00 si=0.0000e+00 val=7.0703e-05 lr=5.00e-05 time=46.51s
+2025-08-10 04:23:39,275 - INFO - Epoch 18: SI penalty is 0.00% of task loss
+2025-08-10 04:23:40,380 - INFO - Epoch 18 task=9.5338e-05 kd=0.0000e+00 si=0.0000e+00 val=9.6350e-05 lr=5.00e-05 time=46.11s
+2025-08-10 04:24:26,026 - INFO - Epoch 19: SI penalty is 0.00% of task loss
+2025-08-10 04:24:27,131 - INFO - Epoch 19 task=9.1119e-05 kd=0.0000e+00 si=0.0000e+00 val=8.1026e-05 lr=5.00e-05 time=45.65s
+2025-08-10 04:25:13,863 - INFO - Epoch 20: SI penalty is 0.00% of task loss
+2025-08-10 04:25:14,968 - INFO - Epoch 20 task=9.2978e-05 kd=0.0000e+00 si=0.0000e+00 val=6.2966e-05 lr=5.00e-05 time=46.73s
+2025-08-10 04:26:02,668 - INFO - Epoch 21: SI penalty is 0.00% of task loss
+2025-08-10 04:26:03,772 - INFO - Epoch 21 task=9.3443e-05 kd=0.0000e+00 si=0.0000e+00 val=1.4120e-04 lr=5.00e-05 time=47.68s
+2025-08-10 04:26:49,549 - INFO - Epoch 22: SI penalty is 0.00% of task loss
+2025-08-10 04:26:50,654 - INFO - Epoch 22 task=8.9044e-05 kd=0.0000e+00 si=0.0000e+00 val=1.3385e-04 lr=5.00e-05 time=45.78s
+2025-08-10 04:27:36,756 - INFO - Epoch 23: SI penalty is 0.00% of task loss
+2025-08-10 04:27:37,861 - INFO - Epoch 23 task=8.7336e-05 kd=0.0000e+00 si=0.0000e+00 val=8.9756e-05 lr=5.00e-05 time=46.10s
+2025-08-10 04:28:24,314 - INFO - Epoch 24: SI penalty is 0.00% of task loss
+2025-08-10 04:28:25,419 - INFO - Epoch 24 task=8.9005e-05 kd=0.0000e+00 si=0.0000e+00 val=8.7444e-05 lr=5.00e-05 time=46.45s
+2025-08-10 04:29:11,748 - INFO - Epoch 25: SI penalty is 0.00% of task loss
+2025-08-10 04:29:12,852 - INFO - Epoch 25 task=9.0102e-05 kd=0.0000e+00 si=0.0000e+00 val=2.6603e-04 lr=5.00e-05 time=46.33s
+2025-08-10 04:30:02,427 - INFO - Epoch 26: SI penalty is 0.00% of task loss
+2025-08-10 04:30:03,536 - INFO - Epoch 26 task=8.5150e-05 kd=0.0000e+00 si=0.0000e+00 val=1.1926e-04 lr=5.00e-05 time=49.58s
+2025-08-10 04:30:52,694 - INFO - Epoch 27: SI penalty is 0.00% of task loss
+2025-08-10 04:30:53,798 - INFO - Epoch 27 task=7.7464e-05 kd=0.0000e+00 si=0.0000e+00 val=1.3393e-04 lr=2.50e-05 time=49.16s
+2025-08-10 04:31:45,101 - INFO - Epoch 28: SI penalty is 0.00% of task loss
+2025-08-10 04:31:46,208 - INFO - Epoch 28 task=7.4247e-05 kd=0.0000e+00 si=0.0000e+00 val=1.1922e-04 lr=2.50e-05 time=51.30s
+2025-08-10 04:32:35,201 - INFO - Epoch 29: SI penalty is 0.00% of task loss
+2025-08-10 04:32:36,307 - INFO - Epoch 29 task=7.5550e-05 kd=0.0000e+00 si=0.0000e+00 val=1.8427e-04 lr=2.50e-05 time=48.99s
+2025-08-10 04:33:24,008 - INFO - Epoch 30: SI penalty is 0.00% of task loss
+2025-08-10 04:33:25,114 - INFO - Epoch 30 task=7.3963e-05 kd=0.0000e+00 si=0.0000e+00 val=8.1673e-05 lr=2.50e-05 time=47.70s
+2025-08-10 04:34:14,286 - INFO - Epoch 31: SI penalty is 0.00% of task loss
+2025-08-10 04:34:15,393 - INFO - Epoch 31 task=7.2932e-05 kd=0.0000e+00 si=0.0000e+00 val=1.7898e-04 lr=2.50e-05 time=49.17s
+2025-08-10 04:35:05,492 - INFO - Epoch 32: SI penalty is 0.00% of task loss
+2025-08-10 04:35:06,598 - INFO - Epoch 32 task=7.2363e-05 kd=0.0000e+00 si=0.0000e+00 val=1.2205e-04 lr=2.50e-05 time=50.10s
+2025-08-10 04:35:53,365 - INFO - Epoch 33: SI penalty is 0.00% of task loss
+2025-08-10 04:35:54,470 - INFO - Epoch 33 task=6.7589e-05 kd=0.0000e+00 si=0.0000e+00 val=1.2012e-04 lr=1.25e-05 time=46.77s
+2025-08-10 04:36:41,354 - INFO - Epoch 34: SI penalty is 0.00% of task loss
+2025-08-10 04:36:42,460 - INFO - Epoch 34 task=6.9245e-05 kd=0.0000e+00 si=0.0000e+00 val=1.6200e-04 lr=1.25e-05 time=46.88s
+2025-08-10 04:37:29,878 - INFO - Epoch 35: SI penalty is 0.00% of task loss
+2025-08-10 04:37:30,983 - INFO - Epoch 35 task=6.7961e-05 kd=0.0000e+00 si=0.0000e+00 val=1.0715e-04 lr=1.25e-05 time=47.42s
+2025-08-10 04:38:17,450 - INFO - Epoch 36: SI penalty is 0.00% of task loss
+2025-08-10 04:38:18,555 - INFO - Epoch 36 task=6.7602e-05 kd=0.0000e+00 si=0.0000e+00 val=9.7284e-05 lr=1.25e-05 time=46.47s
+2025-08-10 04:39:17,007 - INFO - Epoch 37: SI penalty is 0.00% of task loss
+2025-08-10 04:39:18,119 - INFO - Epoch 37 task=6.8653e-05 kd=0.0000e+00 si=0.0000e+00 val=1.3408e-04 lr=1.25e-05 time=58.46s
+2025-08-10 04:40:30,937 - INFO - Epoch 38: SI penalty is 0.00% of task loss
+2025-08-10 04:40:32,052 - INFO - Epoch 38 task=6.6043e-05 kd=0.0000e+00 si=0.0000e+00 val=1.0811e-04 lr=1.25e-05 time=72.82s
+2025-08-10 04:41:43,594 - INFO - Epoch 39: SI penalty is 0.00% of task loss
+2025-08-10 04:41:44,707 - INFO - Epoch 39 task=6.8602e-05 kd=0.0000e+00 si=0.0000e+00 val=1.4521e-04 lr=6.25e-06 time=71.55s
+2025-08-10 04:42:47,453 - INFO - Epoch 40: SI penalty is 0.00% of task loss
+2025-08-10 04:42:48,561 - INFO - Epoch 40 task=6.5686e-05 kd=0.0000e+00 si=0.0000e+00 val=1.2165e-04 lr=6.25e-06 time=62.74s
+2025-08-10 04:42:48,565 - INFO - Early stopping at epoch 40
+2025-08-10 04:42:50,352 - INFO - Task 2 completed.
+2025-08-10 04:42:50,355 - INFO - ==== Incremental Training Complete ====
+2025-08-10 04:42:50,358 - INFO - ==== Starting Comprehensive Evaluation ====
+2025-08-10 04:42:50,376 - INFO - Evaluating model trained after task 0...
+2025-08-10 04:42:56,796 - INFO - Full test set evaluation: MAE=5.6224e-02, R2=0.1693
+2025-08-10 04:43:01,534 - INFO -   Task 0 -> Test Task 0: MAE=2.7923e-02, R2=-29.2707
+2025-08-10 04:43:03,321 - INFO -   Task 0 -> Test Task 1: MAE=3.5453e-02, R2=-2.1284
+2025-08-10 04:43:03,677 - INFO -   Task 0 -> Test Task 2: MAE=7.2164e-01, R2=-980.0900
+2025-08-10 04:43:03,681 - INFO - Evaluating model trained after task 1...
+2025-08-10 04:43:10,074 - INFO - Full test set evaluation: MAE=2.2954e-02, R2=0.9066
+2025-08-10 04:43:14,862 - INFO -   Task 1 -> Test Task 0: MAE=3.5175e-02, R2=-49.1422
+2025-08-10 04:43:16,650 - INFO -   Task 1 -> Test Task 1: MAE=1.2655e-02, R2=0.5757
+2025-08-10 04:43:17,006 - INFO -   Task 1 -> Test Task 2: MAE=3.1547e-02, R2=-0.5866
+2025-08-10 04:43:17,009 - INFO - Evaluating model trained after task 2...
+2025-08-10 04:43:23,391 - INFO - Full test set evaluation: MAE=3.0896e-02, R2=0.8322
+2025-08-10 04:43:28,177 - INFO -   Task 2 -> Test Task 0: MAE=2.4834e-02, R2=-25.0796
+2025-08-10 04:43:29,966 - INFO -   Task 2 -> Test Task 1: MAE=2.3275e-02, R2=-0.2577
+2025-08-10 04:43:30,322 - INFO -   Task 2 -> Test Task 2: MAE=2.5186e-02, R2=-0.0489
+2025-08-10 04:43:30,325 - INFO - ==== Computing Continual Learning Metrics ====
+2025-08-10 04:43:30,328 - INFO - Computing random initialization baselines...
+2025-08-10 04:43:32,668 - INFO -   Baseline Task 0: R=-0.9732
+2025-08-10 04:43:34,438 - INFO -   Baseline Task 1: R=-0.9253
+2025-08-10 04:43:34,789 - INFO -   Baseline Task 2: R=-0.6923
+2025-08-10 04:43:34,791 - INFO - ==== Continual Learning Results ====
+2025-08-10 04:43:34,794 - INFO - BWT (Backward Transfer): -0.0038 (less negative = less forgetting)
+2025-08-10 04:43:34,798 - INFO - FWT (Forward Transfer): 0.7753 (positive = beneficial transfer)
+2025-08-10 04:43:34,800 - INFO - ACC (Average Accuracy): -0.0244
+2025-08-10 04:43:34,803 - INFO - ==== Performance Matrix R[i][j] ====
+2025-08-10 04:43:34,805 - INFO - Rows: trained after task i, Columns: evaluated on task j
+2025-08-10 04:43:34,809 - INFO -        Task 0 Task 1 Task 2
+2025-08-10 04:43:34,812 - INFO - Task 0: -0.0279 -0.0355 -0.7216
+2025-08-10 04:43:34,814 - INFO - Task 1: -0.0352 -0.0127 -0.0315
+2025-08-10 04:43:34,818 - INFO - Task 2: -0.0248 -0.0233 -0.0252
+2025-08-10 04:43:34,905 - INFO - ==== Evaluation Complete ====
+2025-08-10 04:43:34,908 - INFO - All results saved to: /beegfs/home/users/z/zzhuqshun/Thesis/final/pure_fine_tuning_sitrainer/metrics

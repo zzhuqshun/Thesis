@@ -8,6 +8,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 
 # Assuming SOHLSTM is defined in model.py
+from utils.config import Config
 from utils.base import SOHLSTM
 
 logger = logging.getLogger(__name__)
@@ -80,6 +81,7 @@ def plot_losses(history: dict, out_dir: Path):
     plt.figure(figsize=(10, 6))
     plt.semilogy(df['epoch'], df['train_loss'], label='Train Loss')
     plt.semilogy(df['epoch'], df['val_loss'], label='Val Loss')
+    
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.title('Training and Validation Loss')
@@ -152,7 +154,11 @@ def plot_prediction_scatter(preds: np.ndarray,
     plt.savefig(out_dir / 'prediction_scatter.png', dpi=300, bbox_inches='tight')
     plt.close()
 
-def evaluate_incremental_learning(config, inc_dir, loaders, device):
+def evaluate_incremental_learning(config: Config,
+                                  model_class: type = None,
+                                  inc_dir: Path = None,
+                                  loaders: dict = None,
+                                  device: torch.device = None):
     """
     Comprehensive evaluation of incremental learning performance.
     """
@@ -166,7 +172,7 @@ def evaluate_incremental_learning(config, inc_dir, loaders, device):
     # Performance matrix R[i][j] = performance of model after task i on test set of task j
     R_matrix = np.zeros((num_tasks, num_tasks))
     metrics_summary = []
-    
+    model_class = SOHLSTM if model_class is None else model_class
     # Evaluate each trained model on all test sets
     for trained_task_idx in range(num_tasks):
         logger.info("Evaluating model trained after task %d...", trained_task_idx)
@@ -178,7 +184,7 @@ def evaluate_incremental_learning(config, inc_dir, loaders, device):
             continue
         
         # Create fresh model and load trained weights
-        eval_model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
+        eval_model = model_class(3, hidden_size=config.HIDDEN_SIZE, dropout=config.DROPOUT).to(device)
         checkpoint = torch.load(checkpoint_path, map_location=device)
         eval_model.load_state_dict(checkpoint['model_state'])
         eval_model.eval()
@@ -249,7 +255,7 @@ def evaluate_incremental_learning(config, inc_dir, loaders, device):
     # Compute baseline performance for Forward Transfer calculation
     logger.info("Computing random initialization baselines...")
     torch.manual_seed(config.SEED + 999)  # Different seed for baseline
-    baseline_model = SOHLSTM(3, config.HIDDEN_SIZE, config.NUM_LAYERS, config.DROPOUT).to(device)
+    baseline_model = model_class(3, hidden_size=config.HIDDEN_SIZE, dropout=config.DROPOUT).to(device)
 
     baseline_performance = np.zeros(num_tasks)
     for j in range(num_tasks):

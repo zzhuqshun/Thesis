@@ -1,0 +1,301 @@
+2025-08-10 00:41:03,596 - ==== Experiment Setup ====
+2025-08-10 00:41:03,598 - Mode: incremental
+2025-08-10 00:41:03,599 - Number of tasks: 3
+2025-08-10 00:41:03,601 - SI lambdas: [1.7139, 1.7139, 1.7139]
+2025-08-10 00:41:03,602 - LWF alphas: [0.0, 0.0, 0.0]
+2025-08-10 00:41:03,603 - Base directory: /beegfs/home/users/z/zzhuqshun/Thesis/05_Final/si/strategies/trial14
+2025-08-10 00:41:03,604 - ==== Incremental Training with SI ====
+2025-08-10 00:41:03,610 - Number of tasks: 3
+2025-08-10 00:42:47,917 - Incremental training - Task 0 Train IDs: ['03', '27', '05', '21', '11'], size: 107395
+2025-08-10 00:42:47,957 - Incremental training - Task 0 Val IDs: ['01'], size: 20028
+2025-08-10 00:42:47,960 - Incremental training - Test Task 0 size: 8584
+2025-08-10 00:42:47,963 - Incremental training - Task 1 Train IDs: ['09', '29', '25'], size: 41175
+2025-08-10 00:42:47,965 - Incremental training - Task 1 Val IDs: ['19'], size: 16183
+2025-08-10 00:42:47,968 - Incremental training - Test Task 1 size: 6937
+2025-08-10 00:42:47,971 - Incremental training - Task 2 Train IDs: ['15', '07', '23'], size: 57074
+2025-08-10 00:42:47,973 - Incremental training - Task 2 Val IDs: ['13'], size: 4511
+2025-08-10 00:42:47,976 - Incremental training - Test Task 2 size: 1934
+2025-08-10 00:42:47,998 -   (Scaler) Scaler centers: [ 3.3374245   0.101279   27.50083333]
+2025-08-10 00:42:48,005 -   (Scaler) Scaler scales: [0.18253608 1.77971742 1.05683333]
+2025-08-10 00:42:49,125 - --- task0 (LWF α=0.0000, SI λ=1.7139, epsilon=0.0057) ---
+2025-08-10 00:46:03,241 - Epoch 0: SI loss is 0.00% of task loss
+2025-08-10 00:46:06,686 - Epoch 0 task=3.4230e-02 kd=0.0000e+00 si=0.0000e+00 val=1.6261e-03 lr=1.00e-04 time=72.46s
+2025-08-10 00:47:04,296 - Epoch 1: SI loss is 0.00% of task loss
+2025-08-10 00:47:07,511 - Epoch 1 task=7.4052e-03 kd=0.0000e+00 si=0.0000e+00 val=5.2367e-04 lr=1.00e-04 time=57.57s
+2025-08-10 00:48:08,003 - Epoch 2: SI loss is 0.00% of task loss
+2025-08-10 00:48:11,194 - Epoch 2 task=5.5567e-03 kd=0.0000e+00 si=0.0000e+00 val=4.8094e-03 lr=1.00e-04 time=60.45s
+2025-08-10 00:49:17,246 - Epoch 3: SI loss is 0.00% of task loss
+2025-08-10 00:49:20,425 - Epoch 3 task=4.6124e-03 kd=0.0000e+00 si=0.0000e+00 val=2.8694e-03 lr=1.00e-04 time=66.05s
+2025-08-10 00:50:15,663 - Epoch 4: SI loss is 0.00% of task loss
+2025-08-10 00:50:18,847 - Epoch 4 task=3.7149e-03 kd=0.0000e+00 si=0.0000e+00 val=7.9964e-04 lr=1.00e-04 time=55.24s
+2025-08-10 00:51:22,009 - Epoch 5: SI loss is 0.00% of task loss
+2025-08-10 00:51:25,191 - Epoch 5 task=2.9550e-03 kd=0.0000e+00 si=0.0000e+00 val=5.6263e-04 lr=1.00e-04 time=63.16s
+2025-08-10 00:52:21,870 - Epoch 6: SI loss is 0.00% of task loss
+2025-08-10 00:52:25,054 - Epoch 6 task=2.2622e-03 kd=0.0000e+00 si=0.0000e+00 val=1.5247e-03 lr=1.00e-04 time=56.68s
+2025-08-10 00:53:24,286 - Epoch 7: SI loss is 0.00% of task loss
+2025-08-10 00:53:27,464 - Epoch 7 task=1.4246e-03 kd=0.0000e+00 si=0.0000e+00 val=5.3280e-04 lr=1.00e-04 time=59.23s
+2025-08-10 00:54:32,160 - Epoch 8: SI loss is 0.00% of task loss
+2025-08-10 00:54:35,360 - Epoch 8 task=1.1544e-03 kd=0.0000e+00 si=0.0000e+00 val=3.9870e-04 lr=5.00e-05 time=64.72s
+2025-08-10 00:55:39,037 - Epoch 9: SI loss is 0.00% of task loss
+2025-08-10 00:55:42,244 - Epoch 9 task=9.7767e-04 kd=0.0000e+00 si=0.0000e+00 val=3.5182e-04 lr=5.00e-05 time=63.69s
+2025-08-10 00:56:47,750 - Epoch 10: SI loss is 0.00% of task loss
+2025-08-10 00:56:50,930 - Epoch 10 task=8.4404e-04 kd=0.0000e+00 si=0.0000e+00 val=5.2055e-04 lr=5.00e-05 time=65.44s
+2025-08-10 00:57:52,859 - Epoch 11: SI loss is 0.00% of task loss
+2025-08-10 00:57:56,031 - Epoch 11 task=7.6738e-04 kd=0.0000e+00 si=0.0000e+00 val=5.1661e-04 lr=5.00e-05 time=61.93s
+2025-08-10 00:58:58,513 - Epoch 12: SI loss is 0.00% of task loss
+2025-08-10 00:59:01,701 - Epoch 12 task=7.2667e-04 kd=0.0000e+00 si=0.0000e+00 val=6.5345e-04 lr=5.00e-05 time=62.48s
+2025-08-10 01:00:07,912 - Epoch 13: SI loss is 0.00% of task loss
+2025-08-10 01:00:11,113 - Epoch 13 task=6.8301e-04 kd=0.0000e+00 si=0.0000e+00 val=3.3920e-04 lr=5.00e-05 time=66.21s
+2025-08-10 01:01:10,738 - Epoch 14: SI loss is 0.00% of task loss
+2025-08-10 01:01:13,945 - Epoch 14 task=6.4148e-04 kd=0.0000e+00 si=0.0000e+00 val=2.6663e-04 lr=5.00e-05 time=59.59s
+2025-08-10 01:02:19,331 - Epoch 15: SI loss is 0.00% of task loss
+2025-08-10 01:02:22,537 - Epoch 15 task=6.3526e-04 kd=0.0000e+00 si=0.0000e+00 val=2.9412e-04 lr=5.00e-05 time=65.36s
+2025-08-10 01:03:18,172 - Epoch 16: SI loss is 0.00% of task loss
+2025-08-10 01:03:21,379 - Epoch 16 task=5.9401e-04 kd=0.0000e+00 si=0.0000e+00 val=3.2588e-04 lr=5.00e-05 time=55.63s
+2025-08-10 01:04:16,586 - Epoch 17: SI loss is 0.00% of task loss
+2025-08-10 01:04:19,783 - Epoch 17 task=5.8944e-04 kd=0.0000e+00 si=0.0000e+00 val=3.4995e-04 lr=5.00e-05 time=55.20s
+2025-08-10 01:05:15,477 - Epoch 18: SI loss is 0.00% of task loss
+2025-08-10 01:05:18,672 - Epoch 18 task=6.1049e-04 kd=0.0000e+00 si=0.0000e+00 val=3.1248e-04 lr=5.00e-05 time=55.69s
+2025-08-10 01:06:14,555 - Epoch 19: SI loss is 0.00% of task loss
+2025-08-10 01:06:17,731 - Epoch 19 task=5.7712e-04 kd=0.0000e+00 si=0.0000e+00 val=3.3734e-04 lr=5.00e-05 time=55.88s
+2025-08-10 01:07:14,114 - Epoch 20: SI loss is 0.00% of task loss
+2025-08-10 01:07:17,313 - Epoch 20 task=5.3518e-04 kd=0.0000e+00 si=0.0000e+00 val=3.4163e-04 lr=5.00e-05 time=56.38s
+2025-08-10 01:08:19,613 - Epoch 21: SI loss is 0.00% of task loss
+2025-08-10 01:08:22,819 - Epoch 21 task=5.0963e-04 kd=0.0000e+00 si=0.0000e+00 val=2.9101e-04 lr=2.50e-05 time=62.30s
+2025-08-10 01:09:20,633 - Epoch 22: SI loss is 0.00% of task loss
+2025-08-10 01:09:23,837 - Epoch 22 task=5.0648e-04 kd=0.0000e+00 si=0.0000e+00 val=2.8975e-04 lr=2.50e-05 time=57.81s
+2025-08-10 01:10:25,622 - Epoch 23: SI loss is 0.00% of task loss
+2025-08-10 01:10:28,829 - Epoch 23 task=4.7010e-04 kd=0.0000e+00 si=0.0000e+00 val=2.7765e-04 lr=2.50e-05 time=61.78s
+2025-08-10 01:11:27,687 - Epoch 24: SI loss is 0.00% of task loss
+2025-08-10 01:11:30,908 - Epoch 24 task=4.7018e-04 kd=0.0000e+00 si=0.0000e+00 val=3.4681e-04 lr=2.50e-05 time=58.87s
+2025-08-10 01:12:24,903 - Epoch 25: SI loss is 0.00% of task loss
+2025-08-10 01:12:28,112 - Epoch 25 task=4.5135e-04 kd=0.0000e+00 si=0.0000e+00 val=3.6010e-04 lr=2.50e-05 time=53.99s
+2025-08-10 01:13:21,560 - Epoch 26: SI loss is 0.00% of task loss
+2025-08-10 01:13:24,768 - Epoch 26 task=4.3634e-04 kd=0.0000e+00 si=0.0000e+00 val=2.6459e-04 lr=2.50e-05 time=53.44s
+2025-08-10 01:14:17,386 - Epoch 27: SI loss is 0.00% of task loss
+2025-08-10 01:14:20,592 - Epoch 27 task=4.3197e-04 kd=0.0000e+00 si=0.0000e+00 val=2.8829e-04 lr=2.50e-05 time=52.57s
+2025-08-10 01:15:13,990 - Epoch 28: SI loss is 0.00% of task loss
+2025-08-10 01:15:17,196 - Epoch 28 task=4.1569e-04 kd=0.0000e+00 si=0.0000e+00 val=2.9794e-04 lr=2.50e-05 time=53.40s
+2025-08-10 01:16:10,241 - Epoch 29: SI loss is 0.00% of task loss
+2025-08-10 01:16:13,445 - Epoch 29 task=4.4446e-04 kd=0.0000e+00 si=0.0000e+00 val=3.1255e-04 lr=2.50e-05 time=53.04s
+2025-08-10 01:17:04,962 - Epoch 30: SI loss is 0.00% of task loss
+2025-08-10 01:17:08,163 - Epoch 30 task=4.3217e-04 kd=0.0000e+00 si=0.0000e+00 val=2.6386e-04 lr=2.50e-05 time=51.52s
+2025-08-10 01:19:12,971 - Epoch 31: SI loss is 0.00% of task loss
+2025-08-10 01:19:16,224 - Epoch 31 task=4.1045e-04 kd=0.0000e+00 si=0.0000e+00 val=3.4058e-04 lr=2.50e-05 time=124.79s
+2025-08-10 01:21:02,330 - Epoch 32: SI loss is 0.00% of task loss
+2025-08-10 01:21:05,501 - Epoch 32 task=3.8672e-04 kd=0.0000e+00 si=0.0000e+00 val=9.7832e-04 lr=2.50e-05 time=106.08s
+2025-08-10 01:23:20,667 - Epoch 33: SI loss is 0.00% of task loss
+2025-08-10 01:23:23,906 - Epoch 33 task=4.1790e-04 kd=0.0000e+00 si=0.0000e+00 val=3.8923e-04 lr=2.50e-05 time=135.17s
+2025-08-10 01:25:27,068 - Epoch 34: SI loss is 0.00% of task loss
+2025-08-10 01:25:30,284 - Epoch 34 task=4.2211e-04 kd=0.0000e+00 si=0.0000e+00 val=3.0947e-04 lr=2.50e-05 time=123.15s
+2025-08-10 01:26:53,656 - Epoch 35: SI loss is 0.00% of task loss
+2025-08-10 01:26:56,829 - Epoch 35 task=4.0056e-04 kd=0.0000e+00 si=0.0000e+00 val=3.8018e-04 lr=2.50e-05 time=83.35s
+2025-08-10 01:28:28,248 - Epoch 36: SI loss is 0.00% of task loss
+2025-08-10 01:28:31,455 - Epoch 36 task=3.7477e-04 kd=0.0000e+00 si=0.0000e+00 val=3.9505e-04 lr=2.50e-05 time=91.45s
+2025-08-10 01:30:05,713 - Epoch 37: SI loss is 0.00% of task loss
+2025-08-10 01:30:08,884 - Epoch 37 task=3.0671e-04 kd=0.0000e+00 si=0.0000e+00 val=4.3370e-04 lr=1.25e-05 time=94.22s
+2025-08-10 01:31:26,575 - Epoch 38: SI loss is 0.00% of task loss
+2025-08-10 01:31:29,744 - Epoch 38 task=2.7589e-04 kd=0.0000e+00 si=0.0000e+00 val=4.2847e-04 lr=1.25e-05 time=76.09s
+2025-08-10 01:32:35,672 - Epoch 39: SI loss is 0.00% of task loss
+2025-08-10 01:32:38,860 - Epoch 39 task=2.7806e-04 kd=0.0000e+00 si=0.0000e+00 val=3.3350e-04 lr=1.25e-05 time=65.93s
+2025-08-10 01:33:31,366 - Epoch 40: SI loss is 0.00% of task loss
+2025-08-10 01:33:34,563 - Epoch 40 task=2.8348e-04 kd=0.0000e+00 si=0.0000e+00 val=4.5022e-04 lr=1.25e-05 time=52.50s
+2025-08-10 01:34:23,257 - Epoch 41: SI loss is 0.00% of task loss
+2025-08-10 01:34:26,455 - Epoch 41 task=3.8410e-04 kd=0.0000e+00 si=0.0000e+00 val=3.1686e-04 lr=1.25e-05 time=48.69s
+2025-08-10 01:35:12,907 - Epoch 42: SI loss is 0.00% of task loss
+2025-08-10 01:35:16,108 - Epoch 42 task=3.7994e-04 kd=0.0000e+00 si=0.0000e+00 val=3.3096e-04 lr=1.25e-05 time=46.45s
+2025-08-10 01:36:02,227 - Epoch 43: SI loss is 0.00% of task loss
+2025-08-10 01:36:05,429 - Epoch 43 task=3.7147e-04 kd=0.0000e+00 si=0.0000e+00 val=3.2056e-04 lr=6.25e-06 time=46.12s
+2025-08-10 01:36:51,381 - Epoch 44: SI loss is 0.00% of task loss
+2025-08-10 01:36:54,585 - Epoch 44 task=3.6417e-04 kd=0.0000e+00 si=0.0000e+00 val=2.9186e-04 lr=6.25e-06 time=45.95s
+2025-08-10 01:37:40,611 - Epoch 45: SI loss is 0.00% of task loss
+2025-08-10 01:37:43,817 - Epoch 45 task=3.6124e-04 kd=0.0000e+00 si=0.0000e+00 val=2.9052e-04 lr=6.25e-06 time=46.02s
+2025-08-10 01:38:30,957 - Epoch 46: SI loss is 0.00% of task loss
+2025-08-10 01:38:34,160 - Epoch 46 task=3.5334e-04 kd=0.0000e+00 si=0.0000e+00 val=3.1928e-04 lr=6.25e-06 time=47.14s
+2025-08-10 01:39:24,584 - Epoch 47: SI loss is 0.00% of task loss
+2025-08-10 01:39:27,803 - Epoch 47 task=3.5178e-04 kd=0.0000e+00 si=0.0000e+00 val=3.0273e-04 lr=6.25e-06 time=50.45s
+2025-08-10 01:40:23,299 - Epoch 48: SI loss is 0.00% of task loss
+2025-08-10 01:40:26,497 - Epoch 48 task=3.5602e-04 kd=0.0000e+00 si=0.0000e+00 val=3.0610e-04 lr=6.25e-06 time=55.50s
+2025-08-10 01:41:59,844 - Epoch 49: SI loss is 0.00% of task loss
+2025-08-10 01:42:03,048 - Epoch 49 task=3.5568e-04 kd=0.0000e+00 si=0.0000e+00 val=3.2331e-04 lr=3.13e-06 time=93.35s
+2025-08-10 01:43:37,346 - Epoch 50: SI loss is 0.00% of task loss
+2025-08-10 01:43:40,570 - Epoch 50 task=3.5304e-04 kd=0.0000e+00 si=0.0000e+00 val=3.1917e-04 lr=3.13e-06 time=94.29s
+2025-08-10 01:43:40,578 - Early stopping at epoch 50
+2025-08-10 01:43:49,656 - SI: Computing importance with paper-required normalization...
+2025-08-10 01:43:49,697 - SI: Applied paper-required normalization, scale factor: 0.003399
+2025-08-10 01:43:50,100 - SI: Final omega stats - mean: 1.0000e+00, max: 3.8926e+02, std: 3.8109e+00
+2025-08-10 01:43:50,117 - Task 0 completed. SI importance weights updated.
+2025-08-10 01:43:50,126 - Prepared for next task. Old model saved for knowledge distillation.
+2025-08-10 01:43:50,134 - --- task1 (LWF α=0.0000, SI λ=1.7139, epsilon=0.0057) ---
+2025-08-10 01:44:29,325 - Epoch 0: SI loss is 107838.18% of task loss
+2025-08-10 01:44:31,872 - Epoch 0 task=1.5542e-03 kd=0.0000e+00 si=1.6760e+00 val=1.1765e-03 lr=1.00e-04 time=38.94s
+2025-08-10 01:45:14,908 - Epoch 1: SI loss is 295033.77% of task loss
+2025-08-10 01:45:17,470 - Epoch 1 task=1.1835e-03 kd=0.0000e+00 si=3.4918e+00 val=6.2732e-04 lr=1.00e-04 time=42.96s
+2025-08-10 01:46:02,452 - Epoch 2: SI loss is 625252.88% of task loss
+2025-08-10 01:46:05,051 - Epoch 2 task=1.0345e-03 kd=0.0000e+00 si=6.4683e+00 val=1.9228e-03 lr=1.00e-04 time=44.90s
+2025-08-10 01:46:51,508 - Epoch 3: SI loss is 1024541.47% of task loss
+2025-08-10 01:46:54,089 - Epoch 3 task=8.5368e-04 kd=0.0000e+00 si=8.7463e+00 val=1.6074e-03 lr=1.00e-04 time=46.45s
+2025-08-10 01:47:39,723 - Epoch 4: SI loss is 1401349.54% of task loss
+2025-08-10 01:47:42,288 - Epoch 4 task=8.9072e-04 kd=0.0000e+00 si=1.2482e+01 val=9.1758e-04 lr=1.00e-04 time=45.62s
+2025-08-10 01:48:26,891 - Epoch 5: SI loss is 1786323.85% of task loss
+2025-08-10 01:48:29,463 - Epoch 5 task=8.2205e-04 kd=0.0000e+00 si=1.4685e+01 val=5.9561e-04 lr=1.00e-04 time=44.59s
+2025-08-10 01:49:09,860 - Epoch 6: SI loss is 2342270.84% of task loss
+2025-08-10 01:49:12,434 - Epoch 6 task=7.4441e-04 kd=0.0000e+00 si=1.7436e+01 val=7.0928e-04 lr=1.00e-04 time=40.25s
+2025-08-10 01:49:53,129 - Epoch 7: SI loss is 2887595.10% of task loss
+2025-08-10 01:49:55,708 - Epoch 7 task=6.9376e-04 kd=0.0000e+00 si=2.0033e+01 val=7.7361e-04 lr=1.00e-04 time=40.69s
+2025-08-10 01:50:41,360 - Epoch 8: SI loss is 3852147.42% of task loss
+2025-08-10 01:50:43,949 - Epoch 8 task=5.8712e-04 kd=0.0000e+00 si=2.2617e+01 val=1.1126e-03 lr=1.00e-04 time=45.64s
+2025-08-10 01:51:27,803 - Epoch 9: SI loss is 4093818.14% of task loss
+2025-08-10 01:51:30,363 - Epoch 9 task=6.2688e-04 kd=0.0000e+00 si=2.5663e+01 val=1.3824e-03 lr=1.00e-04 time=43.84s
+2025-08-10 01:52:18,667 - Epoch 10: SI loss is 5756191.43% of task loss
+2025-08-10 01:52:21,270 - Epoch 10 task=4.9391e-04 kd=0.0000e+00 si=2.8430e+01 val=8.6634e-04 lr=1.00e-04 time=48.30s
+2025-08-10 01:53:08,606 - Epoch 11: SI loss is 5856643.79% of task loss
+2025-08-10 01:53:11,205 - Epoch 11 task=5.2926e-04 kd=0.0000e+00 si=3.0997e+01 val=9.3778e-04 lr=1.00e-04 time=47.33s
+2025-08-10 01:53:58,472 - Epoch 12: SI loss is 7032047.75% of task loss
+2025-08-10 01:54:01,058 - Epoch 12 task=4.7114e-04 kd=0.0000e+00 si=3.3131e+01 val=2.0623e-03 lr=5.00e-05 time=47.26s
+2025-08-10 01:54:46,397 - Epoch 13: SI loss is 7239323.02% of task loss
+2025-08-10 01:54:48,970 - Epoch 13 task=4.7831e-04 kd=0.0000e+00 si=3.4626e+01 val=1.1538e-03 lr=5.00e-05 time=45.32s
+2025-08-10 01:55:36,521 - Epoch 14: SI loss is 8301759.40% of task loss
+2025-08-10 01:55:39,107 - Epoch 14 task=4.2008e-04 kd=0.0000e+00 si=3.4874e+01 val=1.8274e-03 lr=5.00e-05 time=47.53s
+2025-08-10 01:56:27,885 - Epoch 15: SI loss is 8728098.45% of task loss
+2025-08-10 01:56:30,461 - Epoch 15 task=4.0700e-04 kd=0.0000e+00 si=3.5524e+01 val=1.8301e-03 lr=5.00e-05 time=48.76s
+2025-08-10 01:57:19,019 - Epoch 16: SI loss is 9558648.66% of task loss
+2025-08-10 01:57:21,598 - Epoch 16 task=3.7963e-04 kd=0.0000e+00 si=3.6288e+01 val=9.0576e-04 lr=5.00e-05 time=48.56s
+2025-08-10 01:58:11,182 - Epoch 17: SI loss is 10162792.07% of task loss
+2025-08-10 01:58:13,768 - Epoch 17 task=3.6940e-04 kd=0.0000e+00 si=3.7541e+01 val=1.2719e-03 lr=5.00e-05 time=49.58s
+2025-08-10 01:59:03,908 - Epoch 18: SI loss is 12509931.75% of task loss
+2025-08-10 01:59:06,510 - Epoch 18 task=3.0623e-04 kd=0.0000e+00 si=3.8309e+01 val=1.2818e-03 lr=2.50e-05 time=50.13s
+2025-08-10 01:59:52,570 - Epoch 19: SI loss is 12558908.71% of task loss
+2025-08-10 01:59:55,135 - Epoch 19 task=3.0734e-04 kd=0.0000e+00 si=3.8598e+01 val=1.0723e-03 lr=2.50e-05 time=46.05s
+2025-08-10 02:00:41,789 - Epoch 20: SI loss is 13343917.24% of task loss
+2025-08-10 02:00:44,370 - Epoch 20 task=2.9346e-04 kd=0.0000e+00 si=3.9159e+01 val=1.3334e-03 lr=2.50e-05 time=46.64s
+2025-08-10 02:01:30,888 - Epoch 21: SI loss is 13270919.53% of task loss
+2025-08-10 02:01:33,457 - Epoch 21 task=2.9854e-04 kd=0.0000e+00 si=3.9619e+01 val=1.0980e-03 lr=2.50e-05 time=46.50s
+2025-08-10 02:02:20,784 - Epoch 22: SI loss is 13930952.57% of task loss
+2025-08-10 02:02:23,378 - Epoch 22 task=2.8753e-04 kd=0.0000e+00 si=4.0056e+01 val=1.2732e-03 lr=2.50e-05 time=47.33s
+2025-08-10 02:03:11,515 - Epoch 23: SI loss is 14265942.08% of task loss
+2025-08-10 02:03:14,114 - Epoch 23 task=2.8385e-04 kd=0.0000e+00 si=4.0493e+01 val=1.2129e-03 lr=2.50e-05 time=48.13s
+2025-08-10 02:04:03,625 - Epoch 24: SI loss is 15640014.84% of task loss
+2025-08-10 02:04:06,210 - Epoch 24 task=2.6084e-04 kd=0.0000e+00 si=4.0796e+01 val=1.2620e-03 lr=1.25e-05 time=49.49s
+2025-08-10 02:04:51,864 - Epoch 25: SI loss is 15119734.94% of task loss
+2025-08-10 02:04:54,460 - Epoch 25 task=2.7100e-04 kd=0.0000e+00 si=4.0974e+01 val=1.4386e-03 lr=1.25e-05 time=45.64s
+2025-08-10 02:04:54,471 - Early stopping at epoch 25
+2025-08-10 02:04:57,763 - SI: Computing importance with paper-required normalization...
+2025-08-10 02:04:57,773 - SI: Applied paper-required normalization, scale factor: 0.001401
+2025-08-10 02:04:57,785 - SI: Final omega stats - mean: 2.0000e+00, max: 1.1425e+03, std: 8.2381e+00
+2025-08-10 02:04:57,794 - Task 1 completed. SI importance weights updated.
+2025-08-10 02:04:57,810 - Prepared for next task. Old model saved for knowledge distillation.
+2025-08-10 02:04:57,820 - --- task2 (LWF α=0.0000, SI λ=1.7139, epsilon=0.0057) ---
+2025-08-10 02:06:08,432 - Epoch 0: SI loss is 309717.90% of task loss
+2025-08-10 02:06:09,127 - Epoch 0 task=6.8638e-04 kd=0.0000e+00 si=2.1258e+00 val=1.6906e-03 lr=1.00e-04 time=70.32s
+2025-08-10 02:07:18,503 - Epoch 1: SI loss is 787613.55% of task loss
+2025-08-10 02:07:19,173 - Epoch 1 task=7.8553e-04 kd=0.0000e+00 si=6.1869e+00 val=1.2033e-03 lr=1.00e-04 time=69.21s
+2025-08-10 02:08:24,458 - Epoch 2: SI loss is 1784280.91% of task loss
+2025-08-10 02:08:25,132 - Epoch 2 task=5.9261e-04 kd=0.0000e+00 si=1.0574e+01 val=1.3784e-03 lr=1.00e-04 time=65.18s
+2025-08-10 02:09:34,492 - Epoch 3: SI loss is 2563542.82% of task loss
+2025-08-10 02:09:35,166 - Epoch 3 task=6.1377e-04 kd=0.0000e+00 si=1.5734e+01 val=8.6909e-04 lr=1.00e-04 time=69.36s
+2025-08-10 02:10:45,651 - Epoch 4: SI loss is 4568399.01% of task loss
+2025-08-10 02:10:46,344 - Epoch 4 task=4.4041e-04 kd=0.0000e+00 si=2.0120e+01 val=1.2271e-03 lr=1.00e-04 time=70.36s
+2025-08-10 02:11:54,292 - Epoch 5: SI loss is 5140881.85% of task loss
+2025-08-10 02:11:54,943 - Epoch 5 task=5.2333e-04 kd=0.0000e+00 si=2.6904e+01 val=1.1263e-03 lr=1.00e-04 time=67.93s
+2025-08-10 02:12:40,222 - Epoch 6: SI loss is 4945418.49% of task loss
+2025-08-10 02:12:40,868 - Epoch 6 task=6.9344e-04 kd=0.0000e+00 si=3.4294e+01 val=1.2570e-03 lr=1.00e-04 time=45.27s
+2025-08-10 02:13:28,393 - Epoch 7: SI loss is 8969634.25% of task loss
+2025-08-10 02:13:29,046 - Epoch 7 task=4.6544e-04 kd=0.0000e+00 si=4.1748e+01 val=9.1700e-04 lr=1.00e-04 time=47.52s
+2025-08-10 02:14:34,627 - Epoch 8: SI loss is 9451644.57% of task loss
+2025-08-10 02:14:35,282 - Epoch 8 task=5.1903e-04 kd=0.0000e+00 si=4.9057e+01 val=8.4201e-04 lr=1.00e-04 time=65.57s
+2025-08-10 02:15:32,141 - Epoch 9: SI loss is 12207924.09% of task loss
+2025-08-10 02:15:32,811 - Epoch 9 task=4.4075e-04 kd=0.0000e+00 si=5.3806e+01 val=7.8730e-04 lr=1.00e-04 time=56.79s
+2025-08-10 02:16:36,882 - Epoch 10: SI loss is 14827625.46% of task loss
+2025-08-10 02:16:37,560 - Epoch 10 task=4.0087e-04 kd=0.0000e+00 si=5.9440e+01 val=5.1632e-04 lr=1.00e-04 time=63.95s
+2025-08-10 02:17:47,749 - Epoch 11: SI loss is 13953469.01% of task loss
+2025-08-10 02:17:48,461 - Epoch 11 task=4.9384e-04 kd=0.0000e+00 si=6.8908e+01 val=8.9266e-04 lr=1.00e-04 time=70.07s
+2025-08-10 02:19:05,003 - Epoch 12: SI loss is 19952000.65% of task loss
+2025-08-10 02:19:05,695 - Epoch 12 task=3.8604e-04 kd=0.0000e+00 si=7.7022e+01 val=6.1857e-04 lr=1.00e-04 time=76.53s
+2025-08-10 02:20:23,468 - Epoch 13: SI loss is 22820864.00% of task loss
+2025-08-10 02:20:24,176 - Epoch 13 task=3.7989e-04 kd=0.0000e+00 si=8.6695e+01 val=5.9607e-04 lr=1.00e-04 time=77.76s
+2025-08-10 02:21:42,671 - Epoch 14: SI loss is 23437671.61% of task loss
+2025-08-10 02:21:43,356 - Epoch 14 task=4.1747e-04 kd=0.0000e+00 si=9.7844e+01 val=4.1224e-04 lr=1.00e-04 time=78.48s
+2025-08-10 02:23:02,252 - Epoch 15: SI loss is 31478268.77% of task loss
+2025-08-10 02:23:02,957 - Epoch 15 task=3.4710e-04 kd=0.0000e+00 si=1.0926e+02 val=1.0060e-03 lr=1.00e-04 time=78.75s
+2025-08-10 02:24:21,321 - Epoch 16: SI loss is 41403749.64% of task loss
+2025-08-10 02:24:22,010 - Epoch 16 task=2.9694e-04 kd=0.0000e+00 si=1.2295e+02 val=1.0320e-03 lr=1.00e-04 time=78.33s
+2025-08-10 02:25:38,593 - Epoch 17: SI loss is 43480929.40% of task loss
+2025-08-10 02:25:39,306 - Epoch 17 task=3.0548e-04 kd=0.0000e+00 si=1.3283e+02 val=8.7898e-04 lr=1.00e-04 time=76.58s
+2025-08-10 02:26:58,335 - Epoch 18: SI loss is 31282227.45% of task loss
+2025-08-10 02:26:59,043 - Epoch 18 task=4.8658e-04 kd=0.0000e+00 si=1.5221e+02 val=1.3514e-03 lr=1.00e-04 time=79.01s
+2025-08-10 02:28:13,408 - Epoch 19: SI loss is 50393257.51% of task loss
+2025-08-10 02:28:14,088 - Epoch 19 task=3.2302e-04 kd=0.0000e+00 si=1.6278e+02 val=1.7231e-03 lr=1.00e-04 time=74.34s
+2025-08-10 02:29:33,391 - Epoch 20: SI loss is 75052780.95% of task loss
+2025-08-10 02:29:34,108 - Epoch 20 task=2.2280e-04 kd=0.0000e+00 si=1.6722e+02 val=1.1992e-03 lr=1.00e-04 time=79.29s
+2025-08-10 02:30:50,795 - Epoch 21: SI loss is 116333129.30% of task loss
+2025-08-10 02:30:51,494 - Epoch 21 task=1.4709e-04 kd=0.0000e+00 si=1.7112e+02 val=2.0857e-03 lr=5.00e-05 time=76.68s
+2025-08-10 02:32:07,105 - Epoch 22: SI loss is 121646603.61% of task loss
+2025-08-10 02:32:07,751 - Epoch 22 task=1.4350e-04 kd=0.0000e+00 si=1.7457e+02 val=1.6539e-03 lr=5.00e-05 time=75.58s
+2025-08-10 02:32:57,203 - Epoch 23: SI loss is 125161553.01% of task loss
+2025-08-10 02:32:57,851 - Epoch 23 task=1.4215e-04 kd=0.0000e+00 si=1.7792e+02 val=1.0631e-03 lr=5.00e-05 time=49.44s
+2025-08-10 02:33:46,271 - Epoch 24: SI loss is 136472678.57% of task loss
+2025-08-10 02:33:46,921 - Epoch 24 task=1.3332e-04 kd=0.0000e+00 si=1.8195e+02 val=1.2014e-03 lr=5.00e-05 time=48.42s
+2025-08-10 02:34:34,818 - Epoch 25: SI loss is 146356462.32% of task loss
+2025-08-10 02:34:35,465 - Epoch 25 task=1.2676e-04 kd=0.0000e+00 si=1.8552e+02 val=5.5300e-04 lr=5.00e-05 time=47.89s
+2025-08-10 02:35:23,589 - Epoch 26: SI loss is 154162195.07% of task loss
+2025-08-10 02:35:24,239 - Epoch 26 task=1.2283e-04 kd=0.0000e+00 si=1.8936e+02 val=6.3297e-04 lr=5.00e-05 time=48.12s
+2025-08-10 02:36:18,679 - Epoch 27: SI loss is 174618414.70% of task loss
+2025-08-10 02:36:19,378 - Epoch 27 task=1.0997e-04 kd=0.0000e+00 si=1.9203e+02 val=7.4361e-04 lr=2.50e-05 time=54.45s
+2025-08-10 02:37:40,181 - Epoch 28: SI loss is 178800795.23% of task loss
+2025-08-10 02:37:40,880 - Epoch 28 task=1.0840e-04 kd=0.0000e+00 si=1.9382e+02 val=8.6935e-04 lr=2.50e-05 time=80.79s
+2025-08-10 02:39:02,013 - Epoch 29: SI loss is 177450591.27% of task loss
+2025-08-10 02:39:02,720 - Epoch 29 task=1.1013e-04 kd=0.0000e+00 si=1.9542e+02 val=7.7756e-04 lr=2.50e-05 time=81.11s
+2025-08-10 02:40:31,865 - Epoch 30: SI loss is 192030090.93% of task loss
+2025-08-10 02:40:33,503 - Epoch 30 task=1.0250e-04 kd=0.0000e+00 si=1.9683e+02 val=6.2943e-04 lr=2.50e-05 time=90.04s
+2025-08-10 02:41:54,451 - Epoch 31: SI loss is 194514743.27% of task loss
+2025-08-10 02:41:55,159 - Epoch 31 task=1.0204e-04 kd=0.0000e+00 si=1.9848e+02 val=9.1401e-04 lr=2.50e-05 time=80.93s
+2025-08-10 02:43:15,086 - Epoch 32: SI loss is 194187446.33% of task loss
+2025-08-10 02:43:15,781 - Epoch 32 task=1.0312e-04 kd=0.0000e+00 si=2.0025e+02 val=8.2321e-04 lr=2.50e-05 time=79.91s
+2025-08-10 02:44:32,546 - Epoch 33: SI loss is 209670768.08% of task loss
+2025-08-10 02:44:33,243 - Epoch 33 task=9.6123e-05 kd=0.0000e+00 si=2.0154e+02 val=8.0679e-04 lr=1.25e-05 time=76.75s
+2025-08-10 02:45:51,940 - Epoch 34: SI loss is 211956434.65% of task loss
+2025-08-10 02:45:52,625 - Epoch 34 task=9.5447e-05 kd=0.0000e+00 si=2.0231e+02 val=8.3491e-04 lr=1.25e-05 time=78.68s
+2025-08-10 02:45:52,640 - Early stopping at epoch 34
+2025-08-10 02:45:56,557 - SI: Computing importance with paper-required normalization...
+2025-08-10 02:45:56,575 - SI: Applied paper-required normalization, scale factor: 0.001840
+2025-08-10 02:45:56,592 - SI: Final omega stats - mean: 3.0000e+00, max: 2.2489e+03, std: 1.4528e+01
+2025-08-10 02:45:56,605 - Task 2 completed. SI importance weights updated.
+2025-08-10 02:45:56,620 - ==== Incremental Training Complete ====
+2025-08-10 02:45:56,642 - ==== Starting Comprehensive Evaluation ====
+2025-08-10 02:45:56,769 - Evaluating model trained after task 0...
+2025-08-10 02:46:04,905 -   Task 0 -> Test Task 0: MAE=2.5116e-02
+2025-08-10 02:46:05,930 -   Task 0 -> Test Task 1: MAE=5.9989e-02
+2025-08-10 02:46:06,150 -   Task 0 -> Test Task 2: MAE=3.9382e-02
+2025-08-10 02:46:06,167 - Evaluating model trained after task 1...
+2025-08-10 02:46:14,148 -   Task 1 -> Test Task 0: MAE=3.2127e-02
+2025-08-10 02:46:15,184 -   Task 1 -> Test Task 1: MAE=7.7028e-02
+2025-08-10 02:46:15,398 -   Task 1 -> Test Task 2: MAE=3.9350e-02
+2025-08-10 02:46:15,411 - Evaluating model trained after task 2...
+2025-08-10 02:46:23,582 -   Task 2 -> Test Task 0: MAE=2.4596e-02
+2025-08-10 02:46:24,605 -   Task 2 -> Test Task 1: MAE=1.1833e-02
+2025-08-10 02:46:24,822 -   Task 2 -> Test Task 2: MAE=2.2904e-02
+2025-08-10 02:46:24,834 - ==== Computing Continual Learning Metrics ====
+2025-08-10 02:46:24,846 - Computing random initialization baselines...
+2025-08-10 02:46:26,424 -   Baseline Task 0: R=-0.9732
+2025-08-10 02:46:27,443 -   Baseline Task 1: R=-0.9253
+2025-08-10 02:46:27,652 -   Baseline Task 2: R=-0.6923
+2025-08-10 02:46:27,665 - ==== Continual Learning Results ====
+2025-08-10 02:46:27,681 - BWT (Backward Transfer): 0.0329 (positive = backward gain)
+2025-08-10 02:46:27,693 - FWT (Forward Transfer): 0.7591 (positive = beneficial transfer)
+2025-08-10 02:46:27,705 - ACC (Average Accuracy): -0.0198
+2025-08-10 02:46:27,721 - ==== Performance Matrix R[i][j] ====
+2025-08-10 02:46:27,735 - Rows: trained after task i, Columns: evaluated on task j
+2025-08-10 02:46:27,752 -        Task 0 Task 1 Task 2
+2025-08-10 02:46:27,762 - Task 0: -0.0251 -0.0600 -0.0394
+2025-08-10 02:46:27,778 - Task 1: -0.0321 -0.0770 -0.0394
+2025-08-10 02:46:27,792 - Task 2: -0.0246 -0.0118 -0.0229
+2025-08-10 02:46:28,165 - ==== Evaluation Complete ====
+2025-08-10 02:46:28,181 - All results saved to: /beegfs/home/users/z/zzhuqshun/Thesis/05_Final/si/strategies/trial14/metrics
+2025-08-10 02:46:28,207 - ==== Final Summary ====
+2025-08-10 02:46:28,223 - Continual Learning Metrics:
+2025-08-10 02:46:28,234 -   BWT: 0.0329
+2025-08-10 02:46:28,254 -   FWT: 0.7591
+2025-08-10 02:46:28,275 -   ACC: -0.0198
+2025-08-10 02:46:28,290 -   num_tasks: 3.0000
+2025-08-10 02:46:28,306 - ==== Experiment Complete ====

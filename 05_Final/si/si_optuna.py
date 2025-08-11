@@ -59,7 +59,7 @@ def objective(trial):
     lam0 = trial.suggest_float("lambda0", 1e-2, 10, log=True)
     lam1 = lam0
     lam2 = lam0
-    epsilon = trial.suggest_float("epsilon", 1e-5, 1e-2, log=True)
+    epsilon = trial.suggest_float("epsilon", 1e-3, 1e-1, log=True)
 
     
     # 构造配置
@@ -99,8 +99,9 @@ def objective(trial):
         val_loader = cached_loaders[f'task{task_idx}_val']
         
         # 训练当前任务
-        trainer.train_task(train_loader, val_loader, task_idx, alpha_lwf=current_alpha)
-        
+        history = trainer.train_task(train_loader, val_loader, task_idx, alpha_lwf=current_alpha)
+        ratio = history['si_loss'][-1] / (history['task_loss'][-1] + 1e-12)
+        print(f"[Trial {trial.number}] Task{task_idx} ratio = {ratio:.2%}  (λ={current_lambda:.3g})")
         # SI任务结束处理
         trainer.si.end_task()
         
