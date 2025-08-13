@@ -73,22 +73,99 @@ def evaluate(model: torch.nn.Module,
 
 
 # Visualization utilities
-def plot_losses(history: dict, out_dir: Path):
-    """Plot training and validation loss curves."""
-    df = pd.DataFrame(history)
+def plot_losses(history, out_dir, title: str = None):
+    """
+    Plot training/validation curves with backward compatibility.
+
+    Accepts:
+      - dict-like history (e.g., {"epoch": [...], "train_task": [...], ...})
+      - pandas.DataFrame
+      - path to a CSV file previously saved as history
+
+    Primary y-axis (semilogy): training loss & validation loss/mae
+    Secondary y-axis (linear): kd_pct / si_pct / kl (if available)
+    """
+    # --- normalize inputs ---
+    if isinstance(history, (str, Path)):
+        df = pd.read_csv(history)
+    elif isinstance(history, pd.DataFrame):
+        df = history.copy()
+    elif isinstance(history, dict):
+        df = pd.DataFrame(history)
+    else:
+        raise TypeError("Unsupported history type. Use dict/DataFrame/CSV path.")
+
+    out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # --- choose column names (backward compatible) ---
+    x = "epoch" if "epoch" in df.columns else None
+    if x is None:
+        df = df.reset_index().rename(columns={"index": "epoch"})
+        x = "epoch"
+
+    # Primary metrics mapping
+    if "train_loss" in df.columns:
+        y_train = "train_loss"
+        y_val   = "val_loss" if "val_loss" in df.columns else None
+        y_train_label = "Train Loss"
+        y_val_label   = "Val Loss"
+    else:
+        y_train = "train_task" if "train_task" in df.columns else None
+        # try multiple fallback names for validation
+        for cand in ["val_mae", "val_loss", "val_mse", "val"]:
+            if cand in df.columns:
+                y_val = cand
+                break
+        else:
+            y_val = None
+        y_train_label = "Train Task (MSE)" if y_train == "train_task" else "Train"
+        y_val_label   = "Val MAE" if y_val == "val_mae" else "Val"
+
+    # If nothing to plot on primary axis, return quietly
+    if y_train is None and y_val is None:
+        return
+
+    # --- draw ---
     plt.figure(figsize=(10, 6))
-    plt.semilogy(df['epoch'], df['train_loss'], label='Train Loss')
-    plt.semilogy(df['epoch'], df['val_loss'], label='Val Loss')
-    
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.title('Training and Validation Loss')
-    plt.legend()
+
+    # primary: semilogy to stabilize visualization
+    if y_train is not None:
+        plt.semilogy(df[x], df[y_train], label=y_train_label)
+    if y_val is not None:
+        plt.semilogy(df[x], df[y_val], label=y_val_label)
+
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    if title is None:
+        title = "Training / Validation Curves"
+    plt.title(title)
     plt.grid(True)
+
+    # secondary axis: kd_pct / si_pct / kl (if present)
+    has_right = any(col in df.columns for col in ["kd_pct", "si_pct", "kl"])
+    if has_right:
+        ax1 = plt.gca()
+        ax2 = ax1.twinx()
+        labels_right = []
+        if "kd_pct" in df.columns:
+            ax2.plot(df[x], df["kd_pct"], alpha=0.35, linewidth=1.5, label="KD %")
+            labels_right.append("KD %")
+        if "si_pct" in df.columns:
+            ax2.plot(df[x], df["si_pct"], alpha=0.35, linewidth=1.5, label="SI %")
+            labels_right.append("SI %")
+        if "kl" in df.columns:
+            # show kl as percentage for readability
+            kl_pct = df["kl"] * 100.0
+            ax2.plot(df[x], kl_pct, alpha=0.35, linewidth=1.5, label="KL norm %")
+            labels_right.append("KL norm %")
+        ax2.set_ylabel("Regularizer / KL (%)")
+        # two legends: left (loss), right (regularizers)
+        ax2.legend(loc="upper right")
+
+    plt.legend(loc="upper left")
     plt.tight_layout()
-    plt.savefig(out_dir / 'loss_curves.png', dpi=300, bbox_inches='tight')
+    plt.savefig(out_dir / "loss_curves.png", dpi=300, bbox_inches="tight")
     plt.close()
 
 
@@ -303,7 +380,7 @@ def evaluate_incremental_learning(config: Config,
     # Log results
     logger.info("==== Continual Learning Results ====")
     logger.info("BWT (Backward Transfer): %.4f %s", BWT, 
-               "(less negative = less forgetting)" if BWT < 0 else "(positive = backward gain)")
+               "(negative = forgetting)" if BWT < 0 else "(positive = backward gain)")
     logger.info("FWT (Forward Transfer): %.4f %s", FWT,
                "(positive = beneficial transfer)" if FWT > 0 else "(negative = interference)")
     logger.info("ACC (Average Accuracy): %.4f", ACC)

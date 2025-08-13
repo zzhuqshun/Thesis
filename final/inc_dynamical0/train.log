@@ -1,0 +1,102 @@
+2025-08-12 20:15:58,934 - INFO - ==== Incremental Training (SI + KD via SITrainer) ====
+2025-08-12 20:15:58,948 - INFO - Number of tasks: 3
+2025-08-12 20:17:36,996 - INFO - Incremental training - Task 0 Train IDs: ['03', '27', '05', '21', '11'], size: 107395
+2025-08-12 20:17:37,016 - INFO - Incremental training - Task 0 Val IDs: ['01'], size: 20028
+2025-08-12 20:17:37,019 - INFO - Incremental training - Test Task 0 size: 8584
+2025-08-12 20:17:37,024 - INFO - Incremental training - Task 1 Train IDs: ['09', '29', '25'], size: 41175
+2025-08-12 20:17:37,028 - INFO - Incremental training - Task 1 Val IDs: ['19'], size: 16183
+2025-08-12 20:17:37,031 - INFO - Incremental training - Test Task 1 size: 6937
+2025-08-12 20:17:37,035 - INFO - Incremental training - Task 2 Train IDs: ['15', '07', '23'], size: 57074
+2025-08-12 20:17:37,039 - INFO - Incremental training - Task 2 Val IDs: ['13'], size: 4511
+2025-08-12 20:17:37,042 - INFO - Incremental training - Test Task 2 size: 1934
+2025-08-12 20:17:37,059 - INFO -   (Scaler) Scaler centers: [ 3.3374245   0.101279   27.50083333]
+2025-08-12 20:17:37,077 - INFO -   (Scaler) Scaler scales: [0.18253608 1.77971742 1.05683333]
+2025-08-12 20:20:14,707 - INFO - ========== Model Structure ==========
+2025-08-12 20:20:14,718 - INFO - 
+SOHLSTM(
+  (lstm): LSTM(3, 128, num_layers=2, batch_first=True, dropout=0.3)
+  (fc): Sequential(
+    (0): Linear(in_features=128, out_features=64, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+    (2): Dropout(p=0.3, inplace=False)
+    (3): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+2025-08-12 20:20:14,719 - INFO - =====================================
+2025-08-12 20:20:14,720 - INFO - ====== Model Parameters Details ======
+2025-08-12 20:20:14,722 - INFO - lstm.weight_ih_l0                                  | trainable |     1536 params
+2025-08-12 20:20:14,723 - INFO - lstm.weight_hh_l0                                  | trainable |    65536 params
+2025-08-12 20:20:14,724 - INFO - lstm.bias_ih_l0                                    | trainable |      512 params
+2025-08-12 20:20:14,725 - INFO - lstm.bias_hh_l0                                    | trainable |      512 params
+2025-08-12 20:20:14,728 - INFO - lstm.weight_ih_l1                                  | trainable |    65536 params
+2025-08-12 20:20:14,730 - INFO - lstm.weight_hh_l1                                  | trainable |    65536 params
+2025-08-12 20:20:14,733 - INFO - lstm.bias_ih_l1                                    | trainable |      512 params
+2025-08-12 20:20:14,735 - INFO - lstm.bias_hh_l1                                    | trainable |      512 params
+2025-08-12 20:20:14,737 - INFO - fc.0.weight                                        | trainable |     8192 params
+2025-08-12 20:20:14,740 - INFO - fc.0.bias                                          | trainable |       64 params
+2025-08-12 20:20:14,741 - INFO - fc.3.weight                                        | trainable |       64 params
+2025-08-12 20:20:14,742 - INFO - fc.3.bias                                          | trainable |        1 params
+2025-08-12 20:20:14,743 - INFO - --------------------------------------------------------------------------------
+2025-08-12 20:20:14,744 - INFO - Total params:                                          208513 params (only trainable)
+2025-08-12 20:20:14,745 - INFO - =====================================
+2025-08-12 20:20:14,746 - INFO - --- task0 (KL-scheduled KD+SI, eps=0.001) ---
+2025-08-12 20:22:05,740 - INFO - Epoch 0: task=3.4245e-02 kd%=0.00% si%=0.00% kl=0.000 val=4.0887e-02
+2025-08-12 20:23:59,064 - INFO - Epoch 1: task=7.3882e-03 kd%=0.00% si%=0.00% kl=0.000 val=3.6148e-02
+2025-08-12 20:25:58,083 - INFO - Epoch 2: task=5.5538e-03 kd%=0.00% si%=0.00% kl=0.000 val=1.5671e-02
+2025-08-12 20:27:53,342 - INFO - Epoch 3: task=3.9574e-03 kd%=0.00% si%=0.00% kl=0.000 val=1.2478e-02
+2025-08-12 20:29:45,788 - INFO - Epoch 4: task=2.9706e-03 kd%=0.00% si%=0.00% kl=0.000 val=1.4970e-02
+2025-08-12 20:31:49,990 - INFO - Epoch 5: task=2.2706e-03 kd%=0.00% si%=0.00% kl=0.000 val=1.4074e-02
+2025-08-12 20:33:53,340 - INFO - Epoch 6: task=1.6811e-03 kd%=0.00% si%=0.00% kl=0.000 val=1.4001e-02
+2025-08-12 20:35:51,481 - INFO - Epoch 7: task=1.2226e-03 kd%=0.00% si%=0.00% kl=0.000 val=1.7101e-02
+2025-08-12 20:37:46,219 - INFO - Epoch 8: task=9.0893e-04 kd%=0.00% si%=0.00% kl=0.000 val=1.2918e-02
+2025-08-12 20:39:54,951 - INFO - Epoch 9: task=7.0184e-04 kd%=0.00% si%=0.00% kl=0.000 val=1.6901e-02
+2025-08-12 20:42:01,644 - INFO - Epoch 10: task=5.6939e-04 kd%=0.00% si%=0.00% kl=0.000 val=1.3751e-02
+2025-08-12 20:44:08,945 - INFO - Epoch 11: task=5.0023e-04 kd%=0.00% si%=0.00% kl=0.000 val=1.4116e-02
+2025-08-12 20:46:09,795 - INFO - Epoch 12: task=4.6140e-04 kd%=0.00% si%=0.00% kl=0.000 val=1.3840e-02
+2025-08-12 20:48:21,036 - INFO - Epoch 13: task=4.1976e-04 kd%=0.00% si%=0.00% kl=0.000 val=1.2331e-02
+2025-08-12 20:50:34,847 - INFO - Epoch 14: task=2.6166e-04 kd%=0.00% si%=0.00% kl=0.000 val=1.3909e-02
+2025-08-12 20:52:46,760 - INFO - Epoch 15: task=1.9763e-04 kd%=0.00% si%=0.00% kl=0.000 val=2.1143e-02
+2025-08-12 20:54:53,426 - INFO - Epoch 16: task=1.5802e-04 kd%=0.00% si%=0.00% kl=0.000 val=2.2477e-02
+2025-08-12 20:57:01,478 - INFO - Epoch 17: task=1.4238e-04 kd%=0.00% si%=0.00% kl=0.000 val=2.0643e-02
+2025-08-12 20:59:12,846 - INFO - Epoch 18: task=1.3013e-04 kd%=0.00% si%=0.00% kl=0.000 val=2.1605e-02
+2025-08-12 21:01:21,290 - INFO - Epoch 19: task=1.1888e-04 kd%=0.00% si%=0.00% kl=0.000 val=2.4164e-02
+2025-08-12 21:03:32,012 - INFO - Epoch 20: task=1.1307e-04 kd%=0.00% si%=0.00% kl=0.000 val=2.5716e-02
+2025-08-12 21:05:46,327 - INFO - Epoch 21: task=1.2111e-04 kd%=0.00% si%=0.00% kl=0.000 val=2.4165e-02
+2025-08-12 21:07:43,923 - INFO - Epoch 22: task=1.2174e-04 kd%=0.00% si%=0.00% kl=0.000 val=2.3917e-02
+2025-08-12 21:09:41,282 - INFO - Epoch 23: task=1.0746e-04 kd%=0.00% si%=0.00% kl=0.000 val=2.4580e-02
+2025-08-12 21:11:52,360 - INFO - Epoch 24: task=1.0050e-04 kd%=0.00% si%=0.00% kl=0.000 val=1.9759e-02
+2025-08-12 21:14:11,721 - INFO - Epoch 25: task=9.7107e-05 kd%=0.00% si%=0.00% kl=0.000 val=2.2578e-02
+2025-08-12 21:16:30,364 - INFO - Epoch 26: task=2.4711e-04 kd%=0.00% si%=0.00% kl=0.000 val=1.5698e-02
+2025-08-12 21:18:39,675 - INFO - Epoch 27: task=9.6642e-05 kd%=0.00% si%=0.00% kl=0.000 val=2.1928e-02
+2025-08-12 21:20:32,800 - INFO - Epoch 28: task=8.8390e-05 kd%=0.00% si%=0.00% kl=0.000 val=2.3725e-02
+2025-08-12 21:22:25,635 - INFO - Epoch 29: task=8.7959e-05 kd%=0.00% si%=0.00% kl=0.000 val=2.3297e-02
+2025-08-12 21:24:20,947 - INFO - Epoch 30: task=8.6172e-05 kd%=0.00% si%=0.00% kl=0.000 val=2.4956e-02
+2025-08-12 21:26:27,311 - INFO - Epoch 31: task=8.4747e-05 kd%=0.00% si%=0.00% kl=0.000 val=2.4741e-02
+2025-08-12 21:28:18,157 - INFO - Epoch 32: task=8.0344e-05 kd%=0.00% si%=0.00% kl=0.000 val=2.7038e-02
+2025-08-12 21:30:05,209 - INFO - Epoch 33: task=7.7603e-05 kd%=0.00% si%=0.00% kl=0.000 val=2.7225e-02
+2025-08-12 21:30:05,213 - INFO - Early stopping at epoch 33
+2025-08-12 21:30:05,450 - INFO - Saved best checkpoint: /beegfs/home/users/z/zzhuqshun/Thesis/final/inc_dynamical/task0/task0_best.pt
+2025-08-12 21:30:13,071 - INFO - --- task1 (KL-scheduled KD+SI, eps=0.001) ---
+2025-08-12 21:31:28,646 - INFO - Epoch 0: task=9.7933e-04 kd%=0.01% si%=0.00% kl=0.999 val=2.5920e-02
+2025-08-12 21:32:43,744 - INFO - Epoch 1: task=5.4758e-04 kd%=0.00% si%=0.00% kl=1.000 val=2.4265e-02
+2025-08-12 21:34:01,541 - INFO - Epoch 2: task=4.4966e-04 kd%=0.00% si%=0.00% kl=1.000 val=2.6314e-02
+2025-08-12 21:35:18,497 - INFO - Epoch 3: task=4.3497e-04 kd%=0.00% si%=0.00% kl=1.000 val=1.9519e-02
+2025-08-12 21:36:35,279 - INFO - Epoch 4: task=4.1546e-04 kd%=0.00% si%=0.00% kl=1.000 val=1.9166e-02
+2025-08-12 21:37:51,801 - INFO - Epoch 5: task=3.6324e-04 kd%=0.00% si%=0.00% kl=1.000 val=2.3223e-02
+2025-08-12 21:39:06,548 - INFO - Epoch 6: task=3.3489e-04 kd%=0.00% si%=0.00% kl=1.000 val=2.2160e-02
+2025-08-12 21:40:21,027 - INFO - Epoch 7: task=3.5094e-04 kd%=0.00% si%=0.00% kl=1.000 val=2.5003e-02
+2025-08-12 21:41:35,796 - INFO - Epoch 8: task=3.0665e-04 kd%=0.00% si%=0.00% kl=1.000 val=2.6649e-02
+2025-08-12 21:42:50,592 - INFO - Epoch 9: task=3.0113e-04 kd%=0.00% si%=0.00% kl=1.000 val=1.7768e-02
+2025-08-12 21:44:06,289 - INFO - Epoch 10: task=2.8702e-04 kd%=0.00% si%=0.00% kl=1.000 val=2.5804e-02
+2025-08-12 21:45:22,428 - INFO - Epoch 11: task=2.8148e-04 kd%=0.00% si%=0.00% kl=1.000 val=2.2500e-02
+2025-08-12 21:46:39,182 - INFO - Epoch 12: task=2.6981e-04 kd%=0.00% si%=0.00% kl=1.000 val=1.7643e-02
+2025-08-12 21:47:55,531 - INFO - Epoch 13: task=2.6559e-04 kd%=0.00% si%=0.00% kl=1.000 val=1.6760e-02
+2025-08-12 21:49:11,944 - INFO - Epoch 14: task=2.6395e-04 kd%=0.00% si%=0.00% kl=1.000 val=2.0328e-02
+2025-08-12 21:50:28,416 - INFO - Epoch 15: task=2.5769e-04 kd%=0.00% si%=0.00% kl=1.000 val=1.9391e-02
+2025-08-12 21:51:44,338 - INFO - Epoch 16: task=2.5492e-04 kd%=0.00% si%=0.00% kl=1.000 val=2.4932e-02
+2025-08-12 21:53:00,642 - INFO - Epoch 17: task=2.4873e-04 kd%=0.00% si%=0.00% kl=1.000 val=5.8930e-03
+2025-08-12 21:54:16,999 - INFO - Epoch 18: task=2.4848e-04 kd%=0.00% si%=0.00% kl=1.000 val=1.3309e-02
+2025-08-12 21:55:32,873 - INFO - Epoch 19: task=2.5122e-04 kd%=0.00% si%=0.00% kl=1.000 val=1.4011e-02
+2025-08-12 21:56:47,850 - INFO - Epoch 20: task=2.7036e-04 kd%=0.00% si%=0.00% kl=1.000 val=1.2832e-02
+2025-08-12 21:58:02,417 - INFO - Epoch 21: task=2.4144e-04 kd%=0.00% si%=0.00% kl=1.000 val=1.0501e-02
+2025-08-12 21:59:17,164 - INFO - Epoch 22: task=2.3035e-04 kd%=0.00% si%=0.00% kl=1.000 val=1.7556e-02
