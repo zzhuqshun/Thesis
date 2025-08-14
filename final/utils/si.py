@@ -1,9 +1,7 @@
 # utils/si.py
-# Synaptic Intelligence (SI) with numerically-stable epsilon and a simple penalty() API.
-# SITrainer with KL-driven scheduling and auto-balancing for KD/SI.
-# - KD uses Smooth L1 (Huber) on outputs.
-# - KL is computed on teacher's last LSTM hidden state vs a cross-task reference (diagonal Gaussians).
-# - Coefficients c_kd/c_si are computed so that each regularizer contributes a target fraction of L_task.
+# Synaptic Intelligence (SI) + KD (LwF) with KL-driven scheduling.
+# 当关闭 SI/KD 时，不做任何正则或额外前向，等价于纯微调。
+
 import logging
 from dataclasses import dataclass
 from typing import Optional, Tuple, Dict
@@ -12,26 +10,28 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
+
 logger = logging.getLogger(__name__)
 
+# ------------------------------ SI core ------------------------------
 class SI:
     """
     Synaptic Intelligence (Zenke et al., 2017) - online importance accumulation.
 
     Usage:
-      - Call `begin_task(model)` at the start of a task.
-      - During training, call `update_w(model)` BEFORE optimizer.step() to snapshot gradients,
-        and call `on_param_update(model)` RIGHT AFTER optimizer.step() to accumulate path integral.
-      - After finishing a task, call `consolidate(model)` to build/update Omega and theta_star.
-      - During later tasks, add `penalty(model)` into the total loss (weighted outside).
+      - begin_task(model) at task start
+      - During training:
+          update_w(model) BEFORE optimizer.step()
+          on_param_update(model) RIGHT AFTER optimizer.step()
+      - consolidate(model) at task end to build Omega and theta_star
+      - penalty(model) returns SI regularizer value for current model
     """
 
     def __init__(self, model: nn.Module, device: torch.device, epsilon: float = 1e-3):
         self.device = device
         self.epsilon = float(epsilon) if epsilon is not None else 1e-3
         if self.epsilon <= 0.0:
-            # Never allow epsilon=0, it breaks the denominator
-            self.epsilon = 1e-3
+            self.epsilon = 1e-3  # avoid zero denom
 
         self.w: Dict[str, torch.Tensor] = {}
         self.theta_task_start: Dict[str, torch.Tensor] = {}
@@ -68,14 +68,17 @@ class SI:
                 if p.grad is not None:
                     self._grads[n] = p.grad.detach().clone()
                 self._theta_pre_step[n] = p.detach().clone()
+
     @torch.no_grad()
     def on_param_update(self, model):
-        """Call RIGHT AFTER optimizer.step(). Use per-step delta."""
-        if not hasattr(self, "_grads"): return
+        """Call RIGHT AFTER optimizer.step(). Accumulate path integral from this step."""
+        if not hasattr(self, "_grads"):
+            return
         for n, p in model.named_parameters():
-            if not p.requires_grad: continue
+            if not p.requires_grad:
+                continue
             if n in self._grads and n in self._theta_pre_step:
-                delta_step = p.detach() - self._theta_pre_step[n]   # ← 本步Δθ
+                delta_step = p.detach() - self._theta_pre_step[n]
                 self.w[n].add_(-self._grads[n] * delta_step)
                 self.theta_prev[n] = p.detach().clone()
         del self._grads
@@ -96,9 +99,7 @@ class SI:
             self.theta_star[n] = p.detach().clone()
 
     def penalty(self, model: nn.Module) -> torch.Tensor:
-        """
-        L_SI = sum_i Omega_i * (theta_i - theta_i^*)^2
-        """
+        """L_SI = sum_i Omega_i * (theta_i - theta_i^*)^2"""
         loss = torch.zeros((), device=self.device)
         for n, p in model.named_parameters():
             if not p.requires_grad:
@@ -107,23 +108,26 @@ class SI:
                 loss = loss + (self.omega[n] * (p - self.theta_star[n]).pow(2)).sum()
         return loss
 
+# ------------------------------ Reg config ------------------------------
 @dataclass
 class RegConfig:
-    kd_feat_weight: float = 0.0 
-    # Max proportions of L_task allocated to KD/SI (before KL & warmup)
+    kd_feat_weight: float = 0.0
     p_kd_max: float = 0.40
     p_si_max: float = 0.25
-    # Huber delta for KD
     kd_delta: float = 1e-2
-    # KL normalization temperature (bigger -> smaller kl_norm)
     kl_tau: float = 50
-    # Clip the scaling factor c_* to avoid numeric spikes
     scale_clip: float = 5.0
-    # Warmup epochs for p_* (linearly ramp from 0 to max)
     warmup_epochs: int = 5
-    p_kd_floor: float = 0.05   # ← 新增：就算 KL 高也给点粮
-    p_si_floor: float = 0.02   # ← 新增
+    p_kd_floor: float = 0.05
+    p_si_floor: float = 0.02
 
+    # NEW: KL 平滑与参考分布合并的参数
+    kl_ema_alpha: float = 0.90     # kl_norm 的 EMA 系数（越大越平滑）
+    kl_ref_alpha: float = 0.80     # (mu_ref, var_ref) 的 EMA 合并系数
+    kl_sigma_floor: float = 1e-4   # 给 var 的小噪声/下限，防数值问题
+
+
+# ------------------------------ Feature stats ------------------------------
 class FeatureStatTracker:
     """Online mean/var tracker for features with Welford's algorithm."""
     def __init__(self, feat_dim: int, device: torch.device):
@@ -141,7 +145,6 @@ class FeatureStatTracker:
         self.n += b
         delta = x.mean(dim=0) - self.mean
         self.mean += delta * (b / max(self.n, 1))
-        # For per-dim var, combine batch var + mean shift
         batch_var = x.var(dim=0, unbiased=False)
         self.M2 += batch_var * b + delta.pow(2) * (self.n - b) * b / max(self.n, 1)
 
@@ -151,10 +154,9 @@ class FeatureStatTracker:
         var = torch.clamp(var, min=1e-6)
         return self.mean.clone(), var.clone()
 
+# ------------------------------ KL helper ------------------------------
 def _sym_kl_diag(mu_p, var_p, mu_q, var_q) -> torch.Tensor:
     """Symmetric KL between two diagonal Gaussians N(mu, var). Returns scalar."""
-    # Dkl(p||q) = 0.5 * sum( var_p/var_q + (mu_q - mu_p)^2/var_q - 1 + log(var_q/var_p) )
-    # Sym: D(p||q)+D(q||p)
     var_p = torch.clamp(var_p, min=1e-6)
     var_q = torch.clamp(var_q, min=1e-6)
     term_pq = var_p / var_q + (mu_q - mu_p).pow(2) / var_q - 1.0 + torch.log(var_q / var_p)
@@ -162,10 +164,11 @@ def _sym_kl_diag(mu_p, var_p, mu_q, var_q) -> torch.Tensor:
     kl = 0.5 * (term_pq.sum() + term_qp.sum())
     return torch.relu(kl)  # non-negative safeguard
 
+# ------------------------------ Trainer ------------------------------
 class SITrainer:
     """
     Incremental trainer with SI regularization and KD (LwF-style), driven by KL scheduling.
-    Assumes model has attributes: model.lstm and model.fc, and forward returns prediction.
+    当 use_kd/use_si 关闭时，不会有任何 teacher/SI 开销，等价于纯微调。
     """
 
     def __init__(self,
@@ -176,89 +179,48 @@ class SITrainer:
                  grad_clip: float = 1.0,
                  si_epsilon: float = 1e-3,
                  reg_cfg: Optional[RegConfig] = None,
-                 val_metric: str = "mse" ):
+                 ema_decay: Optional[float] = 0.99):
         self.model = model.to(device)
         self.device = device
         self.base_lr = lr
         self.weight_decay = weight_decay
         self.grad_clip = grad_clip
 
-        self.si = SI(self.model, device=self.device, epsilon=si_epsilon)
-        self.teacher: Optional[nn.Module] = None
-
         self.reg_cfg = reg_cfg or RegConfig()
+        # 开关：由 RegConfig 推导
+        self.use_kd = (self.reg_cfg.p_kd_max > 0.0 or self.reg_cfg.p_kd_floor > 0.0)
+        self.use_si = (self.reg_cfg.p_si_max > 0.0 or self.reg_cfg.p_si_floor > 0.0)
+        self.use_feat_kd = self.use_kd and (self.reg_cfg.kd_feat_weight > 0.0)
+        self.use_kl = self.use_kd or self.use_si  # KL 仅用于调度
 
-        # Cross-task KL reference (mu_ref, var_ref) on teacher hidden features
+        # SI state（仅在 use_si 时实际使用）
+        self.si = SI(self.model, device=self.device, epsilon=si_epsilon) if self.use_si else None
+
+        # Teacher / KL 参考
+        self.teacher: Optional[nn.Module] = None
         self.kl_ref: Optional[Tuple[torch.Tensor, torch.Tensor]] = None
 
-        # Optimizer with layer-wise LR (LSTM first layer smaller)
-        # If you want exact layerwise control, split param groups accordingly.
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.base_lr, weight_decay=self.weight_decay)
-        
-        self.ema_decay: Optional[float] = 0.99   # or set from config
-        self.ema_start_epoch: Optional[int] = None  # will set later per task
+        # Optimizer
+        self.optimizer = torch.optim.Adam(self.model.parameters(),
+                                          lr=self.base_lr,
+                                          weight_decay=self.weight_decay)
+
+        # EMA
+        self.ema_decay: Optional[float] = ema_decay
         self._ema_state: Optional[Dict[str, torch.Tensor]] = None
 
-        self.val_metric = val_metric.lower().strip()
-        if self.val_metric not in ("mse", "mae"):
-            self.val_metric = "mse"  # default
-    @torch.no_grad()
-    def _ema_reset(self):
-        self._ema_state = {k: v.detach().clone() for k, v in self.model.state_dict().items()}
-
-    @torch.no_grad()
-    def _ema_update(self):
-        if self._ema_state is None:
-            self._ema_reset()
-            return
-        d = self.ema_decay if self.ema_decay is not None else 0.99
-        msd = self.model.state_dict()
-        for k, v in msd.items():
-            self._ema_state[k].mul_(d).add_(v.detach(), alpha=(1.0 - d))
-
-    # ------------------------ Feature helpers ------------------------
-    @torch.no_grad()
-    def _last_hidden(self, model: nn.Module, x: torch.Tensor) -> torch.Tensor:
-        """
-        Extract last hidden state from LSTM outputs.
-        Assumes model.lstm returns (out, (hn, cn)), where out is [B, T, H].
-        """
-        out, _ = model.lstm(x)
-        h_last = out[:, -1, :]  # [B, H]
-        return h_last
-    
-    @torch.no_grad()
-    def _kl_norm_from_batch(self, x: torch.Tensor, feat_dim: int) -> float:
-        """
-        Compute kl_norm in [0,1]: compare teacher hidden features on batch vs cross-task reference.
-        If reference is missing (e.g., first incremental task), bootstrap it from current batch (kl=0).
-        """
-        if self.teacher is None:
-            return 0.0
-        h = self._last_hidden(self.teacher, x)  # [B, H]
-        mu_cur = h.mean(dim=0)
-        var_cur = torch.clamp(h.var(dim=0, unbiased=False), min=1e-6)
-
-        if self.kl_ref is None:
-            # bootstrap: set reference so KL=0 initially
-            self.kl_ref = (mu_cur.detach().clone(), var_cur.detach().clone())
-            return 0.0
-
-        mu_ref, var_ref = self.kl_ref
-        kl = _sym_kl_diag(mu_cur, var_cur, mu_ref, var_ref)
-        kl_value = kl.item()
-        s = max(self.reg_cfg.kl_tau, 1e-6)
-        kl_norm = float(kl_value / (kl_value + s))
-        return float(kl_norm)
+        self._kl_ema: Optional[float] = None
+        
 
     # ------------------------ Loss pieces ------------------------
     def _task_loss(self, y_pred: torch.Tensor, y_true: torch.Tensor) -> torch.Tensor:
-        # Keep your original supervised loss; MSE is common here.
         return F.mse_loss(y_pred, y_true)
 
     def _kd_raw_loss(self, y_student: torch.Tensor, y_teacher: torch.Tensor) -> torch.Tensor:
-        # Huber (Smooth L1) KD for regression
         return F.smooth_l1_loss(y_student, y_teacher, beta=self.reg_cfg.kd_delta)
+
+    def _feat_kd_loss_from(self, h_s: torch.Tensor, h_t: torch.Tensor) -> torch.Tensor:
+        return 1.0 - F.cosine_similarity(h_s, h_t.detach(), dim=1).mean()
 
     # ------------------------ Train one task ------------------------
     def train_one_task(self,
@@ -266,168 +228,175 @@ class SITrainer:
                        val_loader: Optional[DataLoader],
                        epochs: int,
                        task_id: int) -> Dict[str, float]:
-        """
-        Train model for a single task with SI+KD (KL-scheduled, auto-balanced).
-        Returns dict of last-epoch logs (for convenience).
-        """
-        # Prepare SI for this task
-        self.si.begin_task(self.model)
-        # reset EMA at task start
+        # 模式提示
+        mode = ("SI+KD"    if (self.use_si and self.use_kd) else
+        "KD-only"  if (self.use_kd and not self.use_si) else
+        "SI-only"  if (self.use_si and not self.use_kd) else
+        "pure-finetune")
+
+        logger.info("=== Train task %d in mode: %s ===", task_id, mode)
+
+        # SI/EMA init
+        if self.use_si:
+            self.si.begin_task(self.model)
         self._ema_reset()
+        self._kl_ema = None
 
-        # Hidden feature dimension for trackers
-        with torch.no_grad():
-            sample_x, _ = next(iter(train_loader))
-            sample_x = sample_x.to(self.device)
-            feat_dim = self._last_hidden(self.model, sample_x).size(1)
+        # 仅当需要 KL/teacher 统计时才创建 tracker
+        feat_dim = getattr(self.model.lstm, "hidden_size", None)
+        feat_tracker = (FeatureStatTracker(feat_dim, self.device)
+                        if (self.use_kl and self.teacher is not None and feat_dim is not None) else None)
 
-        # Track current task teacher features to update kl_ref after consolidate
-        feat_tracker = FeatureStatTracker(feat_dim=feat_dim, device=self.device)
 
         best_val = float("inf")
         best_state = copy.deepcopy(self.model.state_dict())
-        no_improve = 0
-        patience = 20  # keep your original patience if needed
+        no_improve, patience = 0, 20
 
-        history = {
-            "epoch": [],
-            "train_task": [],
-            "kd_pct": [],
-            "si_pct": [],
-            "kl": [],
-            "val_mae": [],   
-            "val_mse": [],   
-        }
+        history = {"epoch": [], "train_task": [], "kd_pct": [], "si_pct": [], "kl": [], "val_mse": []}
 
         for epoch in range(epochs):
             self.model.train()
-            epoch_task, epoch_kd_contrib, epoch_si_contrib = 0.0, 0.0, 0.0
-            epoch_kd_pct, epoch_si_pct, epoch_kl = 0.0, 0.0, 0.0
+            epoch_task = epoch_kd_pct = epoch_si_pct = epoch_kl = 0.0
             n_batches = 0
 
-            # Linear warmup
-            warmup = min(1.0, (epoch + 1) / max(1, self.reg_cfg.warmup_epochs))
+            # target proportion warmup
+            warmup = min(1.0, (epoch + 1) / max(1, self.reg_cfg.warmup_epochs)) if (self.use_kd or self.use_si) else 0.0
 
             for x, y in train_loader:
-                x = x.to(self.device)
-                y = y.to(self.device)
+                x = x.to(self.device); y = y.to(self.device)
 
-                # Forward - student
-                y_pred = self.model(x)
+                # 学生是否需要 hidden：仅当做 feature KD 时才需要
+                need_s_hidden = (self.teacher is not None) and self.use_feat_kd
+                # 教师是否需要 hidden：做 feature KD 或 KL 调度都需要
+                need_t_hidden = (self.teacher is not None) and (self.use_feat_kd or self.use_kl)
+
+                # 学生前向
+                if need_s_hidden:
+                    y_pred, h_s = self.model(x, return_hidden=True)
+                else:
+                    y_pred = self.model(x)
+                    h_s = None
+
+                # 教师前向：KD 或 KL 调度任一开启即需要
+                if (self.teacher is not None) and (self.use_kd or self.use_kl):
+                    with torch.no_grad():
+                        if need_t_hidden:  # (feature KD 或 KL 调度 需要 hidden)
+                            out = self.teacher(x, return_hidden=True)
+                            if self.use_kd:
+                                y_teacher, h_t = out         # KD 需要 y_teacher
+                            else:
+                                _, h_t = out                 # 仅 KL 调度：只要 h_t
+                                y_teacher = None
+                        else:
+                            y_teacher = self.teacher(x) if self.use_kd else None
+                            h_t = None
+                else:
+                    y_teacher, h_t = None, None
+
+                # 任务损失
                 L_task = self._task_loss(y_pred, y)
 
-                # KD raw (if teacher exists)
-                if self.teacher is not None:
-                    with torch.no_grad():
-                        y_teacher = self.teacher(x)
+                # KD
+                if (y_teacher is not None) and self.use_kd:
                     L_kd_raw = self._kd_raw_loss(y_pred, y_teacher)
-
-                    # + feature KD (counts into KD bucket)
-                    if self.reg_cfg.kd_feat_weight > 0.0:
-                        L_kd_feat = self._feat_kd_loss(x)
-                        L_kd_raw = L_kd_raw + self.reg_cfg.kd_feat_weight * L_kd_feat
+                    if self.use_feat_kd and (h_t is not None) and (h_s is not None):
+                        L_kd_raw = L_kd_raw + self.reg_cfg.kd_feat_weight * self._feat_kd_loss_from(h_s, h_t)
                 else:
                     L_kd_raw = torch.zeros_like(L_task)
 
-                # SI raw penalty
-                L_si_raw = self.si.penalty(self.model)
+                # SI
+                if self.use_si:
+                    L_si_raw = self.si.penalty(self.model)
+                else:
+                    L_si_raw = torch.zeros_like(L_task)
 
-                # KL scheduling (based on teacher hidden features vs reference)
-                kl_norm = self._kl_norm_from_batch(x, feat_dim=feat_dim)
-                # Target proportions this step
-                p_kd = (self.reg_cfg.p_kd_floor 
-                        + kl_norm * (self.reg_cfg.p_kd_max - self.reg_cfg.p_kd_floor)) * warmup
-                p_si = (self.reg_cfg.p_si_floor 
-                        + (1.0 - kl_norm) * (self.reg_cfg.p_si_max - self.reg_cfg.p_si_floor)) * warmup
+                # KL 调度
+                if self.use_kl and (h_t is not None):
+                    kl_norm = self._kl_norm_from_features(h_t)
+                else:
+                    kl_norm = 0.0
 
-                # Auto-balance coefficients so each reg contributes ~ p_* * L_task
+                p_kd = ((self.reg_cfg.p_kd_floor + kl_norm * (self.reg_cfg.p_kd_max - self.reg_cfg.p_kd_floor)) * warmup
+                        if self.use_kd else 0.0)
+                p_si = ((self.reg_cfg.p_si_floor + (1.0 - kl_norm) * (self.reg_cfg.p_si_max - self.reg_cfg.p_si_floor)) * warmup
+                        if self.use_si else 0.0)
+
+                # 自平衡系数
                 eps = 1e-12
-                c_kd = (p_kd * L_task.detach()) / (L_kd_raw.detach() + eps) if self.teacher is not None else torch.tensor(0.0, device=self.device)
-                c_si = (p_si * L_task.detach()) / (L_si_raw.detach() + eps) if L_si_raw.detach().item() > 0 else torch.tensor(0.0, device=self.device)
-
-                # Clip scaling to avoid numeric explosion when raw term is tiny
+                c_kd = ((p_kd * L_task.detach()) / (L_kd_raw.detach() + eps)
+                        if (self.use_kd and (y_teacher is not None)) else torch.tensor(0.0, device=self.device))
+                c_si = ((p_si * L_task.detach()) / (L_si_raw.detach() + eps)
+                        if (self.use_si and (L_si_raw.detach().item() > 0)) else torch.tensor(0.0, device=self.device))
                 c_kd = torch.clamp(c_kd, max=self.reg_cfg.scale_clip)
                 c_si = torch.clamp(c_si, max=self.reg_cfg.scale_clip)
 
-                # Total loss
+                # 总损失与更新
                 L_total = L_task + c_kd * L_kd_raw + c_si * L_si_raw
-
-                # Backward
                 self.optimizer.zero_grad(set_to_none=True)
-                # ---- SI needs grads BEFORE step (for w update) ----
                 L_total.backward()
-                # (Record grads for SI path integral)
-                self.si.update_w(self.model)
-
-                # Step
+                if self.use_si:
+                    self.si.update_w(self.model)
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.grad_clip)
                 self.optimizer.step()
-                # Accumulate SI after the params have changed
-                self.si.on_param_update(self.model)
-                
-                # Always update EMA every batch (full-run EMA)
-                if self.ema_decay is not None:
-                    self._ema_update()
+                if self.use_si:
+                    self.si.on_param_update(self.model)
 
+                # EMA
+                self._ema_update()
 
+                # KL 参考统计
+                if (feat_tracker is not None) and (h_t is not None):
+                    feat_tracker.update(h_t.detach())
 
-                # Track feature stats on TEACHER (reference lives in teacher space)
-                if self.teacher is not None:
-                    with torch.no_grad():
-                        h_teacher = self._last_hidden(self.teacher, x)  # [B, H]
-                    feat_tracker.update(h_teacher)
-
-
-                # Logs
+                # 记录
                 with torch.no_grad():
                     kd_contrib = (c_kd * L_kd_raw).item()
                     si_contrib = (c_si * L_si_raw).item()
                     epoch_task += L_task.item()
-                    epoch_kd_contrib += kd_contrib
-                    epoch_si_contrib += si_contrib
                     denom = L_task.item() + 1e-12
-                    epoch_kd_pct += kd_contrib / denom
-                    epoch_si_pct += si_contrib / denom
-                    epoch_kl += kl_norm
+                    epoch_kd_pct += (kd_contrib / denom) if self.use_kd else 0.0
+                    epoch_si_pct += (si_contrib / denom) if self.use_si else 0.0
+                    epoch_kl += kl_norm if self.use_kl else 0.0
                     n_batches += 1
 
-            # ---- Validation ----
-            val_mae, val_mse = float("nan"), float("nan")
+            # 验证
+            val_mse = float("nan")
             if val_loader is not None:
-                v_mae, v_mse = self.evaluate_metrics(self.model, val_loader)
-                val_mae, val_mse = float(v_mae), float(v_mse)
-                # choose the monitored value
-                val_monitored = val_mse if self.val_metric == "mse" else val_mae
+                mse_sum, n_elems = 0.0, 0
+                self.model.eval()
+                with torch.no_grad():
+                    for vx, vy in val_loader:
+                        vx = vx.to(self.device); vy = vy.to(self.device)
+                        vpred = self.model(vx)   # 验证不取 hidden
+                        mse_sum += F.mse_loss(vpred, vy, reduction="sum").item()
+                        n_elems += vy.numel()
+                self.model.train()
+                val_mse = (mse_sum / n_elems) if n_elems > 0 else float("inf")
+                val_monitored = val_mse
             else:
                 val_monitored = None
 
-            # Print epoch summary
+            # 日志
             kd_pct = epoch_kd_pct / max(1, n_batches)
             si_pct = epoch_si_pct / max(1, n_batches)
             avg_kl = epoch_kl / max(1, n_batches)
             avg_task = epoch_task / max(1, n_batches)
 
             if val_loader is not None:
-                logger.info(
-                    "Epoch %d: task=%.4e kd%%=%.2f%% si%%=%.2f%% kl=%.3f val_mae=%.4e val_mse=%.4e",
-                    epoch, avg_task, kd_pct * 100.0, si_pct * 100.0, avg_kl, val_mae, val_mse
-                )
+                logger.info("Epoch %d: task=%.4e kd%%=%.2f%% si%%=%.2f%% kl=%.3f val_mse=%.4e",
+                            epoch, avg_task, kd_pct*100.0, si_pct*100.0, avg_kl, val_mse)
             else:
-                logger.info(
-                    "Epoch %d: task=%.4e kd%%=%.2f%% si%%=%.2f%% kl=%.3f",
-                    epoch, avg_task, kd_pct * 100.0, si_pct * 100.0, avg_kl
-                )
+                logger.info("Epoch %d: task=%.4e kd%%=%.2f%% si%%=%.2f%% kl=%.3f",
+                            epoch, avg_task, kd_pct*100.0, si_pct*100.0, avg_kl)
 
-            # Record history (keep both columns)
             history["epoch"].append(epoch)
             history["train_task"].append(avg_task)
             history["kd_pct"].append(kd_pct * 100.0)
             history["si_pct"].append(si_pct * 100.0)
             history["kl"].append(avg_kl)
-            history["val_mae"].append(val_mae)
             history["val_mse"].append(val_mse)
 
-            # Early stopping on chosen metric
+            # early stopping
             if val_loader is not None:
                 if val_monitored < best_val - 1e-6:
                     best_val = val_monitored
@@ -439,8 +408,8 @@ class SITrainer:
                     logger.info("Early stopping at epoch %d", epoch)
                     break
 
+        # 选 ValBest vs EMA
         chosen_is_ema = False
-        # Restore best (val-based) and compare with EMA on the same metric
         if val_loader is not None:
             self.model.load_state_dict(best_state)
             chosen_state = copy.deepcopy(best_state)
@@ -449,92 +418,127 @@ class SITrainer:
             if self._ema_state is not None:
                 cur_state = copy.deepcopy(self.model.state_dict())
                 self.model.load_state_dict(self._ema_state)
-                ema_mae, ema_mse = self.evaluate_metrics(self.model, val_loader)
-                ema_val = ema_mse if self.val_metric == "mse" else ema_mae
-                if ema_val < chosen_val - 1e-6:
+                mse_sum, n_elems = 0.0, 0
+                self.model.eval()
+                with torch.no_grad():
+                    for vx, vy in val_loader:
+                        vx = vx.to(self.device); vy = vy.to(self.device)
+                        vpred = self.model(vx)
+                        mse_sum += F.mse_loss(vpred, vy, reduction="sum").item()
+                        n_elems += vy.numel()
+                ema_mse = (mse_sum / n_elems) if n_elems > 0 else float("inf")
+                if ema_mse < chosen_val - 1e-6:
                     chosen_state = copy.deepcopy(self._ema_state)
-                    chosen_val = ema_val
+                    chosen_val = ema_mse
                     chosen_is_ema = True
                 self.model.load_state_dict(cur_state)
 
             self.model.load_state_dict(chosen_state)
-            logger.info("Task %d picked %s weights for consolidation (val_%s=%.6e).",
-            task_id, "EMA" if chosen_is_ema else "ValBest", self.val_metric, chosen_val)
-            
-        # Consolidate SI and update teacher + KL reference
-        self.si.consolidate(self.model)
-        self._update_teacher()
-        self._update_kl_ref_from_tracker(feat_tracker)
-        
-        return {
-            "best_val": best_val if val_loader is not None else float("nan"),
-            "history": history
-        }
+            logger.info("Task %d picked %s weights for consolidation (val_mse=%.6e).",
+                        task_id, "EMA" if chosen_is_ema else "ValBest", chosen_val)
 
-    @torch.no_grad()
-    def evaluate_metrics(self, model: nn.Module, loader: DataLoader) -> Tuple[float, float]:
-        """Return (mae, mse) averaged per-element over the loader."""
-        model.eval()
-        mae_sum, mse_sum, n = 0.0, 0.0, 0
-        for x, y in loader:
-            x = x.to(self.device)
-            y = y.to(self.device)
-            pred = model(x)
-            # sum reduction to compute dataset average
-            mae_sum += F.l1_loss(pred, y, reduction="sum").item()
-            mse_sum += F.mse_loss(pred, y, reduction="sum").item()
-            n += y.numel()
-        if n == 0:
-            return float("inf"), float("inf")
-        return mae_sum / n, mse_sum / n
+        # 任务结束：SI consolidate / teacher & KL
+        if self.use_si:
+            self.si.consolidate(self.model)
 
+        if (self.use_kd or self.use_kl):
+            self._update_teacher()
+            if feat_tracker is not None:
+                self._update_kl_ref_from_tracker(feat_tracker)
+        else:
+            self.teacher = None
+            self.kl_ref = None
 
-    # ------------------------ Teacher / KL ref maintenance ------------------------
+        return {"best_val": best_val if val_loader is not None else float("nan"),
+                "history": history}
+
+    # ------------------------ Teacher / KL maintenance ------------------------
     def _update_teacher(self):
         self.teacher = copy.deepcopy(self.model).eval()
         for p in self.teacher.parameters():
             p.requires_grad_(False)
-    
+
     @torch.no_grad()
-    def _update_kl_ref_from_tracker(self, tracker: FeatureStatTracker):
-        if getattr(tracker, "n", 0) == 0:
+    def _update_kl_ref_from_tracker(self, tracker: Optional[FeatureStatTracker]):
+        if (tracker is None) or (getattr(tracker, "n", 0) == 0):
             return
         mu_new, var_new = tracker.finalize()
-        sigma_floor = 1e-4  # widen the ref a bit
-
+        sigma_floor = float(self.reg_cfg.kl_sigma_floor)
         if self.kl_ref is None:
             self.kl_ref = (mu_new, torch.clamp(var_new + sigma_floor, min=1e-6))
             return
-
         mu_ref, var_ref = self.kl_ref
-        alpha = 0.8  # put more weight on historical ref
+        alpha = float(self.reg_cfg.kl_ref_alpha)
         mu  = alpha * mu_ref + (1.0 - alpha) * mu_new
         var = alpha * var_ref + (1.0 - alpha) * var_new + sigma_floor
         self.kl_ref = (mu, torch.clamp(var, min=1e-6))
 
+
     @torch.no_grad()
     def prime_kl_ref(self, loader, max_batches: int = 64):
         """Use teacher on task0 data to initialize (mu_ref, var_ref)."""
-        if self.teacher is None:
+        if (self.teacher is None) or (not self.use_kl):
             return
         tracker = None
-        n = 0
-        for x, _ in loader:
+        for i, (x, _) in enumerate(loader):
             x = x.to(self.device)
-            h = self._last_hidden(self.teacher, x)  # [B, H]
+            _, h = self.teacher(x, return_hidden=True)
             if tracker is None:
                 tracker = FeatureStatTracker(h.size(1), self.device)
             tracker.update(h)
-            n += 1
-            if n >= max_batches:
+            if (i + 1) >= max_batches:
                 break
         if tracker is not None:
             self.kl_ref = tracker.finalize()
-    def _feat_kd_loss(self, x: torch.Tensor) -> torch.Tensor:
-        """Cosine feature KD on last hidden; returns scalar."""
-        with torch.no_grad():
-            h_t = self._last_hidden(self.teacher, x)  # [B,H]
-        h_s = self._last_hidden(self.model, x)
-        # cosine distance = 1 - cos
-        return 1.0 - F.cosine_similarity(h_s, h_t, dim=1).mean()
 
+    @torch.no_grad()
+    def _kl_norm_from_features(self, h: Optional[torch.Tensor]) -> float:
+        """
+        输入 h 为教师隐状态；对 h 展平到 [B, D]，计算 batch 的 (mu,var)，
+        与 (mu_ref,var_ref) 做对称 KL -> 归一化到 [0,1]，并对 kl_norm 做 EMA。
+        """
+        if (h is None) or (h.numel() == 0):
+            return 0.0
+
+        # 形状稳健：允许 [B,H] / [B,T,H] / [L,B,H]
+        if h.dim() > 2:
+            h = h.view(h.size(0), -1)
+        elif h.dim() == 1:
+            h = h.view(1, -1)
+
+        mu_cur = h.mean(dim=0)
+        var_cur = torch.clamp(h.var(dim=0, unbiased=False), min=1e-6)
+
+        if self.kl_ref is None:
+            self.kl_ref = (mu_cur.detach().clone(), var_cur.detach().clone())
+            # 第一次直接返回 0（相当于冷启动）：
+            self._kl_ema = 0.0
+            return 0.0
+
+        mu_ref, var_ref = self.kl_ref
+        kl_value = _sym_kl_diag(mu_cur, var_cur, mu_ref, var_ref).item()
+
+        s = max(self.reg_cfg.kl_tau, 1e-6)
+        raw = float(kl_value / (kl_value + s))   # 原始 [0,1]
+
+        a = float(self.reg_cfg.kl_ema_alpha)
+        self._kl_ema = raw if (self._kl_ema is None) else (a * self._kl_ema + (1.0 - a) * raw)
+        return float(self._kl_ema)
+    @torch.no_grad()
+    def _ema_reset(self):
+        if self.ema_decay is None:
+            self._ema_state = None
+            return
+        self._ema_state = {k: v.detach().clone() for k, v in self.model.state_dict().items()}
+
+    @torch.no_grad()
+    def _ema_update(self):
+        if self.ema_decay is None:
+            return
+        if self._ema_state is None:
+            self._ema_reset()
+            return
+        d = self.ema_decay
+        msd = self.model.state_dict()
+        for k, v in msd.items():
+            self._ema_state[k].mul_(d).add_(v.detach(), alpha=(1.0 - d))

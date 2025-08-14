@@ -34,15 +34,8 @@ def inc_training(config: Config):
     # Model & trainer
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     model = SOHLSTM(3, config.HIDDEN_SIZE, config.DROPOUT).to(device)
-    reg_cfg = RegConfig(
-        p_kd_max=0.55, p_si_max=0.30,
-        p_kd_floor=0.15, p_si_floor=0.08,
-        kd_feat_weight=0.5,   # 生效
-        kd_delta=1e-2,
-        kl_tau=2.0,
-        scale_clip=5.0,
-        warmup_epochs=5
-    )
+
+    reg_cfg = RegConfig(**config.REG)
 
     trainer = SITrainer(
         model=model,
@@ -51,8 +44,7 @@ def inc_training(config: Config):
         weight_decay=config.WEIGHT_DECAY,
         grad_clip=1.0,
         si_epsilon=1e-3,
-        reg_cfg=reg_cfg,
-        val_metric="mse"
+        reg_cfg=reg_cfg
     )
 
     print_model_summary(model)
@@ -60,8 +52,6 @@ def inc_training(config: Config):
     # Sequential tasks
     for task_idx in range(num_tasks):
         task_name = f"task{task_idx}"
-        logger.info("--- %s (KL-scheduled KD+SI, eps=%.4g) ---", task_name, trainer.si.epsilon)
-
         # per-task dir
         task_dir = inc_dir / task_name
         task_dir.mkdir(parents=True, exist_ok=True)
@@ -103,9 +93,38 @@ def main():
     set_seed(config.SEED)
     
     # Output directory
-    config.BASE_DIR = Path.cwd() / "inc_dynamical"
+    config.BASE_DIR = Path.cwd() / "inc_ft"
     config.BASE_DIR.mkdir(parents=True, exist_ok=True)
     
+    # # KD + SI
+    # config.REG = {
+    #     "p_kd_max": 0.35, "p_si_max": 0.35,
+    #     "p_kd_floor": 0.08, "p_si_floor": 0.08,
+    #     "kd_feat_weight": 0.5,
+    #     "kd_delta": 1e-2,
+    #     "kl_tau": 80,
+    #     "scale_clip": 5.0,
+    #     "warmup_epochs": 5,
+    # }
+
+    # Fine-tuning
+    config.REG = {
+        "p_kd_max": 0.0, "p_si_max": 0.0,
+        "p_kd_floor": 0.0, "p_si_floor": 0.0,
+        "kd_feat_weight": 0.0,
+        "kd_delta": 0.0,
+        "kl_tau": 0.0,
+        "scale_clip": 0.0,
+        "warmup_epochs": 0,
+    }
+    
+    # # Only SI
+    # config.REG = {
+    #     "p_kd_max": 0.0, "p_si_max": 0.30,
+    #     "p_kd_floor": 0.0, "p_si_floor": 0.08,
+    # }
+
+
     setup_logging(config.BASE_DIR)
     config.save(config.BASE_DIR / "config.yaml")
     

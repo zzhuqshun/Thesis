@@ -1,0 +1,278 @@
+2025-08-13 15:12:48,866 - INFO - ==== Incremental Training (SI + KD via SITrainer) ====
+2025-08-13 15:12:48,894 - INFO - Number of tasks: 3
+2025-08-13 15:14:24,175 - INFO - Incremental training - Task 0 Train IDs: ['03', '27', '05', '21', '11'], size: 107395
+2025-08-13 15:14:24,192 - INFO - Incremental training - Task 0 Val IDs: ['01'], size: 20028
+2025-08-13 15:14:24,197 - INFO - Incremental training - Test Task 0 size: 8584
+2025-08-13 15:14:24,202 - INFO - Incremental training - Task 1 Train IDs: ['09', '29', '25'], size: 41175
+2025-08-13 15:14:24,207 - INFO - Incremental training - Task 1 Val IDs: ['19'], size: 16183
+2025-08-13 15:14:24,211 - INFO - Incremental training - Test Task 1 size: 6937
+2025-08-13 15:14:24,215 - INFO - Incremental training - Task 2 Train IDs: ['15', '07', '23'], size: 57074
+2025-08-13 15:14:24,219 - INFO - Incremental training - Task 2 Val IDs: ['13'], size: 4511
+2025-08-13 15:14:24,223 - INFO - Incremental training - Test Task 2 size: 1934
+2025-08-13 15:14:24,245 - INFO -   (Scaler) Scaler centers: [ 3.3374245   0.101279   27.50083333]
+2025-08-13 15:14:24,254 - INFO -   (Scaler) Scaler scales: [0.18253608 1.77971742 1.05683333]
+2025-08-13 15:17:15,948 - INFO - ========== Model Structure ==========
+2025-08-13 15:17:15,965 - INFO - 
+SOHLSTM(
+  (lstm): LSTM(3, 128, num_layers=2, batch_first=True, dropout=0.3)
+  (fc): Sequential(
+    (0): Linear(in_features=128, out_features=64, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+    (2): Dropout(p=0.3, inplace=False)
+    (3): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+2025-08-13 15:17:15,970 - INFO - =====================================
+2025-08-13 15:17:15,973 - INFO - ====== Model Parameters Details ======
+2025-08-13 15:17:15,978 - INFO - lstm.weight_ih_l0                                  | trainable |     1536 params
+2025-08-13 15:17:15,983 - INFO - lstm.weight_hh_l0                                  | trainable |    65536 params
+2025-08-13 15:17:15,988 - INFO - lstm.bias_ih_l0                                    | trainable |      512 params
+2025-08-13 15:17:15,991 - INFO - lstm.bias_hh_l0                                    | trainable |      512 params
+2025-08-13 15:17:15,993 - INFO - lstm.weight_ih_l1                                  | trainable |    65536 params
+2025-08-13 15:17:15,998 - INFO - lstm.weight_hh_l1                                  | trainable |    65536 params
+2025-08-13 15:17:16,003 - INFO - lstm.bias_ih_l1                                    | trainable |      512 params
+2025-08-13 15:17:16,007 - INFO - lstm.bias_hh_l1                                    | trainable |      512 params
+2025-08-13 15:17:16,011 - INFO - fc.0.weight                                        | trainable |     8192 params
+2025-08-13 15:17:16,015 - INFO - fc.0.bias                                          | trainable |       64 params
+2025-08-13 15:17:16,021 - INFO - fc.3.weight                                        | trainable |       64 params
+2025-08-13 15:17:16,025 - INFO - fc.3.bias                                          | trainable |        1 params
+2025-08-13 15:17:16,029 - INFO - --------------------------------------------------------------------------------
+2025-08-13 15:17:16,032 - INFO - Total params:                                          208513 params (only trainable)
+2025-08-13 15:17:16,035 - INFO - =====================================
+2025-08-13 15:17:16,038 - INFO - --- task0 (KL-scheduled KD+SI, eps=0.001) ---
+2025-08-13 15:19:27,781 - INFO - Epoch 0: task=3.4245e-02 kd%=0.00% si%=0.00% kl=0.000 val_mae=4.0887e-02 val_mse=1.9670e-03
+2025-08-13 15:21:31,142 - INFO - Epoch 1: task=7.3882e-03 kd%=0.00% si%=0.00% kl=0.000 val_mae=3.6148e-02 val_mse=1.6494e-03
+2025-08-13 15:23:42,530 - INFO - Epoch 2: task=5.5538e-03 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.5671e-02 val_mse=3.8430e-04
+2025-08-13 15:25:54,549 - INFO - Epoch 3: task=3.9574e-03 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.2478e-02 val_mse=2.2400e-04
+2025-08-13 15:28:02,660 - INFO - Epoch 4: task=2.9706e-03 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.4970e-02 val_mse=3.4918e-04
+2025-08-13 15:29:57,962 - INFO - Epoch 5: task=2.2706e-03 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.4074e-02 val_mse=3.0784e-04
+2025-08-13 15:32:05,194 - INFO - Epoch 6: task=1.6811e-03 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.4001e-02 val_mse=3.0202e-04
+2025-08-13 15:34:15,325 - INFO - Epoch 7: task=1.2226e-03 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.7101e-02 val_mse=4.5324e-04
+2025-08-13 15:36:12,299 - INFO - Epoch 8: task=9.0893e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.2918e-02 val_mse=2.5167e-04
+2025-08-13 15:38:23,000 - INFO - Epoch 9: task=7.0184e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.6901e-02 val_mse=4.4295e-04
+2025-08-13 15:40:30,886 - INFO - Epoch 10: task=5.6939e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.3751e-02 val_mse=2.9051e-04
+2025-08-13 15:42:39,381 - INFO - Epoch 11: task=5.0023e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.4116e-02 val_mse=3.0992e-04
+2025-08-13 15:44:49,857 - INFO - Epoch 12: task=4.6140e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.3840e-02 val_mse=2.9626e-04
+2025-08-13 15:46:45,593 - INFO - Epoch 13: task=4.1976e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.2331e-02 val_mse=2.2781e-04
+2025-08-13 15:48:40,104 - INFO - Epoch 14: task=2.6166e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=1.3909e-02 val_mse=3.1073e-04
+2025-08-13 15:50:34,951 - INFO - Epoch 15: task=1.9763e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=2.1143e-02 val_mse=6.1402e-04
+2025-08-13 15:52:31,651 - INFO - Epoch 16: task=1.5802e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=2.2477e-02 val_mse=6.8102e-04
+2025-08-13 15:54:34,462 - INFO - Epoch 17: task=1.4238e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=2.0643e-02 val_mse=5.8623e-04
+2025-08-13 15:56:32,766 - INFO - Epoch 18: task=1.3013e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=2.1605e-02 val_mse=6.3497e-04
+2025-08-13 15:58:29,787 - INFO - Epoch 19: task=1.1888e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=2.4164e-02 val_mse=7.6878e-04
+2025-08-13 16:00:22,237 - INFO - Epoch 20: task=1.1307e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=2.5716e-02 val_mse=8.6040e-04
+2025-08-13 16:02:14,715 - INFO - Epoch 21: task=1.2111e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=2.4165e-02 val_mse=7.8465e-04
+2025-08-13 16:04:06,050 - INFO - Epoch 22: task=1.2174e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=2.3917e-02 val_mse=7.6271e-04
+2025-08-13 16:05:56,958 - INFO - Epoch 23: task=1.0746e-04 kd%=0.00% si%=0.00% kl=0.000 val_mae=2.4580e-02 val_mse=7.9818e-04
+2025-08-13 16:05:56,961 - INFO - Early stopping at epoch 23
+2025-08-13 16:06:02,617 - INFO - Task 0 picked ValBest weights for consolidation (val_mse=2.240025e-04).
+2025-08-13 16:06:02,939 - INFO - Saved best checkpoint: /beegfs/home/users/z/zzhuqshun/Thesis/final/inc_dynamical/task0/task0_best.pt
+2025-08-13 16:06:10,522 - INFO - --- task1 (KL-scheduled KD+SI, eps=0.001) ---
+2025-08-13 16:07:48,648 - INFO - Epoch 0: task=3.9857e-03 kd%=10.92% si%=1.64% kl=0.990 val_mae=2.2230e-02 val_mse=7.3955e-04
+2025-08-13 16:09:26,520 - INFO - Epoch 1: task=3.2815e-03 kd%=21.83% si%=3.29% kl=0.989 val_mae=1.9509e-02 val_mse=5.8072e-04
+2025-08-13 16:11:04,294 - INFO - Epoch 2: task=2.7980e-03 kd%=32.77% si%=4.93% kl=0.990 val_mae=1.7786e-02 val_mse=4.6331e-04
+2025-08-13 16:12:41,943 - INFO - Epoch 3: task=2.4885e-03 kd%=43.65% si%=6.59% kl=0.989 val_mae=2.4825e-02 val_mse=9.2950e-04
+2025-08-13 16:14:19,053 - INFO - Epoch 4: task=2.1328e-03 kd%=54.58% si%=8.23% kl=0.990 val_mae=2.1843e-02 val_mse=7.3000e-04
+2025-08-13 16:15:56,265 - INFO - Epoch 5: task=1.9002e-03 kd%=54.57% si%=8.23% kl=0.989 val_mae=1.8726e-02 val_mse=5.3073e-04
+2025-08-13 16:17:32,836 - INFO - Epoch 6: task=1.6988e-03 kd%=54.55% si%=8.25% kl=0.989 val_mae=2.1247e-02 val_mse=6.8366e-04
+2025-08-13 16:19:09,349 - INFO - Epoch 7: task=1.4955e-03 kd%=54.59% si%=8.22% kl=0.990 val_mae=2.5444e-02 val_mse=9.7653e-04
+2025-08-13 16:20:46,098 - INFO - Epoch 8: task=1.3148e-03 kd%=54.59% si%=8.23% kl=0.990 val_mae=1.8322e-02 val_mse=5.0499e-04
+2025-08-13 16:22:23,029 - INFO - Epoch 9: task=1.1712e-03 kd%=54.57% si%=8.24% kl=0.989 val_mae=2.2451e-02 val_mse=7.5115e-04
+2025-08-13 16:23:59,547 - INFO - Epoch 10: task=1.0557e-03 kd%=54.56% si%=8.24% kl=0.989 val_mae=1.9124e-02 val_mse=5.4442e-04
+2025-08-13 16:25:36,217 - INFO - Epoch 11: task=8.7509e-04 kd%=54.58% si%=8.23% kl=0.990 val_mae=1.8277e-02 val_mse=4.7976e-04
+2025-08-13 16:27:12,723 - INFO - Epoch 12: task=7.9215e-04 kd%=54.57% si%=8.23% kl=0.989 val_mae=1.8842e-02 val_mse=4.8130e-04
+2025-08-13 16:28:48,986 - INFO - Epoch 13: task=7.7043e-04 kd%=54.57% si%=8.24% kl=0.989 val_mae=1.0561e-02 val_mse=1.4602e-04
+2025-08-13 16:30:25,493 - INFO - Epoch 14: task=6.6305e-04 kd%=54.58% si%=8.23% kl=0.989 val_mae=1.1899e-02 val_mse=2.2828e-04
+2025-08-13 16:32:01,838 - INFO - Epoch 15: task=6.3515e-04 kd%=54.58% si%=8.23% kl=0.990 val_mae=1.2343e-02 val_mse=2.2790e-04
+2025-08-13 16:33:38,182 - INFO - Epoch 16: task=5.5821e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=1.0451e-02 val_mse=1.6043e-04
+2025-08-13 16:35:20,262 - INFO - Epoch 17: task=5.3723e-04 kd%=54.57% si%=8.23% kl=0.989 val_mae=1.0545e-02 val_mse=1.5910e-04
+2025-08-13 16:37:02,726 - INFO - Epoch 18: task=4.7117e-04 kd%=54.59% si%=8.22% kl=0.990 val_mae=9.9414e-03 val_mse=1.4583e-04
+2025-08-13 16:38:45,210 - INFO - Epoch 19: task=4.3180e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=1.1109e-02 val_mse=1.9105e-04
+2025-08-13 16:40:27,683 - INFO - Epoch 20: task=4.2232e-04 kd%=54.61% si%=8.22% kl=0.990 val_mae=9.7826e-03 val_mse=1.4573e-04
+2025-08-13 16:42:11,601 - INFO - Epoch 21: task=4.0696e-04 kd%=54.56% si%=8.24% kl=0.989 val_mae=9.7935e-03 val_mse=1.4110e-04
+2025-08-13 16:44:00,024 - INFO - Epoch 22: task=3.7920e-04 kd%=54.58% si%=8.23% kl=0.989 val_mae=1.5180e-02 val_mse=3.1708e-04
+2025-08-13 16:45:53,438 - INFO - Epoch 23: task=3.8010e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=9.5870e-03 val_mse=1.3425e-04
+2025-08-13 16:47:42,337 - INFO - Epoch 24: task=3.6680e-04 kd%=54.58% si%=8.23% kl=0.989 val_mae=1.0052e-02 val_mse=1.5660e-04
+2025-08-13 16:49:33,638 - INFO - Epoch 25: task=3.4665e-04 kd%=54.57% si%=8.24% kl=0.989 val_mae=1.2397e-02 val_mse=2.2362e-04
+2025-08-13 16:51:22,109 - INFO - Epoch 26: task=3.3278e-04 kd%=54.57% si%=8.24% kl=0.989 val_mae=8.6313e-03 val_mse=1.1506e-04
+2025-08-13 16:53:29,721 - INFO - Epoch 27: task=3.3387e-04 kd%=54.61% si%=8.22% kl=0.990 val_mae=1.1191e-02 val_mse=1.7954e-04
+2025-08-13 16:55:08,705 - INFO - Epoch 28: task=3.1910e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=9.7910e-03 val_mse=1.3839e-04
+2025-08-13 16:56:44,283 - INFO - Epoch 29: task=3.1997e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=6.5876e-03 val_mse=6.9164e-05
+2025-08-13 16:58:19,635 - INFO - Epoch 30: task=3.1202e-04 kd%=54.60% si%=8.22% kl=0.990 val_mae=7.5841e-03 val_mse=8.6592e-05
+2025-08-13 16:59:56,270 - INFO - Epoch 31: task=3.0184e-04 kd%=54.57% si%=8.24% kl=0.989 val_mae=7.8131e-03 val_mse=9.5273e-05
+2025-08-13 17:01:31,602 - INFO - Epoch 32: task=2.9569e-04 kd%=54.55% si%=8.25% kl=0.989 val_mae=1.0914e-02 val_mse=1.7030e-04
+2025-08-13 17:03:06,374 - INFO - Epoch 33: task=3.0318e-04 kd%=54.60% si%=8.22% kl=0.990 val_mae=9.0494e-03 val_mse=1.2108e-04
+2025-08-13 17:04:41,790 - INFO - Epoch 34: task=2.8546e-04 kd%=54.57% si%=8.24% kl=0.989 val_mae=9.3599e-03 val_mse=1.2620e-04
+2025-08-13 17:06:17,786 - INFO - Epoch 35: task=2.8961e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=7.2311e-03 val_mse=8.3832e-05
+2025-08-13 17:07:52,660 - INFO - Epoch 36: task=2.8405e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=7.0401e-03 val_mse=8.0541e-05
+2025-08-13 17:09:27,387 - INFO - Epoch 37: task=2.8288e-04 kd%=54.60% si%=8.22% kl=0.990 val_mae=5.5281e-03 val_mse=4.9643e-05
+2025-08-13 17:11:02,042 - INFO - Epoch 38: task=3.1248e-04 kd%=54.58% si%=8.23% kl=0.989 val_mae=6.8448e-03 val_mse=6.7167e-05
+2025-08-13 17:12:37,058 - INFO - Epoch 39: task=2.7129e-04 kd%=54.64% si%=8.20% kl=0.991 val_mae=5.9709e-03 val_mse=5.3306e-05
+2025-08-13 17:14:12,303 - INFO - Epoch 40: task=2.5743e-04 kd%=54.57% si%=8.24% kl=0.989 val_mae=6.1241e-03 val_mse=6.1014e-05
+2025-08-13 17:15:47,499 - INFO - Epoch 41: task=2.5555e-04 kd%=54.60% si%=8.22% kl=0.990 val_mae=5.8363e-03 val_mse=6.0196e-05
+2025-08-13 17:17:22,411 - INFO - Epoch 42: task=2.8110e-04 kd%=54.55% si%=8.25% kl=0.989 val_mae=5.8240e-03 val_mse=4.7719e-05
+2025-08-13 17:18:57,338 - INFO - Epoch 43: task=2.4995e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=1.1793e-02 val_mse=1.7868e-04
+2025-08-13 17:20:32,560 - INFO - Epoch 44: task=2.5756e-04 kd%=54.58% si%=8.23% kl=0.989 val_mae=8.4282e-03 val_mse=1.0074e-04
+2025-08-13 17:22:08,015 - INFO - Epoch 45: task=2.5310e-04 kd%=54.58% si%=8.23% kl=0.989 val_mae=8.3878e-03 val_mse=1.1305e-04
+2025-08-13 17:23:42,831 - INFO - Epoch 46: task=2.4681e-04 kd%=54.58% si%=8.23% kl=0.989 val_mae=5.6362e-03 val_mse=4.9624e-05
+2025-08-13 17:25:17,608 - INFO - Epoch 47: task=2.3770e-04 kd%=54.58% si%=8.23% kl=0.990 val_mae=9.2764e-03 val_mse=1.2378e-04
+2025-08-13 17:26:52,151 - INFO - Epoch 48: task=2.3290e-04 kd%=54.57% si%=8.24% kl=0.989 val_mae=9.3401e-03 val_mse=1.1366e-04
+2025-08-13 17:28:27,136 - INFO - Epoch 49: task=2.3907e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=1.0589e-02 val_mse=1.4759e-04
+2025-08-13 17:30:01,742 - INFO - Epoch 50: task=2.2229e-04 kd%=54.57% si%=8.23% kl=0.989 val_mae=8.7979e-03 val_mse=1.2078e-04
+2025-08-13 17:31:36,477 - INFO - Epoch 51: task=2.3373e-04 kd%=54.60% si%=8.22% kl=0.990 val_mae=4.9568e-03 val_mse=4.1849e-05
+2025-08-13 17:33:11,122 - INFO - Epoch 52: task=2.2753e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=6.6780e-03 val_mse=6.8404e-05
+2025-08-13 17:34:45,767 - INFO - Epoch 53: task=2.2961e-04 kd%=54.58% si%=8.23% kl=0.990 val_mae=1.4757e-02 val_mse=2.6364e-04
+2025-08-13 17:36:21,029 - INFO - Epoch 54: task=2.1819e-04 kd%=54.57% si%=8.24% kl=0.989 val_mae=1.0858e-02 val_mse=1.5952e-04
+2025-08-13 17:37:56,138 - INFO - Epoch 55: task=2.2215e-04 kd%=54.56% si%=8.24% kl=0.989 val_mae=6.4862e-03 val_mse=6.0293e-05
+2025-08-13 17:39:30,839 - INFO - Epoch 56: task=2.2471e-04 kd%=54.59% si%=8.22% kl=0.990 val_mae=5.7763e-03 val_mse=4.8163e-05
+2025-08-13 17:41:05,632 - INFO - Epoch 57: task=2.1965e-04 kd%=54.57% si%=8.24% kl=0.989 val_mae=1.6920e-02 val_mse=3.5419e-04
+2025-08-13 17:42:40,232 - INFO - Epoch 58: task=2.1284e-04 kd%=54.60% si%=8.22% kl=0.990 val_mae=1.2920e-02 val_mse=2.0488e-04
+2025-08-13 17:44:15,005 - INFO - Epoch 59: task=2.1502e-04 kd%=54.59% si%=8.22% kl=0.990 val_mae=1.0592e-02 val_mse=1.4087e-04
+2025-08-13 17:45:49,732 - INFO - Epoch 60: task=2.0730e-04 kd%=54.59% si%=8.22% kl=0.990 val_mae=1.3586e-02 val_mse=2.1714e-04
+2025-08-13 17:47:24,290 - INFO - Epoch 61: task=2.2326e-04 kd%=54.56% si%=8.24% kl=0.989 val_mae=1.2183e-02 val_mse=1.8040e-04
+2025-08-13 17:48:58,882 - INFO - Epoch 62: task=2.0435e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=1.1335e-02 val_mse=1.6400e-04
+2025-08-13 17:50:33,466 - INFO - Epoch 63: task=2.0562e-04 kd%=54.56% si%=8.24% kl=0.989 val_mae=1.0774e-02 val_mse=1.4553e-04
+2025-08-13 17:52:08,183 - INFO - Epoch 64: task=2.0378e-04 kd%=54.57% si%=8.24% kl=0.989 val_mae=1.7606e-02 val_mse=3.3892e-04
+2025-08-13 17:53:42,786 - INFO - Epoch 65: task=2.0227e-04 kd%=54.56% si%=8.24% kl=0.989 val_mae=5.1525e-03 val_mse=4.2866e-05
+2025-08-13 17:55:17,304 - INFO - Epoch 66: task=1.9878e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=1.6546e-02 val_mse=3.3704e-04
+2025-08-13 17:56:52,047 - INFO - Epoch 67: task=1.9577e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=1.4348e-02 val_mse=2.4095e-04
+2025-08-13 17:58:27,320 - INFO - Epoch 68: task=2.0239e-04 kd%=54.57% si%=8.24% kl=0.989 val_mae=1.3924e-02 val_mse=2.3516e-04
+2025-08-13 18:00:02,623 - INFO - Epoch 69: task=1.8939e-04 kd%=54.55% si%=8.25% kl=0.989 val_mae=1.0661e-02 val_mse=1.4344e-04
+2025-08-13 18:01:37,598 - INFO - Epoch 70: task=2.0112e-04 kd%=54.59% si%=8.22% kl=0.990 val_mae=6.6703e-03 val_mse=5.9271e-05
+2025-08-13 18:03:13,638 - INFO - Epoch 71: task=1.9691e-04 kd%=54.59% si%=8.23% kl=0.990 val_mae=9.8937e-03 val_mse=1.2483e-04
+2025-08-13 18:03:13,641 - INFO - Early stopping at epoch 71
+2025-08-13 18:03:18,109 - INFO - Task 1 picked ValBest weights for consolidation (val_mse=4.184867e-05).
+2025-08-13 18:03:18,182 - INFO - Saved best checkpoint: /beegfs/home/users/z/zzhuqshun/Thesis/final/inc_dynamical/task1/task1_best.pt
+2025-08-13 18:03:21,274 - INFO - --- task2 (KL-scheduled KD+SI, eps=0.001) ---
+2025-08-13 18:05:28,057 - INFO - Epoch 0: task=2.3825e-04 kd%=11.00% si%=1.60% kl=1.000 val_mae=3.8863e-02 val_mse=1.9462e-03
+2025-08-13 18:07:34,646 - INFO - Epoch 1: task=1.7798e-04 kd%=22.00% si%=3.20% kl=1.000 val_mae=3.9392e-02 val_mse=1.9082e-03
+2025-08-13 18:09:40,946 - INFO - Epoch 2: task=1.5595e-04 kd%=32.99% si%=4.80% kl=1.000 val_mae=3.4535e-02 val_mse=1.5421e-03
+2025-08-13 18:11:47,306 - INFO - Epoch 3: task=1.4306e-04 kd%=43.99% si%=6.40% kl=1.000 val_mae=2.8705e-02 val_mse=1.0186e-03
+2025-08-13 18:13:54,634 - INFO - Epoch 4: task=1.2797e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=3.2967e-02 val_mse=1.3997e-03
+2025-08-13 18:16:03,983 - INFO - Epoch 5: task=1.2955e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.9340e-02 val_mse=1.1031e-03
+2025-08-13 18:18:10,706 - INFO - Epoch 6: task=1.2055e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=3.1199e-02 val_mse=1.2797e-03
+2025-08-13 18:20:16,959 - INFO - Epoch 7: task=1.0903e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.8193e-02 val_mse=1.0003e-03
+2025-08-13 18:22:23,213 - INFO - Epoch 8: task=1.1589e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=3.2801e-02 val_mse=1.3097e-03
+2025-08-13 18:24:29,098 - INFO - Epoch 9: task=1.0986e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=3.1255e-02 val_mse=1.1953e-03
+2025-08-13 18:26:39,407 - INFO - Epoch 10: task=1.0649e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.6939e-02 val_mse=9.7953e-04
+2025-08-13 18:28:49,211 - INFO - Epoch 11: task=1.0986e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.7448e-02 val_mse=9.0480e-04
+2025-08-13 18:31:00,345 - INFO - Epoch 12: task=1.0129e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.7061e-02 val_mse=9.1762e-04
+2025-08-13 18:33:39,188 - INFO - Epoch 13: task=9.8427e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.5108e-02 val_mse=7.7197e-04
+2025-08-13 18:36:17,285 - INFO - Epoch 14: task=1.0226e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.4083e-02 val_mse=7.4314e-04
+2025-08-13 18:38:34,194 - INFO - Epoch 15: task=9.9901e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.2329e-02 val_mse=6.5583e-04
+2025-08-13 18:40:45,673 - INFO - Epoch 16: task=9.5242e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.3519e-02 val_mse=7.5554e-04
+2025-08-13 18:42:46,646 - INFO - Epoch 17: task=9.7876e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.2048e-02 val_mse=6.4574e-04
+2025-08-13 18:44:50,081 - INFO - Epoch 18: task=9.0556e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.8974e-02 val_mse=1.0079e-03
+2025-08-13 18:47:14,661 - INFO - Epoch 19: task=9.5081e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.6657e-02 val_mse=8.7875e-04
+2025-08-13 18:49:40,792 - INFO - Epoch 20: task=9.3697e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.6544e-02 val_mse=8.4203e-04
+2025-08-13 18:52:07,790 - INFO - Epoch 21: task=9.1241e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.5808e-02 val_mse=7.7143e-04
+2025-08-13 18:54:38,265 - INFO - Epoch 22: task=8.9148e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.2521e-02 val_mse=6.2861e-04
+2025-08-13 18:57:11,159 - INFO - Epoch 23: task=9.3198e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.9926e-02 val_mse=5.4461e-04
+2025-08-13 18:59:42,668 - INFO - Epoch 24: task=9.0402e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.0991e-02 val_mse=5.5456e-04
+2025-08-13 19:02:14,597 - INFO - Epoch 25: task=9.2410e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.5746e-02 val_mse=7.8265e-04
+2025-08-13 19:04:49,108 - INFO - Epoch 26: task=9.0261e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.9138e-02 val_mse=4.7634e-04
+2025-08-13 19:07:23,528 - INFO - Epoch 27: task=9.0458e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.0837e-02 val_mse=5.4892e-04
+2025-08-13 19:09:50,042 - INFO - Epoch 28: task=9.7676e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.1123e-02 val_mse=5.8305e-04
+2025-08-13 19:12:17,831 - INFO - Epoch 29: task=8.6672e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.2162e-02 val_mse=6.0464e-04
+2025-08-13 19:14:52,890 - INFO - Epoch 30: task=8.6399e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.2591e-02 val_mse=6.1150e-04
+2025-08-13 19:17:31,375 - INFO - Epoch 31: task=8.3533e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.0238e-02 val_mse=5.4919e-04
+2025-08-13 19:19:54,522 - INFO - Epoch 32: task=9.0100e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.7554e-02 val_mse=4.0449e-04
+2025-08-13 19:22:35,698 - INFO - Epoch 33: task=8.4841e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.0892e-02 val_mse=5.3710e-04
+2025-08-13 19:25:12,713 - INFO - Epoch 34: task=8.4579e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.6191e-02 val_mse=3.6521e-04
+2025-08-13 19:27:51,145 - INFO - Epoch 35: task=8.1645e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.6261e-02 val_mse=3.6327e-04
+2025-08-13 19:30:26,741 - INFO - Epoch 36: task=9.0250e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.9159e-02 val_mse=4.6838e-04
+2025-08-13 19:32:56,199 - INFO - Epoch 37: task=9.2676e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=5.2918e-02 val_mse=3.0293e-03
+2025-08-13 19:35:20,607 - INFO - Epoch 38: task=9.9424e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.5413e-02 val_mse=3.3726e-04
+2025-08-13 19:37:43,086 - INFO - Epoch 39: task=7.8752e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.9209e-02 val_mse=4.9429e-04
+2025-08-13 19:40:06,102 - INFO - Epoch 40: task=8.6583e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.4900e-02 val_mse=3.1667e-04
+2025-08-13 19:42:31,459 - INFO - Epoch 41: task=8.1426e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.9201e-02 val_mse=4.7483e-04
+2025-08-13 19:45:00,307 - INFO - Epoch 42: task=8.0780e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.6299e-02 val_mse=3.6183e-04
+2025-08-13 19:48:02,198 - INFO - Epoch 43: task=7.9162e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.4945e-02 val_mse=3.1876e-04
+2025-08-13 19:51:02,616 - INFO - Epoch 44: task=8.3207e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.1898e-02 val_mse=2.1646e-04
+2025-08-13 19:54:04,805 - INFO - Epoch 45: task=7.9633e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.8234e-02 val_mse=4.4700e-04
+2025-08-13 19:57:05,737 - INFO - Epoch 46: task=8.3286e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.4803e-02 val_mse=3.0449e-04
+2025-08-13 19:59:38,622 - INFO - Epoch 47: task=7.6901e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.2146e-02 val_mse=2.3009e-04
+2025-08-13 20:01:46,504 - INFO - Epoch 48: task=8.7036e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.7761e-02 val_mse=4.0794e-04
+2025-08-13 20:03:53,785 - INFO - Epoch 49: task=9.0871e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.0275e-02 val_mse=1.5985e-04
+2025-08-13 20:06:00,836 - INFO - Epoch 50: task=8.7367e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.8957e-02 val_mse=4.5230e-04
+2025-08-13 20:08:07,496 - INFO - Epoch 51: task=7.9933e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.0016e-02 val_mse=4.8740e-04
+2025-08-13 20:10:14,045 - INFO - Epoch 52: task=8.1156e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.1179e-02 val_mse=5.4052e-04
+2025-08-13 20:12:21,893 - INFO - Epoch 53: task=8.0585e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.9511e-02 val_mse=4.8164e-04
+2025-08-13 20:14:29,210 - INFO - Epoch 54: task=7.9591e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.2279e-02 val_mse=5.7293e-04
+2025-08-13 20:16:36,583 - INFO - Epoch 55: task=7.6562e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.8395e-02 val_mse=4.2718e-04
+2025-08-13 20:18:43,255 - INFO - Epoch 56: task=7.5859e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.6978e-02 val_mse=3.8623e-04
+2025-08-13 20:20:51,569 - INFO - Epoch 57: task=7.8579e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.6891e-02 val_mse=3.8179e-04
+2025-08-13 20:22:59,820 - INFO - Epoch 58: task=7.8956e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.5048e-02 val_mse=3.1061e-04
+2025-08-13 20:25:07,361 - INFO - Epoch 59: task=7.7976e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.4645e-02 val_mse=6.7220e-04
+2025-08-13 20:27:14,089 - INFO - Epoch 60: task=8.2759e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.6216e-02 val_mse=3.4066e-04
+2025-08-13 20:29:20,910 - INFO - Epoch 61: task=7.7962e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.7799e-02 val_mse=4.0543e-04
+2025-08-13 20:31:27,949 - INFO - Epoch 62: task=7.5363e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=9.6789e-03 val_mse=1.5134e-04
+2025-08-13 20:33:36,568 - INFO - Epoch 63: task=8.2806e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.1801e-02 val_mse=2.3118e-04
+2025-08-13 20:35:49,500 - INFO - Epoch 64: task=7.5105e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.4355e-02 val_mse=2.9468e-04
+2025-08-13 20:38:00,341 - INFO - Epoch 65: task=1.5104e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.6334e-02 val_mse=3.1976e-04
+2025-08-13 20:40:07,692 - INFO - Epoch 66: task=3.7922e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.9824e-02 val_mse=4.5120e-04
+2025-08-13 20:42:14,397 - INFO - Epoch 67: task=1.1228e-04 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.3857e-02 val_mse=6.0605e-04
+2025-08-13 20:44:20,643 - INFO - Epoch 68: task=8.2300e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.5558e-02 val_mse=3.1432e-04
+2025-08-13 20:46:26,948 - INFO - Epoch 69: task=7.8324e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.5919e-02 val_mse=3.3221e-04
+2025-08-13 20:48:33,474 - INFO - Epoch 70: task=7.6023e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.2615e-02 val_mse=5.9222e-04
+2025-08-13 20:50:40,082 - INFO - Epoch 71: task=7.8018e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.0597e-02 val_mse=1.6907e-04
+2025-08-13 20:52:46,408 - INFO - Epoch 72: task=8.8955e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.4466e-02 val_mse=2.7802e-04
+2025-08-13 20:54:52,834 - INFO - Epoch 73: task=7.6201e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=7.2220e-03 val_mse=9.3012e-05
+2025-08-13 20:56:59,179 - INFO - Epoch 74: task=7.9350e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.5017e-02 val_mse=2.9383e-04
+2025-08-13 20:59:05,521 - INFO - Epoch 75: task=7.0536e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.4535e-02 val_mse=2.8485e-04
+2025-08-13 21:01:11,965 - INFO - Epoch 76: task=7.4031e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=8.9833e-03 val_mse=1.3300e-04
+2025-08-13 21:03:18,605 - INFO - Epoch 77: task=7.2608e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.3332e-02 val_mse=2.5677e-04
+2025-08-13 21:05:25,181 - INFO - Epoch 78: task=7.7443e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.2648e-02 val_mse=2.2886e-04
+2025-08-13 21:07:31,660 - INFO - Epoch 79: task=7.3468e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.4735e-02 val_mse=2.5749e-04
+2025-08-13 21:09:38,157 - INFO - Epoch 80: task=7.3602e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.0882e-02 val_mse=1.7803e-04
+2025-08-13 21:11:44,609 - INFO - Epoch 81: task=8.8337e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.7299e-02 val_mse=3.5451e-04
+2025-08-13 21:13:52,195 - INFO - Epoch 82: task=7.3324e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.8516e-02 val_mse=4.0517e-04
+2025-08-13 21:16:00,248 - INFO - Epoch 83: task=7.4710e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.3567e-02 val_mse=2.4085e-04
+2025-08-13 21:18:08,310 - INFO - Epoch 84: task=7.4242e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.2529e-02 val_mse=2.2647e-04
+2025-08-13 21:20:16,533 - INFO - Epoch 85: task=7.6340e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.2402e-02 val_mse=2.2166e-04
+2025-08-13 21:22:24,778 - INFO - Epoch 86: task=7.8788e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.5121e-02 val_mse=2.8888e-04
+2025-08-13 21:24:32,735 - INFO - Epoch 87: task=7.6111e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=2.0127e-02 val_mse=4.7702e-04
+2025-08-13 21:26:39,354 - INFO - Epoch 88: task=7.4533e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=8.9404e-03 val_mse=1.2784e-04
+2025-08-13 21:28:44,685 - INFO - Epoch 89: task=7.4335e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.5167e-02 val_mse=2.9401e-04
+2025-08-13 21:30:50,568 - INFO - Epoch 90: task=7.3894e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=7.7847e-03 val_mse=1.1471e-04
+2025-08-13 21:33:16,223 - INFO - Epoch 91: task=7.2478e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=9.5531e-03 val_mse=1.4147e-04
+2025-08-13 21:35:50,735 - INFO - Epoch 92: task=7.0264e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.5368e-02 val_mse=3.0063e-04
+2025-08-13 21:38:33,357 - INFO - Epoch 93: task=7.5880e-05 kd%=54.99% si%=8.00% kl=1.000 val_mae=1.4403e-02 val_mse=2.7058e-04
+2025-08-13 21:38:33,388 - INFO - Early stopping at epoch 93
+2025-08-13 21:38:34,506 - INFO - Task 2 picked ValBest weights for consolidation (val_mse=9.301217e-05).
+2025-08-13 21:38:34,644 - INFO - Saved best checkpoint: /beegfs/home/users/z/zzhuqshun/Thesis/final/inc_dynamical/task2/task2_best.pt
+2025-08-13 21:38:38,111 - INFO - ==== Incremental Training Complete ====
+2025-08-13 21:38:38,122 - INFO - Evaluating final model...
+2025-08-13 21:38:38,140 - INFO - ==== Starting Comprehensive Evaluation ====
+2025-08-13 21:38:38,229 - INFO - Evaluating model trained after task 0...
+2025-08-13 21:38:44,796 - INFO - Full test set evaluation: MAE=8.1125e-02, R2=-0.4934
+2025-08-13 21:38:50,890 - INFO -   Task 0 -> Test Task 0: MAE=3.1550e-02, R2=-37.6123
+2025-08-13 21:38:52,691 - INFO -   Task 0 -> Test Task 1: MAE=7.8711e-02, R2=-12.6480
+2025-08-13 21:38:53,060 - INFO -   Task 0 -> Test Task 2: MAE=1.7590e+00, R2=-6867.8667
+2025-08-13 21:38:53,073 - INFO - Evaluating model trained after task 1...
+2025-08-13 21:38:59,562 - INFO - Full test set evaluation: MAE=2.0400e-02, R2=0.9193
+2025-08-13 21:39:05,554 - INFO -   Task 1 -> Test Task 0: MAE=2.2753e-02, R2=-25.2799
+2025-08-13 21:39:07,349 - INFO -   Task 1 -> Test Task 1: MAE=9.0207e-03, R2=0.7086
+2025-08-13 21:39:07,708 - INFO -   Task 1 -> Test Task 2: MAE=7.0365e-02, R2=-6.4651
+2025-08-13 21:39:07,721 - INFO - Evaluating model trained after task 2...
+2025-08-13 21:39:14,240 - INFO - Full test set evaluation: MAE=4.4185e-02, R2=0.6965
+2025-08-13 21:39:20,200 - INFO -   Task 2 -> Test Task 0: MAE=3.7548e-02, R2=-58.9771
+2025-08-13 21:39:21,994 - INFO -   Task 2 -> Test Task 1: MAE=2.5851e-02, R2=-0.5205
+2025-08-13 21:39:22,350 - INFO -   Task 2 -> Test Task 2: MAE=1.0325e-02, R2=0.7606
+2025-08-13 21:39:22,354 - INFO - ==== Computing Continual Learning Metrics ====
+2025-08-13 21:39:22,358 - INFO - Computing random initialization baselines...
+2025-08-13 21:39:24,792 - INFO -   Baseline Task 0: R=-0.9732
+2025-08-13 21:39:26,563 - INFO -   Baseline Task 1: R=-0.9253
+2025-08-13 21:39:26,914 - INFO -   Baseline Task 2: R=-0.6923
+2025-08-13 21:39:26,916 - INFO - ==== Continual Learning Results ====
+2025-08-13 21:39:26,920 - INFO - BWT (Backward Transfer): -0.0114 (negative = forgetting)
+2025-08-13 21:39:26,924 - INFO - FWT (Forward Transfer): 0.7342 (positive = beneficial transfer)
+2025-08-13 21:39:26,928 - INFO - ACC (Average Accuracy): -0.0246
+2025-08-13 21:39:26,932 - INFO - ==== Performance Matrix R[i][j] ====
+2025-08-13 21:39:26,936 - INFO - Rows: trained after task i, Columns: evaluated on task j
+2025-08-13 21:39:26,940 - INFO -        Task 0 Task 1 Task 2
+2025-08-13 21:39:26,944 - INFO - Task 0: -0.0316 -0.0787 -1.7590
+2025-08-13 21:39:26,947 - INFO - Task 1: -0.0228 -0.0090 -0.0704
+2025-08-13 21:39:26,951 - INFO - Task 2: -0.0375 -0.0259 -0.0103
+2025-08-13 21:39:27,055 - INFO - ==== Evaluation Complete ====
+2025-08-13 21:39:27,059 - INFO - All results saved to: /beegfs/home/users/z/zzhuqshun/Thesis/final/inc_dynamical/metrics
