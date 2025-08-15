@@ -1,0 +1,151 @@
+2025-08-15 14:47:08,664 - INFO - ==== Incremental Training (SI + KD via IncTrainer) ====
+2025-08-15 14:47:08,672 - INFO - Number of tasks: 3
+2025-08-15 14:48:44,380 - INFO - Incremental training - Task 0 Train IDs: ['03', '27', '05', '21', '11'], size: 107395
+2025-08-15 14:48:44,389 - INFO - Incremental training - Task 0 Val IDs: ['01'], size: 20028
+2025-08-15 14:48:44,391 - INFO - Incremental training - Test Task 0 size: 8584
+2025-08-15 14:48:44,394 - INFO - Incremental training - Task 1 Train IDs: ['09', '29', '25'], size: 41175
+2025-08-15 14:48:44,397 - INFO - Incremental training - Task 1 Val IDs: ['19'], size: 16183
+2025-08-15 14:48:44,400 - INFO - Incremental training - Test Task 1 size: 6937
+2025-08-15 14:48:44,403 - INFO - Incremental training - Task 2 Train IDs: ['15', '07', '23'], size: 57074
+2025-08-15 14:48:44,406 - INFO - Incremental training - Task 2 Val IDs: ['13'], size: 4511
+2025-08-15 14:48:44,408 - INFO - Incremental training - Test Task 2 size: 1934
+2025-08-15 14:48:44,422 - INFO -   (Scaler) Scaler centers: [ 3.3374245   0.101279   27.50083333]
+2025-08-15 14:48:44,428 - INFO -   (Scaler) Scaler scales: [0.18253608 1.77971742 1.05683333]
+2025-08-15 14:48:45,787 - INFO - ========== Model Structure ==========
+2025-08-15 14:48:45,789 - INFO - 
+SOHLSTM(
+  (lstm): LSTM(3, 128, num_layers=2, batch_first=True, dropout=0.3)
+  (fc): Sequential(
+    (0): Linear(in_features=128, out_features=64, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+    (2): Dropout(p=0.3, inplace=False)
+    (3): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+2025-08-15 14:48:45,793 - INFO - =====================================
+2025-08-15 14:48:45,795 - INFO - ====== Model Parameters Details ======
+2025-08-15 14:48:45,798 - INFO - lstm.weight_ih_l0                                  | trainable |     1536 params
+2025-08-15 14:48:45,801 - INFO - lstm.weight_hh_l0                                  | trainable |    65536 params
+2025-08-15 14:48:45,804 - INFO - lstm.bias_ih_l0                                    | trainable |      512 params
+2025-08-15 14:48:45,810 - INFO - lstm.bias_hh_l0                                    | trainable |      512 params
+2025-08-15 14:48:45,812 - INFO - lstm.weight_ih_l1                                  | trainable |    65536 params
+2025-08-15 14:48:45,815 - INFO - lstm.weight_hh_l1                                  | trainable |    65536 params
+2025-08-15 14:48:45,817 - INFO - lstm.bias_ih_l1                                    | trainable |      512 params
+2025-08-15 14:48:45,819 - INFO - lstm.bias_hh_l1                                    | trainable |      512 params
+2025-08-15 14:48:45,821 - INFO - fc.0.weight                                        | trainable |     8192 params
+2025-08-15 14:48:45,823 - INFO - fc.0.bias                                          | trainable |       64 params
+2025-08-15 14:48:45,826 - INFO - fc.3.weight                                        | trainable |       64 params
+2025-08-15 14:48:45,828 - INFO - fc.3.bias                                          | trainable |        1 params
+2025-08-15 14:48:45,830 - INFO - --------------------------------------------------------------------------------
+2025-08-15 14:48:45,830 - INFO - Total params:                                          208513 params (only trainable)
+2025-08-15 14:48:45,831 - INFO - =====================================
+2025-08-15 14:51:52,180 - INFO - [Task 0][Ep 0] train=3.4183e-02 val=1.8106e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=95.98s
+2025-08-15 14:53:26,211 - INFO - [Task 0][Ep 1] train=7.4524e-03 val=9.6827e-04 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=93.96s
+2025-08-15 14:55:00,271 - INFO - [Task 0][Ep 2] train=5.6415e-03 val=1.1449e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=94.03s
+2025-08-15 14:56:34,045 - INFO - [Task 0][Ep 3] train=4.6389e-03 val=5.0094e-04 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=93.77s
+2025-08-15 14:58:08,683 - INFO - [Task 0][Ep 4] train=3.7085e-03 val=1.0208e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=94.60s
+2025-08-15 14:59:50,902 - INFO - [Task 0][Ep 5] train=2.8454e-03 val=3.8385e-04 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=102.22s
+2025-08-15 15:01:33,391 - INFO - [Task 0][Ep 6] train=1.9421e-03 val=3.4660e-04 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=102.46s
+2025-08-15 15:03:15,379 - INFO - [Task 0][Ep 7] train=1.3745e-03 val=2.3536e-04 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=101.95s
+2025-08-15 15:04:56,811 - INFO - [Task 0][Ep 8] train=1.1364e-03 val=2.8731e-04 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=101.39s
+2025-08-15 15:06:36,516 - INFO - [Task 0][Ep 9] train=8.5875e-04 val=9.2570e-04 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=99.70s
+2025-08-15 15:08:14,191 - INFO - [Task 0][Ep 10] train=6.4584e-04 val=9.1032e-04 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=97.67s
+2025-08-15 15:09:48,163 - INFO - [Task 0][Ep 11] train=5.3215e-04 val=1.2565e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=93.97s
+2025-08-15 15:11:22,120 - INFO - [Task 0][Ep 12] train=4.7213e-04 val=8.5282e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.00e-04 time=93.96s
+2025-08-15 15:12:56,164 - INFO - [Task 0][Ep 13] train=4.5206e-04 val=2.6870e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=5.00e-05 time=94.04s
+2025-08-15 15:14:30,012 - INFO - [Task 0][Ep 14] train=3.1625e-04 val=1.1495e-02 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=5.00e-05 time=93.85s
+2025-08-15 15:16:03,870 - INFO - [Task 0][Ep 15] train=2.0442e-04 val=1.1450e-02 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=5.00e-05 time=93.84s
+2025-08-15 15:17:37,977 - INFO - [Task 0][Ep 16] train=2.8454e-04 val=5.0561e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=5.00e-05 time=94.10s
+2025-08-15 15:19:12,730 - INFO - [Task 0][Ep 17] train=4.2232e-04 val=7.1749e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=5.00e-05 time=94.75s
+2025-08-15 15:20:47,162 - INFO - [Task 0][Ep 18] train=2.4178e-04 val=7.7412e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=5.00e-05 time=94.43s
+2025-08-15 15:22:21,330 - INFO - [Task 0][Ep 19] train=1.7374e-04 val=8.2510e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=2.50e-05 time=94.15s
+2025-08-15 15:23:55,871 - INFO - [Task 0][Ep 20] train=1.1908e-04 val=7.0348e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=2.50e-05 time=94.52s
+2025-08-15 15:25:29,861 - INFO - [Task 0][Ep 21] train=1.0881e-04 val=4.9684e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=2.50e-05 time=93.97s
+2025-08-15 15:27:04,334 - INFO - [Task 0][Ep 22] train=9.9826e-05 val=5.4105e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=2.50e-05 time=94.47s
+2025-08-15 15:28:39,754 - INFO - [Task 0][Ep 23] train=9.6723e-05 val=4.8673e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=2.50e-05 time=95.40s
+2025-08-15 15:30:14,673 - INFO - [Task 0][Ep 24] train=9.0518e-05 val=4.2275e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=2.50e-05 time=94.90s
+2025-08-15 15:31:49,627 - INFO - [Task 0][Ep 25] train=8.6469e-05 val=8.7125e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.25e-05 time=94.94s
+2025-08-15 15:33:25,166 - INFO - [Task 0][Ep 26] train=8.0020e-05 val=4.1118e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.25e-05 time=95.52s
+2025-08-15 15:34:59,116 - INFO - [Task 0][Ep 27] train=7.8008e-05 val=4.4624e-03 | KL=0.000 | Lambda: KD=0.0000 SI=0.0000 | Ratio: KD=0.00% SI=0.00% | lr=1.25e-05 time=93.94s
+2025-08-15 15:34:59,124 - INFO - [Task 0] Early stopping at epoch 27
+2025-08-15 15:36:37,512 - INFO - [Task 1][Ep 0] train=8.6762e-03 val=4.8886e-04 | KL=1.963 | Lambda: KD=0.4366 SI=0.0000 | Ratio: KD=56.37% SI=0.00% | lr=1.00e-04 time=61.99s
+2025-08-15 15:37:38,469 - INFO - [Task 1][Ep 1] train=8.9559e-03 val=5.3050e-04 | KL=1.961 | Lambda: KD=0.4365 SI=0.0107 | Ratio: KD=54.99% SI=1.81% | lr=1.00e-04 time=60.91s
+2025-08-15 15:38:39,281 - INFO - [Task 1][Ep 2] train=8.8151e-03 val=4.5851e-04 | KL=1.963 | Lambda: KD=0.4365 SI=0.0214 | Ratio: KD=57.15% SI=2.95% | lr=1.00e-04 time=60.79s
+2025-08-15 15:39:39,834 - INFO - [Task 1][Ep 3] train=9.0180e-03 val=4.9342e-04 | KL=1.962 | Lambda: KD=0.4366 SI=0.0321 | Ratio: KD=53.65% SI=3.16% | lr=1.00e-04 time=60.51s
+2025-08-15 15:40:41,321 - INFO - [Task 1][Ep 4] train=8.7491e-03 val=5.1511e-04 | KL=1.963 | Lambda: KD=0.4366 SI=0.0428 | Ratio: KD=54.66% SI=3.81% | lr=1.00e-04 time=61.47s
+2025-08-15 15:41:50,828 - INFO - [Task 1][Ep 5] train=8.8169e-03 val=4.8770e-04 | KL=1.967 | Lambda: KD=0.4366 SI=0.0535 | Ratio: KD=54.85% SI=3.90% | lr=1.00e-04 time=69.49s
+2025-08-15 15:42:59,782 - INFO - [Task 1][Ep 6] train=8.8018e-03 val=5.2675e-04 | KL=1.958 | Lambda: KD=0.4364 SI=0.0642 | Ratio: KD=54.25% SI=4.06% | lr=1.00e-04 time=68.94s
+2025-08-15 15:44:13,387 - INFO - [Task 1][Ep 7] train=8.8475e-03 val=7.2771e-04 | KL=1.961 | Lambda: KD=0.4365 SI=0.0749 | Ratio: KD=53.91% SI=4.06% | lr=1.00e-04 time=73.59s
+2025-08-15 15:45:44,951 - INFO - [Task 1][Ep 8] train=9.1065e-03 val=4.9785e-04 | KL=1.964 | Lambda: KD=0.4366 SI=0.0856 | Ratio: KD=54.47% SI=4.46% | lr=5.00e-05 time=91.53s
+2025-08-15 15:47:29,899 - INFO - [Task 1][Ep 9] train=8.7684e-03 val=6.1779e-04 | KL=1.961 | Lambda: KD=0.4366 SI=0.0963 | Ratio: KD=53.16% SI=3.67% | lr=5.00e-05 time=104.93s
+2025-08-15 15:49:13,294 - INFO - [Task 1][Ep 10] train=8.8201e-03 val=5.6126e-04 | KL=1.963 | Lambda: KD=0.4365 SI=0.1070 | Ratio: KD=53.13% SI=4.64% | lr=5.00e-05 time=103.37s
+2025-08-15 15:50:54,031 - INFO - [Task 1][Ep 11] train=8.7877e-03 val=5.4792e-04 | KL=1.964 | Lambda: KD=0.4365 SI=0.1070 | Ratio: KD=53.19% SI=4.25% | lr=5.00e-05 time=100.72s
+2025-08-15 15:52:32,054 - INFO - [Task 1][Ep 12] train=8.7877e-03 val=4.8804e-04 | KL=1.964 | Lambda: KD=0.4366 SI=0.1069 | Ratio: KD=53.09% SI=3.73% | lr=5.00e-05 time=98.00s
+2025-08-15 15:54:10,107 - INFO - [Task 1][Ep 13] train=8.7098e-03 val=5.1810e-04 | KL=1.961 | Lambda: KD=0.4365 SI=0.1070 | Ratio: KD=53.50% SI=3.88% | lr=5.00e-05 time=98.03s
+2025-08-15 15:55:47,944 - INFO - [Task 1][Ep 14] train=8.7760e-03 val=1.1434e-03 | KL=1.961 | Lambda: KD=0.4365 SI=0.1070 | Ratio: KD=53.33% SI=4.05% | lr=2.50e-05 time=97.82s
+2025-08-15 15:57:24,667 - INFO - [Task 1][Ep 15] train=8.7201e-03 val=7.6429e-04 | KL=1.961 | Lambda: KD=0.4366 SI=0.1070 | Ratio: KD=52.98% SI=3.35% | lr=2.50e-05 time=96.70s
+2025-08-15 15:59:00,838 - INFO - [Task 1][Ep 16] train=8.7302e-03 val=4.8924e-04 | KL=1.963 | Lambda: KD=0.4366 SI=0.1069 | Ratio: KD=52.99% SI=3.29% | lr=2.50e-05 time=96.16s
+2025-08-15 16:00:38,258 - INFO - [Task 1][Ep 17] train=8.7094e-03 val=4.9145e-04 | KL=1.965 | Lambda: KD=0.4366 SI=0.1070 | Ratio: KD=52.85% SI=3.39% | lr=2.50e-05 time=97.41s
+2025-08-15 16:02:10,750 - INFO - [Task 1][Ep 18] train=8.7181e-03 val=6.8917e-04 | KL=1.964 | Lambda: KD=0.4366 SI=0.1069 | Ratio: KD=52.92% SI=3.31% | lr=2.50e-05 time=92.48s
+2025-08-15 16:03:43,031 - INFO - [Task 1][Ep 19] train=8.6870e-03 val=6.9646e-04 | KL=1.963 | Lambda: KD=0.4365 SI=0.1070 | Ratio: KD=52.97% SI=3.26% | lr=2.50e-05 time=92.27s
+2025-08-15 16:05:19,239 - INFO - [Task 1][Ep 20] train=8.7854e-03 val=5.5240e-04 | KL=1.962 | Lambda: KD=0.4366 SI=0.1070 | Ratio: KD=52.88% SI=3.46% | lr=1.25e-05 time=96.16s
+2025-08-15 16:06:59,422 - INFO - [Task 1][Ep 21] train=8.6040e-03 val=5.3431e-04 | KL=1.962 | Lambda: KD=0.4365 SI=0.1070 | Ratio: KD=53.96% SI=3.84% | lr=1.25e-05 time=100.16s
+2025-08-15 16:08:39,049 - INFO - [Task 1][Ep 22] train=8.6513e-03 val=5.0157e-04 | KL=1.963 | Lambda: KD=0.4366 SI=0.1069 | Ratio: KD=53.98% SI=3.71% | lr=1.25e-05 time=99.61s
+2025-08-15 16:08:39,074 - INFO - [Task 1] Early stopping at epoch 22
+2025-08-15 16:11:10,425 - INFO - [Task 2][Ep 0] train=4.7628e-03 val=3.5828e-03 | KL=0.255 | Lambda: KD=0.4902 SI=0.0000 | Ratio: KD=49.62% SI=0.00% | lr=1.00e-04 time=136.34s
+2025-08-15 16:13:27,192 - INFO - [Task 2][Ep 1] train=4.9478e-03 val=5.5892e-03 | KL=0.254 | Lambda: KD=0.4902 SI=0.0084 | Ratio: KD=46.86% SI=4.47% | lr=1.00e-04 time=136.52s
+2025-08-15 16:15:44,285 - INFO - [Task 2][Ep 2] train=5.0303e-03 val=5.6385e-03 | KL=0.249 | Lambda: KD=0.4904 SI=0.0168 | Ratio: KD=44.61% SI=5.91% | lr=1.00e-04 time=137.07s
+2025-08-15 16:18:00,163 - INFO - [Task 2][Ep 3] train=4.9510e-03 val=6.4936e-03 | KL=0.254 | Lambda: KD=0.4902 SI=0.0252 | Ratio: KD=46.40% SI=5.49% | lr=1.00e-04 time=135.86s
+2025-08-15 16:20:10,349 - INFO - [Task 2][Ep 4] train=4.9698e-03 val=6.0385e-03 | KL=0.256 | Lambda: KD=0.4901 SI=0.0337 | Ratio: KD=46.32% SI=5.28% | lr=1.00e-04 time=130.16s
+2025-08-15 16:22:13,312 - INFO - [Task 2][Ep 5] train=5.1153e-03 val=6.4774e-03 | KL=0.255 | Lambda: KD=0.4902 SI=0.0421 | Ratio: KD=44.21% SI=5.29% | lr=1.00e-04 time=122.93s
+2025-08-15 16:24:14,162 - INFO - [Task 2][Ep 6] train=5.0673e-03 val=8.9712e-03 | KL=0.258 | Lambda: KD=0.4901 SI=0.0505 | Ratio: KD=44.22% SI=5.49% | lr=5.00e-05 time=120.83s
+2025-08-15 16:25:55,017 - INFO - [Task 2][Ep 7] train=4.9167e-03 val=5.7166e-03 | KL=0.252 | Lambda: KD=0.4903 SI=0.0589 | Ratio: KD=44.79% SI=5.43% | lr=5.00e-05 time=100.83s
+2025-08-15 16:27:26,041 - INFO - [Task 2][Ep 8] train=5.0060e-03 val=1.0021e-02 | KL=0.257 | Lambda: KD=0.4901 SI=0.0674 | Ratio: KD=44.10% SI=5.61% | lr=5.00e-05 time=91.01s
+2025-08-15 16:28:54,528 - INFO - [Task 2][Ep 9] train=5.0902e-03 val=9.3236e-03 | KL=0.258 | Lambda: KD=0.4901 SI=0.0758 | Ratio: KD=42.55% SI=5.53% | lr=5.00e-05 time=88.48s
+2025-08-15 16:30:27,591 - INFO - [Task 2][Ep 10] train=5.0464e-03 val=9.8695e-03 | KL=0.257 | Lambda: KD=0.4901 SI=0.0842 | Ratio: KD=42.88% SI=5.99% | lr=5.00e-05 time=93.06s
+2025-08-15 16:31:57,397 - INFO - [Task 2][Ep 11] train=5.0194e-03 val=8.2961e-03 | KL=0.250 | Lambda: KD=0.4904 SI=0.0841 | Ratio: KD=43.31% SI=5.90% | lr=5.00e-05 time=89.80s
+2025-08-15 16:33:33,594 - INFO - [Task 2][Ep 12] train=5.0380e-03 val=6.6856e-03 | KL=0.255 | Lambda: KD=0.4902 SI=0.0842 | Ratio: KD=42.46% SI=5.79% | lr=2.50e-05 time=96.18s
+2025-08-15 16:35:23,489 - INFO - [Task 2][Ep 13] train=4.9994e-03 val=8.3519e-03 | KL=0.256 | Lambda: KD=0.4902 SI=0.0842 | Ratio: KD=43.15% SI=5.73% | lr=2.50e-05 time=109.86s
+2025-08-15 16:37:27,333 - INFO - [Task 2][Ep 14] train=4.9334e-03 val=8.0130e-03 | KL=0.250 | Lambda: KD=0.4904 SI=0.0841 | Ratio: KD=43.53% SI=5.82% | lr=2.50e-05 time=123.81s
+2025-08-15 16:39:25,050 - INFO - [Task 2][Ep 15] train=4.9447e-03 val=8.7852e-03 | KL=0.260 | Lambda: KD=0.4900 SI=0.0842 | Ratio: KD=43.24% SI=5.81% | lr=2.50e-05 time=117.40s
+2025-08-15 16:41:00,473 - INFO - [Task 2][Ep 16] train=4.9549e-03 val=8.8335e-03 | KL=0.255 | Lambda: KD=0.4902 SI=0.0842 | Ratio: KD=43.47% SI=5.76% | lr=2.50e-05 time=95.41s
+2025-08-15 16:42:43,414 - INFO - [Task 2][Ep 17] train=4.9656e-03 val=8.2234e-03 | KL=0.256 | Lambda: KD=0.4902 SI=0.0842 | Ratio: KD=43.78% SI=5.74% | lr=2.50e-05 time=102.93s
+2025-08-15 16:44:22,875 - INFO - [Task 2][Ep 18] train=4.9486e-03 val=7.8948e-03 | KL=0.260 | Lambda: KD=0.4900 SI=0.0842 | Ratio: KD=43.95% SI=5.77% | lr=1.25e-05 time=99.44s
+2025-08-15 16:45:56,809 - INFO - [Task 2][Ep 19] train=4.9017e-03 val=9.4446e-03 | KL=0.254 | Lambda: KD=0.4902 SI=0.0842 | Ratio: KD=43.75% SI=5.73% | lr=1.25e-05 time=93.90s
+2025-08-15 16:47:35,449 - INFO - [Task 2][Ep 20] train=4.9098e-03 val=8.0362e-03 | KL=0.254 | Lambda: KD=0.4902 SI=0.0842 | Ratio: KD=43.85% SI=5.69% | lr=1.25e-05 time=98.62s
+2025-08-15 16:47:35,462 - INFO - [Task 2] Early stopping at epoch 20
+2025-08-15 16:47:54,866 - INFO - ==== Incremental Training Complete ====
+2025-08-15 16:47:54,873 - INFO - Evaluating final model...
+2025-08-15 16:47:54,881 - INFO - ==== Starting Comprehensive Evaluation ====
+2025-08-15 16:47:54,917 - INFO - Evaluating model trained after task 0...
+2025-08-15 16:48:01,419 - INFO - Full test set evaluation: MAE=5.6224e-02, R2=0.1693
+2025-08-15 16:48:06,821 - INFO -   Task 0 -> Test Task 0: MAE=2.7923e-02, R2=-29.2707
+2025-08-15 16:48:08,629 - INFO -   Task 0 -> Test Task 1: MAE=3.5453e-02, R2=-2.1284
+2025-08-15 16:48:09,000 - INFO -   Task 0 -> Test Task 2: MAE=7.2164e-01, R2=-980.0900
+2025-08-15 16:48:09,015 - INFO - Evaluating model trained after task 1...
+2025-08-15 16:48:15,768 - INFO - Full test set evaluation: MAE=4.2417e-02, R2=0.6089
+2025-08-15 16:48:21,439 - INFO -   Task 1 -> Test Task 0: MAE=2.2702e-02, R2=-42.7964
+2025-08-15 16:48:23,238 - INFO -   Task 1 -> Test Task 1: MAE=4.3004e-02, R2=-3.5596
+2025-08-15 16:48:23,605 - INFO -   Task 1 -> Test Task 2: MAE=1.8046e-01, R2=-64.5196
+2025-08-15 16:48:23,614 - INFO - Evaluating model trained after task 2...
+2025-08-15 16:48:30,132 - INFO - Full test set evaluation: MAE=6.1984e-02, R2=0.1568
+2025-08-15 16:48:35,952 - INFO -   Task 2 -> Test Task 0: MAE=3.9803e-02, R2=-61.8139
+2025-08-15 16:48:37,754 - INFO -   Task 2 -> Test Task 1: MAE=3.0201e-02, R2=-1.7088
+2025-08-15 16:48:38,119 - INFO -   Task 2 -> Test Task 2: MAE=6.5405e-02, R2=-8.6984
+2025-08-15 16:48:38,135 - INFO - ==== Computing Continual Learning Metrics ====
+2025-08-15 16:48:38,147 - INFO - Computing random initialization baselines...
+2025-08-15 16:48:40,760 - INFO -   Baseline Task 0: R=-0.9732
+2025-08-15 16:48:42,540 - INFO -   Baseline Task 1: R=-0.9253
+2025-08-15 16:48:42,899 - INFO -   Baseline Task 2: R=-0.6923
+2025-08-15 16:48:42,913 - INFO - ==== Continual Learning Results ====
+2025-08-15 16:48:42,926 - INFO - BWT (Backward Transfer): 0.0005 (positive = backward gain)
+2025-08-15 16:48:42,936 - INFO - FWT (Forward Transfer): 0.7008 (positive = beneficial transfer)
+2025-08-15 16:48:42,944 - INFO - ACC (Average Accuracy): -0.0451
+2025-08-15 16:48:42,954 - INFO - ==== Performance Matrix R[i][j] ====
+2025-08-15 16:48:42,965 - INFO - Rows: trained after task i, Columns: evaluated on task j
+2025-08-15 16:48:42,973 - INFO -        Task 0 Task 1 Task 2
+2025-08-15 16:48:42,981 - INFO - Task 0: -0.0279 -0.0355 -0.7216
+2025-08-15 16:48:42,994 - INFO - Task 1: -0.0227 -0.0430 -0.1805
+2025-08-15 16:48:43,003 - INFO - Task 2: -0.0398 -0.0302 -0.0654
+2025-08-15 16:48:43,562 - INFO - ==== Evaluation Complete ====
+2025-08-15 16:48:43,572 - INFO - All results saved to: /beegfs/home/users/z/zzhuqshun/Thesis/final/tryout_train_both_kd_reverse_tau_10_si_warumup/metrics

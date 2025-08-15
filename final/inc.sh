@@ -37,6 +37,6 @@ source ~/miniconda3/bin/activate
 conda activate myenv
 
 # Run the Python script, passing the folder path as an argument
-python run_inc.py
+python tryout.py
 
 

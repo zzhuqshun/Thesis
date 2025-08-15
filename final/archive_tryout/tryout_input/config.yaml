@@ -1,0 +1,43 @@
+MODE: incremental
+BASE_DIR: /beegfs/home/users/z/zzhuqshun/Thesis/final/tryout_train_input
+DATA_DIR: /beegfs/home/users/z/zzhuqshun/Thesis/01_Datenaufbereitung/Output/Calculated
+SEQUENCE_LENGTH: 720
+HIDDEN_SIZE: 128
+NUM_LAYERS: 2
+DROPOUT: 0.3
+BATCH_SIZE: 32
+LEARNING_RATE: 0.0001
+EPOCHS: 200
+PATIENCE: 20
+WEIGHT_DECAY: 1.0e-06
+RESAMPLE: 10min
+ALPHA: 0.1
+NUM_TASKS: 3
+SEED: 42
+joint_datasets:
+  train_ids: ['03', '05', '07', 09, '11', '15', '21', '23', '25', '27', '29']
+  val_ids: ['01', '19', '13']
+  test_id: '17'
+incremental_datasets:
+  task0_train_ids: ['03', '27', '05', '21', '11']
+  task0_val_ids: ['01']
+  task1_train_ids: [09, '29', '25']
+  task1_val_ids: ['19']
+  task2_train_ids: ['15', '07', '23']
+  task2_val_ids: ['13']
+  test_id: '17'
+Info:
+  gpu_model: [Tesla P100-PCIE-16GB]
+USE_SI: true
+USE_KD: true
+USE_KL: true
+KL_MODE: input
+TAU: 60.0
+KL_EPS: 1.0e-08
+SI_EPSILON: 0.001
+SI_FLOOR: 0.08
+SI_MAX: 0.3
+KD_FLOOR: 0.1
+KD_MAX: 0.5
+KD_LOSS: mse
+MAX_GRAD_NORM: 1.0

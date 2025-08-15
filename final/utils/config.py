@@ -44,6 +44,34 @@ class Config:
             self.Info['gpu_model'] = [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())]
         else:
             self.Info['gpu_model'] = ['CPU']
+            
+        # ---- Continual / Incremental learning switches & hyperparams ----
+        # Toggles
+        self.USE_SI = kwargs.get('USE_SI', True)        # turn SI penalty on/off
+        self.USE_KD = kwargs.get('USE_KD', True)        # turn KD (LwF-style) on/off
+        self.USE_KL = kwargs.get('USE_KL', True)        # turn KL-driven scheduling on/off
+
+        # KL scheduling
+        self.KL_MODE = kwargs.get('KL_MODE', 'input')   # 'input' | 'hidden' | 'both'
+        self.TAU = float(kwargs.get('TAU', 60.0))       # temperature for KL->[0,1] mapping
+        self.KL_EPS = float(kwargs.get('KL_EPS', 1e-8)) # numerical stability for variances
+
+        # SI (Synaptic Intelligence)
+        self.SI_EPSILON = float(kwargs.get('SI_EPSILON', 1e-3))  # SI denominator epsilon
+        self.SI_FLOOR = float(kwargs.get('SI_FLOOR', 0.0))       # min SI weight
+        self.SI_MAX   = float(kwargs.get('SI_MAX',   1.0))       # max SI weight
+        self.SI_WARMUP_EPOCHS = int(kwargs.get('SI_WARMUP_EPOCHS', 5.0))
+
+        # KD (teacher-student distillation for regression)
+        self.KD_FLOOR = float(kwargs.get('KD_FLOOR', 0.0))       # min KD weight
+        self.KD_MAX   = float(kwargs.get('KD_MAX',   0.5))       # max KD weight
+        self.KD_LOSS  = kwargs.get('KD_LOSS', 'mse')             # 'mse' | 'l1' | 'smoothl1'
+        self.KD_WARMUP_EPOCHS = int(kwargs.get('KD_WARMUP_EPOCHS', 5.0))
+        
+
+        # Training safety / misc
+        self.MAX_GRAD_NORM = float(kwargs.get('MAX_GRAD_NORM', 1.0))  # grad clipping
+
 
     def _create_incremental_splits(self):
         random.seed(self.SEED)

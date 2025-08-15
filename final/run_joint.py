@@ -54,10 +54,10 @@ def main():
     # Initialize configuration
     config = Config()
     config.MODE = "joint" 
-    config.SEED = 0
+    config.SEED = 42
     set_seed(config.SEED)
     
-    config.BASE_DIR = Path.cwd() / 'joint_0'
+    config.BASE_DIR = Path.cwd() / 'joint_42'
     config.BASE_DIR.mkdir(parents=True, exist_ok=True)
     setup_logging(config.BASE_DIR)
 
