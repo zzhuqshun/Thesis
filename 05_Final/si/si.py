@@ -36,7 +36,7 @@ class Config:
         self.MODE = 'incremental'  
         
         # Directory structure
-        self.BASE_DIR = Path.cwd()/ "si" / "strategies" / "trial14"
+        self.BASE_DIR = Path.cwd()/ "si" / "strategies" / "trial25"
         self.DATA_DIR = Path('../01_Datenaufbereitung/Output/Calculated/')
         
         # Model hyperparameters
@@ -56,12 +56,12 @@ class Config:
         self.SCALER = "RobustScaler"
         self.RESAMPLE = '10min'     # Time series resampling frequency
         self.ALPHA = 0.1            # Smoothing factor for predictions
-        
+
         # Continual Learning parameters
         self.NUM_TASKS = 3          # Number of incremental tasks
         self.LWF_ALPHAS = [0.0, 0.0, 0.0]    # Learning without Forgetting weights
-        self.SI_LAMBDAS = [1.7139, 1.7139, 1.7139]    # Synaptic Intelligence regularization weights
-        self.SI_EPSILON = 0.005744
+        self.SI_LAMBDAS = [0.206248, 0.206248, 0.206248]    # Synaptic Intelligence regularization weights
+        self.SI_EPSILON = 0.008301
         
         # Random seed for reproducibility
         self.SEED = 42

@@ -1,4 +1,5 @@
 # run_inc.py
+import os
 import logging
 import torch
 import copy
@@ -53,38 +54,6 @@ def inc_training(config: Config):
         
         # per-task seed
         set_seed(config.SEED + task_idx)
-        
-        ckpt_path0 = Path("task0_best.pt")
-        if task_idx == 0 and getattr(config, "SKIP_TASK0", False) and ckpt_path0.exists():
-            ckpt = torch.load(ckpt_path0, map_location=device)
-
-            # 1) 恢复模型
-            trainer.model.load_state_dict(ckpt["model_state"])
-            logger.info("[Skip] Loaded Task0 best from %s", ckpt_path0)
-
-            # 2) 恢复 SI（如有保存）
-            si_state = ckpt.get("si_state")
-            if config.USE_SI and si_state:
-                trainer.si.omega = {n: t.to(device) for n, t in si_state.get("omega", {}).items()}
-                trainer.si.theta_star = {n: t.to(device) for n, t in si_state.get("theta_star", {}).items()}
-                logger.info("[Skip] Restored SI (omega/theta_star).")
-            else:
-                trainer.si.omega = {}
-                trainer.si.theta_star = {}
-
-            # 3) 为下一任务构建 teacher 与 KL 参考统计（最简单：直接复算）
-            if config.USE_KL:
-                trainer._after_task_finalize(loaders["task0_train"])
-                logger.info("[Skip] Built teacher & KL stats from task0_train.")
-            else:
-                trainer.prev_stats = None
-                trainer.prev_model = copy.deepcopy(trainer.model).to(device)
-                trainer.prev_model.eval()
-                for p in trainer.prev_model.parameters():
-                    p.requires_grad_(False)
-
-            logger.info("[Skip] Task0 training skipped. Start Task1.")
-            continue
             
         # >>> train one task (IncTrainer already saves best checkpoint under inc_dir/task{t}/task{t}_best.pt)
         hist = trainer.train_task(
@@ -111,7 +80,7 @@ def main():
     config = Config()
     config.MODE = "incremental"
 
-    config.SKIP_TASK0 = True
+    # config.SKIP_TASK0 = True
     
     # ---- toggles: enable/disable components here ----
     # SI / KD / KL switches
@@ -124,16 +93,16 @@ def main():
 
     # KL mode & temperature
     config.KL_MODE = 'both'   # 'input' | 'hidden' | 'both'
-    config.TAU = 50          # s = KL / (KL + TAU)
+    config.TAU = 0.5
+    # config.S_MIN = 0.15
+    # config.S_MAX = None
 
     # SI strength range (auto-scheduled by KL)
-    config.SI_FLOOR = 0.0
-    config.SI_MAX   = 0.10
-    config.SI_EPSILON = 1e-3
+    config.SI_LAMBDA = 0.003002606845241161
+    config.SI_EPSILON = 0.0951554140693468
     config.SI_WARMUP_EPOCHS = 10
     # KD strength range (auto-scheduled by KL)
-    config.KD_FLOOR = 0.1
-    config.KD_MAX   = 0.5
+    config.KD_LAMBDA = 0.009542713658753916
     config.KD_LOSS  = 'mse'    # 'mse' | 'l1' | 'smoothl1'
     config.KD_WARMUP_EPOCHS = 10
     # Training basics (keep your existing settings)
@@ -142,7 +111,9 @@ def main():
     set_seed(config.SEED)
 
     # Output directory
-    config.BASE_DIR = Path.cwd() / "tryout_tau50_warmup_smalelr_si_load_task0"
+    # job_id = os.getenv("SLURM_JOB_ID") or os.getenv("SLURM_JOBID")
+    # config.BASE_DIR = Path.cwd() / f"tryout_{job_id}" / "tryout_optuna_init_tau10"
+    config.BASE_DIR = Path.cwd() / "tryout_optuna_init_tau0.5_decay"
     config.BASE_DIR.mkdir(parents=True, exist_ok=True)
 
     setup_logging(config.BASE_DIR)

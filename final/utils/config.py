@@ -54,17 +54,17 @@ class Config:
         # KL scheduling
         self.KL_MODE = kwargs.get('KL_MODE', 'input')   # 'input' | 'hidden' | 'both'
         self.TAU = float(kwargs.get('TAU', 60.0))       # temperature for KL->[0,1] mapping
+        # self.S_MIN = float(kwargs.get('S_MIN', 0.15))
+        # self.S_MAX = float(kwargs.get('S_MAX', 1.0))
         self.KL_EPS = float(kwargs.get('KL_EPS', 1e-8)) # numerical stability for variances
 
         # SI (Synaptic Intelligence)
         self.SI_EPSILON = float(kwargs.get('SI_EPSILON', 1e-3))  # SI denominator epsilon
-        self.SI_FLOOR = float(kwargs.get('SI_FLOOR', 0.0))       # min SI weight
-        self.SI_MAX   = float(kwargs.get('SI_MAX',   1.0))       # max SI weight
+        self.SI_LAMBDA = float(kwargs.get('SI_LAMBDA', 0.0))      
         self.SI_WARMUP_EPOCHS = int(kwargs.get('SI_WARMUP_EPOCHS', 5.0))
 
         # KD (teacher-student distillation for regression)
-        self.KD_FLOOR = float(kwargs.get('KD_FLOOR', 0.0))       # min KD weight
-        self.KD_MAX   = float(kwargs.get('KD_MAX',   0.5))       # max KD weight
+        self.KD_LAMBDA = float(kwargs.get('KD_LAMBDA', 0.0))    
         self.KD_LOSS  = kwargs.get('KD_LOSS', 'mse')             # 'mse' | 'l1' | 'smoothl1'
         self.KD_WARMUP_EPOCHS = int(kwargs.get('KD_WARMUP_EPOCHS', 5.0))
         
@@ -85,14 +85,25 @@ class Config:
         t0_fer = [str(item) for item in random.sample(faster, 1)]
         t0 = t0_n + t0_f + t0_fer
         
-        # Task 1: Random 3 cells
-        rest_cells = [str(item) for item in [c for c in cells if c not in t0]]  # 确保转换为字符串
-        random.shuffle(rest_cells)
+        # # Task 1: Random 3 cells
+        # rest_cells = [str(item) for item in [c for c in cells if c not in t0]]  # 确保转换为字符串
+        # random.shuffle(rest_cells)
         
-        # Task 1: Random 3 cells
-        t1 = rest_cells[:3]
-        # Task 2: Random 3 cells
-        t2 = rest_cells[3:6]
+        # # Task 1: Random 3 cells
+        # t1 = rest_cells[:3]
+        # # Task 2: Random 3 cells
+        # t2 = rest_cells[3:6]
+        
+        # Decay distribution
+        rem_normal = [c for c in normal  if c not in t0_n]   # 1 left (since 4N - 3N used)
+        rem_fast   = [c for c in fast    if c not in t0_f]   # all fast except the 1 picked for Task0
+        rem_faster = [c for c in faster  if c not in t0_fer] # all faster except the 1 picked for Task0
+
+        # Task 1: all remaining fast + one remaining normal
+        t1 = rem_fast + rem_normal
+
+        # Task 2: all remaining faster
+        t2 = rem_faster
         
         return {
             'task0_train_ids': t0, 'task0_val_ids': ['01'],

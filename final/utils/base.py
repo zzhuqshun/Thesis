@@ -1,5 +1,6 @@
 import logging
 import copy
+import math
 import time
 from pathlib import Path
 import torch
@@ -307,6 +308,22 @@ class IncTrainer:
         tau = max(1e-12, float(self.config.TAU))
         return float(kl_value / (kl_value + tau))
 
+        # """Map KL -> s using log1p without tau; keep S_MIN floor and optional S_MAX cap."""
+        # # No tau; more sensitive at small KL, naturally saturates for large KL.
+        # s_min = float(getattr(self.config, "S_MIN", 0.15))
+        # s_max = getattr(self.config, "S_MAX", None)  # e.g., 0.35 if you want a safety cap; None to disable
+
+        # kl = max(0.0, float(kl_value))
+        # s_raw = math.log1p(kl)          # log(1 + KL)
+        # s = s_raw / (1.0 + s_raw)       # in (0,1)
+
+        # if s < s_min:
+        #     s = s_min
+        # if (s_max is not None) and (s > float(s_max)):
+        #     s = float(s_max)
+        # return float(s)
+
+
     def _kd_loss(self, student_y: torch.Tensor, teacher_y: torch.Tensor) -> torch.Tensor:
         typ = self.config.KD_LOSS.lower()
         if typ == 'l1':
@@ -343,7 +360,7 @@ class IncTrainer:
         # history fields (minimal but informative)
         hist = {k: [] for k in [
             'epoch', 'train_loss', 'train_sup','train_kd', 'train_si', 'val_loss',
-            'kl', 'lam_kd', 'lam_si', 'kd_ratio', 'si_ratio',
+            'kl', 's','lam_kd', 'lam_si', 'kd_ratio', 'si_ratio',
             'lr', 'time'
         ]}
 
@@ -355,28 +372,33 @@ class IncTrainer:
             tot_sup = tot_kd = tot_si = tot_kl = 0.0
             tot_lam_kd = tot_lam_si = 0.0
             nb = 0
+            tot_s = 0.0 
 
             for x, y in train_loader:
                 x, y = x.to(self.device), y.to(self.device)
 
                 # KL-driven schedule (compute only if needed)
-                do_sched = (task_id > 0) and self.config.USE_KL and (self.config.USE_SI or self.config.USE_KD)
-                kl_val = self._compute_kl(x) if do_sched else 0.0
-                s = (kl_val / (kl_val + self.config.TAU)) if kl_val > 0 else 0.0
+                if task_id == 0:
+                    kl_val = 0.0
+                    s = 0.0
+                    lam_kd = 0.0
+                    lam_si = 0.0
+                else:
+                    # warmup
+                    warm_kd = min(1.0, epoch / float(self.config.KD_WARMUP_EPOCHS))
+                    warm_si = min(1.0, epoch / float(self.config.SI_WARMUP_EPOCHS))
 
-                # adaptive lambdas (0 on task0 or when toggles are off)
-                lam_kd = 0.0
-                lam_si = 0.0
-                if task_id > 0 and self.config.USE_KD:
-                    lam_kd = self.config.KD_FLOOR + (1-s) * (self.config.KD_MAX - self.config.KD_FLOOR)
-                    if getattr(self.config, "KD_WARMUP_EPOCHS", 0) > 0:
-                        warm = min(1.0, epoch / float(self.config.KD_WARMUP_EPOCHS))
-                        lam_kd *= warm
-                if task_id > 0 and self.config.USE_SI:
-                    lam_si = self.config.SI_FLOOR + s * (self.config.SI_MAX - self.config.SI_FLOOR)
-                    if getattr(self.config, "SI_WARMUP_EPOCHS", 0) > 0:
-                        warm = min(1.0, epoch / float(self.config.SI_WARMUP_EPOCHS))
-                        lam_si *= warm
+                    lam_kd = (self.config.KD_LAMBDA * warm_kd) if self.config.USE_KD else 0.0
+                    lam_si = (self.config.SI_LAMBDA * warm_si) if self.config.USE_SI else 0.0
+
+                    if self.config.USE_KL:
+                        kl_val = self._compute_kl(x)
+                        s = self._sched(kl_val)  # log1p-based scheduling
+                        lam_kd *= (1.0 - s)
+                        lam_si *= s
+                    else:
+                        kl_val = 0.0
+                        s = 0.0
 
                 # supervised forward
                 opt.zero_grad(set_to_none=True)
@@ -417,8 +439,9 @@ class IncTrainer:
                 tot_kl  += kl_val * bs
                 tot_lam_kd += lam_kd * bs
                 tot_lam_si += lam_si * bs
+                tot_s += s * bs
                 nb += bs
-
+            
             # epoch metrics
             train_loss = (tot_sup + tot_kd + tot_si) / max(1, nb)
 
@@ -440,6 +463,8 @@ class IncTrainer:
             avg_kl = tot_kl / max(1, nb)
             lam_kd_avg = tot_lam_kd / max(1, nb)
             lam_si_avg = tot_lam_si / max(1, nb)
+            avg_s = tot_s / max(1, nb)
+
 
             # loss shares (portion of total training loss from KD/SI)
             total_acc = tot_sup + tot_kd + tot_si
@@ -462,19 +487,22 @@ class IncTrainer:
             hist['kd_ratio'].append(kd_ratio)
             hist['si_ratio'].append(si_ratio)
             hist['lr'].append(lr_cur)
+            hist['s'].append(avg_s)
             hist['time'].append(elapsed)
 
             # concise logging
             logger.info(
-                "[Task %d][Epoch %d] train=%.4e val=%.4e | KL=%.3f | Lambda: KD=%.4f SI=%.4f | Ratio: KD=%.2f%% SI=%.2f%% | lr=%.2e time=%.2fs",
-                task_id, epoch, train_loss, val_loss, avg_kl, lam_kd_avg, lam_si_avg,
+                "[Task %d][Epoch %d] train=%.4e val=%.4e | KL=%.3f s=%.3f | Lambda: KD=%.4e SI=%.4e | Ratio: KD=%.2f%% SI=%.2f%% | lr=%.2e time=%.2fs",
+                task_id, epoch, train_loss, val_loss, avg_kl, avg_s, lam_kd_avg, lam_si_avg,
                 kd_ratio*100, si_ratio*100, lr_cur, elapsed
             )
+
 
             # save best
             if val_loss < best_val - 1e-12:
                 best_val = val_loss
                 best_state = copy.deepcopy(self.model.state_dict())
+                torch.save({'model_state': best_state}, task_dir / f"task{task_id}_best.pt")
                 no_imp = 0
             else:
                 no_imp += 1
@@ -495,12 +523,7 @@ class IncTrainer:
         self._after_task_finalize(train_loader)
 
         # if task_id == 0:
-        #     ckpt_path = task_dir / f"task{task_id}_best.pt"
-
-        #     try:
-        #         ckpt = torch.load(ckpt_path, map_location="cpu")
-        #     except FileNotFoundError:
-        #         ckpt = {"model_state": copy.deepcopy(self.model.state_dict())}
+        #     ckpt = {"model_state": best_state}
 
         #     si_state = None
         #     if self.config.USE_SI and (self.si.omega or self.si.theta_star):
@@ -509,12 +532,9 @@ class IncTrainer:
         #             "theta_star": {n: t.detach().cpu() for n, t in self.si.theta_star.items()},
         #         }
 
-        #     ckpt.update({
-        #         "si_state": si_state
-        #     })
-        #     torch.save(ckpt, ckpt_path)
-        #     logger.info("[Task %d] Augmented checkpoint saved with SI & KL stats at %s",
-        #                 task_id, ckpt_path)
+        #     ckpt["si_state"] = si_state
+        #     torch.save(ckpt, task_dir / "task0_best.pt")
+        #     logger.info("[Task 0] Saved model + SI state at %s", task_dir / "task0_best.pt")
             
         return hist
 

@@ -1,0 +1,301 @@
+=== Job Start: Thu Aug  7 02:33:45 PM CEST 2025 ===
+Job ID:           98761
+Job Name:         si_optuna
+Partition:        gpu
+Node List:        gpu011
+Requested GPUs:   1
+CUDA Devices:     0
+Running on host:  gpu011
+
+=== GPU Details via nvidia-smi ===
+0, Tesla P100-PCIE-16GB, 16384 MiB, 0 %, 36
+===================================
+Starting SI optimization with 30 trials
+Device: cuda:0
+Note: SI trains from scratch (no pretrained Task0 model)
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+Loading data and creating dataloaders...
+Data loaded!
+--- Task 0 (LWF α=0.0000, SI λ=0.1329, ε=0.079695) ---
+[Trial 0] Task0 ratio = 0.00%  (λ=0.133)
+--- Task 1 (LWF α=0.0000, SI λ=0.1329, ε=0.079695) ---
+[Trial 0] Task1 ratio = 1964430.66%  (λ=0.133)
+--- Task 2 (LWF α=0.0000, SI λ=0.1329, ε=0.079695) ---
+[Trial 0] Task2 ratio = 39527829.54%  (λ=0.133)
+Trial  0: λ=[0.1329,0.1329,0.1329], ε=0.079695 → MAEs=[0.0184,0.0178,0.0227], Avg=0.0196
+[I 2025-08-07 16:22:38,749] Trial 0 finished with value: 0.019637634977698326 and parameters: {'lambda0': 0.13292918943162169, 'epsilon': 0.07969454818643935}. Best is trial 0 with value: 0.019637634977698326.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=1.5703, ε=0.015751) ---
+[Trial 1] Task0 ratio = 0.00%  (λ=1.57)
+--- Task 1 (LWF α=0.0000, SI λ=1.5703, ε=0.015751) ---
+[Trial 1] Task1 ratio = 14898916.40%  (λ=1.57)
+--- Task 2 (LWF α=0.0000, SI λ=1.5703, ε=0.015751) ---
+[Trial 1] Task2 ratio = 73882611.71%  (λ=1.57)
+Trial  1: λ=[1.5703,1.5703,1.5703], ε=0.015751 → MAEs=[0.0192,0.0138,0.0206], Avg=0.0179
+[I 2025-08-07 18:20:55,401] Trial 1 finished with value: 0.01785212941467762 and parameters: {'lambda0': 1.5702970884055387, 'epsilon': 0.015751320499779727}. Best is trial 1 with value: 0.01785212941467762.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.0294, ε=0.002051) ---
+[Trial 2] Task0 ratio = 0.00%  (λ=0.0294)
+--- Task 1 (LWF α=0.0000, SI λ=0.0294, ε=0.002051) ---
+[Trial 2] Task1 ratio = 924592.03%  (λ=0.0294)
+--- Task 2 (LWF α=0.0000, SI λ=0.0294, ε=0.002051) ---
+[Trial 2] Task2 ratio = 1517500.29%  (λ=0.0294)
+Trial  2: λ=[0.0294,0.0294,0.0294], ε=0.002051 → MAEs=[0.2767,0.0211,0.0270], Avg=0.1083
+[I 2025-08-07 19:37:11,764] Trial 2 finished with value: 0.10826360434293747 and parameters: {'lambda0': 0.02938027938703535, 'epsilon': 0.002051110418843397}. Best is trial 1 with value: 0.01785212941467762.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.0149, ε=0.053995) ---
+[Trial 3] Task0 ratio = 0.00%  (λ=0.0149)
+--- Task 1 (LWF α=0.0000, SI λ=0.0149, ε=0.053995) ---
+[Trial 3] Task1 ratio = 114926.70%  (λ=0.0149)
+--- Task 2 (LWF α=0.0000, SI λ=0.0149, ε=0.053995) ---
+[Trial 3] Task2 ratio = 539416.39%  (λ=0.0149)
+Trial  3: λ=[0.0149,0.0149,0.0149], ε=0.053995 → MAEs=[0.0353,0.0499,0.0212], Avg=0.0355
+[I 2025-08-07 21:12:18,395] Trial 3 finished with value: 0.03549612686038017 and parameters: {'lambda0': 0.014936568554617643, 'epsilon': 0.05399484409787434}. Best is trial 1 with value: 0.01785212941467762.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.6358, ε=0.026070) ---
+[Trial 4] Task0 ratio = 0.00%  (λ=0.636)
+--- Task 1 (LWF α=0.0000, SI λ=0.6358, ε=0.026070) ---
+[Trial 4] Task1 ratio = 5271542.41%  (λ=0.636)
+--- Task 2 (LWF α=0.0000, SI λ=0.6358, ε=0.026070) ---
+[Trial 4] Task2 ratio = 23073674.74%  (λ=0.636)
+Trial  4: λ=[0.6358,0.6358,0.6358], ε=0.026070 → MAEs=[0.0282,0.0180,0.0177], Avg=0.0213
+[I 2025-08-07 23:00:21,474] Trial 4 finished with value: 0.021302947774529457 and parameters: {'lambda0': 0.6358358856676253, 'epsilon': 0.02607024758370768}. Best is trial 1 with value: 0.01785212941467762.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.0115, ε=0.087060) ---
+[Trial 5] Task0 ratio = 0.00%  (λ=0.0115)
+--- Task 1 (LWF α=0.0000, SI λ=0.0115, ε=0.087060) ---
+[Trial 5] Task1 ratio = 115769.67%  (λ=0.0115)
+--- Task 2 (LWF α=0.0000, SI λ=0.0115, ε=0.087060) ---
+[Trial 5] Task2 ratio = 2559802.11%  (λ=0.0115)
+Trial  5: λ=[0.0115,0.0115,0.0115], ε=0.087060 → MAEs=[0.0279,0.0134,0.0122], Avg=0.0179
+[I 2025-08-08 00:50:30,367] Trial 5 finished with value: 0.017863649874925613 and parameters: {'lambda0': 0.011527987128232402, 'epsilon': 0.08706020878304858}. Best is trial 1 with value: 0.01785212941467762.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=3.1429, ε=0.002659) ---
+[Trial 6] Task0 ratio = 0.00%  (λ=3.14)
+--- Task 1 (LWF α=0.0000, SI λ=3.1429, ε=0.002659) ---
+[Trial 6] Task1 ratio = 20871810.93%  (λ=3.14)
+--- Task 2 (LWF α=0.0000, SI λ=3.1429, ε=0.002659) ---
+[Trial 6] Task2 ratio = 411861806.39%  (λ=3.14)
+Trial  6: λ=[3.1429,3.1429,3.1429], ε=0.002659 → MAEs=[0.0269,0.0376,0.0115], Avg=0.0254
+[I 2025-08-08 03:19:45,307] Trial 6 finished with value: 0.025364650413393974 and parameters: {'lambda0': 3.142880890840109, 'epsilon': 0.0026587543983272706}. Best is trial 1 with value: 0.01785212941467762.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.0351, ε=0.002327) ---
+[Trial 7] Task0 ratio = 0.00%  (λ=0.0351)
+--- Task 1 (LWF α=0.0000, SI λ=0.0351, ε=0.002327) ---
+[Trial 7] Task1 ratio = 758719.99%  (λ=0.0351)
+--- Task 2 (LWF α=0.0000, SI λ=0.0351, ε=0.002327) ---
+[Trial 7] Task2 ratio = 2226400.25%  (λ=0.0351)
+Trial  7: λ=[0.0351,0.0351,0.0351], ε=0.002327 → MAEs=[0.0305,0.0102,0.0073], Avg=0.0160
+[I 2025-08-08 06:03:03,746] Trial 7 finished with value: 0.01597834937274456 and parameters: {'lambda0': 0.035113563139704075, 'epsilon': 0.002327067708383781}. Best is trial 7 with value: 0.01597834937274456.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.0818, ε=0.011208) ---
+[Trial 8] Task0 ratio = 0.00%  (λ=0.0818)
+--- Task 1 (LWF α=0.0000, SI λ=0.0818, ε=0.011208) ---
+[Trial 8] Task1 ratio = 6988449.15%  (λ=0.0818)
+--- Task 2 (LWF α=0.0000, SI λ=0.0818, ε=0.011208) ---
+[Trial 8] Task2 ratio = 41224394.28%  (λ=0.0818)
+Trial  8: λ=[0.0818,0.0818,0.0818], ε=0.011208 → MAEs=[0.0561,0.0056,0.0092], Avg=0.0236
+[I 2025-08-08 08:31:32,399] Trial 8 finished with value: 0.023636244237422943 and parameters: {'lambda0': 0.08179499475211674, 'epsilon': 0.01120760621186057}. Best is trial 7 with value: 0.01597834937274456.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.1976, ε=0.003823) ---
+[Trial 9] Task0 ratio = 0.00%  (λ=0.198)
+--- Task 1 (LWF α=0.0000, SI λ=0.1976, ε=0.003823) ---
+[Trial 9] Task1 ratio = 2270425.83%  (λ=0.198)
+--- Task 2 (LWF α=0.0000, SI λ=0.1976, ε=0.003823) ---
+[Trial 9] Task2 ratio = 56332667.38%  (λ=0.198)
+Trial  9: λ=[0.1976,0.1976,0.1976], ε=0.003823 → MAEs=[0.0803,0.0510,0.0054], Avg=0.0456
+[I 2025-08-08 11:13:21,269] Trial 9 finished with value: 0.04555873945355415 and parameters: {'lambda0': 0.19762189340280073, 'epsilon': 0.0038234752246751854}. Best is trial 7 with value: 0.01597834937274456.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.0420, ε=0.001028) ---
+[Trial 10] Task0 ratio = 0.00%  (λ=0.042)
+--- Task 1 (LWF α=0.0000, SI λ=0.0420, ε=0.001028) ---
+[Trial 10] Task1 ratio = 523341.25%  (λ=0.042)
+--- Task 2 (LWF α=0.0000, SI λ=0.0420, ε=0.001028) ---
+[Trial 10] Task2 ratio = 1099139.41%  (λ=0.042)
+Trial 10: λ=[0.0420,0.0420,0.0420], ε=0.001028 → MAEs=[0.0359,0.0161,0.0304], Avg=0.0275
+[I 2025-08-08 12:42:29,832] Trial 10 finished with value: 0.02748042345046997 and parameters: {'lambda0': 0.04196203337603126, 'epsilon': 0.0010280029617905616}. Best is trial 7 with value: 0.01597834937274456.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=1.2053, ε=0.011588) ---
+[Trial 11] Task0 ratio = 0.00%  (λ=1.21)
+--- Task 1 (LWF α=0.0000, SI λ=1.2053, ε=0.011588) ---
+[Trial 11] Task1 ratio = 13577398.06%  (λ=1.21)
+--- Task 2 (LWF α=0.0000, SI λ=1.2053, ε=0.011588) ---
+[Trial 11] Task2 ratio = 37494030.47%  (λ=1.21)
+Trial 11: λ=[1.2053,1.2053,1.2053], ε=0.011588 → MAEs=[0.0292,0.0545,0.0246], Avg=0.0361
+[I 2025-08-08 14:22:45,181] Trial 11 finished with value: 0.03611094132065773 and parameters: {'lambda0': 1.205314687768485, 'epsilon': 0.01158813397370297}. Best is trial 7 with value: 0.01597834937274456.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=8.4462, ε=0.004875) ---
+[Trial 12] Task0 ratio = 0.00%  (λ=8.45)
+--- Task 1 (LWF α=0.0000, SI λ=8.4462, ε=0.004875) ---
+[Trial 12] Task1 ratio = 102800367.64%  (λ=8.45)
+--- Task 2 (LWF α=0.0000, SI λ=8.4462, ε=0.004875) ---
+[Trial 12] Task2 ratio = 802400386.37%  (λ=8.45)
+Trial 12: λ=[8.4462,8.4462,8.4462], ε=0.004875 → MAEs=[0.0258,0.0199,0.0185], Avg=0.0214
+[I 2025-08-08 17:02:56,915] Trial 12 finished with value: 0.021413177251815796 and parameters: {'lambda0': 8.446167420390536, 'epsilon': 0.004875065452823015}. Best is trial 7 with value: 0.01597834937274456.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.4675, ε=0.026847) ---
+[Trial 13] Task0 ratio = 0.00%  (λ=0.467)
+--- Task 1 (LWF α=0.0000, SI λ=0.4675, ε=0.026847) ---
+[Trial 13] Task1 ratio = 21993619.14%  (λ=0.467)
+--- Task 2 (LWF α=0.0000, SI λ=0.4675, ε=0.026847) ---
+[Trial 13] Task2 ratio = 38586434.71%  (λ=0.467)
+Trial 13: λ=[0.4675,0.4675,0.4675], ε=0.026847 → MAEs=[0.1022,0.0135,0.0249], Avg=0.0469
+[I 2025-08-08 18:19:58,551] Trial 13 finished with value: 0.04686319828033447 and parameters: {'lambda0': 0.4674692072777469, 'epsilon': 0.026847260936519547}. Best is trial 7 with value: 0.01597834937274456.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=1.7139, ε=0.005744) ---
+[Trial 14] Task0 ratio = 0.00%  (λ=1.71)
+--- Task 1 (LWF α=0.0000, SI λ=1.7139, ε=0.005744) ---
+[Trial 14] Task1 ratio = 9261096.11%  (λ=1.71)
+--- Task 2 (LWF α=0.0000, SI λ=1.7139, ε=0.005744) ---
+[Trial 14] Task2 ratio = 91021832.54%  (λ=1.71)
+Trial 14: λ=[1.7139,1.7139,1.7139], ε=0.005744 → MAEs=[0.0121,0.0152,0.0136], Avg=0.0136
+[I 2025-08-08 20:12:01,123] Trial 14 finished with value: 0.01362389326095581 and parameters: {'lambda0': 1.7138890273524043, 'epsilon': 0.005743921379695764}. Best is trial 14 with value: 0.01362389326095581.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=6.0846, ε=0.006523) ---
+[Trial 15] Task0 ratio = 0.00%  (λ=6.08)
+--- Task 1 (LWF α=0.0000, SI λ=6.0846, ε=0.006523) ---
+[Trial 15] Task1 ratio = 134717736.78%  (λ=6.08)
+--- Task 2 (LWF α=0.0000, SI λ=6.0846, ε=0.006523) ---
+[Trial 15] Task2 ratio = 361946289.23%  (λ=6.08)
+Trial 15: λ=[6.0846,6.0846,6.0846], ε=0.006523 → MAEs=[0.0196,0.0286,0.0463], Avg=0.0315
+[I 2025-08-08 22:25:05,470] Trial 15 finished with value: 0.03149489685893059 and parameters: {'lambda0': 6.084591488841322, 'epsilon': 0.006523041476282559}. Best is trial 14 with value: 0.01362389326095581.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.2884, ε=0.001314) ---
+[Trial 16] Task0 ratio = 0.00%  (λ=0.288)
+--- Task 1 (LWF α=0.0000, SI λ=0.2884, ε=0.001314) ---
+[Trial 16] Task1 ratio = 3218793.34%  (λ=0.288)
+--- Task 2 (LWF α=0.0000, SI λ=0.2884, ε=0.001314) ---
+[Trial 16] Task2 ratio = 15348551.26%  (λ=0.288)
+Trial 16: λ=[0.2884,0.2884,0.2884], ε=0.001314 → MAEs=[0.0167,0.0288,0.0119], Avg=0.0191
+[I 2025-08-08 23:53:02,952] Trial 16 finished with value: 0.019144298508763313 and parameters: {'lambda0': 0.2883642938894573, 'epsilon': 0.0013137832068518605}. Best is trial 14 with value: 0.01362389326095581.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=1.6599, ε=0.002228) ---
+[Trial 17] Task0 ratio = 0.00%  (λ=1.66)
+--- Task 1 (LWF α=0.0000, SI λ=1.6599, ε=0.002228) ---
+[Trial 17] Task1 ratio = 11634039.24%  (λ=1.66)
+--- Task 2 (LWF α=0.0000, SI λ=1.6599, ε=0.002228) ---
+[Trial 17] Task2 ratio = 208215320.28%  (λ=1.66)
+Trial 17: λ=[1.6599,1.6599,1.6599], ε=0.002228 → MAEs=[0.0282,0.0164,0.0137], Avg=0.0194
+[I 2025-08-09 02:00:06,304] Trial 17 finished with value: 0.019431328400969505 and parameters: {'lambda0': 1.6598511811147398, 'epsilon': 0.0022279086362052667}. Best is trial 14 with value: 0.01362389326095581.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.0628, ε=0.006669) ---
+[Trial 18] Task0 ratio = 0.00%  (λ=0.0628)
+--- Task 1 (LWF α=0.0000, SI λ=0.0628, ε=0.006669) ---
+[Trial 18] Task1 ratio = 1659886.96%  (λ=0.0628)
+--- Task 2 (LWF α=0.0000, SI λ=0.0628, ε=0.006669) ---
+[Trial 18] Task2 ratio = 7206036.28%  (λ=0.0628)
+Trial 18: λ=[0.0628,0.0628,0.0628], ε=0.006669 → MAEs=[0.0222,0.0173,0.0069], Avg=0.0155
+[I 2025-08-09 03:48:44,906] Trial 18 finished with value: 0.015459372662007809 and parameters: {'lambda0': 0.06284452351261977, 'epsilon': 0.006669313252643101}. Best is trial 14 with value: 0.01362389326095581.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.7727, ε=0.005959) ---
+[Trial 19] Task0 ratio = 0.00%  (λ=0.773)
+--- Task 1 (LWF α=0.0000, SI λ=0.7727, ε=0.005959) ---
+[Trial 19] Task1 ratio = 6514963.78%  (λ=0.773)
+--- Task 2 (LWF α=0.0000, SI λ=0.7727, ε=0.005959) ---
+[Trial 19] Task2 ratio = 63580953.07%  (λ=0.773)
+Trial 19: λ=[0.7727,0.7727,0.7727], ε=0.005959 → MAEs=[0.0203,0.0138,0.0185], Avg=0.0175
+[I 2025-08-09 05:46:42,836] Trial 19 finished with value: 0.017544088885188103 and parameters: {'lambda0': 0.7726930083976549, 'epsilon': 0.005959206131645758}. Best is trial 14 with value: 0.01362389326095581.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.0841, ε=0.008588) ---
+[Trial 20] Task0 ratio = 0.00%  (λ=0.0841)
+--- Task 1 (LWF α=0.0000, SI λ=0.0841, ε=0.008588) ---
+[Trial 20] Task1 ratio = 532339.93%  (λ=0.0841)
+--- Task 2 (LWF α=0.0000, SI λ=0.0841, ε=0.008588) ---
+[Trial 20] Task2 ratio = 4514329.33%  (λ=0.0841)
+Trial 20: λ=[0.0841,0.0841,0.0841], ε=0.008588 → MAEs=[0.0164,0.0245,0.0162], Avg=0.0191
+[I 2025-08-09 08:37:14,483] Trial 20 finished with value: 0.019052334129810333 and parameters: {'lambda0': 0.08414443347060573, 'epsilon': 0.008588044993462964}. Best is trial 14 with value: 0.01362389326095581.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.0308, ε=0.003540) ---
+[Trial 21] Task0 ratio = 0.00%  (λ=0.0308)
+--- Task 1 (LWF α=0.0000, SI λ=0.0308, ε=0.003540) ---
+[Trial 21] Task1 ratio = 213070.62%  (λ=0.0308)
+--- Task 2 (LWF α=0.0000, SI λ=0.0308, ε=0.003540) ---
+[Trial 21] Task2 ratio = 1700576.37%  (λ=0.0308)
+Trial 21: λ=[0.0308,0.0308,0.0308], ε=0.003540 → MAEs=[0.0226,0.0134,0.0186], Avg=0.0182
+[I 2025-08-09 10:23:03,243] Trial 21 finished with value: 0.018180357292294502 and parameters: {'lambda0': 0.030810437109729263, 'epsilon': 0.00353972845105616}. Best is trial 14 with value: 0.01362389326095581.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.1098, ε=0.001559) ---
+[Trial 22] Task0 ratio = 0.00%  (λ=0.11)
+--- Task 1 (LWF α=0.0000, SI λ=0.1098, ε=0.001559) ---
+[Trial 22] Task1 ratio = 1179015.71%  (λ=0.11)
+--- Task 2 (LWF α=0.0000, SI λ=0.1098, ε=0.001559) ---
+[Trial 22] Task2 ratio = 3936155.62%  (λ=0.11)
+Trial 22: λ=[0.1098,0.1098,0.1098], ε=0.001559 → MAEs=[0.0276,0.0550,0.0236], Avg=0.0354
+[I 2025-08-09 12:10:08,568] Trial 22 finished with value: 0.035391513258218765 and parameters: {'lambda0': 0.1097674316759364, 'epsilon': 0.0015588337066854074}. Best is trial 14 with value: 0.01362389326095581.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.0575, ε=0.003420) ---
+[Trial 23] Task0 ratio = 0.00%  (λ=0.0575)
+--- Task 1 (LWF α=0.0000, SI λ=0.0575, ε=0.003420) ---
+[Trial 23] Task1 ratio = 703631.45%  (λ=0.0575)
+--- Task 2 (LWF α=0.0000, SI λ=0.0575, ε=0.003420) ---
+[Trial 23] Task2 ratio = 2895543.07%  (λ=0.0575)
+Trial 23: λ=[0.0575,0.0575,0.0575], ε=0.003420 → MAEs=[0.0168,0.0307,0.0293], Avg=0.0256
+[I 2025-08-09 14:36:42,989] Trial 23 finished with value: 0.025579296052455902 and parameters: {'lambda0': 0.05753679540850442, 'epsilon': 0.003420446997728534}. Best is trial 14 with value: 0.01362389326095581.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.0203, ε=0.019190) ---
+[Trial 24] Task0 ratio = 0.00%  (λ=0.0203)
+--- Task 1 (LWF α=0.0000, SI λ=0.0203, ε=0.019190) ---
+[Trial 24] Task1 ratio = 163913.99%  (λ=0.0203)
+--- Task 2 (LWF α=0.0000, SI λ=0.0203, ε=0.019190) ---
+[Trial 24] Task2 ratio = 705088.35%  (λ=0.0203)
+Trial 24: λ=[0.0203,0.0203,0.0203], ε=0.019190 → MAEs=[0.0351,0.0365,0.0226], Avg=0.0314
+[I 2025-08-09 16:08:42,666] Trial 24 finished with value: 0.031378183513879776 and parameters: {'lambda0': 0.020252438964921935, 'epsilon': 0.01919021861029622}. Best is trial 14 with value: 0.01362389326095581.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.2062, ε=0.008301) ---
+[Trial 25] Task0 ratio = 0.00%  (λ=0.206)
+--- Task 1 (LWF α=0.0000, SI λ=0.2062, ε=0.008301) ---
+[Trial 25] Task1 ratio = 2200509.72%  (λ=0.206)
+--- Task 2 (LWF α=0.0000, SI λ=0.2062, ε=0.008301) ---
+[Trial 25] Task2 ratio = 34224420.14%  (λ=0.206)
+Trial 25: λ=[0.2062,0.2062,0.2062], ε=0.008301 → MAEs=[0.0146,0.0055,0.0133], Avg=0.0112
+[I 2025-08-09 19:44:21,311] Trial 25 finished with value: 0.011159227229654789 and parameters: {'lambda0': 0.20624835931819063, 'epsilon': 0.008300526070770448}. Best is trial 25 with value: 0.011159227229654789.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.3095, ε=0.007475) ---
+[Trial 26] Task0 ratio = 0.00%  (λ=0.31)
+--- Task 1 (LWF α=0.0000, SI λ=0.3095, ε=0.007475) ---
+[Trial 26] Task1 ratio = 2476143.58%  (λ=0.31)
+--- Task 2 (LWF α=0.0000, SI λ=0.3095, ε=0.007475) ---
+[Trial 26] Task2 ratio = 32430361.91%  (λ=0.31)
+Trial 26: λ=[0.3095,0.3095,0.3095], ε=0.007475 → MAEs=[0.0141,0.0142,0.0148], Avg=0.0144
+[I 2025-08-09 21:56:15,359] Trial 26 finished with value: 0.014375638216733932 and parameters: {'lambda0': 0.30952090692393486, 'epsilon': 0.0074754454133830585}. Best is trial 25 with value: 0.011159227229654789.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.2977, ε=0.008553) ---
+[Trial 27] Task0 ratio = 0.00%  (λ=0.298)
+--- Task 1 (LWF α=0.0000, SI λ=0.2977, ε=0.008553) ---
+[Trial 27] Task1 ratio = 2695416.97%  (λ=0.298)
+--- Task 2 (LWF α=0.0000, SI λ=0.2977, ε=0.008553) ---
+[Trial 27] Task2 ratio = 67711206.81%  (λ=0.298)
+Trial 27: λ=[0.2977,0.2977,0.2977], ε=0.008553 → MAEs=[0.0197,0.0299,0.0098], Avg=0.0198
+[I 2025-08-09 23:53:40,378] Trial 27 finished with value: 0.0197860486805439 and parameters: {'lambda0': 0.29774914640275263, 'epsilon': 0.008552680286532416}. Best is trial 25 with value: 0.011159227229654789.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=3.1806, ε=0.014919) ---
+[Trial 28] Task0 ratio = 0.00%  (λ=3.18)
+--- Task 1 (LWF α=0.0000, SI λ=3.1806, ε=0.014919) ---
+[Trial 28] Task1 ratio = 176289039.23%  (λ=3.18)
+--- Task 2 (LWF α=0.0000, SI λ=3.1806, ε=0.014919) ---
+[Trial 28] Task2 ratio = 269641319.13%  (λ=3.18)
+Trial 28: λ=[3.1806,3.1806,3.1806], ε=0.014919 → MAEs=[0.0946,0.0362,0.0055], Avg=0.0454
+[I 2025-08-10 01:58:21,140] Trial 28 finished with value: 0.0454123318195343 and parameters: {'lambda0': 3.1805519723096096, 'epsilon': 0.014918905042424681}. Best is trial 25 with value: 0.011159227229654789.
+Inncremental_datasets:  {'task0_train_ids': ['03', '27', '05', '21', '11'], 'task0_val_ids': ['01'], 'task1_train_ids': ['09', '29', '25'], 'task1_val_ids': ['19'], 'task2_train_ids': ['15', '07', '23'], 'task2_val_ids': ['13'], 'test_id': '17'}
+--- Task 0 (LWF α=0.0000, SI λ=0.5160, ε=0.036105) ---
+[Trial 29] Task0 ratio = 0.00%  (λ=0.516)
+--- Task 1 (LWF α=0.0000, SI λ=0.5160, ε=0.036105) ---
+[Trial 29] Task1 ratio = 3828767.77%  (λ=0.516)
+--- Task 2 (LWF α=0.0000, SI λ=0.5160, ε=0.036105) ---
+[Trial 29] Task2 ratio = 50217790.16%  (λ=0.516)
+Trial 29: λ=[0.5160,0.5160,0.5160], ε=0.036105 → MAEs=[0.0490,0.0131,0.0248], Avg=0.0290
+[I 2025-08-10 04:42:53,358] Trial 29 finished with value: 0.028965989127755165 and parameters: {'lambda0': 0.5159745525500146, 'epsilon': 0.036104826001814146}. Best is trial 25 with value: 0.011159227229654789.
+
+==================================================
+SI OPTIMIZATION COMPLETED!
+==================================================
+Best Validation MAE: 0.011159
+Best Parameters:
+  lambda0: 0.206248
+  epsilon: 0.008301
+Completed trials: 30
+==================================================
+
+Final Best MAE: 0.011159
+  lambda0: 0.206248
+  epsilon: 0.008301

@@ -78,13 +78,13 @@ def plot_losses(history, out_dir, title=None):
     out_dir = Path(out_dir); out_dir.mkdir(parents=True, exist_ok=True)
 
     if title is None: title = "Training"
-    t = f"{title}\nKL={df['kl'].mean():.3f} | λ: KD={df['lam_kd'].mean():.3f} SI={df['lam_si'].mean():.3f}"
+    t = f"{title}\nKL={df['kl'].mean():.3f} | λ: KD={df['lam_kd'].mean():.4e} SI={df['lam_si'].mean():.4e}"
 
     plt.figure(figsize=(9,5))
     plt.semilogy(df['epoch'], df['train_loss'], label='Train Loss')
-    plt.semilogy(df['epoch'], df['train_sup'], label='Task Loss')
-    plt.semilogy(df['epoch'], df['train_kd'], label='KD Loss')
-    plt.semilogy(df['epoch'], df['train_si'], label='SI Loss')
+    plt.semilogy(df['epoch'], df['train_sup'], label='Task Loss', alpha=0.5)
+    plt.semilogy(df['epoch'], df['train_kd'], label='KD Loss', alpha=0.5)
+    plt.semilogy(df['epoch'], df['train_si'], label='SI Loss', alpha=0.5)
     plt.semilogy(df['epoch'], df['val_loss'],   label='Val Loss')
     plt.xlabel('Epoch'); plt.ylabel('Loss'); plt.title(t)
     plt.grid(True); plt.legend()
