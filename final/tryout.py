@@ -54,7 +54,15 @@ def inc_training(config: Config):
         
         # per-task seed
         set_seed(config.SEED + task_idx)
-            
+        # if task_idx == 1:
+        #     config.SI_LAMBDA = 0.0015831525202184133
+        #     config.SI_EPSILON = 0.013481575603601416
+        #     config.KD_LAMBDA = 0.001171142666747359
+       
+        # if task_idx == 2:
+        #     config.SI_LAMBDA = 0.0001776934210981567
+        #     config.SI_EPSILON = 0.00801632436628857
+        #     config.KD_LAMBDA = 0.0021646846539953237
         # >>> train one task (IncTrainer already saves best checkpoint under inc_dir/task{t}/task{t}_best.pt)
         hist = trainer.train_task(
             train_loader=loaders[f"{task_name}_train"],
@@ -86,10 +94,10 @@ def main():
     # SI / KD / KL switches
     config.USE_SI = True
     config.USE_KD = True
-    config.USE_KL = True
+    # config.USE_KL = True
     # config.USE_SI = False
     # config.USE_KD = False
-    # config.USE_KL = False
+    config.USE_KL = False
 
     # KL mode & temperature
     config.KL_MODE = 'both'   # 'input' | 'hidden' | 'both'
@@ -113,7 +121,7 @@ def main():
     # Output directory
     # job_id = os.getenv("SLURM_JOB_ID") or os.getenv("SLURM_JOBID")
     # config.BASE_DIR = Path.cwd() / f"tryout_{job_id}" / "tryout_optuna_init_tau10"
-    config.BASE_DIR = Path.cwd() / "tryout_optuna_init_tau0.5_decay"
+    config.BASE_DIR = Path.cwd() / "tryout_trial14"
     config.BASE_DIR.mkdir(parents=True, exist_ok=True)
 
     setup_logging(config.BASE_DIR)
